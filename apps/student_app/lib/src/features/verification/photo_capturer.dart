@@ -13,6 +13,9 @@ import 'image_quality.dart';
 /// Behind an interface so tests never need a camera.
 abstract class PhotoCapturer {
   Future<Uint8List?> capture(BuildContext context, DocKind kind);
+
+  /// A photo with no guide frame, for support attachments.
+  Future<Uint8List?> captureFree(BuildContext context);
 }
 
 class CameraPhotoCapturer implements PhotoCapturer {
@@ -22,14 +25,22 @@ class CameraPhotoCapturer implements PhotoCapturer {
   Future<Uint8List?> capture(BuildContext context, DocKind kind) => Navigator.of(context).push<Uint8List>(
         MaterialPageRoute(fullscreenDialog: true, builder: (_) => CameraCaptureScreen(kind: kind)),
       );
+
+  @override
+  Future<Uint8List?> captureFree(BuildContext context) => Navigator.of(context).push<Uint8List>(
+        MaterialPageRoute(fullscreenDialog: true, builder: (_) => const CameraCaptureScreen(kind: DocKind.studentId, freeform: true)),
+      );
 }
 
 final photoCapturerProvider = Provider<PhotoCapturer>((_) => const CameraPhotoCapturer());
 
 class CameraCaptureScreen extends StatefulWidget {
-  const CameraCaptureScreen({super.key, required this.kind});
+  const CameraCaptureScreen({super.key, required this.kind, this.freeform = false});
 
   final DocKind kind;
+
+  /// No guide window: for photos that are not a document.
+  final bool freeform;
 
   @override
   State<CameraCaptureScreen> createState() => _CameraCaptureScreenState();
@@ -155,7 +166,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                 fit: StackFit.expand,
                 children: [
                   ClipRect(child: CameraPreview(_controller!)),
-                  IgnorePointer(child: CustomPaint(painter: _FramePainter(color: t.colors.accent, shade: t.colors.background.withValues(alpha: 0.6), round: selfie, radius: t.radiusCard))),
+                  if (!widget.freeform) IgnorePointer(child: CustomPaint(painter: _FramePainter(color: t.colors.accent, shade: t.colors.background.withValues(alpha: 0.6), round: selfie, radius: t.radiusCard))),
                 ],
               ),
             ),
@@ -164,7 +175,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(selfie ? l10n.captureGuideSelfie : l10n.captureGuideCard, style: text.bodyMedium, textAlign: TextAlign.center),
+                  if (!widget.freeform) Text(selfie ? l10n.captureGuideSelfie : l10n.captureGuideCard, style: text.bodyMedium, textAlign: TextAlign.center),
                   const SizedBox(height: TurboSpacing.md),
                   TurboButton(label: l10n.captureShutter, large: true, loading: _busy, onPressed: _shutter),
                 ],

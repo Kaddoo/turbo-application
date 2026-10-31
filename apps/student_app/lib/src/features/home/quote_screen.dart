@@ -10,6 +10,7 @@ import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../wallet/wallet_providers.dart';
+import '../ride/ride_providers.dart';
 import 'service_area.dart';
 import 'trip_draft.dart';
 
@@ -60,6 +61,38 @@ class QuoteScreen extends ConsumerStatefulWidget {
 class _QuoteScreenState extends ConsumerState<QuoteScreen> {
   Timer? _expiry;
   bool _renewed = false;
+  bool _booking = false;
+  String? _bookError;
+
+  Future<void> _book(Quote q) async {
+    final l10n = AppLocalizations.of(context);
+    setState(() {
+      _booking = true;
+      _bookError = null;
+    });
+    try {
+      final ride = await ref.read(rideActionsProvider).book(q.quoteId!);
+      if (mounted) context.go('/ride/${ride.id}');
+    } on ApiProblem catch (p) {
+      if (!mounted) return;
+      if (p.code == ProblemCode.activeRideExists.value) {
+        // Already riding: open that ride instead of booking another.
+        final active = await ref.refresh(activeRideProvider.future);
+        if (active != null && mounted) {
+          context.go('/ride/${active.id}');
+          return;
+        }
+      }
+      if (p.code == ProblemCode.quoteExpired.value || p.code == ProblemCode.insufficientBalance.value) {
+        // The price or the wallet moved; show the new numbers.
+        await ref.read(quoteProvider.notifier).refresh();
+        ref.invalidate(walletProvider);
+      }
+      if (mounted) setState(() => _bookError = problemMessage(l10n, p));
+    } finally {
+      if (mounted) setState(() => _booking = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -224,7 +257,8 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                   TurboButton(
                     label: l10n.quoteBook(formatPesewas(fare)),
                     large: true,
-                    onPressed: null,
+                    loading: _booking,
+                    onPressed: () => _book(q),
                   )
                 else
                   TurboButton(
@@ -242,12 +276,13 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                       await ref.read(quoteProvider.notifier).refresh();
                     },
                   ),
-                const SizedBox(height: TurboSpacing.sm),
-                Text(
-                  l10n.quoteBookingSoon,
-                  style: text.bodySmall,
-                  textAlign: TextAlign.center,
-                ),
+                if (_bookError != null) ...[
+                  const SizedBox(height: TurboSpacing.md),
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(_bookError!, style: text.bodyMedium?.copyWith(color: t.colors.danger), textAlign: TextAlign.center),
+                  ),
+                ],
               ],
             );
           },

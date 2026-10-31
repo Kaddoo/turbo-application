@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import 'geo.dart';
 import 'location_service.dart';
 import 'map_view.dart';
+import '../ride/ride_providers.dart';
 import 'service_area.dart';
 import 'trip_draft.dart';
 
@@ -21,6 +22,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
+  bool _openedActive = false;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +59,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final gate = ref.watch(gateProvider).value ?? const GateState();
     final wallet = ref.watch(walletProvider);
     final saved = ref.watch(savedPlacesProvider);
+    final active = ref.watch(activeRideProvider).value;
+    // Opening the app with a ride running goes straight to it, once.
+    ref.listen(activeRideProvider, (_, next) {
+      final ride = next.value;
+      if (ride != null && !_openedActive) {
+        _openedActive = true;
+        context.go('/ride/${ride.id}');
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -154,7 +166,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   child: Row(
                     children: [
                       const Wordmark(),
-                      const SizedBox(width: TurboSpacing.md),
+                      const SizedBox(width: TurboSpacing.sm),
+                      IconButton(
+                        tooltip: l10n.safetyTitle,
+                        constraints: const BoxConstraints(
+                          minWidth: TurboSizes.minTap,
+                          minHeight: TurboSizes.minTap,
+                        ),
+                        icon: const Icon(Icons.shield_outlined),
+                        onPressed: () => context.push('/safety'),
+                      ),
                       Expanded(
                         child: Align(
                           alignment: Alignment.centerRight,
@@ -222,6 +243,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       locationNotice(),
+                      if (active != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                          child: TurboCard(
+                            onTap: () => context.go('/ride/${active.id}'),
+                            semanticLabel: l10n.homeActiveOpen,
+                            child: Row(
+                              children: [
+                                Icon(Icons.directions_car, color: t.colors.accentText),
+                                const SizedBox(width: TurboSpacing.md),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(l10n.homeActiveRide, style: text.labelLarge),
+                                      Text(
+                                        '${active.pickup.label ?? ''} → ${active.dropoff.label ?? ''}',
+                                        style: text.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.chevron_right),
+                              ],
+                            ),
+                          ),
+                        ),
                       if (gate.bookingsPaused)
                         Padding(
                           padding: const EdgeInsets.only(
@@ -251,7 +299,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         label: l10n.homeWhereTo,
                         large: true,
                         icon: Icons.search,
-                        onPressed: gate.bookingsPaused
+                        onPressed: gate.bookingsPaused || active != null
                             ? null
                             : () => _start(context, points, loc),
                       ),

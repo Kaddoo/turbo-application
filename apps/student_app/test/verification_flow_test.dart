@@ -24,6 +24,9 @@ class FakeCapturer implements PhotoCapturer {
     taken.add(kind);
     return Uint8List.fromList(_png);
   }
+
+  @override
+  Future<Uint8List?> captureFree(BuildContext context) async => Uint8List.fromList(_png);
 }
 
 FakeServer signedInServer({String verification = 'not_submitted', Map<String, Object?>? state}) {

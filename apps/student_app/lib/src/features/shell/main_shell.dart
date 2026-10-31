@@ -10,7 +10,7 @@ class MainShell extends StatelessWidget {
 
   final Widget child;
 
-  static const _paths = ['/home', '/wallet', '/activity'];
+  static const _paths = ['/home', '/activity', '/wallet', '/profile'];
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +25,10 @@ class MainShell extends StatelessWidget {
         selectedIndex: index < 0 ? 0 : index,
         onDestinationSelected: (i) => context.go(_paths[i]),
         destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.directions_car_outlined),
-            selectedIcon: const Icon(Icons.directions_car),
-            label: l10n.navRide,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: const Icon(Icons.account_balance_wallet),
-            label: l10n.navWallet,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.receipt_long_outlined),
-            selectedIcon: const Icon(Icons.receipt_long),
-            label: l10n.navActivity,
-          ),
+          NavigationDestination(icon: const Icon(Icons.directions_car_outlined), selectedIcon: const Icon(Icons.directions_car), label: l10n.navRide),
+          NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), selectedIcon: const Icon(Icons.receipt_long), label: l10n.navActivity),
+          NavigationDestination(icon: const Icon(Icons.account_balance_wallet_outlined), selectedIcon: const Icon(Icons.account_balance_wallet), label: l10n.navWallet),
+          NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: l10n.navProfile),
         ],
       ),
     );

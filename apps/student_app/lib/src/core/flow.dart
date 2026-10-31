@@ -95,6 +95,10 @@ bool locationFitsStep(FlowStep step, String location) {
       within('/home') ||
           within('/wallet') ||
           within('/activity') ||
+          within('/profile') ||
+          within('/ride') ||
+          within('/safety') ||
+          within('/support') ||
           location == '/verification/status',
   };
 }

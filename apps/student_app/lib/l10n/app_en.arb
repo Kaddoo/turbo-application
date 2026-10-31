@@ -248,5 +248,244 @@
   "rideStatusArrived": "Driver has arrived",
   "rideStatusInProgress": "On the way",
   "rideStatusCompleted": "Completed",
-  "rideStatusCancelled": "Cancelled"
+  "rideStatusCancelled": "Cancelled",
+  "rideSearchingTitle": "Finding your driver",
+  "rideFareHeld": "Your fare is held. {amount}",
+  "rideCancel": "Cancel ride",
+  "rideCancelTitle": "Cancel this ride?",
+  "rideCancelFree": "It's free to cancel before you're in the car.",
+  "rideKeep": "Keep ride",
+  "cancelWaitTooLong": "Waiting too long",
+  "cancelChangedMind": "I changed my mind",
+  "cancelWrongLocation": "Wrong pickup or drop-off",
+  "cancelOther": "Another reason",
+  "rideCancelFailed": "We couldn't cancel just now. Check your connection and try again.",
+  "ridePinLabel": "Your start PIN",
+  "ridePinHint": "Tell this to your driver when you're in the car. Never share it earlier.",
+  "ridePinDigit": "Digit {position}: {digit}",
+  "ridePlate": "Plate",
+  "rideVehicleLine": "{colour} {make} {model}",
+  "rideDriverOnWay": "Your driver is on the way",
+  "rideDriverArrived": "Your driver has arrived",
+  "rideEtaMinutes": "About {minutes} min away",
+  "ridePickupAt": "Pickup: {name}",
+  "rideLocationDelayed": "Your driver's location is delayed.",
+  "rideMessagesTitle": "Quick messages",
+  "qmImHere": "I'm here",
+  "qmRunningLate": "Running late",
+  "qmAtTheGate": "At the gate",
+  "qmCannotFindYou": "I can't find you",
+  "qmPleaseComeOut": "Please come out",
+  "qmOnMyWay": "On my way",
+  "rideMessageFailed": "That message didn't send. Try again.",
+  "rideDriverSaid": "{name}: {message}",
+  "rideInTripTitle": "On your way",
+  "rideFareLocked": "Fare locked at {amount}",
+  "rideShareTrip": "Share trip",
+  "rideSafety": "Safety",
+  "rideSosHold": "Hold for SOS",
+  "rideNoCancelNote": "Need to stop the ride? Contact support from Safety.",
+  "rideArrivingIn": "About {minutes} min left",
+  "rideDoneTitle": "You've arrived",
+  "rideFareCharged": "Fare charged",
+  "rideDistanceTime": "Distance and time",
+  "rideDistanceTimeValue": "{km} km · {minutes} min",
+  "rideViewReceipt": "View receipt",
+  "rideRateTitle": "How was your ride with {name}?",
+  "rideRateComment": "Anything we should know?",
+  "rideRateSubmit": "Send rating",
+  "rideRated": "Thanks. Your rating was sent.",
+  "rideDone": "Done",
+  "rideReport": "Report a problem with this ride",
+  "rideRateFailed": "We couldn't send your rating. Try again.",
+  "rideCancelledYou": "You cancelled this ride",
+  "rideCancelledDriver": "Your driver couldn't make it",
+  "rideCancelledNoDriver": "We couldn't find a driver",
+  "rideCancelledService": "We had to cancel this ride",
+  "rideCancelledNoShow": "The driver couldn't find you",
+  "rideCancelledNoDriverBody": "No driver was free. You haven't been charged.",
+  "rideCancelledDriverBody": "Your driver had a problem and couldn't come.",
+  "rideCancelledServiceBody": "Something on our side stopped this ride.",
+  "rideCancelledNoShowBody": "The driver waited at the pickup point and couldn't find you.",
+  "rideCancelledYouBody": "You cancelled before the trip started.",
+  "rideNotCharged": "You haven't been charged.",
+  "rideRefunded": "{amount} was put back in your wallet.",
+  "rideCharged": "You were charged {amount}.",
+  "rideBackHome": "Back to home",
+  "rideTryAgain": "Try again",
+  "receiptTitle": "Receipt",
+  "receiptNumber": "Receipt {number}",
+  "receiptTotal": "Total",
+  "rideLoadFailed": "We couldn't load your ride. Check your connection and try again.",
+  "bookFailedInsufficient": "Your wallet is short. Top up and book again.",
+  "homeActiveRide": "Ride in progress",
+  "homeActiveOpen": "Open ride",
+  "homeActiveDisabled": "Finish or cancel your ride to book another.",
+  "@rideRated": {},
+  "@rideDistanceTimeValue": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@ridePinDigit": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "digit": {
+        "type": "String"
+      }
+    }
+  },
+  "@rideVehicleLine": {
+    "placeholders": {
+      "colour": {
+        "type": "String"
+      },
+      "make": {
+        "type": "String"
+      },
+      "model": {
+        "type": "String"
+      }
+    }
+  },
+  "@rideDriverSaid": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "sosHold": "Hold for SOS",
+  "sosHoldSeconds": "Hold for 3 seconds",
+  "sosKeepHolding": "Keep holding to send SOS",
+  "sosLetGo": "Let go to stop. Nothing is sent yet.",
+  "sosSecondsLeft": "{seconds} seconds",
+  "sosAlerted": "Help has been alerted",
+  "sosAlertedBody": "Turbo staff can see your location and will call you. Stay where it is safe.",
+  "sosFailed": "We couldn't send the alert",
+  "sosFailedBody": "Call the emergency number now.",
+  "sosCall": "Call {number}",
+  "sosNoLocation": "We couldn't find your location. Call the emergency number now.",
+  "sosDismiss": "Close",
+  "safetyTitle": "Safety",
+  "safetySosNote": "Staff see your live location and call you at once. They can alert campus security.",
+  "safetyShareTrip": "Share my trip",
+  "safetyShareNoRide": "Start a ride to share it with someone.",
+  "safetyContacts": "Trusted contacts",
+  "safetyContactsCount": "{count} of 3",
+  "safetyContactsEmpty": "Add someone who should know when you travel.",
+  "safetyAddContact": "Add a contact",
+  "safetyContactName": "Name",
+  "safetyContactPhone": "Phone number",
+  "safetyContactRelation": "Relationship (optional)",
+  "safetyContactSave": "Save contact",
+  "safetyContactRemove": "Remove",
+  "safetyContactRemoveTitle": "Remove this contact?",
+  "safetyContactRemoveBody": "They won't be told about your trips any more.",
+  "safetyContactLimit": "You can add up to 3 contacts.",
+  "safetyContactInvalid": "Enter a Ghana number like 24 123 4567.",
+  "safetyCallForHelp": "Call for help",
+  "safetyHowSosWorks": "How SOS works",
+  "safetyHowSosBody": "Hold the button for three seconds. We send your location and ride to our staff, who call you and can alert campus security. Letting go before three seconds sends nothing.",
+  "safetyReport": "Report a safety concern",
+  "safetyLoadFailed": "We couldn't load your contacts. Check your connection and try again.",
+  "shareTitle": "Share this trip",
+  "shareChoose": "Choose who should follow your ride",
+  "shareSend": "Send link",
+  "shareSent": "Link sent",
+  "shareSentBody": "They can follow your ride without an account. The link stops working when the ride ends.",
+  "shareCopy": "Copy link",
+  "shareCopied": "Link copied",
+  "shareNeedContact": "Add a trusted contact first.",
+  "shareFailed": "We couldn't share the trip. Try again.",
+  "@sosSecondsLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@safetyContactsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "navProfile": "Profile",
+  "supportTitle": "Support",
+  "supportNew": "New ticket",
+  "supportMine": "My tickets",
+  "supportEmpty": "No tickets yet. If something goes wrong, tell us here.",
+  "supportLoadFailed": "We couldn't load your tickets. Check your connection and try again.",
+  "supportAbout": "What is it about?",
+  "catSafety": "Safety",
+  "catDriver": "Driver",
+  "catVehicle": "Vehicle",
+  "catWrongCharge": "Wrong charge",
+  "catPayment": "Payment",
+  "catLostItem": "Lost item",
+  "catAccount": "Account",
+  "catPhoneChange": "Change my phone number",
+  "catOther": "Other",
+  "supportSubject": "Subject",
+  "supportMessage": "Message",
+  "supportRide": "About a ride",
+  "supportAddPhoto": "Add a photo",
+  "supportPhotos": "{count} of 5 photos",
+  "supportSend": "Send",
+  "supportSent": "Sent. We'll reply here.",
+  "supportNeedFields": "Choose a topic and write a short message.",
+  "supportStatusOpen": "Open",
+  "supportStatusProgress": "Being looked at",
+  "supportStatusWaiting": "Waiting for you",
+  "supportStatusResolved": "Resolved",
+  "supportStatusClosed": "Closed",
+  "supportReplyHint": "Write a reply",
+  "supportReply": "Send reply",
+  "supportFromStaff": "Support",
+  "supportFromYou": "You",
+  "supportReplyFailed": "We couldn't send that. Try again.",
+  "supportPhotoFailed": "That photo didn't upload. Try again.",
+  "profileTitle": "Profile",
+  "profileEmail": "Email",
+  "profileEmailAdd": "Add",
+  "profileEmailSave": "Save email",
+  "profileEmailInvalid": "Enter a valid email address.",
+  "profileSavedPlaces": "Saved places",
+  "profileSavedPlacesEmpty": "No saved places yet.",
+  "profileDevices": "Signed-in devices",
+  "profileSignOutOthers": "Sign out everywhere else",
+  "profileThisDevice": "This phone",
+  "profileDeviceLastUsed": "Last used {when}",
+  "profileSignOutDevice": "Sign out",
+  "profileTerms": "Terms",
+  "profilePrivacy": "Privacy notice",
+  "profileVersion": "App version",
+  "profileSignOut": "Sign out",
+  "profileDelete": "Delete my account",
+  "profileDeleteTitle": "Delete your account?",
+  "profileDeleteBody": "Our team will handle any money left in your wallet and anonymise your ride records. This can't be undone.",
+  "profileDeleteConfirmLabel": "Delete",
+  "profileDeleteRequested": "We've received your request. We'll be in touch about your wallet.",
+  "profileLoadFailed": "We couldn't load your profile. Check your connection and try again.",
+  "profileChangePhone": "To change your phone number, contact support.",
+  "profileRemovePlace": "Remove place",
+  "@supportPhotos": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

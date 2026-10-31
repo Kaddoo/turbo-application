@@ -738,4 +738,587 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideStatusCancelled => 'Cancelled';
+
+  @override
+  String get rideSearchingTitle => 'Finding your driver';
+
+  @override
+  String rideFareHeld(Object amount) {
+    return 'Your fare is held. $amount';
+  }
+
+  @override
+  String get rideCancel => 'Cancel ride';
+
+  @override
+  String get rideCancelTitle => 'Cancel this ride?';
+
+  @override
+  String get rideCancelFree =>
+      'It\'s free to cancel before you\'re in the car.';
+
+  @override
+  String get rideKeep => 'Keep ride';
+
+  @override
+  String get cancelWaitTooLong => 'Waiting too long';
+
+  @override
+  String get cancelChangedMind => 'I changed my mind';
+
+  @override
+  String get cancelWrongLocation => 'Wrong pickup or drop-off';
+
+  @override
+  String get cancelOther => 'Another reason';
+
+  @override
+  String get rideCancelFailed =>
+      'We couldn\'t cancel just now. Check your connection and try again.';
+
+  @override
+  String get ridePinLabel => 'Your start PIN';
+
+  @override
+  String get ridePinHint =>
+      'Tell this to your driver when you\'re in the car. Never share it earlier.';
+
+  @override
+  String ridePinDigit(int position, String digit) {
+    return 'Digit $position: $digit';
+  }
+
+  @override
+  String get ridePlate => 'Plate';
+
+  @override
+  String rideVehicleLine(String colour, String make, String model) {
+    return '$colour $make $model';
+  }
+
+  @override
+  String get rideDriverOnWay => 'Your driver is on the way';
+
+  @override
+  String get rideDriverArrived => 'Your driver has arrived';
+
+  @override
+  String rideEtaMinutes(Object minutes) {
+    return 'About $minutes min away';
+  }
+
+  @override
+  String ridePickupAt(Object name) {
+    return 'Pickup: $name';
+  }
+
+  @override
+  String get rideLocationDelayed => 'Your driver\'s location is delayed.';
+
+  @override
+  String get rideMessagesTitle => 'Quick messages';
+
+  @override
+  String get qmImHere => 'I\'m here';
+
+  @override
+  String get qmRunningLate => 'Running late';
+
+  @override
+  String get qmAtTheGate => 'At the gate';
+
+  @override
+  String get qmCannotFindYou => 'I can\'t find you';
+
+  @override
+  String get qmPleaseComeOut => 'Please come out';
+
+  @override
+  String get qmOnMyWay => 'On my way';
+
+  @override
+  String get rideMessageFailed => 'That message didn\'t send. Try again.';
+
+  @override
+  String rideDriverSaid(String name, String message) {
+    return '$name: $message';
+  }
+
+  @override
+  String get rideInTripTitle => 'On your way';
+
+  @override
+  String rideFareLocked(Object amount) {
+    return 'Fare locked at $amount';
+  }
+
+  @override
+  String get rideShareTrip => 'Share trip';
+
+  @override
+  String get rideSafety => 'Safety';
+
+  @override
+  String get rideSosHold => 'Hold for SOS';
+
+  @override
+  String get rideNoCancelNote =>
+      'Need to stop the ride? Contact support from Safety.';
+
+  @override
+  String rideArrivingIn(Object minutes) {
+    return 'About $minutes min left';
+  }
+
+  @override
+  String get rideDoneTitle => 'You\'ve arrived';
+
+  @override
+  String get rideFareCharged => 'Fare charged';
+
+  @override
+  String get rideDistanceTime => 'Distance and time';
+
+  @override
+  String rideDistanceTimeValue(String km, int minutes) {
+    return '$km km · $minutes min';
+  }
+
+  @override
+  String get rideViewReceipt => 'View receipt';
+
+  @override
+  String rideRateTitle(Object name) {
+    return 'How was your ride with $name?';
+  }
+
+  @override
+  String get rideRateComment => 'Anything we should know?';
+
+  @override
+  String get rideRateSubmit => 'Send rating';
+
+  @override
+  String get rideRated => 'Thanks. Your rating was sent.';
+
+  @override
+  String get rideDone => 'Done';
+
+  @override
+  String get rideReport => 'Report a problem with this ride';
+
+  @override
+  String get rideRateFailed => 'We couldn\'t send your rating. Try again.';
+
+  @override
+  String get rideCancelledYou => 'You cancelled this ride';
+
+  @override
+  String get rideCancelledDriver => 'Your driver couldn\'t make it';
+
+  @override
+  String get rideCancelledNoDriver => 'We couldn\'t find a driver';
+
+  @override
+  String get rideCancelledService => 'We had to cancel this ride';
+
+  @override
+  String get rideCancelledNoShow => 'The driver couldn\'t find you';
+
+  @override
+  String get rideCancelledNoDriverBody =>
+      'No driver was free. You haven\'t been charged.';
+
+  @override
+  String get rideCancelledDriverBody =>
+      'Your driver had a problem and couldn\'t come.';
+
+  @override
+  String get rideCancelledServiceBody =>
+      'Something on our side stopped this ride.';
+
+  @override
+  String get rideCancelledNoShowBody =>
+      'The driver waited at the pickup point and couldn\'t find you.';
+
+  @override
+  String get rideCancelledYouBody => 'You cancelled before the trip started.';
+
+  @override
+  String get rideNotCharged => 'You haven\'t been charged.';
+
+  @override
+  String rideRefunded(Object amount) {
+    return '$amount was put back in your wallet.';
+  }
+
+  @override
+  String rideCharged(Object amount) {
+    return 'You were charged $amount.';
+  }
+
+  @override
+  String get rideBackHome => 'Back to home';
+
+  @override
+  String get rideTryAgain => 'Try again';
+
+  @override
+  String get receiptTitle => 'Receipt';
+
+  @override
+  String receiptNumber(Object number) {
+    return 'Receipt $number';
+  }
+
+  @override
+  String get receiptTotal => 'Total';
+
+  @override
+  String get rideLoadFailed =>
+      'We couldn\'t load your ride. Check your connection and try again.';
+
+  @override
+  String get bookFailedInsufficient =>
+      'Your wallet is short. Top up and book again.';
+
+  @override
+  String get homeActiveRide => 'Ride in progress';
+
+  @override
+  String get homeActiveOpen => 'Open ride';
+
+  @override
+  String get homeActiveDisabled =>
+      'Finish or cancel your ride to book another.';
+
+  @override
+  String get sosHold => 'Hold for SOS';
+
+  @override
+  String get sosHoldSeconds => 'Hold for 3 seconds';
+
+  @override
+  String get sosKeepHolding => 'Keep holding to send SOS';
+
+  @override
+  String get sosLetGo => 'Let go to stop. Nothing is sent yet.';
+
+  @override
+  String sosSecondsLeft(int seconds) {
+    return '$seconds seconds';
+  }
+
+  @override
+  String get sosAlerted => 'Help has been alerted';
+
+  @override
+  String get sosAlertedBody =>
+      'Turbo staff can see your location and will call you. Stay where it is safe.';
+
+  @override
+  String get sosFailed => 'We couldn\'t send the alert';
+
+  @override
+  String get sosFailedBody => 'Call the emergency number now.';
+
+  @override
+  String sosCall(Object number) {
+    return 'Call $number';
+  }
+
+  @override
+  String get sosNoLocation =>
+      'We couldn\'t find your location. Call the emergency number now.';
+
+  @override
+  String get sosDismiss => 'Close';
+
+  @override
+  String get safetyTitle => 'Safety';
+
+  @override
+  String get safetySosNote =>
+      'Staff see your live location and call you at once. They can alert campus security.';
+
+  @override
+  String get safetyShareTrip => 'Share my trip';
+
+  @override
+  String get safetyShareNoRide => 'Start a ride to share it with someone.';
+
+  @override
+  String get safetyContacts => 'Trusted contacts';
+
+  @override
+  String safetyContactsCount(int count) {
+    return '$count of 3';
+  }
+
+  @override
+  String get safetyContactsEmpty =>
+      'Add someone who should know when you travel.';
+
+  @override
+  String get safetyAddContact => 'Add a contact';
+
+  @override
+  String get safetyContactName => 'Name';
+
+  @override
+  String get safetyContactPhone => 'Phone number';
+
+  @override
+  String get safetyContactRelation => 'Relationship (optional)';
+
+  @override
+  String get safetyContactSave => 'Save contact';
+
+  @override
+  String get safetyContactRemove => 'Remove';
+
+  @override
+  String get safetyContactRemoveTitle => 'Remove this contact?';
+
+  @override
+  String get safetyContactRemoveBody =>
+      'They won\'t be told about your trips any more.';
+
+  @override
+  String get safetyContactLimit => 'You can add up to 3 contacts.';
+
+  @override
+  String get safetyContactInvalid => 'Enter a Ghana number like 24 123 4567.';
+
+  @override
+  String get safetyCallForHelp => 'Call for help';
+
+  @override
+  String get safetyHowSosWorks => 'How SOS works';
+
+  @override
+  String get safetyHowSosBody =>
+      'Hold the button for three seconds. We send your location and ride to our staff, who call you and can alert campus security. Letting go before three seconds sends nothing.';
+
+  @override
+  String get safetyReport => 'Report a safety concern';
+
+  @override
+  String get safetyLoadFailed =>
+      'We couldn\'t load your contacts. Check your connection and try again.';
+
+  @override
+  String get shareTitle => 'Share this trip';
+
+  @override
+  String get shareChoose => 'Choose who should follow your ride';
+
+  @override
+  String get shareSend => 'Send link';
+
+  @override
+  String get shareSent => 'Link sent';
+
+  @override
+  String get shareSentBody =>
+      'They can follow your ride without an account. The link stops working when the ride ends.';
+
+  @override
+  String get shareCopy => 'Copy link';
+
+  @override
+  String get shareCopied => 'Link copied';
+
+  @override
+  String get shareNeedContact => 'Add a trusted contact first.';
+
+  @override
+  String get shareFailed => 'We couldn\'t share the trip. Try again.';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get supportTitle => 'Support';
+
+  @override
+  String get supportNew => 'New ticket';
+
+  @override
+  String get supportMine => 'My tickets';
+
+  @override
+  String get supportEmpty =>
+      'No tickets yet. If something goes wrong, tell us here.';
+
+  @override
+  String get supportLoadFailed =>
+      'We couldn\'t load your tickets. Check your connection and try again.';
+
+  @override
+  String get supportAbout => 'What is it about?';
+
+  @override
+  String get catSafety => 'Safety';
+
+  @override
+  String get catDriver => 'Driver';
+
+  @override
+  String get catVehicle => 'Vehicle';
+
+  @override
+  String get catWrongCharge => 'Wrong charge';
+
+  @override
+  String get catPayment => 'Payment';
+
+  @override
+  String get catLostItem => 'Lost item';
+
+  @override
+  String get catAccount => 'Account';
+
+  @override
+  String get catPhoneChange => 'Change my phone number';
+
+  @override
+  String get catOther => 'Other';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportMessage => 'Message';
+
+  @override
+  String get supportRide => 'About a ride';
+
+  @override
+  String get supportAddPhoto => 'Add a photo';
+
+  @override
+  String supportPhotos(int count) {
+    return '$count of 5 photos';
+  }
+
+  @override
+  String get supportSend => 'Send';
+
+  @override
+  String get supportSent => 'Sent. We\'ll reply here.';
+
+  @override
+  String get supportNeedFields => 'Choose a topic and write a short message.';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusProgress => 'Being looked at';
+
+  @override
+  String get supportStatusWaiting => 'Waiting for you';
+
+  @override
+  String get supportStatusResolved => 'Resolved';
+
+  @override
+  String get supportStatusClosed => 'Closed';
+
+  @override
+  String get supportReplyHint => 'Write a reply';
+
+  @override
+  String get supportReply => 'Send reply';
+
+  @override
+  String get supportFromStaff => 'Support';
+
+  @override
+  String get supportFromYou => 'You';
+
+  @override
+  String get supportReplyFailed => 'We couldn\'t send that. Try again.';
+
+  @override
+  String get supportPhotoFailed => 'That photo didn\'t upload. Try again.';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profileEmailAdd => 'Add';
+
+  @override
+  String get profileEmailSave => 'Save email';
+
+  @override
+  String get profileEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get profileSavedPlaces => 'Saved places';
+
+  @override
+  String get profileSavedPlacesEmpty => 'No saved places yet.';
+
+  @override
+  String get profileDevices => 'Signed-in devices';
+
+  @override
+  String get profileSignOutOthers => 'Sign out everywhere else';
+
+  @override
+  String get profileThisDevice => 'This phone';
+
+  @override
+  String profileDeviceLastUsed(Object when) {
+    return 'Last used $when';
+  }
+
+  @override
+  String get profileSignOutDevice => 'Sign out';
+
+  @override
+  String get profileTerms => 'Terms';
+
+  @override
+  String get profilePrivacy => 'Privacy notice';
+
+  @override
+  String get profileVersion => 'App version';
+
+  @override
+  String get profileSignOut => 'Sign out';
+
+  @override
+  String get profileDelete => 'Delete my account';
+
+  @override
+  String get profileDeleteTitle => 'Delete your account?';
+
+  @override
+  String get profileDeleteBody =>
+      'Our team will handle any money left in your wallet and anonymise your ride records. This can\'t be undone.';
+
+  @override
+  String get profileDeleteConfirmLabel => 'Delete';
+
+  @override
+  String get profileDeleteRequested =>
+      'We\'ve received your request. We\'ll be in touch about your wallet.';
+
+  @override
+  String get profileLoadFailed =>
+      'We couldn\'t load your profile. Check your connection and try again.';
+
+  @override
+  String get profileChangePhone =>
+      'To change your phone number, contact support.';
+
+  @override
+  String get profileRemovePlace => 'Remove place';
 }

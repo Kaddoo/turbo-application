@@ -6,9 +6,21 @@ import 'package:turbo_ui/turbo_ui.dart';
 
 /// What the home map shows.
 class MapSpec {
-  const MapSpec({this.center, this.pickupPoints = const [], this.showMyLocation = false});
+  const MapSpec({
+    this.center,
+    this.pickupPoints = const [],
+    this.showMyLocation = false,
+    this.driver,
+    this.pickup,
+    this.dropoff,
+  });
 
   final GeoPoint? center;
+
+  /// The driver's last known position, when there is a ride.
+  final GeoPoint? driver;
+  final GeoPoint? pickup;
+  final GeoPoint? dropoff;
   final List<PickupPoint> pickupPoints;
   final bool showMyLocation;
 }
@@ -18,18 +30,33 @@ typedef MapBuilder = Widget Function(BuildContext context, MapSpec spec);
 Widget _googleMap(BuildContext context, MapSpec spec) {
   // Without a position (no permission, no pickup points) the map opens on a
   // wide view of Ghana; real data replaces it as soon as it arrives.
-  final target = spec.center != null
-      ? LatLng(spec.center!.lat.toDouble(), spec.center!.lng.toDouble())
+  LatLng ll(GeoPoint p) => LatLng(p.lat.toDouble(), p.lng.toDouble());
+  final focus = spec.driver ?? spec.pickup ?? spec.center;
+  final target = focus != null
+      ? ll(focus)
       : spec.pickupPoints.isNotEmpty
           ? LatLng(spec.pickupPoints.first.point.lat.toDouble(), spec.pickupPoints.first.point.lng.toDouble())
           : const LatLng(5.7, 0.1);
   return GoogleMap(
-    initialCameraPosition: CameraPosition(target: target, zoom: spec.center != null ? 15 : 12),
+    initialCameraPosition: CameraPosition(target: target, zoom: focus != null ? 15 : 12),
     myLocationEnabled: spec.showMyLocation,
     myLocationButtonEnabled: false,
     zoomControlsEnabled: false,
     mapToolbarEnabled: false,
     markers: {
+      if (spec.pickup != null) Marker(markerId: const MarkerId('pickup'), position: ll(spec.pickup!)),
+      if (spec.dropoff != null)
+        Marker(
+          markerId: const MarkerId('dropoff'),
+          position: ll(spec.dropoff!),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        ),
+      if (spec.driver != null)
+        Marker(
+          markerId: const MarkerId('driver'),
+          position: ll(spec.driver!),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        ),
       for (final p in spec.pickupPoints.where((p) => p.isActive))
         Marker(
           markerId: MarkerId(p.id),

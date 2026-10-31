@@ -1347,6 +1347,1050 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get rideStatusCancelled;
+
+  /// No description provided for @rideSearchingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding your driver'**
+  String get rideSearchingTitle;
+
+  /// No description provided for @rideFareHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Your fare is held. {amount}'**
+  String rideFareHeld(Object amount);
+
+  /// No description provided for @rideCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel ride'**
+  String get rideCancel;
+
+  /// No description provided for @rideCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this ride?'**
+  String get rideCancelTitle;
+
+  /// No description provided for @rideCancelFree.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s free to cancel before you\'re in the car.'**
+  String get rideCancelFree;
+
+  /// No description provided for @rideKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep ride'**
+  String get rideKeep;
+
+  /// No description provided for @cancelWaitTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting too long'**
+  String get cancelWaitTooLong;
+
+  /// No description provided for @cancelChangedMind.
+  ///
+  /// In en, this message translates to:
+  /// **'I changed my mind'**
+  String get cancelChangedMind;
+
+  /// No description provided for @cancelWrongLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong pickup or drop-off'**
+  String get cancelWrongLocation;
+
+  /// No description provided for @cancelOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another reason'**
+  String get cancelOther;
+
+  /// No description provided for @rideCancelFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t cancel just now. Check your connection and try again.'**
+  String get rideCancelFailed;
+
+  /// No description provided for @ridePinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your start PIN'**
+  String get ridePinLabel;
+
+  /// No description provided for @ridePinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell this to your driver when you\'re in the car. Never share it earlier.'**
+  String get ridePinHint;
+
+  /// No description provided for @ridePinDigit.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {position}: {digit}'**
+  String ridePinDigit(int position, String digit);
+
+  /// No description provided for @ridePlate.
+  ///
+  /// In en, this message translates to:
+  /// **'Plate'**
+  String get ridePlate;
+
+  /// No description provided for @rideVehicleLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{colour} {make} {model}'**
+  String rideVehicleLine(String colour, String make, String model);
+
+  /// No description provided for @rideDriverOnWay.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driver is on the way'**
+  String get rideDriverOnWay;
+
+  /// No description provided for @rideDriverArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driver has arrived'**
+  String get rideDriverArrived;
+
+  /// No description provided for @rideEtaMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'About {minutes} min away'**
+  String rideEtaMinutes(Object minutes);
+
+  /// No description provided for @ridePickupAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup: {name}'**
+  String ridePickupAt(Object name);
+
+  /// No description provided for @rideLocationDelayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driver\'s location is delayed.'**
+  String get rideLocationDelayed;
+
+  /// No description provided for @rideMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick messages'**
+  String get rideMessagesTitle;
+
+  /// No description provided for @qmImHere.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m here'**
+  String get qmImHere;
+
+  /// No description provided for @qmRunningLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Running late'**
+  String get qmRunningLate;
+
+  /// No description provided for @qmAtTheGate.
+  ///
+  /// In en, this message translates to:
+  /// **'At the gate'**
+  String get qmAtTheGate;
+
+  /// No description provided for @qmCannotFindYou.
+  ///
+  /// In en, this message translates to:
+  /// **'I can\'t find you'**
+  String get qmCannotFindYou;
+
+  /// No description provided for @qmPleaseComeOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Please come out'**
+  String get qmPleaseComeOut;
+
+  /// No description provided for @qmOnMyWay.
+  ///
+  /// In en, this message translates to:
+  /// **'On my way'**
+  String get qmOnMyWay;
+
+  /// No description provided for @rideMessageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That message didn\'t send. Try again.'**
+  String get rideMessageFailed;
+
+  /// No description provided for @rideDriverSaid.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: {message}'**
+  String rideDriverSaid(String name, String message);
+
+  /// No description provided for @rideInTripTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On your way'**
+  String get rideInTripTitle;
+
+  /// No description provided for @rideFareLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare locked at {amount}'**
+  String rideFareLocked(Object amount);
+
+  /// No description provided for @rideShareTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share trip'**
+  String get rideShareTrip;
+
+  /// No description provided for @rideSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get rideSafety;
+
+  /// No description provided for @rideSosHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold for SOS'**
+  String get rideSosHold;
+
+  /// No description provided for @rideNoCancelNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Need to stop the ride? Contact support from Safety.'**
+  String get rideNoCancelNote;
+
+  /// No description provided for @rideArrivingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'About {minutes} min left'**
+  String rideArrivingIn(Object minutes);
+
+  /// No description provided for @rideDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve arrived'**
+  String get rideDoneTitle;
+
+  /// No description provided for @rideFareCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare charged'**
+  String get rideFareCharged;
+
+  /// No description provided for @rideDistanceTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance and time'**
+  String get rideDistanceTime;
+
+  /// No description provided for @rideDistanceTimeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km · {minutes} min'**
+  String rideDistanceTimeValue(String km, int minutes);
+
+  /// No description provided for @rideViewReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'View receipt'**
+  String get rideViewReceipt;
+
+  /// No description provided for @rideRateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your ride with {name}?'**
+  String rideRateTitle(Object name);
+
+  /// No description provided for @rideRateComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything we should know?'**
+  String get rideRateComment;
+
+  /// No description provided for @rideRateSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send rating'**
+  String get rideRateSubmit;
+
+  /// No description provided for @rideRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks. Your rating was sent.'**
+  String get rideRated;
+
+  /// No description provided for @rideDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get rideDone;
+
+  /// No description provided for @rideReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem with this ride'**
+  String get rideReport;
+
+  /// No description provided for @rideRateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send your rating. Try again.'**
+  String get rideRateFailed;
+
+  /// No description provided for @rideCancelledYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You cancelled this ride'**
+  String get rideCancelledYou;
+
+  /// No description provided for @rideCancelledDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driver couldn\'t make it'**
+  String get rideCancelledDriver;
+
+  /// No description provided for @rideCancelledNoDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find a driver'**
+  String get rideCancelledNoDriver;
+
+  /// No description provided for @rideCancelledService.
+  ///
+  /// In en, this message translates to:
+  /// **'We had to cancel this ride'**
+  String get rideCancelledService;
+
+  /// No description provided for @rideCancelledNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'The driver couldn\'t find you'**
+  String get rideCancelledNoShow;
+
+  /// No description provided for @rideCancelledNoDriverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No driver was free. You haven\'t been charged.'**
+  String get rideCancelledNoDriverBody;
+
+  /// No description provided for @rideCancelledDriverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driver had a problem and couldn\'t come.'**
+  String get rideCancelledDriverBody;
+
+  /// No description provided for @rideCancelledServiceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Something on our side stopped this ride.'**
+  String get rideCancelledServiceBody;
+
+  /// No description provided for @rideCancelledNoShowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The driver waited at the pickup point and couldn\'t find you.'**
+  String get rideCancelledNoShowBody;
+
+  /// No description provided for @rideCancelledYouBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You cancelled before the trip started.'**
+  String get rideCancelledYouBody;
+
+  /// No description provided for @rideNotCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t been charged.'**
+  String get rideNotCharged;
+
+  /// No description provided for @rideRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} was put back in your wallet.'**
+  String rideRefunded(Object amount);
+
+  /// No description provided for @rideCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'You were charged {amount}.'**
+  String rideCharged(Object amount);
+
+  /// No description provided for @rideBackHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to home'**
+  String get rideBackHome;
+
+  /// No description provided for @rideTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get rideTryAgain;
+
+  /// No description provided for @receiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get receiptTitle;
+
+  /// No description provided for @receiptNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt {number}'**
+  String receiptNumber(Object number);
+
+  /// No description provided for @receiptTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get receiptTotal;
+
+  /// No description provided for @rideLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your ride. Check your connection and try again.'**
+  String get rideLoadFailed;
+
+  /// No description provided for @bookFailedInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet is short. Top up and book again.'**
+  String get bookFailedInsufficient;
+
+  /// No description provided for @homeActiveRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride in progress'**
+  String get homeActiveRide;
+
+  /// No description provided for @homeActiveOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open ride'**
+  String get homeActiveOpen;
+
+  /// No description provided for @homeActiveDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish or cancel your ride to book another.'**
+  String get homeActiveDisabled;
+
+  /// No description provided for @sosHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold for SOS'**
+  String get sosHold;
+
+  /// No description provided for @sosHoldSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold for 3 seconds'**
+  String get sosHoldSeconds;
+
+  /// No description provided for @sosKeepHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep holding to send SOS'**
+  String get sosKeepHolding;
+
+  /// No description provided for @sosLetGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Let go to stop. Nothing is sent yet.'**
+  String get sosLetGo;
+
+  /// No description provided for @sosSecondsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds'**
+  String sosSecondsLeft(int seconds);
+
+  /// No description provided for @sosAlerted.
+  ///
+  /// In en, this message translates to:
+  /// **'Help has been alerted'**
+  String get sosAlerted;
+
+  /// No description provided for @sosAlertedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turbo staff can see your location and will call you. Stay where it is safe.'**
+  String get sosAlertedBody;
+
+  /// No description provided for @sosFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send the alert'**
+  String get sosFailed;
+
+  /// No description provided for @sosFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Call the emergency number now.'**
+  String get sosFailedBody;
+
+  /// No description provided for @sosCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {number}'**
+  String sosCall(Object number);
+
+  /// No description provided for @sosNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find your location. Call the emergency number now.'**
+  String get sosNoLocation;
+
+  /// No description provided for @sosDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get sosDismiss;
+
+  /// No description provided for @safetyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get safetyTitle;
+
+  /// No description provided for @safetySosNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff see your live location and call you at once. They can alert campus security.'**
+  String get safetySosNote;
+
+  /// No description provided for @safetyShareTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share my trip'**
+  String get safetyShareTrip;
+
+  /// No description provided for @safetyShareNoRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a ride to share it with someone.'**
+  String get safetyShareNoRide;
+
+  /// No description provided for @safetyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted contacts'**
+  String get safetyContacts;
+
+  /// No description provided for @safetyContactsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 3'**
+  String safetyContactsCount(int count);
+
+  /// No description provided for @safetyContactsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add someone who should know when you travel.'**
+  String get safetyContactsEmpty;
+
+  /// No description provided for @safetyAddContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a contact'**
+  String get safetyAddContact;
+
+  /// No description provided for @safetyContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get safetyContactName;
+
+  /// No description provided for @safetyContactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get safetyContactPhone;
+
+  /// No description provided for @safetyContactRelation.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship (optional)'**
+  String get safetyContactRelation;
+
+  /// No description provided for @safetyContactSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save contact'**
+  String get safetyContactSave;
+
+  /// No description provided for @safetyContactRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get safetyContactRemove;
+
+  /// No description provided for @safetyContactRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this contact?'**
+  String get safetyContactRemoveTitle;
+
+  /// No description provided for @safetyContactRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They won\'t be told about your trips any more.'**
+  String get safetyContactRemoveBody;
+
+  /// No description provided for @safetyContactLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to 3 contacts.'**
+  String get safetyContactLimit;
+
+  /// No description provided for @safetyContactInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a Ghana number like 24 123 4567.'**
+  String get safetyContactInvalid;
+
+  /// No description provided for @safetyCallForHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Call for help'**
+  String get safetyCallForHelp;
+
+  /// No description provided for @safetyHowSosWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How SOS works'**
+  String get safetyHowSosWorks;
+
+  /// No description provided for @safetyHowSosBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the button for three seconds. We send your location and ride to our staff, who call you and can alert campus security. Letting go before three seconds sends nothing.'**
+  String get safetyHowSosBody;
+
+  /// No description provided for @safetyReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a safety concern'**
+  String get safetyReport;
+
+  /// No description provided for @safetyLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your contacts. Check your connection and try again.'**
+  String get safetyLoadFailed;
+
+  /// No description provided for @shareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this trip'**
+  String get shareTitle;
+
+  /// No description provided for @shareChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose who should follow your ride'**
+  String get shareChoose;
+
+  /// No description provided for @shareSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send link'**
+  String get shareSend;
+
+  /// No description provided for @shareSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Link sent'**
+  String get shareSent;
+
+  /// No description provided for @shareSentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They can follow your ride without an account. The link stops working when the ride ends.'**
+  String get shareSentBody;
+
+  /// No description provided for @shareCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get shareCopy;
+
+  /// No description provided for @shareCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get shareCopied;
+
+  /// No description provided for @shareNeedContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a trusted contact first.'**
+  String get shareNeedContact;
+
+  /// No description provided for @shareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t share the trip. Try again.'**
+  String get shareFailed;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportTitle;
+
+  /// No description provided for @supportNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New ticket'**
+  String get supportNew;
+
+  /// No description provided for @supportMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get supportMine;
+
+  /// No description provided for @supportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No tickets yet. If something goes wrong, tell us here.'**
+  String get supportEmpty;
+
+  /// No description provided for @supportLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your tickets. Check your connection and try again.'**
+  String get supportLoadFailed;
+
+  /// No description provided for @supportAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'What is it about?'**
+  String get supportAbout;
+
+  /// No description provided for @catSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get catSafety;
+
+  /// No description provided for @catDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get catDriver;
+
+  /// No description provided for @catVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get catVehicle;
+
+  /// No description provided for @catWrongCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong charge'**
+  String get catWrongCharge;
+
+  /// No description provided for @catPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get catPayment;
+
+  /// No description provided for @catLostItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost item'**
+  String get catLostItem;
+
+  /// No description provided for @catAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get catAccount;
+
+  /// No description provided for @catPhoneChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change my phone number'**
+  String get catPhoneChange;
+
+  /// No description provided for @catOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get catOther;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubject;
+
+  /// No description provided for @supportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get supportMessage;
+
+  /// No description provided for @supportRide.
+  ///
+  /// In en, this message translates to:
+  /// **'About a ride'**
+  String get supportRide;
+
+  /// No description provided for @supportAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get supportAddPhoto;
+
+  /// No description provided for @supportPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 5 photos'**
+  String supportPhotos(int count);
+
+  /// No description provided for @supportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get supportSend;
+
+  /// No description provided for @supportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. We\'ll reply here.'**
+  String get supportSent;
+
+  /// No description provided for @supportNeedFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a topic and write a short message.'**
+  String get supportNeedFields;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Being looked at'**
+  String get supportStatusProgress;
+
+  /// No description provided for @supportStatusWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for you'**
+  String get supportStatusWaiting;
+
+  /// No description provided for @supportStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get supportStatusResolved;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get supportStatusClosed;
+
+  /// No description provided for @supportReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a reply'**
+  String get supportReplyHint;
+
+  /// No description provided for @supportReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reply'**
+  String get supportReply;
+
+  /// No description provided for @supportFromStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportFromStaff;
+
+  /// No description provided for @supportFromYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportFromYou;
+
+  /// No description provided for @supportReplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send that. Try again.'**
+  String get supportReplyFailed;
+
+  /// No description provided for @supportPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo didn\'t upload. Try again.'**
+  String get supportPhotoFailed;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get profileEmail;
+
+  /// No description provided for @profileEmailAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get profileEmailAdd;
+
+  /// No description provided for @profileEmailSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save email'**
+  String get profileEmailSave;
+
+  /// No description provided for @profileEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get profileEmailInvalid;
+
+  /// No description provided for @profileSavedPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved places'**
+  String get profileSavedPlaces;
+
+  /// No description provided for @profileSavedPlacesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved places yet.'**
+  String get profileSavedPlacesEmpty;
+
+  /// No description provided for @profileDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed-in devices'**
+  String get profileDevices;
+
+  /// No description provided for @profileSignOutOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out everywhere else'**
+  String get profileSignOutOthers;
+
+  /// No description provided for @profileThisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone'**
+  String get profileThisDevice;
+
+  /// No description provided for @profileDeviceLastUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last used {when}'**
+  String profileDeviceLastUsed(Object when);
+
+  /// No description provided for @profileSignOutDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get profileSignOutDevice;
+
+  /// No description provided for @profileTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get profileTerms;
+
+  /// No description provided for @profilePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy notice'**
+  String get profilePrivacy;
+
+  /// No description provided for @profileVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get profileVersion;
+
+  /// No description provided for @profileSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get profileSignOut;
+
+  /// No description provided for @profileDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get profileDelete;
+
+  /// No description provided for @profileDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get profileDeleteTitle;
+
+  /// No description provided for @profileDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team will handle any money left in your wallet and anonymise your ride records. This can\'t be undone.'**
+  String get profileDeleteBody;
+
+  /// No description provided for @profileDeleteConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get profileDeleteConfirmLabel;
+
+  /// No description provided for @profileDeleteRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve received your request. We\'ll be in touch about your wallet.'**
+  String get profileDeleteRequested;
+
+  /// No description provided for @profileLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your profile. Check your connection and try again.'**
+  String get profileLoadFailed;
+
+  /// No description provided for @profileChangePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'To change your phone number, contact support.'**
+  String get profileChangePhone;
+
+  /// No description provided for @profileRemovePlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove place'**
+  String get profileRemovePlace;
 }
 
 class _AppLocalizationsDelegate
