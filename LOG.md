@@ -2,6 +2,32 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: run the real backend locally
+
+**Task:** Make `api/contract/openapi.yaml` the source of truth and run the backend from `origin/main` for the phone apps.
+
+**Files touched:**
+- tools/backend-local.sh (setup, start, stop), tools/review-student.sh (approve, reject or send back a student as the demo verifier)
+- tools/make-mock-spec.mjs, packages/turbo_api/tool/generate.sh (read `api/contract/openapi.yaml`), packages/turbo_api/generated (regenerated from 0.2.2)
+- api/contract/openapi.yaml (copied from origin/main so tooling works before the merge), packages/turbo_ui scanner test (only our own lib folders)
+- CONTRACT_REQUESTS.md (CR-1 confirmed live), .gitignore (`.backend/`)
+
+**What changed:** The client is generated from contract 0.2.2. The backend runs from `.backend/` (git-ignored): a private Postgres 16 on port 5433, the API on port 3000 bound to the local network with signed upload links built from this Mac's address, and the worker. Development settings: sign-in code 123456, fake payments, push logged, estimated routes.
+
+**Checked against the running backend (curl):** app-config, legal, sign-up with the terms refusal then the same code accepted, profile, verification status, service area (demo boundary and one pickup point, "Central Gate"), wallet (GH₵0.00), four photo uploads (204) and a submit (pending), a reviewer decision (needs attention) with the student seeing the message.
+
+**Acceptance criteria:**
+- [x] Client regenerated; `flutter analyze` clean; tests pass in all four packages
+- [x] Backend migrates, seeds and answers the phase 1 calls
+- [ ] Student app on the phone against the real backend: built and installed, not yet used
+- [ ] Backend's own 69 tests not run here
+
+**Deviations from plan or contract:**
+- `api/openapi.yaml` (0.2.0, planning's copy) is now superseded by `api/contract/openapi.yaml` (0.2.2) in our tooling, as Kevin decided. The old file is left in place; planning should remove it and update `CLAUDE.md`, which still names `api/openapi.yaml`.
+- The wallet starts at GH₵0.00, so quotes show "Top up" until top-ups exist (phase 2); the dev backend has a fake payment provider for that.
+
+**Status:** done. Branch: backend-local. **Next step:** use the student app against the real backend on the phone; then phase 2 (wallet, top-up, booking).
+
 ## 2026-10-31, Kevin with Claude, code: mock, design brief, backend review
 
 **Task:** Make the mock behave on a phone, write the screen-by-screen design brief, and read the backend that landed on `origin/main`.

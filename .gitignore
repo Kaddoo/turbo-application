@@ -23,3 +23,4 @@ node_modules/
 # Local secrets, never committed
 **/ios/Flutter/Secrets.xcconfig
 .mock/
+.backend/
