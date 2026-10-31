@@ -61,6 +61,39 @@ class RetryInterceptor extends Interceptor {
   }
 }
 
+typedef RefreshSession = Future<bool> Function();
+
+/// On a 401 from a protected call, refreshes the session once (shared by all
+/// calls that fail at the same time) and replays the request with the new
+/// token. If the refresh fails the original 401 goes through.
+class RefreshInterceptor extends Interceptor {
+  RefreshInterceptor(this.dio, this.refresh);
+
+  final Dio dio;
+  final RefreshSession refresh;
+  Future<bool>? _inflight;
+
+  static const _replayedKey = 'turbo_refresh_replayed';
+
+  @override
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    final request = err.requestOptions;
+    final isAuthCall = request.path.startsWith('/auth/');
+    if (err.response?.statusCode != 401 || isAuthCall || request.extra[_replayedKey] == true) {
+      return handler.next(err);
+    }
+    final ok = await (_inflight ??= refresh().whenComplete(() => _inflight = null));
+    if (!ok) return handler.next(err);
+    request.extra[_replayedKey] = true;
+    request.headers.remove('Authorization');
+    try {
+      handler.resolve(await dio.fetch<dynamic>(request));
+    } on DioException catch (e) {
+      handler.next(e);
+    }
+  }
+}
+
 /// Turns failures into [ApiProblem] so callers never see raw Dio errors.
 class ProblemInterceptor extends Interceptor {
   @override

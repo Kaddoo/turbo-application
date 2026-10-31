@@ -10,6 +10,7 @@ class TurboClient {
     required String baseUrl,
     required String appVersion,
     AccessTokenReader? accessToken,
+    RefreshSession? refreshSession,
     Dio? dio,
   }) : dio = dio ??
             Dio(BaseOptions(
@@ -20,6 +21,7 @@ class TurboClient {
     this.dio.interceptors.addAll([
       HeadersInterceptor(appVersion: appVersion, accessToken: accessToken),
       RetryInterceptor(this.dio),
+      if (refreshSession != null) RefreshInterceptor(this.dio, refreshSession),
       ProblemInterceptor(),
     ]);
     api = TurboApiGenerated(dio: this.dio, interceptors: const []);
