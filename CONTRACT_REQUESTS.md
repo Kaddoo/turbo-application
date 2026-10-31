@@ -34,3 +34,13 @@ Things the apps need that the contract lacks or leaves unclear. Code sessions wr
 ### CR-4. Place search (CR-2) still open
 
 The destination screen offers official pickup points as drop-offs. A real "search for a place" needs the endpoint in CR-2 or a restricted Google key with billing.
+
+### CR-5. The driver app cannot show document expiry or time on duty
+
+**What:** The driver screens call for (1) a documents list with expiry dates (valid, expiring in under 30 days, expired) on "Me" and in the readiness checklist, (2) which document blocked going on duty and when it expired, and (3) how long the driver has been on duty. `GET /driver/profile` has none of these, and `document_expired` carries only a sentence.
+**Suggested:** add `documents: [{type, expiresOn}]` and `dutySince` to `DriverProfile`, and put `documentType` and `expiredOn` extension fields on the `document_expired` problem. Until then the checklist says documents are checked when going on duty, and time on duty counts from when the app started sharing.
+
+### CR-6. Supervisor and campus security phone numbers (drivers and students)
+
+**What:** "Too many tries. Call your supervisor." (PIN locked), the Safety screens and the help screens need real phone numbers. The apps show 112 only.
+**Suggested:** `supervisorPhone` and `campusSecurityPhone` in `GET /app-config` (see CR-3).

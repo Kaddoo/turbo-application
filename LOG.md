@@ -2,6 +2,39 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: push and the driver app
+
+**Task:** Push notifications for both apps, then the driver app (prompt 05).
+
+**Files touched:**
+- apps/student_app, apps/driver_app: features/push (register, tap routing, in-app notes), ios Runner.entitlements (not yet switched on) and `remote-notification` background mode
+- apps/driver_app: whole app. core (session, gate, profile, flow, problem messages), auth (phone, code, terms), duty (readiness, location sharing, connectivity), home (off duty, on duty), ride (offer with 45 s countdown, to pickup, at pickup with PIN keypad and no-show, trip with offline-safe completion, end screens), me (devices, shifts, attendance, salary, trips), support, safety (SOS), shell
+- packages/turbo_api/test/live_backend_test.dart (decodes the real backend's answers; skipped when none runs)
+- CONTRACT_REQUESTS.md (CR-5, CR-6)
+
+**What changed:**
+- Push: each app registers the phone with the server after sign-in and removes it first on sign-out; a tapped push opens the right screen (ride, wallet, support, safety); a message while the app is open shows a note and refreshes the data; a push that starts the app waits for sign-in. Tested with a fake push platform.
+- Driver app: sign in as a driver (unknown number gets "This number isn't registered as a driver"); readiness checklist (location Always, battery or charging, internet, notifications); Go on duty starts location sharing at once and off duty stops it; a stalled position, an offline phone and an unreachable server each show a red or amber banner in words; a ride takes over the screen until it ends; accept or decline with a reason; navigate to pickup (Google Maps or Waze); "I've arrived" asks first when far from the pickup; four-digit PIN keypad with lock message; "Student not here" after the wait; complete with confirm and retry until the server answers; calm end screens; SOS by 3-second hold; trips, shifts, attendance, salary history, help tickets.
+
+**Checked on the real backend:** the generated client decodes the real answers for every driver and student call used (including "no current ride"), via the live test. The ride lifecycle was driven by script earlier in the day.
+
+**Acceptance criteria:**
+- [x] `flutter analyze` clean; student app 124 tests, driver app 53, turbo_ui 48
+- [ ] **Push on a real phone: blocked.** Xcode refuses the Push Notifications capability: "PLA Update available: agree to the latest Program License Agreement". Accept it at developer.apple.com, then set `CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements` for both apps (the file exists) and upload an APNs key to the Firebase project `turbo-dev-5f54ed`. Until then the apps work by polling.
+- [ ] Driver app used on the phone: installed, not used
+- [ ] 30-minute locked-screen location test: still open (R7)
+- [ ] Driver sign-in to ride loop against the real backend on a phone: not done
+
+**Deviations from plan or contract:**
+- Drivers' documents and time on duty are not shown (CR-5). The driver "Me" has no documents list.
+- Supervisor and security numbers are missing (CR-6); "Call your supervisor" has no button.
+- The driver app has no photo attachments on tickets and no student web build yet.
+- Completion retries live in memory; if the app is killed while waiting for signal the driver must tap Complete again (the server still holds the ride in progress).
+- Firebase's newer `register()` API returns an installation id, not the classic FCM token the backend's sender expects, so the apps use `getToken` (marked deprecated).
+- The shared sign-in, gate and session code was copied from the student app into the driver app, not moved into a shared package. Worth extracting before the redesign branch settles.
+
+**Status:** built and tested; not seen on a phone. **Next step:** accept the Apple agreement, switch on push, run the locked-screen test, then the student web build and offline notes.
+
 ## 2026-10-31, Kevin with Claude, code: student app phase 2, part 2 (ride, safety, support, profile)
 
 **Task:** Finish the student app's functions before the UI redesign is handed over.
