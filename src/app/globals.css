@@ -80,7 +80,7 @@ html.bg-scroll [data-bg] { background-color: transparent; }
 .motion.hero-intro [data-hero-shade] { opacity: 0; }
 .motion.hero-intro [data-hero-copy] { pointer-events: none; }
 
-/* Car-door loader: shown once per visit (head script adds html.door). The door
+/* Car-door loader: plays on every page load (head script adds html.door). The door
    handle pulls, then the door swings open on its hinge to reveal the page.
    Pure CSS, so it always finishes and hides itself. */
 .door-loader { display: none; }

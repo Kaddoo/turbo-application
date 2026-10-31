@@ -63,7 +63,7 @@ const PALETTE = {
 const ROAD_WIDTH: Record<string, number> = { service: 5, minor: 8, major: 15 };
 
 /** Camera: straight down over the car (matching the drone shot), then up and back into the overview. */
-const ZOOM = 4.5; // seconds
+const ZOOM = 6.5; // seconds
 const NEAR_DIST = 110; // metres above the car at the start
 const FAR_DIST = 950; // overview camera distance
 const TILT = 0.86; // overview tilt from vertical, radians
@@ -75,7 +75,7 @@ const SPEED_CRUISE = 30; // m/s once zoomed out, so rides read at map scale
 const DECEL = 9; // m/s², braking into the drop-off
 const HOLD = 1.8; // seconds parked at a drop-off before the next ride
 
-const smooth = (t: number) => t * t * (3 - 2 * t);
+const smooth = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // ease in-out cubic
 const node = (i: number, y = 0) => new Vector3(map.nodes[2 * i], y, map.nodes[2 * i + 1]);
 
 /** Flat polygon on the ground (x east, z south). */

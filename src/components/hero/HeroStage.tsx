@@ -70,7 +70,8 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     const handOver = () => {
       if (handedOver) return;
       handedOver = true;
-      video.pause();
+      // Let the video play out under the cross-fade, then stop it.
+      timers.push(window.setTimeout(() => video.pause(), 1800));
       if (scene) {
         setMode("3d");
         scene.play();
@@ -122,7 +123,7 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     video.src = `/video/hero-${wide ? "wide" : "tall"}.${webm ? "webm" : "mp4"}`;
 
     const onTime = () => {
-      if (video.duration && video.currentTime > video.duration - 0.8) handOver();
+      if (video.duration && video.currentTime > video.duration - 1.6) handOver();
     };
     video.addEventListener("timeupdate", onTime);
     video.addEventListener("ended", handOver);
@@ -150,14 +151,14 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
       </div>
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 size-full transition-opacity duration-700 ${mode === "3d" ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 size-full transition-opacity duration-[1600ms] ease-in-out ${mode === "3d" ? "opacity-100" : "opacity-0"}`}
       />
       <video
         ref={videoRef}
         muted
         playsInline
         preload="auto"
-        className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ${mode === "video" ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 size-full object-cover transition-[opacity,transform,filter] duration-[1600ms] ease-in-out ${mode === "video" ? "opacity-100" : "scale-[1.08] opacity-0 brightness-50"}`}
       />
     </div>
   );
