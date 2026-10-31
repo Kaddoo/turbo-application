@@ -1,6 +1,7 @@
 name: turbo_api
 description: "A new Flutter package project."
 version: 0.0.1
+publish_to: none
 homepage:
 
 resolution: workspace
@@ -11,6 +12,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  dio: ^5.9.0
+  uuid: ^4.5.1
+  turbo_api_generated:
+    path: generated
 
 dev_dependencies:
   flutter_test:
