@@ -2,6 +2,37 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: student app phase 2, part 2 (ride, safety, support, profile)
+
+**Task:** Finish the student app's functions before the UI redesign is handed over.
+
+**Files touched:**
+- apps/student_app: features/ride (booking, searching, driver assigned with PIN, arrived, in trip, done with rating and receipt, cancelled variants, cancel), features/safety (SOS hold, safety screen, trusted contacts, share trip), features/support (list, new ticket with photos, conversation), features/profile (email, saved places, devices, terms, sign out, delete), home (active ride card, safety button), shell (Ride, Activity, Wallet, Profile), router, ARB
+- tools/drive-ride.sh (plays the driver on the local backend), CONTRACT_REQUESTS.md (CR-3, CR-4)
+
+**What changed:** A student can now book a quoted ride (one idempotency key per quote, reused on retry; `active_ride_exists` opens the running ride; a short wallet or an expired price re-reads the quote), watch it by polling (4 s, with a haptic on arrival), message the driver with quick messages, see the start PIN digit by digit, cancel with a reason before the trip, trigger SOS by holding for 3 seconds (falls back to dialling 112 if it cannot send), share the trip with trusted contacts, rate the driver, see the receipt, and read what happened to the money on a cancelled ride. Support tickets with up to 5 photos, a profile with devices and account deletion, and a bottom bar matching the design (Home, Activity, Wallet, Profile).
+
+**Checked on the real backend:** a full ride with a test student: quote, book, assigned, driver acknowledges, arrives, student sees the PIN, driver starts with it, completes, GH₵50 charged and the wallet debited. The driver side was played by `tools/drive-ride.sh`.
+
+**Acceptance criteria:**
+- [x] `flutter analyze` clean; student app 116 tests, turbo_ui 48 (including the hard-coded style scan, which caught a product name in a string and now passes)
+- [x] Whole ride lifecycle against the running backend
+- [ ] Used on the phone: installed, not used
+- [ ] Push notifications (Firebase): not built
+- [ ] Trip-share public page and the student web build: not built
+- [ ] Offline "last updated" notes on wallet and history: not built
+- [ ] Ghana Card photo capture against the real backend: parked
+- [ ] Android pre-permission screens: not built (Android paused)
+- [ ] Driver app: only the location spike exists
+
+**Deviations from plan or contract:**
+- Bottom bar is Home, Activity, Wallet, Profile (the design), not Ride, Wallet, Activity (prompt 04). Safety is a shield button on home, in a ride, and in Profile.
+- No campus security number, announcements or notification toggles: contract has none (CR-3).
+- Place search is off; official points serve as drop-offs (CR-4).
+- Map tiles need billing on the Maps project; markers and the layout are built and tested with a stand-in map.
+
+**Status:** done for the ride flow. Branch: student-ride. **Next step:** push notifications, then the driver app (prompt 05), then the student web build.
+
 ## 2026-10-31, Kevin with Claude, code: student app phase 2, part 1 (wallet and top-up)
 
 **Task:** Move on without place search: drop-offs from official points, then the wallet, top-up and activity screens, behind the bottom bar.

@@ -31,7 +31,7 @@ case "${1:-status}" in
   off)    curl -s -o /dev/null -w "duty off: %{http_code}\n" -X PUT -H "$h" -H "$j" -d '{"onDuty":false}' "$b/driver/duty" ;;
   status) current | python3 -c "import sys,json;t=sys.stdin.read();d=json.loads(t) if t.strip() else {};print({k:d.get(k) for k in ('id','status','noShowAvailableAt')} if 'id' in d else 'no ride')" ;;
   ack)    ping; curl -s -o /dev/null -w "ack: %{http_code}\n" -X POST -H "$h" "$b/driver/rides/$(ride)/ack" ;;
-  arrive) ping 5.7203 0.0757; curl -s -o /dev/null -w "arrived: %{http_code}\n" -X POST -H "$h" "$b/driver/rides/$(ride)/arrived" ;;
+  arrive) ping 5.7203 0.0757; curl -s -o /dev/null -w "arrived: %{http_code}\n" -X POST -H "$h" -H "$j" -d '{"location":{"lat":5.7203,"lng":0.0757}}' "$b/driver/rides/$(ride)/arrived" ;;
   start)  curl -s -o /dev/null -w "start: %{http_code}\n" -X POST -H "$h" -H "$j" -d "{\"pin\":\"${2:?pin}\"}" "$b/driver/rides/$(ride)/start" ;;
   complete) ping 5.6942 -0.0335; curl -s -w "\ncomplete: %{http_code}\n" -X POST -H "$h" -H "$j" -d '{"location":{"lat":5.6942,"lng":-0.0335}}' "$b/driver/rides/$(ride)/complete" | tail -1 ;;
   *) echo "usage: $0 duty|status|ack|arrive|start <pin>|complete|off"; exit 1 ;;

@@ -21,3 +21,16 @@ Things the apps need that the contract lacks or leaves unclear. Code sessions wr
 **Why it matters:** That puts a Google key and billing in the client, and the contract's service area can only be enforced after the quote. A backend `GET /places/autocomplete?q=&sessionToken=` would keep the key on the server and let staff bias results to the boundary.
 
 **Suggested shape:** `GET /places/autocomplete?q=string&sessionToken=uuid` returning `[{placeId, label, landmark?, point?}]`, and `GET /places/{placeId}` returning a `Location`.
+
+### CR-3. Campus security number, announcements and notification settings have no home in the contract
+
+**What:** Three things the student screens call for and the contract cannot supply.
+1. **Campus security phone number** (Safety screen "Call for help", and what SOS tells staff). The app shows the national emergency number 112 only. Suggested: add `campusSecurityPhone` and `supportPhone` to `GET /app-config` (or `GET /service-area`).
+2. **Announcements banner** on the home screen (prompt 04). Nothing in the contract returns one. Suggested: `announcement: { id, message, severity } | null` in `GET /app-config`.
+3. **Notification preferences** (profile toggles "News and offers", "Tips" in the design). There is no endpoint to read or write them. Suggested: `GET/PUT /me/notification-settings` with a small map of booleans. Until then the toggles are not built.
+
+**Why:** these are visible in the design and in prompts 04 and 05.
+
+### CR-4. Place search (CR-2) still open
+
+The destination screen offers official pickup points as drop-offs. A real "search for a place" needs the endpoint in CR-2 or a restricted Google key with billing.
