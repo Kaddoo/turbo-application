@@ -2,6 +2,29 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: mock, design brief, backend review
+
+**Task:** Make the mock behave on a phone, write the screen-by-screen design brief, and read the backend that landed on `origin/main`.
+
+**Files touched:**
+- tools/make-mock-spec.mjs, tools/mock-server.mjs, package.json (mock gives realistic answers, accepts photo uploads, remembers verification status; `/mock/state/<status>` sets it)
+- design/SCREENS.md (new: components and states per screen, student and driver)
+- CONTRACT_REQUESTS.md (CR-1 answered from the backend source)
+
+**What changed:** First on-device test of the student app against the mock found three mock problems (maintenance on by default, upload URL pointing nowhere, no memory of a submit); none were app bugs. Backend review: see below.
+
+**Backend (read, not run):** `api/` on `origin/main` (Bethel, one commit): Node 22, Express 5, PostgreSQL, 133 of 135 operations implemented against contract 0.2.2 (the two left are v1.1), migrations 001 to 014, a worker for assignment, timeouts, reconciliation and push, 69 tests, deploy files. Its contract copy differs from ours only by the driver-ride fare and ETA fields and a CSV upload type. Without a Google key it estimates routes (straight line times 1.3), so quotes need no Maps billing in development. In development the sign-in code is fixed at 123456.
+- It sits beside our `api/openapi.yaml` (it uses `api/contract/openapi.yaml`); the two copies need a rule for which is the source.
+- Photo uploads go to `PUT /uploads/{id}/content` on the API itself, signed, with exact size and content-type checks and a file-type sniff.
+- To use it from a phone it needs `HOST=0.0.0.0` and `PUBLIC_URL=http://<this Mac>:3000` (signed upload links are built from it), a local Postgres, `npm run migrate`, `npm run seed`.
+
+**Acceptance criteria:**
+- [x] Statuses shown correctly on the phone: pending, plus approved, needs attention and rejected set through the mock
+- [ ] Photo capture and upload against the real backend: parked, not tested
+- [ ] Backend not run here
+
+**Status:** done (mock and docs). **Next step:** run the backend locally and point the apps at it.
+
 ## 2026-10-31, Kevin with Claude, code: group 4 (student app phase 1)
 
 **Task:** Student app phase 1: shell and app-config gate, phone and code, terms, verification capture and status, map home, destination, quote.

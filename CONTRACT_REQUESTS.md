@@ -6,6 +6,8 @@ Things the apps need that the contract lacks or leaves unclear. Code sessions wr
 
 ### CR-1. Does `POST /auth/otp/verify` use up the code when it answers 403 `terms_not_accepted`?
 
+**Answered 2026-10-31 by reading the backend on `origin/main`** (not yet run): no. The code is marked used inside a transaction that is rolled back when the 403 is thrown (`api/src/routes/auth.js`, `tx` in `api/src/db.js`), so the same code can be sent again with the versions. Please state it in the contract so it stays true. Not tested against a running API.
+
 **What:** The contract says `acceptedTermsVersion` is "required on first login (terms_not_accepted if missing)". The build brief puts the Terms screen after the code screen, so the app first sends the code without the versions, gets 403, shows Terms, then sends the same code again with the versions.
 
 **Why it matters:** If the first call consumes the code, the second call fails with `otp_invalid` and a new student has to request another SMS (cost, and a bad first impression). The app handles that case by returning to the phone screen, but that is the fallback, not the intent.
