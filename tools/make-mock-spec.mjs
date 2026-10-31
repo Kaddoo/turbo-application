@@ -2,6 +2,7 @@
 // has none, so the Prism mock behaves like a working backend on a phone.
 // api/openapi.yaml is never changed. Set MOCK_VERIFICATION to try other states.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { networkInterfaces } from 'node:os';
 import yaml from 'js-yaml';
 
 const spec = yaml.load(readFileSync('api/openapi.yaml', 'utf8'));
@@ -61,6 +62,38 @@ s.SavedPlaceCollection.example = {
   data: [
     { id: id(21), label: 'Hostel', location: { point: { lat: 5.7455, lng: 0.0702 }, label: 'Hostel block' } },
   ],
+};
+
+// Signed upload URLs normally point at private storage. On the mock they point
+// back at this server, which accepts any PUT, so photos can be "sent".
+const host =
+  process.env.MOCK_HOST ??
+  Object.values(networkInterfaces())
+    .flat()
+    .find((n) => n && n.family === 'IPv4' && !n.internal)?.address ??
+  'localhost';
+s.UploadSlot.example = {
+  uploadId: id(31),
+  uploadUrl: `http://${host}:4010/mock-upload/photo`,
+  method: 'PUT',
+  headers: {},
+  expiresAt: '2099-01-01T00:00:00Z',
+};
+spec.paths['/mock-upload/{name}'] = {
+  put: {
+    operationId: 'mockUploadSink',
+    summary: 'Mock only: stands in for private object storage',
+    security: [],
+    parameters: [{ name: 'name', in: 'path', required: true, schema: { type: 'string' } }],
+    requestBody: {
+      required: false,
+      content: {
+        'image/jpeg': { schema: { type: 'string', format: 'binary' } },
+        'application/octet-stream': { schema: { type: 'string', format: 'binary' } },
+      },
+    },
+    responses: { 200: { description: 'OK' } },
+  },
 };
 
 mkdirSync('.mock', { recursive: true });
