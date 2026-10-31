@@ -1,11 +1,11 @@
-// Writes .mock/openapi.mock.yaml: the contract plus realistic examples where it
+// Writes .mock/openapi.mock.yaml: the contract (api/contract/openapi.yaml, the source) plus realistic examples where it
 // has none, so the Prism mock behaves like a working backend on a phone.
-// api/openapi.yaml is never changed. Set MOCK_VERIFICATION to try other states.
+// api/contract/openapi.yaml is never changed. Set MOCK_VERIFICATION to try other states.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { networkInterfaces } from 'node:os';
 import yaml from 'js-yaml';
 
-const spec = yaml.load(readFileSync('api/openapi.yaml', 'utf8'));
+const spec = yaml.load(readFileSync('api/contract/openapi.yaml', 'utf8'));
 const s = spec.components.schemas;
 const verification = process.env.MOCK_VERIFICATION ?? 'not_submitted';
 const id = (n) => `0190a1b2-0000-7e4f-8a5b-${String(n).padStart(12, '0')}`;
