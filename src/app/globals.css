@@ -68,6 +68,7 @@ html.lenis, html.lenis body { height: auto; }
 @media (prefers-reduced-motion: no-preference) {
   .motion [data-reveal] { opacity: 0; transform: translateY(28px); }
   .motion [data-split] .w > span { transform: translateY(110%); }
+  .motion [data-scrub] .sw { opacity: 0.18; }
 }
 [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
 [data-split] .w > span { display: inline-block; will-change: transform; }

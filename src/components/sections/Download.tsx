@@ -1,7 +1,6 @@
 import QRCode from "qrcode";
 import { Apple, Globe, Play } from "lucide-react";
 import { links } from "@/config/links";
-import { ButtonLink } from "../Button";
 import { SplitHeading } from "../SectionLabel";
 
 /** Rendered at build time; ships as inline SVG with no client JS. */
@@ -9,17 +8,44 @@ async function qrSvg(url: string) {
   return QRCode.toString(url, { type: "svg", margin: 0, color: { dark: "#0b0c0a", light: "#0000" }, errorCorrectionLevel: "M" });
 }
 
-function StoreBadge({ href, icon: Icon, top, bottom }: { href: string; icon: typeof Apple; top: string; bottom: string }) {
+/** Dotted field with two pins joined by a dashed arc, drawn as you scroll (data-draw). */
+function RouteDots() {
+  return (
+    <svg viewBox="0 0 560 300" className="h-full w-full" aria-hidden fill="none">
+      <defs>
+        <pattern id="cta-dots" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.6" fill="#0b0c0a" fillOpacity=".11" />
+        </pattern>
+        <radialGradient id="cta-fade" cx="60%" cy="50%" r="60%">
+          <stop offset="0" stopColor="#fff" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </radialGradient>
+        <mask id="cta-mask">
+          <rect width="560" height="300" fill="url(#cta-fade)" />
+        </mask>
+      </defs>
+      <rect width="560" height="300" fill="url(#cta-dots)" mask="url(#cta-mask)" />
+      <path data-draw d="M250 210 C 300 70, 420 40, 470 120" stroke="#0b0c0a" strokeWidth="2" strokeDasharray="6 8" strokeLinecap="round" />
+      {[
+        [250, 210],
+        [470, 120],
+      ].map(([x, y]) => (
+        <g key={x} transform={`translate(${x} ${y})`}>
+          <path d="M0 0 C -9 -12, -12 -18, -12 -24 A 12 12 0 1 1 12 -24 C 12 -18, 9 -12, 0 0 Z" fill="#0b0c0a" />
+          <circle cy="-24" r="4.5" fill="#d4ff3a" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function StoreLink({ href, icon: Icon, children }: { href: string; icon: typeof Apple; children: React.ReactNode }) {
   return (
     <a
       href={href}
-      className="group inline-flex h-14 items-center gap-3 rounded-2xl bg-ink px-5 text-paper transition-transform duration-300 hover:-translate-y-0.5"
+      className="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-paper transition-transform duration-300 hover:-translate-y-0.5"
     >
-      <Icon className="size-6 transition-colors group-hover:text-turbo" aria-hidden />
-      <span className="flex flex-col leading-none">
-        <span className="text-[11px] text-paper/60">{top}</span>
-        <span className="mt-1 text-base font-semibold">{bottom}</span>
-      </span>
+      <Icon className="size-4" aria-hidden /> {children}
     </a>
   );
 }
@@ -27,38 +53,37 @@ function StoreBadge({ href, icon: Icon, top, bottom }: { href: string; icon: typ
 export async function Download() {
   const svg = await qrSvg(links.webAppUrl);
   return (
-    <section id="download" aria-labelledby="download-title" className="on-light bg-ink px-4 pb-6 sm:px-6">
-      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] bg-turbo p-8 text-ink sm:p-14 lg:p-20">
-        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full border-[40px] border-ink/[0.06]" />
-        <div aria-hidden className="pointer-events-none absolute -bottom-40 right-40 size-80 rounded-full border-[28px] border-ink/[0.05]" />
-        <div className="relative grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-          <div>
-            <SplitHeading id="download-title" className="text-5xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-              Your next ride is a tap away.
+    <section id="download" aria-labelledby="download-title" className="on-light bg-ink px-4 pb-10 pt-6 sm:px-6">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl bg-turbo p-7 text-ink sm:p-12">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[62%] md:block">
+          <RouteDots />
+        </div>
+        <div className="relative grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+          <div className="max-w-md">
+            <SplitHeading id="download-title" className="text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-5xl">
+              Cashless rides across the corridor.
             </SplitHeading>
-            <p data-reveal className="mt-6 max-w-md text-lg text-ink/70">
-              Get Turbo on your phone, or book from any browser.
+            <p data-reveal className="mt-4 text-[15px] leading-relaxed text-ink/70">
+              Get Turbo on your phone, or book from any browser. Your wallet pays, your PIN starts the trip.
             </p>
-            <div data-reveal className="mt-10 flex flex-wrap gap-3">
-              <StoreBadge href={links.appStoreUrl} icon={Apple} top="Download on the" bottom="App Store" />
-              <StoreBadge href={links.playStoreUrl} icon={Play} top="Get it on" bottom="Google Play" />
-              <ButtonLink href={links.webAppUrl} variant="light" className="h-14 rounded-2xl">
-                <span className="inline-flex items-center gap-2">
-                  <Globe className="size-5" aria-hidden /> Use on the web
-                </span>
-              </ButtonLink>
+            <div data-reveal className="mt-8 flex flex-wrap gap-2.5">
+              <StoreLink href={links.playStoreUrl} icon={Play}>
+                Google Play
+              </StoreLink>
+              <StoreLink href={links.appStoreUrl} icon={Apple}>
+                App Store
+              </StoreLink>
+              <a
+                href={links.webAppUrl}
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-ink/25 px-5 text-sm font-medium transition-colors hover:bg-ink hover:text-paper"
+              >
+                <Globe className="size-4" aria-hidden /> Use on the web
+              </a>
             </div>
           </div>
-          <figure data-reveal className="justify-self-start rounded-[2rem] bg-paper p-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.45)] lg:justify-self-end">
-            <div
-              className="size-44 sm:size-52"
-              role="img"
-              aria-label="QR code that opens the Turbo web app"
-              dangerouslySetInnerHTML={{ __html: svg }}
-            />
-            <figcaption className="mt-4 max-w-44 text-sm text-ink/70 sm:max-w-52">
-              Scan to open the web app on your phone.
-            </figcaption>
+          <figure data-reveal className="flex items-center gap-4 justify-self-start rounded-xl bg-paper p-3 pr-5 md:justify-self-end">
+            <div className="size-20" role="img" aria-label="QR code that opens the Turbo web app" dangerouslySetInnerHTML={{ __html: svg }} />
+            <figcaption className="max-w-[8rem] text-xs leading-snug text-ink/70">Scan to open the web app on your phone.</figcaption>
           </figure>
         </div>
       </div>

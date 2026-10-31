@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Wordmark } from "./Wordmark";
 import { MaintenanceBanner } from "./MaintenanceBanner";
 import { links } from "@/config/links";
 import { cn } from "@/lib/cn";
@@ -39,23 +38,24 @@ export function Header() {
       </div>
       <div
         className={cn(
-          "mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full pl-5 pr-2 transition-all duration-500",
-          scrolled || open
-            ? "border border-white/10 bg-ink/80 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] backdrop-blur-xl"
-            : "border border-transparent",
+          "mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto] items-center rounded-2xl px-2 transition-all duration-500 md:grid-cols-[1fr_auto_1fr]",
+          scrolled || open ? "bg-ink/70 backdrop-blur-xl" : "bg-transparent",
         )}
       >
-        <a href="/" className="text-xl text-paper" aria-label="Turbo home">
-          <Wordmark />
+        <a href="/" className="inline-flex items-center gap-2.5 justify-self-start text-lg text-paper" aria-label="Turbo home">
+          <span aria-hidden className="inline-flex size-10 items-center justify-center rounded-xl bg-turbo">
+            <span className="size-3 rounded-full bg-ink" />
+          </span>
+          <span className="hidden font-semibold tracking-tight sm:inline">Turbo</span>
         </a>
 
         <nav aria-label="Main" className="hidden md:block">
-          <ul className="flex items-center gap-1">
+          <ul className="flex items-center gap-1.5">
             {nav.map((n) => (
               <li key={n.href}>
                 <a
                   href={n.href}
-                  className="rounded-full px-4 py-2 text-sm text-paper/75 transition-colors hover:bg-white/5 hover:text-paper"
+                  className="inline-flex h-9 items-center rounded-full bg-white/[0.07] px-4 text-[13px] text-paper/75 backdrop-blur-md transition-colors hover:bg-white/15 hover:text-paper"
                 >
                   {n.label}
                 </a>
@@ -64,10 +64,10 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-self-end">
           <a
             href="/#download"
-            className="inline-flex h-10 items-center rounded-full bg-turbo px-5 text-sm font-medium text-ink transition-colors hover:bg-white"
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-turbo px-5 text-sm font-medium text-ink transition-colors hover:bg-white"
           >
             Get the app
           </a>

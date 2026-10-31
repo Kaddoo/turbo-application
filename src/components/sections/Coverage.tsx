@@ -1,75 +1,62 @@
-import { MapPin } from "lucide-react";
-import { SectionLabel, SplitHeading } from "../SectionLabel";
+import { MapPin, Navigation } from "lucide-react";
+import { MapScreen, Phone } from "../ui/Phone";
+import { Tag } from "../ui/Tag";
 import { PickupChips } from "./PickupChips";
 
-/** Schematic illustration only: not to scale, not a map (open decision D1). */
-function CorridorIllustration() {
-  const road = "M70 330 C 160 330, 170 250, 260 240 S 380 260, 420 190 S 520 90, 640 80";
+/** Schematic route screen only: not to scale, not a map (open decision D1). */
+function RouteScreen() {
   return (
-    <svg viewBox="0 0 720 400" className="h-auto w-full" role="img" aria-labelledby="corridor-title corridor-desc">
-      <title id="corridor-title">Service corridor illustration</title>
-      <desc id="corridor-desc">
-        A schematic line from Central University at Miotso to Ashaiman China Mall. Not to scale.
-      </desc>
-      <defs>
-        <pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse">
-          <circle cx="1.5" cy="1.5" r="1.5" fill="#0b0c0a" fillOpacity=".09" />
-        </pattern>
-      </defs>
-      <rect width="720" height="400" rx="32" fill="url(#dots)" />
-      <path d={road} fill="none" stroke="#0b0c0a" strokeOpacity=".08" strokeWidth="28" strokeLinecap="round" />
-      <path d={road} fill="none" stroke="#0b0c0a" strokeOpacity=".22" strokeWidth="2" strokeDasharray="2 10" strokeLinecap="round" />
-      <path data-draw d={road} fill="none" stroke="#0b0c0a" strokeWidth="5" strokeLinecap="round" />
-      {[
-        [260, 240],
-        [420, 190],
-      ].map(([x, y]) => (
-        <circle key={x} cx={x} cy={y} r="7" fill="#f3f1ea" stroke="#0b0c0a" strokeWidth="3" />
-      ))}
-      <g>
-        <circle cx="70" cy="330" r="16" fill="#0b0c0a" />
-        <circle cx="70" cy="330" r="6" fill="#d4ff3a" />
-        <text x="70" y="378" textAnchor="middle" className="fill-ink text-[17px] font-semibold">Miotso</text>
-      </g>
-      <g>
-        <circle cx="640" cy="80" r="20" fill="#d4ff3a" stroke="#0b0c0a" strokeWidth="3" />
-        <circle cx="640" cy="80" r="6" fill="#0b0c0a" />
-        <text x="664" y="40" textAnchor="end" className="fill-ink text-[17px] font-semibold">Ashaiman China Mall</text>
-      </g>
-    </svg>
+    <div className="relative flex-1">
+      <MapScreen />
+      <div className="absolute inset-x-3 top-9 flex items-center justify-between rounded-2xl bg-white/10 p-2.5 backdrop-blur-md">
+        <div className="flex items-center gap-2.5">
+          <span className="inline-flex size-8 items-center justify-center rounded-full bg-paper text-ink">
+            <Navigation className="size-3.5" />
+          </span>
+          <p className="text-[11px] leading-tight">
+            Miotso
+            <br />
+            <span className="text-paper/55">to Ashaiman China Mall</span>
+          </p>
+        </div>
+      </div>
+      <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
+        <span className="inline-flex size-8 items-center justify-center rounded-full bg-white/15 text-xs">×</span>
+        <span className="inline-flex h-8 items-center rounded-full bg-turbo px-4 text-[11px] font-medium text-ink">Share trip</span>
+      </div>
+    </div>
   );
 }
 
 export function Coverage() {
   return (
-    <section id="where-we-go" aria-labelledby="where-title" className="on-light bg-paper py-24 text-ink sm:py-32">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-end">
-          <div>
-            <SectionLabel index="03" className="text-mute-dark">
-              Where we go
-            </SectionLabel>
-            <SplitHeading id="where-title" className="mt-6 text-4xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-5xl lg:text-6xl">
-              Miotso toward Ashaiman China Mall.
-            </SplitHeading>
-          </div>
-          <p data-reveal className="max-w-md text-lg text-ink/65 lg:justify-self-end">
+    <section id="where-we-go" aria-labelledby="where-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
+      <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
+        <div className="max-w-md lg:order-1">
+          <Tag icon={MapPin}>Where we go</Tag>
+          <h2 id="where-title" data-reveal className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+            Miotso toward Ashaiman China Mall.
+          </h2>
+          <p data-reveal className="mt-5 text-[15px] leading-relaxed text-paper/60">
             One corridor, served well. Pick up from the points below; the app shows exactly where to stand.
           </p>
+
+          <div className="mt-8">
+            <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-paper/50">Pickup points</h3>
+            <PickupChips />
+          </div>
         </div>
 
-        <div data-reveal className="mt-12 overflow-hidden rounded-[2rem] bg-paper-2 p-4 sm:p-8">
-          <CorridorIllustration />
-        </div>
-
-        <div className="mt-10">
-          <h3 className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-ink/60">
-            <MapPin className="size-4" aria-hidden /> Pickup points
-          </h3>
-          <PickupChips />
+        <div className="flex justify-center lg:order-2 lg:justify-end lg:pr-10">
+          <div data-tilt="1">
+            <div className="[transform:perspective(1800px)_rotateX(12deg)_rotateY(-14deg)_rotateZ(14deg)]">
+              <Phone>
+                <RouteScreen />
+              </Phone>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

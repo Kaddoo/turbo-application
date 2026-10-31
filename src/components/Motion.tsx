@@ -17,6 +17,10 @@ declare global {
  *   data-bar       horizontal bar grows from 0
  *   data-parallax  translateY by factor × scroll
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
+ *   data-scrub     headline words brighten as it scrolls through
+ *   data-tilt      device swings up into its resting tilt (value: ±1 direction)
+ *   data-tapaway   pinned scene: phones rise into the glow (≥1024px)
+ *   data-drift / data-drift-track   card strip slides sideways with scroll (≥1024px)
  * Everything is skipped when the visitor prefers reduced motion.
  */
 export function Motion() {
@@ -76,6 +80,15 @@ export function Motion() {
               });
             });
 
+            gsap.utils.toArray<HTMLElement>("[data-scrub]").forEach((el) => {
+              gsap.to(el.querySelectorAll(".sw"), {
+                opacity: 1,
+                ease: "none",
+                stagger: 0.1,
+                scrollTrigger: { trigger: el, start: "top 85%", end: "bottom 45%", scrub: 0.6 },
+              });
+            });
+
             ScrollTrigger.batch("[data-reveal]", {
               start: "top 90%",
               once: true,
@@ -113,8 +126,42 @@ export function Motion() {
             });
           });
 
+          gsap.utils.toArray<HTMLElement>("[data-tilt]").forEach((el) => {
+            const dir = parseFloat(el.dataset.tilt || "1");
+            gsap.from(el, {
+              y: 140,
+              rotation: 10 * dir,
+              opacity: 0.4,
+              ease: "none",
+              scrollTrigger: { trigger: el.closest("section") ?? el, start: "top bottom", end: "center 60%", scrub: 0.8 },
+            });
+          });
+
           const mm = gsap.matchMedia();
           mm.add("(min-width: 1024px)", () => {
+            gsap.utils.toArray<HTMLElement>("[data-tapaway]").forEach((section) => {
+              const tl = gsap.timeline({
+                scrollTrigger: { trigger: section, start: "top top", end: "+=110%", pin: true, scrub: 0.8 },
+              });
+              tl.from(section.querySelector("[data-tapaway-phones]"), { yPercent: 55, ease: "none" }, 0)
+                .from(section.querySelector("[data-tapaway-glow]"), { opacity: 0, scale: 0.5, ease: "none" }, 0)
+                .from(
+                  section.querySelectorAll<HTMLElement>("[data-tapaway-side]"),
+                  { xPercent: (_, t: HTMLElement) => -45 * parseFloat(t.dataset.tapawaySide || "0"), opacity: 0, ease: "none" },
+                  0.25,
+                );
+            });
+
+            gsap.utils.toArray<HTMLElement>("[data-drift]").forEach((wrap) => {
+              const track = wrap.querySelector<HTMLElement>("[data-drift-track]");
+              if (!track) return;
+              gsap.to(track, {
+                x: () => -Math.max(0, track.scrollWidth - wrap.clientWidth + 48),
+                ease: "none",
+                scrollTrigger: { trigger: wrap, start: "top bottom", end: "bottom top", scrub: 0.8, invalidateOnRefresh: true },
+              });
+            });
+
             gsap.utils.toArray<HTMLElement>("[data-hscroll]").forEach((wrap) => {
               const track = wrap.querySelector<HTMLElement>("[data-hscroll-track]");
               if (!track) return;

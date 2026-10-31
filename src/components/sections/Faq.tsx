@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
-import { SectionLabel, SplitHeading } from "../SectionLabel";
+import { SplitHeading } from "../SectionLabel";
+import { Tag } from "../ui/Tag";
 import { links } from "@/config/links";
 
 const faqs: { q: string; a: React.ReactNode }[] = [
@@ -63,10 +64,8 @@ export function Faq() {
     <section id="faq" aria-labelledby="faq-title" className="bg-ink py-24 sm:py-32">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
         <div>
-          <SectionLabel index="06" className="text-mute">
-            FAQ
-          </SectionLabel>
-          <SplitHeading id="faq-title" className="mt-6 text-4xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-5xl">
+          <Tag tone="dot">FAQ</Tag>
+          <SplitHeading id="faq-title" className="mt-6 text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
             Questions, answered.
           </SplitHeading>
           <p data-reveal className="mt-6 text-paper/60">
@@ -80,13 +79,13 @@ export function Faq() {
         <div className="divide-y divide-white/10 border-y border-white/10">
           {faqs.map(({ q, a }) => (
             <details key={q} data-reveal className="group">
-              <summary className="flex cursor-pointer items-center justify-between gap-6 py-6 text-lg font-medium transition-colors hover:text-turbo sm:text-xl">
+              <summary className="flex cursor-pointer items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight transition-colors hover:text-turbo">
                 <h3>{q}</h3>
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 transition-colors group-open:border-turbo group-open:bg-turbo group-open:text-ink">
                   <Plus className="faq-icon size-4 transition-transform duration-300" aria-hidden />
                 </span>
               </summary>
-              <div className="max-w-2xl pb-7 pr-12 text-paper/65 leading-relaxed">{a}</div>
+              <div className="max-w-2xl pb-7 pr-12 text-[15px] leading-relaxed text-paper/60">{a}</div>
             </details>
           ))}
         </div>
