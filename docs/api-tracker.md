@@ -261,4 +261,5 @@ Newest first. One line per verification that changed a Tested cell, or that was 
 
 | Date | Endpoint(s) | How | Result |
 | --- | --- | --- | --- |
+| 2026-10-31 19:54 UTC | 13 critical dashboard checks (login, me, verifications, live rides, incidents, service area, roles, invite, MFA, logout) | `LIVE_API_URL=https://api.turbogh.app npm run test:live` in `apps/admin_dashboard` | **All failed: every path returns an empty 503 from Caddy** (proxy up, API process behind it down; polled for minutes). Nothing marked Tested. Rerun when the API is up |
 | 2026-10-31 | `GET /health`, `GET /service-area` | Through the dashboard dev proxy against **Prism** (`curl`), not the real API | 200 both. Proves the proxy, not the endpoints, so Tested stays N |
