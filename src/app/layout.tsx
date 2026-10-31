@@ -1,0 +1,48 @@
+import type { Metadata, Viewport } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { siteUrl } from "@/config/links";
+import "./globals.css";
+
+const title = "Turbo — Rides around campus, paid from your wallet";
+const description =
+  "For verified Central University students at Miotso. No cash, no haggling, a driver assigned for you.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: title, template: "%s · Turbo" },
+  description,
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", siteName: "Turbo", title, description, url: "/", locale: "en_GH" },
+  twitter: { card: "summary_large_image", title, description },
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0b0c0a",
+  width: "device-width",
+  initialScale: 1,
+};
+
+// Opts in to reveal animations before first paint; falls back to fully
+// visible content if the animation chunk has not started within 3s.
+const motionBoot = `(function(d){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: motionBoot }} />
+      </head>
+      <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-turbo focus:px-5 focus:py-3 focus:font-medium focus:text-ink"
+        >
+          Skip to content
+        </a>
+        {children}
+      </body>
+    </html>
+  );
+}

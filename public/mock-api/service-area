@@ -1,0 +1,19 @@
+{
+  "_note": "MOCK DATA for local development only. Not real Turbo prices or places.",
+  "fareBands": [
+    { "maxDistanceMeters": 3000, "fareMinor": 1800 },
+    { "maxDistanceMeters": 6000, "fareMinor": 2500 },
+    { "maxDistanceMeters": 10000, "fareMinor": 3400 },
+    { "maxDistanceMeters": 15000, "fareMinor": 4500 }
+  ],
+  "maxTripDistanceMeters": 15000,
+  "pickupPoints": [
+    { "id": "cu-main-gate", "name": "CU Main Gate" },
+    { "id": "cu-hostels", "name": "CU Hostels" },
+    { "id": "miotso-junction", "name": "Miotso Junction" },
+    { "id": "dawhenya", "name": "Dawhenya" },
+    { "id": "lashibi", "name": "Lashibi" },
+    { "id": "ashaiman-china-mall", "name": "Ashaiman China Mall" }
+  ],
+  "operatingHours": { "open": "06:00", "close": "22:00" }
+}
