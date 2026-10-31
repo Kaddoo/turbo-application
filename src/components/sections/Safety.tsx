@@ -14,7 +14,7 @@ const items = [
 /** Card strip that drifts sideways as you scroll on large screens and swipes on small ones. */
 export function Safety() {
   return (
-    <section id="safety" data-bg="paper" aria-labelledby="safety-title" className="on-light relative overflow-hidden bg-paper py-20 text-ink sm:py-28">
+    <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <Tag tone="dot">Safety</Tag>
         <h2

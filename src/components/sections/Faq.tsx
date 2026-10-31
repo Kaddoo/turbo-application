@@ -61,31 +61,31 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 export function Faq() {
   return (
-    <section id="faq" data-bg="paper" aria-labelledby="faq-title" className="on-light bg-paper py-20 text-ink sm:py-28">
+    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-20 sm:py-28">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
         <div>
           <Tag tone="dot">FAQ</Tag>
           <RiseHeading id="faq-title" className="mt-6 text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
             Questions, answered.
           </RiseHeading>
-          <p data-reveal className="mt-6 text-ink/70">
+          <p data-reveal className="mt-6 text-paper/60">
             Still stuck?{" "}
-            <a href="/support/" className="underline underline-offset-4 hover:text-ink/60">
+            <a href="/support/" className="text-turbo underline-offset-4 hover:underline">
               Contact support
             </a>
             .
           </p>
         </div>
-        <div className="divide-y divide-ink/10 border-y border-ink/10">
+        <div className="divide-y divide-white/10 border-y border-white/10">
           {faqs.map(({ q, a }) => (
             <details key={q} data-reveal className="group">
-              <summary className="flex cursor-pointer items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight transition-colors hover:text-ink/60">
+              <summary className="flex cursor-pointer items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight transition-colors hover:text-turbo">
                 <h3>{q}</h3>
-                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-ink/15 transition-colors group-open:border-turbo group-open:bg-turbo group-open:text-ink">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 transition-colors group-open:border-turbo group-open:bg-turbo group-open:text-ink">
                   <Plus className="faq-icon size-4 transition-transform duration-300" aria-hidden />
                 </span>
               </summary>
-              <div className="max-w-2xl pb-7 pr-12 text-[15px] leading-relaxed text-ink/70">{a}</div>
+              <div className="max-w-2xl pb-7 pr-12 text-[15px] leading-relaxed text-paper/60">{a}</div>
             </details>
           ))}
         </div>

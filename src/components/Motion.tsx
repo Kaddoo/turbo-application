@@ -9,7 +9,7 @@ declare global {
 }
 
 /**
- * Loads GSAP and ScrollTrigger after hydration (kept out of the
+ * Loads GSAP, ScrollTrigger and Lenis (smooth scrolling) after hydration (kept out of the
  * critical bundle) and wires declarative data-attributes:
  *   data-split     headline words rise in (the hero's wait for "turbo:hero-reveal")
  *   data-reveal    fade up on enter (batched + staggered)
@@ -38,10 +38,17 @@ export function Motion() {
     let cleanup = () => {};
     let cancelled = false;
 
-    Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
-      .then(([{ gsap }, { ScrollTrigger }]) => {
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger"), import("lenis")])
+      .then(([{ gsap }, { ScrollTrigger }, { default: Lenis }]) => {
         if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
+
+        // Lenis smooths the wheel; GSAP's ticker drives it so ScrollTrigger sees every frame.
+        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+        lenis.on("scroll", ScrollTrigger.update);
+        const tick = (t: number) => lenis.raf(t * 1000);
+        gsap.ticker.add(tick);
+        gsap.ticker.lagSmoothing(0);
 
         // Same-page anchor links scroll smoothly and move focus to the target.
         const onClick = (e: MouseEvent) => {
@@ -52,9 +59,7 @@ export function Motion() {
           const target = document.querySelector<HTMLElement>(hash);
           if (!target) return;
           e.preventDefault();
-          const top = hash === "#main" ? 0 : target.getBoundingClientRect().top + window.scrollY - 24;
-          window.scrollTo({ top, behavior: "smooth" });
-          history.pushState(null, "", hash);
+          lenis.scrollTo(target, { offset: hash === "#main" ? 0 : -24, duration: 1.4 });
           if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
           target.focus({ preventScroll: true });
         };
@@ -162,7 +167,11 @@ export function Motion() {
                   backgroundColor: colour(el),
                   ease: "none",
                   immediateRender: false,
-                  scrollTrigger: { trigger: el, start: "top 80%", end: "top 35%", scrub: true },
+                  // The footer never scrolls far up the viewport, so its fade runs as it enters.
+                  scrollTrigger:
+                    el.tagName === "FOOTER"
+                      ? { trigger: el, start: "top bottom", end: "top 75%", scrub: true }
+                      : { trigger: el, start: "top 80%", end: "top 35%", scrub: true },
                 },
               );
             });
@@ -228,6 +237,9 @@ export function Motion() {
         // push every later trigger (background fades included) down by their pin length.
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
+        // Arriving on a shared /#section link: jump there now that pin spacing is known.
+        const landing = window.location.hash && document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+        if (landing) lenis.scrollTo(landing, { offset: -24, immediate: true });
 
         // Bars are rendered after data arrives; observe them as they appear.
         const animateBars = () => {
@@ -259,6 +271,8 @@ export function Motion() {
           mo.disconnect();
           document.removeEventListener("click", onClick);
           ctx.revert();
+          gsap.ticker.remove(tick);
+          lenis.destroy();
         };
       })
       .catch(() => root.classList.remove("motion"));

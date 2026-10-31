@@ -2,37 +2,53 @@ import QRCode from "qrcode";
 import { Apple, Globe, Play } from "lucide-react";
 import { links } from "@/config/links";
 import { RiseHeading } from "../ui/ScrubHeading";
+import dotMap from "./dotMap.json";
 
 /** Rendered at build time; ships as inline SVG with no client JS. */
 async function qrSvg(url: string) {
   return QRCode.toString(url, { type: "svg", margin: 0, color: { dark: "#0b0c0a", light: "#0000" }, errorCorrectionLevel: "M" });
 }
 
-/** Dotted field with two pins joined by a dashed arc, drawn as you scroll (data-draw). */
+/**
+ * The real road network between the two pins as a dot grid (built by
+ * scripts/map/corridor.mjs from OpenStreetMap), with the trip drawn on scroll.
+ */
 function RouteDots() {
+  const [fx, fy] = dotMap.from;
+  const [tx, ty] = dotMap.to;
   return (
-    <svg viewBox="0 0 560 300" className="h-full w-full" aria-hidden fill="none">
+    <svg viewBox={`0 0 ${dotMap.w} ${dotMap.h}`} className="h-full w-full" aria-hidden fill="none">
       <defs>
-        <pattern id="cta-dots" width="10" height="10" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="1.6" fill="#0b0c0a" fillOpacity=".11" />
-        </pattern>
-        <radialGradient id="cta-fade" cx="60%" cy="50%" r="60%">
-          <stop offset="0" stopColor="#fff" />
+        <radialGradient id="cta-fade" cx="58%" cy="50%" r="62%">
+          <stop offset="0.55" stopColor="#fff" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
         <mask id="cta-mask">
-          <rect width="560" height="300" fill="url(#cta-fade)" />
+          <rect width={dotMap.w} height={dotMap.h} fill="url(#cta-fade)" />
         </mask>
       </defs>
-      <rect width="560" height="300" fill="url(#cta-dots)" mask="url(#cta-mask)" />
-      <path data-draw d="M250 210 C 300 70, 420 40, 470 120" stroke="#0b0c0a" strokeWidth="2" strokeDasharray="6 8" strokeLinecap="round" />
+      <g mask="url(#cta-mask)" strokeLinecap="round" stroke="#0b0c0a">
+        <path d={dotMap.minor} strokeOpacity=".16" strokeWidth="2.4" />
+        <path d={dotMap.major} strokeOpacity=".55" strokeWidth="3.2" />
+      </g>
+      <path
+        data-draw
+        d={`M${tx} ${ty} C ${tx + 40} ${ty - 120}, ${fx - 150} ${fy + 40}, ${fx} ${fy}`}
+        stroke="#0b0c0a"
+        strokeWidth="2"
+        strokeDasharray="6 8"
+        strokeLinecap="round"
+      />
       {[
-        [250, 210],
-        [470, 120],
-      ].map(([x, y]) => (
-        <g key={x} transform={`translate(${x} ${y})`}>
+        [tx, ty, "Ashaiman"],
+        [fx, fy, "Miotso"],
+      ].map(([x, y, label]) => (
+        <g key={label} transform={`translate(${x} ${y})`}>
           <path d="M0 0 C -9 -12, -12 -18, -12 -24 A 12 12 0 1 1 12 -24 C 12 -18, 9 -12, 0 0 Z" fill="#0b0c0a" />
           <circle cy="-24" r="4.5" fill="#d4ff3a" />
+          <text x="18" y="-20" fill="#0b0c0a" fontSize="12" fontWeight="600">
+            {label}
+          </text>
         </g>
       ))}
     </svg>
@@ -53,7 +69,7 @@ function StoreLink({ href, icon: Icon, children }: { href: string; icon: typeof 
 export async function Download() {
   const svg = await qrSvg(links.webAppUrl);
   return (
-    <section id="download" data-bg="paper" aria-labelledby="download-title" className="on-light bg-paper px-4 pb-10 pt-6 sm:px-6">
+    <section id="download" data-bg="ink" aria-labelledby="download-title" className="on-light bg-ink px-4 pb-10 pt-6 sm:px-6">
       <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl bg-turbo p-7 text-ink sm:p-12">
         <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[62%] md:block">
           <RouteDots />
@@ -86,6 +102,12 @@ export async function Download() {
             <figcaption className="max-w-[8rem] text-xs leading-snug text-ink/70">Scan to open the web app on your phone.</figcaption>
           </figure>
         </div>
+        <p className="relative mt-8 hidden text-[10px] text-ink/60 md:block">
+          Roads ©{" "}
+          <a href="https://www.openstreetmap.org/copyright" className="underline underline-offset-2">
+            OpenStreetMap contributors
+          </a>
+        </p>
       </div>
     </section>
   );
