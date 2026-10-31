@@ -15,10 +15,13 @@ export const config = {
   dataKey: e.DATA_ENC_KEY || 'dev-data-key-dev-data-key-dev-0',
   staffMfa: e.STAFF_MFA || (e.NODE_ENV === 'production' ? 'required' : 'optional'),   // required | optional
   smsProvider: e.SMS_PROVIDER || 'console',
-  arkeselKey: e.ARKESEL_API_KEY || '',
+  texifyKey: e.TEXIFY_API_KEY || '',
   smsSender: e.SMS_SENDER || 'Turbo',
   emailProvider: e.EMAIL_PROVIDER || 'console',
-  resendKey: e.RESEND_API_KEY || '',
+  smtpHost: e.SMTP_HOST || '',
+  smtpPort: Number(e.SMTP_PORT || 587),
+  smtpUser: e.SMTP_USER || '',
+  smtpPass: e.SMTP_PASS || '',
   emailFrom: e.EMAIL_FROM || 'Turbo <no-reply@localhost>',
   uploadDir: e.UPLOAD_DIR || './data/uploads',
   publicUrl: (e.PUBLIC_URL || `http://localhost:${e.PORT || 3000}`).replace(/\/$/, ''),
@@ -45,10 +48,10 @@ if (config.env === 'production') {
   if (config.otpMode === 'fixed') throw new Error('OTP_MODE=fixed is not allowed in production');
   if (config.dataKey.length < 32 || config.dataKey.startsWith('dev-')) throw new Error('DATA_ENC_KEY must be set (32+ chars) in production');
   if (config.staffMfa !== 'required') throw new Error('STAFF_MFA must be "required" in production');
-  if (config.otpMode === 'sms' && config.smsProvider === 'console') throw new Error('OTP_MODE=sms needs SMS_PROVIDER=arkesel (console would send nothing)');
-  if (config.smsProvider === 'arkesel' && !config.arkeselKey) throw new Error('ARKESEL_API_KEY missing');
-  if (config.emailProvider === 'resend' && !config.resendKey) throw new Error('RESEND_API_KEY missing');
-  if (config.emailProvider === 'console') throw new Error('EMAIL_PROVIDER=resend is required in production: staff invites and resets are sent by email');
+  if (config.otpMode === 'sms' && config.smsProvider === 'console') throw new Error('OTP_MODE=sms needs SMS_PROVIDER=texify (console would send nothing)');
+  if (config.smsProvider === 'texify' && !config.texifyKey) throw new Error('TEXIFY_API_KEY missing');
+  if (config.emailProvider === 'smtp' && !config.smtpHost) throw new Error('SMTP_HOST missing');
+  if (config.emailProvider === 'console') throw new Error('EMAIL_PROVIDER=smtp is required in production: staff invites and resets are sent by email');
   if (config.paymentProvider === 'payaza' && (config.payazaSecret.startsWith('dev-') || !process.env.PAYAZA_PUBLIC_KEY_B64))
     throw new Error('PAYAZA_WEBHOOK_SECRET and PAYAZA_PUBLIC_KEY_B64 must be set when PAYMENT_PROVIDER=payaza');
   if (config.dataKey === config.jwtSecret) throw new Error('DATA_ENC_KEY must differ from JWT_SECRET');

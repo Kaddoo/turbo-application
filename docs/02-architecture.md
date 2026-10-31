@@ -22,7 +22,7 @@ flowchart LR
   API --> PAY["Payaza"]
   PAY -- "signed webhooks" --> API
   API --> FCM["Firebase FCM push"]
-  API --> SMS["Arkesel / Texify SMS"]
+  API --> SMS["Texify SMS"]
 ```
 
 ## Stack
@@ -36,7 +36,7 @@ flowchart LR
 | Database | PostgreSQL (Supabase) with PostGIS | Boundary check is `ST_Contains`; nearest driver is `ST_Distance` |
 | Timers and jobs | Cloud Tasks and Cloud Scheduler | Assignment ticks, acknowledgement and search timeouts, nightly jobs. **No Redis in v1** (see Cost shape) |
 | Push | Firebase Cloud Messaging | |
-| SMS | Arkesel or Texify | One-time codes, invitations, trip-share links |
+| SMS | Texify | One-time codes, invitations, trip-share links |
 | Payments | Provider adapter; first adapter is **Payaza** (mobile money collections) | See D2, D18 and `08-payaza-integration.md` |
 | Hosting | Cloud Run (API), Vercel (dashboard, landing) | Cloud Run scales to zero; see Cost shape |
 
