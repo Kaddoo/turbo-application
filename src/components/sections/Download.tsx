@@ -1,7 +1,7 @@
 import QRCode from "qrcode";
 import { Apple, Globe, Play } from "lucide-react";
 import { links } from "@/config/links";
-import { SplitHeading } from "../SectionLabel";
+import { RiseHeading } from "../ui/ScrubHeading";
 
 /** Rendered at build time; ships as inline SVG with no client JS. */
 async function qrSvg(url: string) {
@@ -60,9 +60,9 @@ export async function Download() {
         </div>
         <div className="relative grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
           <div className="max-w-md">
-            <SplitHeading id="download-title" className="text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-5xl">
+            <RiseHeading id="download-title" className="text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-5xl">
               Cashless rides across the corridor.
-            </SplitHeading>
+            </RiseHeading>
             <p data-reveal className="mt-4 text-[15px] leading-relaxed text-ink/70">
               Get Turbo on your phone, or book from any browser. Your wallet pays, your PIN starts the trip.
             </p>

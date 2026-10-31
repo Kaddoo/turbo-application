@@ -1,6 +1,6 @@
 import { Bell, CarFront, MapPin, Play, Wallet } from "lucide-react";
 import { links } from "@/config/links";
-import { MapScreen, Phone } from "../ui/Phone";
+import { Phone } from "../ui/Phone";
 import { ScrubHeading } from "../ui/ScrubHeading";
 
 function HomeScreen() {
@@ -12,9 +12,7 @@ function HomeScreen() {
           <br />
           <span className="font-medium">Ama</span>
         </p>
-        <span className="inline-flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-[#5b6150] to-[#2a2e26] text-sm font-semibold">
-          AM
-        </span>
+        <img src="/photos/avatar-ama.jpg" alt="" className="size-11 rounded-full object-cover ring-2 ring-white/10" />
       </div>
       <div className="relative mt-6 flex-1 overflow-hidden rounded-t-[1.75rem] bg-turbo p-4 text-ink">
         <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-ink px-3 text-[11px] font-medium text-paper">
@@ -30,9 +28,13 @@ function HomeScreen() {
 function DriverScreen() {
   return (
     <div className="relative flex-1">
-      <MapScreen />
-      <div className="absolute inset-x-3 top-9 flex items-center gap-2.5 rounded-2xl bg-white/10 p-2.5 backdrop-blur-md">
-        <span className="inline-flex size-9 items-center justify-center rounded-full bg-paper text-xs font-semibold text-ink">KO</span>
+      <img src="/photos/road.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <svg viewBox="0 0 272 568" className="absolute inset-0 h-full w-full" fill="none" preserveAspectRatio="none">
+        <path d="M150 568 C 150 470, 140 400, 136 330" stroke="#d4ff3a" strokeOpacity=".35" strokeWidth="46" strokeLinecap="round" />
+        <path d="M150 568 C 150 470, 140 400, 136 330" stroke="#d4ff3a" strokeWidth="5" strokeLinecap="round" />
+      </svg>
+      <div className="absolute inset-x-3 top-12 flex items-center gap-2.5 rounded-2xl bg-black/35 p-2.5 backdrop-blur-md">
+        <img src="/photos/avatar-kofi.jpg" alt="" className="size-9 rounded-full object-cover" />
         <div className="text-[11px] leading-tight">
           <p className="font-medium">Kofi · your driver</p>
           <p className="text-paper/60">Vetted, salaried</p>

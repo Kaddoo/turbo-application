@@ -1,4 +1,4 @@
-import { SplitHeading } from "../SectionLabel";
+import { RiseHeading, ScrubHeading } from "../ui/ScrubHeading";
 import { Tag } from "../ui/Tag";
 
 const steps = [
@@ -21,30 +21,29 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" aria-labelledby="how-title" className="relative bg-ink py-28 sm:py-40">
+    <section id="how-it-works" aria-labelledby="how-title" className="on-light relative bg-paper py-28 text-ink sm:py-40">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
           <div>
             <Tag tone="dot">How it works</Tag>
-            <SplitHeading
+            <RiseHeading
               id="how-title"
               className="mt-6 max-w-[12ch] text-5xl font-medium leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-[5.25rem]"
             >
               Three steps. No guesswork.
-            </SplitHeading>
+            </RiseHeading>
           </div>
-          <p data-reveal className="max-w-sm text-[15px] leading-relaxed text-paper/60 lg:justify-self-end">
-            Set up once, then every ride is a destination, a fare you can see, and a PIN. No cash, no haggling, a
-            driver assigned for you.
-          </p>
+          <ScrubHeading as="p" className="max-w-sm text-[15px] leading-relaxed text-ink/75 lg:justify-self-end">
+            Set up once, then every ride is a destination, a fare you can see, and a PIN. No cash, no haggling, a driver assigned for you.
+          </ScrubHeading>
         </div>
 
         <ol className="mt-20 grid gap-10 sm:mt-28 md:grid-cols-3 md:gap-8">
           {steps.map(({ n, title, body }) => (
-            <li key={n} data-reveal className="border-t border-white/10 pt-6">
-              <span className="font-mono text-xs text-paper/50">{n}</span>
+            <li key={n} data-reveal className="border-t border-ink/15 pt-6">
+              <span className="font-mono text-xs text-ink/70">{n}</span>
               <h3 className="mt-3 text-lg font-medium tracking-tight">{title}</h3>
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-paper/55">{body}</p>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/65">{body}</p>
             </li>
           ))}
         </ol>

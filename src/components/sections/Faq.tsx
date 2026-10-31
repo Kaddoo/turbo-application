@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { SplitHeading } from "../SectionLabel";
+import { RiseHeading } from "../ui/ScrubHeading";
 import { Tag } from "../ui/Tag";
 import { links } from "@/config/links";
 
@@ -65,9 +65,9 @@ export function Faq() {
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
         <div>
           <Tag tone="dot">FAQ</Tag>
-          <SplitHeading id="faq-title" className="mt-6 text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+          <RiseHeading id="faq-title" className="mt-6 text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
             Questions, answered.
-          </SplitHeading>
+          </RiseHeading>
           <p data-reveal className="mt-6 text-paper/60">
             Still stuck?{" "}
             <a href="/support/" className="text-turbo underline-offset-4 hover:underline">

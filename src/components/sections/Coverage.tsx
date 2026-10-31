@@ -1,5 +1,6 @@
 import { MapPin, Navigation } from "lucide-react";
 import { MapScreen, Phone } from "../ui/Phone";
+import { RiseHeading, ScrubHeading } from "../ui/ScrubHeading";
 import { Tag } from "../ui/Tag";
 import { PickupChips } from "./PickupChips";
 
@@ -30,30 +31,28 @@ function RouteScreen() {
 
 export function Coverage() {
   return (
-    <section id="where-we-go" aria-labelledby="where-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
+    <section id="where-we-go" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-24 text-ink sm:py-32">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="max-w-md lg:order-1">
           <Tag icon={MapPin}>Where we go</Tag>
-          <h2 id="where-title" data-reveal className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+          <RiseHeading id="where-title" className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
             Miotso toward Ashaiman China Mall.
-          </h2>
-          <p data-reveal className="mt-5 text-[15px] leading-relaxed text-paper/60">
+          </RiseHeading>
+          <ScrubHeading as="p" className="mt-5 text-[15px] leading-relaxed text-ink/80">
             One corridor, served well. Pick up from the points below; the app shows exactly where to stand.
-          </p>
+          </ScrubHeading>
 
           <div className="mt-8">
-            <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-paper/50">Pickup points</h3>
+            <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-ink/60">Pickup points</h3>
             <PickupChips />
           </div>
         </div>
 
         <div className="flex justify-center lg:order-2 lg:justify-end lg:pr-10">
           <div data-tilt="1">
-            <div className="[transform:perspective(1800px)_rotateX(12deg)_rotateY(-14deg)_rotateZ(14deg)]">
-              <Phone>
-                <RouteScreen />
-              </Phone>
-            </div>
+            <Phone pose="tiltRight" className="w-[19rem] sm:w-[25rem]">
+              <RouteScreen />
+            </Phone>
           </div>
         </div>
       </div>

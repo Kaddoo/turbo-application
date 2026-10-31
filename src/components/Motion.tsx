@@ -18,6 +18,7 @@ declare global {
  *   data-parallax  translateY by factor × scroll
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
  *   data-scrub     headline words brighten as it scrolls through
+ *   data-words     words rise, unblur and fade in one by one; [data-pop] tags pop in
  *   data-tilt      device swings up into its resting tilt (value: ±1 direction)
  *   data-tapaway   pinned scene: phones rise into the glow (≥1024px)
  *   data-drift / data-drift-track   card strip slides sideways with scroll (≥1024px)
@@ -78,6 +79,18 @@ export function Motion() {
                 scrollTrigger: el.closest("[data-hero]") ? undefined : { trigger: el, start: "top 88%", once: true },
                 onStart: () => gsap.set(words, { clearProps: "willChange" }),
               });
+            });
+
+            gsap.utils.toArray<HTMLElement>("[data-words]").forEach((el) => {
+              const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 85%", once: true } });
+              tl.to(el.querySelectorAll(".rw"), {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 0.9,
+                ease: "power3.out",
+                stagger: 0.09,
+              }).to(el.querySelectorAll("[data-pop]"), { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)", stagger: 0.12 }, 0.35);
             });
 
             gsap.utils.toArray<HTMLElement>("[data-scrub]").forEach((el) => {

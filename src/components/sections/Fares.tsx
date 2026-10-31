@@ -4,6 +4,7 @@ import { CarFront, Info, ReceiptText, ShieldCheck } from "lucide-react";
 import { getServiceArea, formatCedis, formatKm, type ServiceArea } from "@/lib/api";
 import { useApi } from "@/lib/useApi";
 import { Phone } from "../ui/Phone";
+import { RiseHeading } from "../ui/ScrubHeading";
 import { Tag } from "../ui/Tag";
 
 const hasBands = (d: ServiceArea) => d.fareBands.length > 0;
@@ -24,7 +25,7 @@ function FareScreen() {
       <p className="text-[1.45rem] leading-[1.1] tracking-tight">See your fare before you book</p>
       <p className="mt-2 text-[11px] text-paper/50">Fixed. It never changes after.</p>
       <div className="mt-6 flex items-center gap-2.5 rounded-2xl bg-white/[0.07] p-2.5">
-        <span className="inline-flex size-8 items-center justify-center rounded-full bg-paper text-[10px] font-semibold text-ink">KO</span>
+        <img src="/photos/avatar-kofi.jpg" alt="" className="size-8 rounded-full object-cover" />
         <p className="text-[11px] leading-tight">
           Kofi
           <br />
@@ -61,19 +62,17 @@ export function Fares() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="flex justify-center lg:justify-start lg:pl-10">
           <div data-tilt="-1">
-            <div className="[transform:perspective(1800px)_rotateX(14deg)_rotateY(16deg)_rotateZ(-16deg)]">
-              <Phone>
-                <FareScreen />
-              </Phone>
-            </div>
+            <Phone pose="tiltLeft" className="w-[19rem] sm:w-[25rem]">
+              <FareScreen />
+            </Phone>
           </div>
         </div>
 
         <div className="max-w-md">
           <Tag icon={ReceiptText}>Fixed fares</Tag>
-          <h2 id="fares-title" data-reveal className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+          <RiseHeading id="fares-title" className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
             One price per distance band.
-          </h2>
+          </RiseHeading>
           {state.status !== "error" && (
             <p data-reveal className="mt-5 flex gap-2.5 text-[15px] leading-relaxed text-paper/60">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-turbo" aria-hidden />

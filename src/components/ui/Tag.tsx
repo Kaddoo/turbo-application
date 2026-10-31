@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 /**
  * Small pill label. `dot` is the lime eyebrow above section titles; `chip` is
  * the grey tag that floats beside headlines and sits above feature copy.
+ * Both adapt when placed inside an `.on-light` section.
  */
 export function Tag({
   children,
@@ -18,14 +19,17 @@ export function Tag({
 }) {
   return (
     <span
+      data-pop
       className={cn(
-        "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs font-medium tracking-normal whitespace-nowrap",
-        tone === "dot" ? "bg-turbo/15 text-turbo" : "bg-white/[0.08] text-paper/80",
+        "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full px-3 align-middle text-xs font-medium tracking-normal whitespace-nowrap",
+        tone === "dot"
+          ? "bg-turbo/15 text-turbo in-[.on-light]:bg-ink in-[.on-light]:text-turbo"
+          : "bg-white/[0.08] text-paper/80 in-[.on-light]:bg-ink/[0.06] in-[.on-light]:text-ink/75",
         className,
       )}
     >
       {tone === "dot" && <span aria-hidden className="size-1.5 rounded-full bg-turbo" />}
-      {Icon && <Icon aria-hidden className="size-3.5 text-turbo" />}
+      {Icon && <Icon aria-hidden className="size-3.5 text-turbo in-[.on-light]:text-ink" />}
       {children}
     </span>
   );
