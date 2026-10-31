@@ -856,12 +856,6 @@ abstract class AppLocalizations {
   /// **'Search for a place'**
   String get destSearchLabel;
 
-  /// No description provided for @destSearchUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Place search isn\'t available in this version. Pick a saved place instead.'**
-  String get destSearchUnavailable;
-
   /// No description provided for @destSearchNoResults.
   ///
   /// In en, this message translates to:
@@ -987,6 +981,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Getting your price'**
   String get quoteGettingPrice;
+
+  /// No description provided for @destPlacesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus and popular places'**
+  String get destPlacesTitle;
+
+  /// No description provided for @destPlacesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No places are set up yet.'**
+  String get destPlacesEmpty;
 }
 
 class _AppLocalizationsDelegate

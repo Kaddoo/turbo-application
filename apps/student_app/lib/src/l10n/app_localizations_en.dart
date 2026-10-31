@@ -458,10 +458,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get destSearchLabel => 'Search for a place';
 
   @override
-  String get destSearchUnavailable =>
-      'Place search isn\'t available in this version. Pick a saved place instead.';
-
-  @override
   String get destSearchNoResults => 'No places found. Try different words.';
 
   @override
@@ -536,4 +532,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quoteGettingPrice => 'Getting your price';
+
+  @override
+  String get destPlacesTitle => 'Campus and popular places';
+
+  @override
+  String get destPlacesEmpty => 'No places are set up yet.';
 }

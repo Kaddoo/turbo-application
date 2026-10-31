@@ -127,7 +127,6 @@
   "destPickupChoose": "Choose a pickup point",
   "destPickupNone": "Using your location",
   "destSearchLabel": "Search for a place",
-  "destSearchUnavailable": "Place search isn't available in this version. Pick a saved place instead.",
   "destSearchNoResults": "No places found. Try different words.",
   "destSearchFailed": "We couldn't search just now. Try again.",
   "destSavedTitle": "Saved places",
@@ -168,5 +167,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "destPlacesTitle": "Campus and popular places",
+  "destPlacesEmpty": "No places are set up yet."
 }

@@ -56,7 +56,9 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
     setState(() => _searching = true);
     _debounce = Timer(const Duration(milliseconds: 350), () async {
       try {
-        final found = await ref.read(placeSearchProvider).search(q, bounds: searchBounds(boundary));
+        final found = await ref
+            .read(placeSearchProvider)
+            .search(q, bounds: searchBounds(boundary));
         if (mounted && _query.text.trim() == q) {
           setState(() {
             _results = found;
@@ -81,7 +83,11 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
       ref.read(tripDraftProvider.notifier).setDropoff(place);
       setState(() => _results = const []);
     } catch (_) {
-      if (mounted) setState(() => _searchError = AppLocalizations.of(context).destSearchFailed);
+      if (mounted) {
+        setState(
+          () => _searchError = AppLocalizations.of(context).destSearchFailed,
+        );
+      }
     }
   }
 
@@ -104,12 +110,20 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
     final area = ref.watch(serviceAreaProvider).value?.area;
     final search = ref.watch(placeSearchProvider);
     final saved = ref.watch(savedPlacesProvider);
-    final points = (area?.pickupPoints ?? const <PickupPoint>[]).where((p) => p.isActive).toList();
+    final points = (area?.pickupPoints ?? const <PickupPoint>[])
+        .where((p) => p.isActive)
+        .toList();
+
+    final dropoffPoints = points
+        .where((p) => p.id != draft.pickup?.pickupPointId)
+        .toList();
 
     Widget pickupCard() {
       final pickup = draft.pickup;
       return TurboCard(
-        onTap: points.isEmpty ? null : () => setState(() => _pickingPickup = !_pickingPickup),
+        onTap: points.isEmpty
+            ? null
+            : () => setState(() => _pickingPickup = !_pickingPickup),
         semanticLabel: l10n.destPickupLabel,
         child: Row(
           children: [
@@ -121,14 +135,18 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                 children: [
                   Text(l10n.destPickupLabel, style: text.bodySmall),
                   Text(
-                    pickup == null ? l10n.destPickupChoose : (pickup.label ?? l10n.destPickupNone),
+                    pickup == null
+                        ? l10n.destPickupChoose
+                        : (pickup.label ?? l10n.destPickupNone),
                     style: text.bodyLarge,
                   ),
-                  if (pickup?.landmark != null) Text(pickup!.landmark!, style: text.bodySmall),
+                  if (pickup?.landmark != null)
+                    Text(pickup!.landmark!, style: text.bodySmall),
                 ],
               ),
             ),
-            if (points.isNotEmpty) Icon(_pickingPickup ? Icons.expand_less : Icons.expand_more),
+            if (points.isNotEmpty)
+              Icon(_pickingPickup ? Icons.expand_less : Icons.expand_more),
           ],
         ),
       );
@@ -150,7 +168,12 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                   if (_showNeedPickup && draft.pickup == null)
                     Padding(
                       padding: const EdgeInsets.only(top: TurboSpacing.sm),
-                      child: Text(l10n.destNeedPickup, style: text.bodyMedium?.copyWith(color: t.colors.danger)),
+                      child: Text(
+                        l10n.destNeedPickup,
+                        style: text.bodyMedium?.copyWith(
+                          color: t.colors.danger,
+                        ),
+                      ),
                     ),
                   if (_pickingPickup)
                     for (final p in points)
@@ -158,7 +181,9 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                         title: p.name,
                         leading: const Icon(Icons.place_outlined),
                         onTap: () {
-                          ref.read(tripDraftProvider.notifier).setPickup(locationOfPickup(p));
+                          ref
+                              .read(tripDraftProvider.notifier)
+                              .setPickup(locationOfPickup(p));
                           setState(() => _pickingPickup = false);
                         },
                       ),
@@ -169,7 +194,12 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                         children: [
                           Icon(Icons.flag_outlined, color: t.colors.accentText),
                           const SizedBox(width: TurboSpacing.md),
-                          Expanded(child: Text(draft.dropoff!.label ?? '', style: text.bodyLarge)),
+                          Expanded(
+                            child: Text(
+                              draft.dropoff!.label ?? '',
+                              style: text.bodyLarge,
+                            ),
+                          ),
                         ],
                       ),
                     )
@@ -179,19 +209,33 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                       controller: _query,
                       textInputAction: TextInputAction.search,
                       onChanged: (v) => _onChanged(v, area?.boundary),
-                    )
-                  else
-                    Text(l10n.destSearchUnavailable, style: text.bodyMedium),
-                  if (_searching) const Padding(padding: EdgeInsets.only(top: TurboSpacing.md), child: LoadingState(rows: 1)),
+                    ),
+                  if (_searching)
+                    const Padding(
+                      padding: EdgeInsets.only(top: TurboSpacing.md),
+                      child: LoadingState(rows: 1),
+                    ),
                   if (_searchError != null)
                     Padding(
                       padding: const EdgeInsets.only(top: TurboSpacing.md),
-                      child: Text(_searchError!, style: text.bodyMedium?.copyWith(color: t.colors.danger)),
+                      child: Text(
+                        _searchError!,
+                        style: text.bodyMedium?.copyWith(
+                          color: t.colors.danger,
+                        ),
+                      ),
                     ),
-                  if (!_searching && _results.isEmpty && _query.text.trim().length >= 3 && _searchError == null && draft.dropoff == null)
+                  if (!_searching &&
+                      _results.isEmpty &&
+                      _query.text.trim().length >= 3 &&
+                      _searchError == null &&
+                      draft.dropoff == null)
                     Padding(
                       padding: const EdgeInsets.only(top: TurboSpacing.md),
-                      child: Text(l10n.destSearchNoResults, style: text.bodyMedium),
+                      child: Text(
+                        l10n.destSearchNoResults,
+                        style: text.bodyMedium,
+                      ),
                     ),
                   for (final r in _results)
                     TurboListRow(
@@ -201,7 +245,29 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                       onTap: () => _choose(r),
                     ),
                   const SizedBox(height: TurboSpacing.xl),
-                  Semantics(header: true, child: Text(l10n.destSavedTitle, style: text.titleLarge)),
+                  // Official points double as drop-offs, so there is always
+                  // somewhere to go even when place search is not set up.
+                  Semantics(
+                    header: true,
+                    child: Text(l10n.destPlacesTitle, style: text.titleLarge),
+                  ),
+                  const SizedBox(height: TurboSpacing.sm),
+                  if (dropoffPoints.isEmpty)
+                    Text(l10n.destPlacesEmpty, style: text.bodyMedium)
+                  else
+                    for (final p in dropoffPoints)
+                      TurboListRow(
+                        title: p.name,
+                        leading: const Icon(Icons.place_outlined),
+                        onTap: () => ref
+                            .read(tripDraftProvider.notifier)
+                            .setDropoff(locationOfPickup(p)),
+                      ),
+                  const SizedBox(height: TurboSpacing.xl),
+                  Semantics(
+                    header: true,
+                    child: Text(l10n.destSavedTitle, style: text.titleLarge),
+                  ),
                   const SizedBox(height: TurboSpacing.sm),
                   saved.when(
                     loading: () => const LoadingState(rows: 1),
@@ -215,7 +281,9 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                                   title: p.label,
                                   subtitle: p.location.label,
                                   leading: const Icon(Icons.bookmark_border),
-                                  onTap: () => ref.read(tripDraftProvider.notifier).setDropoff(p.location),
+                                  onTap: () => ref
+                                      .read(tripDraftProvider.notifier)
+                                      .setDropoff(p.location),
                                 ),
                             ],
                           ),

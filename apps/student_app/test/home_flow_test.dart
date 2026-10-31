@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:student_app/src/features/home/location_service.dart';
 import 'package:student_app/src/features/home/place_search.dart';
 import 'package:turbo_api/turbo_api.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import 'support/fake_server.dart';
 import 'support/home_harness.dart';
@@ -82,9 +83,11 @@ void main() {
       expect(find.text('Main gate'), findsOneWidget);
       await tester.tap(find.text('Main gate'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Hostel block'));
+      // The pickup list opens above the drop-off places; choose from it.
+      await tester.tap(find.widgetWithText(TurboListRow, 'Hostel block').first);
       await tester.pumpAndSettle();
       expect(find.text('Hostel block'), findsOneWidget);
+      expect(find.widgetWithText(TurboListRow, 'Main gate'), findsOneWidget, reason: 'now offered as a drop-off');
     });
 
     testWidgets('Continue stays off until a drop-off is chosen, then asks for a price', (tester) async {
@@ -93,7 +96,8 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, 'Where to?'));
       await tester.pumpAndSettle();
       expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Continue')).onPressed, isNull);
-      expect(find.textContaining("isn't available in this version"), findsOneWidget);
+      expect(find.textContaining("isn't available"), findsNothing);
+      expect(find.text('Campus and popular places'), findsOneWidget);
 
       await tester.tap(find.text('Hostel place'));
       await tester.pumpAndSettle();
@@ -105,6 +109,22 @@ void main() {
       expect(body['pickup']['pickupPointId'], pickupA['id']);
       expect(body['dropoff']['label'], 'Hostel place');
       expect(find.text('GH₵35.00'), findsOneWidget);
+    });
+
+    testWidgets('official points can be chosen as the drop-off, and the pickup is left out of the list', (tester) async {
+      final server = homeServer()..on('POST /rides/quote', body: quote());
+      await bootHome(tester, server);
+      await tester.tap(find.widgetWithText(FilledButton, 'Where to?'));
+      await tester.pumpAndSettle();
+      // The pickup defaulted to Main gate; it is not offered as a drop-off.
+      expect(find.widgetWithText(TurboListRow, 'Main gate'), findsNothing);
+      await tester.tap(find.widgetWithText(TurboListRow, 'Hostel block'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
+      await tester.pumpAndSettle();
+      final body = bodyOf(server.calls('POST /rides/quote').single) as Map;
+      expect(body['dropoff']['label'], 'Hostel block');
+      expect(body['dropoff']['pickupPointId'], pickupB['id']);
     });
 
     testWidgets('a saved-place chip on home jumps straight to the destination screen', (tester) async {
