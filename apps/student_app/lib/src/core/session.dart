@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turbo_api/turbo_api.dart';
 
+import '../features/push/push_service.dart';
 import 'providers.dart';
 
 enum SessionStatus { signedOut, signedIn }
@@ -62,6 +63,7 @@ class SessionController extends AsyncNotifier<SessionState> {
   }
 
   Future<void> signOut() async {
+    await ref.read(pushRegistrarProvider).unregister();
     try {
       await _auth.logout();
     } catch (_) {

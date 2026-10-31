@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:student_app/src/app.dart';
 import 'package:student_app/src/core/token_store.dart';
@@ -114,6 +115,7 @@ Future<List<MapSpec>> bootHome(
   FakeLocation? location,
   FakeSearch? search,
   Size size = const Size(390, 900),
+  List<Override> extra = const [],
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -123,6 +125,7 @@ Future<List<MapSpec>> bootHome(
     ProviderScope(
       retry: (_, _) => null,
       overrides: [
+        ...extra,
         ...server.overrides(store: MemoryTokenStore('refresh-1')),
         locationServiceProvider.overrideWithValue(location ?? FakeLocation(UserLocation(LocationStatus.granted, GeoPoint(lat: 5.7405, lng: 0.0662)))),
         placeSearchProvider.overrideWithValue(search ?? FakeSearch(available: false)),
