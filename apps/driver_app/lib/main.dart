@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
+import 'src/location/spike_screen.dart';
+
 void main() => runApp(const App());
 
 class App extends StatelessWidget {
@@ -15,8 +17,8 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       localizationsDelegates: TurboUiLocalizations.localizationsDelegates,
       supportedLocales: TurboUiLocalizations.supportedLocales,
-      // Placeholder until the first real screen: the component gallery.
-      home: const TurboGalleryScreen(brand: turboBrand),
+      // The spike screen stands in for the duty screen until group 5.
+      home: const LocationSpikeScreen(brand: turboBrand),
     );
   }
 }

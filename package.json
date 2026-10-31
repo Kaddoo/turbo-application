@@ -3,7 +3,8 @@
   "private": true,
   "description": "Dev tooling only: Prism mock and the Dart client generator",
   "scripts": {
-    "mock": "prism mock api/openapi.yaml -p 4010"
+    "mock": "prism mock api/openapi.yaml -p 4010",
+    "mock:lan": "prism mock api/openapi.yaml -h 0.0.0.0 -p 4010"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.0",

@@ -2,6 +2,29 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: group 3 (driver location spike)
+
+**Task:** Background-location spike for the driver app (risk R7), before anything else in the driver app.
+
+**Files touched:**
+- apps/driver_app/lib/src/location/ (buffer, reporter, permission and stream, API sender, spike screen), lib/main.dart, test/location_test.dart
+- apps/driver_app: Info.plist (location strings, `UIBackgroundModes: location`, local networking), AndroidManifest.xml (location, foreground service, notification permissions), pubspec (geolocator, turbo_api)
+- package.json (`mock:lan` serves the mock to a phone on the same network), .gitignore
+
+**What changed:** One point per 5 s from a background-enabled stream goes to `PUT /driver/location` through the generated client. Failures are buffered, retried every 5 s, sent oldest first in requests of at most 20 points, and points older than 10 minutes are dropped. The reporter detects its own stall (no GPS fix, or no server acceptance, for 30 s) and the screen shows a red banner. iOS asks for "while using" and then "Always"; the screen shows what was granted and a button to open Settings.
+
+**Acceptance criteria:**
+- [x] Pipeline unit tests: 5 s throttle, buffer and flush in order, 20-point batches, 10-minute drop, stall detection, stop
+- [x] `flutter analyze` clean, all tests pass; iOS debug build compiles (unsigned)
+- [ ] 30 minutes with the screen locked on a real iPhone: NOT DONE, no device has run it
+- [ ] Android foreground service: not tested (Android paused)
+
+**Deviations from plan or contract:** Android "Allow all the time" needs `permission_handler` (geolocator cannot request it on Android 11+), plus battery-optimisation guidance; not added yet. iOS strings do not name the product so a rebrand does not touch them. The mock accepts any bearer token, so the spike sends a placeholder.
+
+**Status:** built, not verified on a device. **Launch gate R7 stays open.**
+
+**Next step:** Install on the phone (wireless), run 30 minutes locked, count `PUT /driver/location` in the mock log against the on-screen sent count.
+
 ## 2026-10-31, Kevin with Claude, code: group 2 (turbo_ui)
 
 **Task:** `turbo_ui` brand layer, theme, safeguards, base components, shared states, gallery.

@@ -18,3 +18,4 @@ GoogleService-Info.plist
 node_modules/
 .claude/
 .graphify/
+.secrets/
