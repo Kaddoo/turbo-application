@@ -77,7 +77,9 @@ const routes: [string, RegExp, Handler][] = [
     if (!body.password || body.password.length < 10) return problem(401, 'invalid_credentials', 'Invalid credentials');
     if (!body.totpCode) return problem(401, 'mfa_required', 'MFA code required');
     const prefix = body.email.split(/[@.]/)[0]?.toLowerCase();
-    const role = (['verifier', 'dispatcher', 'finance', 'support', 'hr'] as const).find((r) => r === prefix) ?? 'super_admin';
+    // Same staff emails as the API's dev seed (docs/api-integration.md §8): dispatch@, finance2@, admin@ ...
+    const alias: Record<string, S['StaffRole']> = { verifier: 'verifier', dispatch: 'dispatcher', dispatcher: 'dispatcher', finance: 'finance', finance2: 'finance', support: 'support', hr: 'hr' };
+    const role = alias[prefix ?? ''] ?? 'super_admin';
     store.set('demo.role', role);
     return json(200, tokens());
   }],
@@ -265,7 +267,12 @@ const routes: [string, RegExp, Handler][] = [
       providerTotalPesewas: 842_000, ourTotalPesewas: 842_000, exceptions: [], createdAt: new Date().toISOString() };
     db.reconReports.unshift(r); return json(201, r);
   }],
-  ['POST', /^\/uploads$/, () => json(200, { uploadId: db.uid(), uploadUrl: 'data:,', method: 'PUT', expiresAt: new Date(Date.now() + 300_000).toISOString() })],
+  ['POST', /^\/uploads$/, (_m, _q, b) => {
+    const id = db.uid();
+    return json(201, { uploadId: id, uploadUrl: `${window.location.origin}/demo-storage/${id}`, method: 'PUT',
+      headers: { 'Content-Type': (b as S['UploadRequest']).contentType }, expiresAt: new Date(Date.now() + 600_000).toISOString() });
+  }],
+  ['PUT', /^\/demo-storage\/[^/]+$/, () => json(204)],
 
   ['GET', /^\/admin\/support\/tickets$/, (_m, q) => json(200, page(db.tickets.filter((t) => (!q.get('status') || t.status === q.get('status')) && (!q.get('category') || t.category === q.get('category')))
     .map(({ messages: _x, ...t }) => t), q))],
@@ -317,7 +324,8 @@ export const demoFetch: typeof fetch = async (input, init) => {
   const request = input instanceof Request ? input : new Request(input, init);
   const url = new URL(request.url, window.location.origin);
   const path = url.pathname.replace(/^\/api/, '');
-  const text = request.method === 'GET' || request.method === 'DELETE' ? '' : await request.text();
+  const isJson = (request.headers.get('Content-Type') ?? '').includes('json');
+  const text = request.method === 'GET' || request.method === 'DELETE' || !isJson ? '' : await request.text();
   const body: Json = text ? JSON.parse(text) : {};
   await delay(180 + Math.random() * 220); // feel of a real network
   for (const [method, re, handler] of routes) {

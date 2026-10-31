@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { api, call } from '../api/client';
+import { api, call, onUpgradeRequired } from '../api/client';
 import { canUse, roleLabels, type Area } from '../auth/roles';
 import { useIdleTimer, useSession } from '../auth/session';
 import { Banner, Button, Dialog, DialogActions } from '../components/ui';
@@ -51,6 +51,8 @@ export function Layout() {
   const role = me?.staffRole;
   const onIdle = useCallback(() => void signOut('idle'), [signOut]);
   const idle = useIdleTimer(onIdle);
+  const [outdated, setOutdated] = useState(false);
+  useEffect(() => onUpgradeRequired(() => setOutdated(true)), []);
 
   // SOS banner: polls open incidents for roles the contract lets read them (x-roles: support).
   const sos = useQuery({
@@ -102,6 +104,11 @@ export function Layout() {
       </nav>
       <main className={l.main} id="main">
         <div className={l.banners}>
+          {outdated && (
+            <Banner tone="warning" action={<Button small variant="primary" onClick={() => window.location.reload()}>Reload</Button>}>
+              A newer version of the dashboard is out. Reload to keep working.
+            </Banner>
+          )}
           {open.length > 0 && (
             <Banner tone="danger" action={<Button small variant="danger" onClick={() => navigate('/incidents')}>Open incidents</Button>}>
               {open.length === 1 ? '1 open SOS or safety incident' : `${open.length} open SOS or safety incidents`}

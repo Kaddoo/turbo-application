@@ -10,6 +10,16 @@ npm run gen:api                     # regenerate src/api/schema.d.ts from the co
 npm run check                       # schema up to date, typecheck, tests: must pass before every commit
 ```
 
+## Against the real API
+
+How the API behaves is in `docs/api-integration.md`. Locally the API runs on `http://localhost:3000` (`npm run migrate && npm run seed && npm start`, plus `npm run worker`, in the API repo).
+
+```bash
+API_PROXY_TARGET=http://localhost:3000 npm run dev
+```
+
+Calls go to `/api` on the dev server, which proxies them, so the `SameSite=Strict` refresh cookie works with no CORS setup. Dev staff accounts: `admin@`, `finance@`, `finance2@`, `verifier@`, `dispatch@`, `hr@`, `support@` at `turbo.test`, password `Turbo-demo-1`, no MFA in dev. A deployed dashboard sets `VITE_API_BASE_URL` to the API's `/v1` URL on the same site (for example `admin.turbo.com` and `api.turbo.com`), and its origin must be in the API's `CORS_ORIGINS`.
+
 ## Demo mode
 
 ```bash

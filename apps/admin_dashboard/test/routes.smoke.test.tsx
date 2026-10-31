@@ -80,4 +80,12 @@ describe('every screen renders against the demo server', () => {
     expect(errors).toEqual([]);
     expect(unrouted).toEqual([]);
   }, 10_000);
+
+  it('accepts a CSV statement upload end to end', async () => {
+    unrouted.length = 0;
+    const { uploadFile } = await import('../src/api/client');
+    const id = await uploadFile('provider_statement', new File(['date,amount\n2026-10-01,3500'], 'statement.csv'));
+    expect(id).toBeTruthy();
+    expect(unrouted).toEqual([]);
+  });
 });

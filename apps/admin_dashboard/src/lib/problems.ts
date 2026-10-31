@@ -36,11 +36,14 @@ const messages: Partial<Record<ProblemCode, string>> = {
 export class ApiError extends Error {
   readonly status: number;
   readonly problem: Problem | null;
+  /** Seconds to wait before retrying (429, 503): the body's `retryAfterSeconds`, else the Retry-After header. */
+  readonly retryAfterSeconds: number | undefined;
 
-  constructor(status: number, problem: Problem | null) {
+  constructor(status: number, problem: Problem | null, retryAfterHeader?: number) {
     super(problem?.detail ?? problem?.title ?? `Request failed (${status})`);
     this.status = status;
     this.problem = problem;
+    this.retryAfterSeconds = problem?.retryAfterSeconds ?? retryAfterHeader;
   }
 
   get code(): ProblemCode | null {
@@ -50,6 +53,14 @@ export class ApiError extends Error {
 
 export function problemMessage(error: unknown): string {
   if (error instanceof ApiError) {
+    const wait = error.retryAfterSeconds;
+    // account_locked has its own fixed 15-minute sentence.
+    if (wait && (error.status === 429 || error.status === 503) && error.code !== 'account_locked') {
+      const when = wait < 60 ? `${wait} seconds` : `${Math.ceil(wait / 60)} minutes`;
+      return error.code === 'sms_budget_exceeded'
+        ? `${messages.sms_budget_exceeded} Try again in ${when}.`
+        : `Too many requests right now. Try again in ${when}.`;
+    }
     if (error.code && messages[error.code]) return messages[error.code]!;
     if (error.status === 403) return messages.forbidden!;
     if (error.status === 404) return messages.not_found!;

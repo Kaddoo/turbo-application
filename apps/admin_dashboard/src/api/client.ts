@@ -66,6 +66,13 @@ async function refreshAccessToken(): Promise<boolean> {
   return refreshing;
 }
 
+/** 426 `upgrade_required`: this build is older than the API allows. Layout shows a reload banner. */
+const upgradeListeners = new Set<() => void>();
+export function onUpgradeRequired(listener: () => void): () => void {
+  upgradeListeners.add(listener);
+  return () => upgradeListeners.delete(listener);
+}
+
 const authMiddleware: Middleware = {
   onRequest({ request, schemaPath }) {
     request.headers.set('X-App-Version', APP_VERSION);
@@ -75,6 +82,7 @@ const authMiddleware: Middleware = {
     return request;
   },
   async onResponse({ request, response, schemaPath }) {
+    if (response.status === 426) upgradeListeners.forEach((l) => l());
     if (response.status !== 401 || PUBLIC_AUTH.test(schemaPath)) return undefined;
     // Retry once after a refresh. Requests with a consumed body cannot be replayed safely.
     if (request.bodyUsed || !(await refreshAccessToken())) return undefined;
@@ -110,9 +118,40 @@ export async function call<T>(
 ): Promise<T> {
   const { data, error, response } = await pending;
   if (!response.ok || error !== undefined) {
-    throw new ApiError(response.status, isProblem(error) ? error : null);
+    const header = Number(response.headers.get('Retry-After'));
+    throw new ApiError(response.status, isProblem(error) ? error : null, Number.isFinite(header) && header > 0 ? header : undefined);
   }
   return data as T;
+}
+
+type UploadPurpose = Schemas['UploadRequest']['purpose'];
+type UploadContentType = Schemas['UploadRequest']['contentType'];
+
+/**
+ * The type to declare for a file. Browsers often report CSV as '' or
+ * 'application/vnd.ms-excel'; the API wants 'text/csv' (contract 0.2.2, for
+ * `provider_statement` only).
+ */
+export function uploadContentType(file: File): UploadContentType {
+  if (/\.csv$/i.test(file.name)) return 'text/csv' as UploadContentType;
+  return file.type as UploadContentType;
+}
+
+/**
+ * Signed upload (docs/api-integration.md §5): ask for a slot, PUT the raw
+ * bytes with exactly the declared Content-Type and no auth header, and only
+ * hand back the uploadId once storage has accepted the file.
+ */
+export async function uploadFile(purpose: UploadPurpose, file: File): Promise<string> {
+  const contentType = uploadContentType(file);
+  const slot = await call(api.POST('/uploads', { body: { purpose, contentType, sizeBytes: file.size } }));
+  const res = await transport(slot.uploadUrl, {
+    method: slot.method,
+    body: file,
+    headers: { ...slot.headers, 'Content-Type': contentType },
+  });
+  if (!res.ok) throw new ApiError(res.status, null);
+  return slot.uploadId;
 }
 
 /** One UUID per user intention; keep it while the same intention is retried. */

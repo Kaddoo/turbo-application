@@ -2,6 +2,36 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Claude, code: admin dashboard follows the API integration guide
+
+**Task:** Store the backend's integration guide (contract 0.2.2) and bring the dashboard in line with it before trying the real API.
+
+**Files touched:**
+- docs/api-integration.md (new: the guide, verbatim, with a note on the contract version)
+- apps/admin_dashboard: src/api/client.ts, src/lib/problems.ts, src/main.tsx, src/app/Layout.tsx, src/pages/Finance.tsx, src/pages/People.tsx, src/pages/SignIn.tsx, src/demo/server.ts, vite.config.ts, .env.example, README.md, test/api-client.test.ts (new), test/routes.smoke.test.tsx
+
+**What changed:**
+- Uploads go through one `uploadFile` helper: declares the type (`.csv` always as `text/csv`), PUTs with exactly that `Content-Type` and no auth header, and fails unless storage answers 2xx. Before, a failed PUT was ignored and the screen carried on with a useless `uploadId`.
+- Reconciliation takes the Payaza CSV statement (0.2.2); the "upload a PDF instead" banner is gone.
+- 429/503: the wait comes from `retryAfterSeconds` or `Retry-After`; queries retry after that delay and messages say how long to wait.
+- 426 `upgrade_required` shows a reload banner.
+- Dev proxy target is configurable (`API_PROXY_TARGET`, Prism :4010 by default, real API :3000); refresh-cookie path and domain are rewritten in dev so the cookie comes back.
+- Demo logins match the API's dev accounts (`dispatch@`, `finance2@`); the demo storage accepts uploads; the demo no longer JSON-parses file bodies.
+
+**Acceptance criteria:**
+- [x] `npm run check` (75 tests) and `npm run build` pass
+- [x] Proxy checked against Prism: `/api/health` and `/api/service-area` return 200 through the dev server
+- [ ] Signed in against the real API on :3000 (not running on this machine)
+
+**Deviations from plan or contract:**
+- `api/openapi.yaml` is still 0.2.0. The 0.2.2 file was pasted incomplete (stops at `addDriverDocument`), so it was not stored and types were not regenerated. Until it lands, `text/csv` is sent through the existing content-type cast. 0.2.1 only touches `DriverRide` (driver app).
+- `GET /admin/stats` exists in the API but not in the contract, so Overview does not use it (contract wins). Needs a contract entry to be used.
+- CONTRACT_REQUESTS A1 (CSV for reconciliation) is resolved by 0.2.2; that file lives on branch admin-contract-requests and was not edited here.
+
+**Status:** done, awaiting review. Branch: admin-api-integration (cut from admin-dashboard-screens).
+
+**Next step:** Drop the full 0.2.2 `openapi.yaml` into `api/` and run `npm run gen:api`; then `API_PROXY_TARGET=http://localhost:3000 npm run dev`, sign in as each dev staff account, and click through.
+
 ## 2026-10-31, Claude, code: admin dashboard screens
 
 **Task:** Build the dashboard screens on the scaffold: sign-in through to every `x-roles` area.

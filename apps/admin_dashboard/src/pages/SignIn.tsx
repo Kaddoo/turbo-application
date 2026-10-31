@@ -72,7 +72,7 @@ export function SignInPage() {
         {isDemo && (
           <p className={a.notice}>
             Demo data. Any email and a 10-character password work, and any 6-digit code. Start the email with a role
-            (verifier@, dispatcher@, finance@, support@, hr@) to see that role’s view.
+            (verifier@, dispatch@, finance@, support@, hr@) to see that role’s view.
           </p>
         )}
       </form>

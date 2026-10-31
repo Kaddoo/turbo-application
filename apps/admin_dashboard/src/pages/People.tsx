@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { api, call, type Schemas } from '../api/client';
+import { api, call, type Schemas, uploadFile } from '../api/client';
 import { canUse } from '../auth/roles';
 import { useSession } from '../auth/session';
 import {
@@ -241,9 +241,8 @@ export function DriverDetailPage() {
 
   const addDoc = useAction(async () => {
     if (!doc.file) throw new Error('No file');
-    const slot = await call(api.POST('/uploads', { body: { purpose: 'driver_document', contentType: doc.file.type as Schemas['UploadRequest']['contentType'], sizeBytes: doc.file.size } }));
-    await fetch(slot.uploadUrl, { method: slot.method, body: doc.file, headers: slot.headers }).catch(() => undefined);
-    return call(api.POST('/admin/drivers/{id}/documents', { params: { path: { id } }, body: { type: doc.type, uploadId: slot.uploadId, ...(doc.expiresOn ? { expiresOn: doc.expiresOn } : {}) } }));
+    const uploadId = await uploadFile('driver_document', doc.file);
+    return call(api.POST('/admin/drivers/{id}/documents', { params: { path: { id } }, body: { type: doc.type, uploadId, ...(doc.expiresOn ? { expiresOn: doc.expiresOn } : {}) } }));
   }, [['driver', id], ['expiring-docs']]);
   const saveSalary = useAction(() => {
     const cedis = Number(salaryForm.cedis);

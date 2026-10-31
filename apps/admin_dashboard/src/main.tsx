@@ -19,6 +19,10 @@ const queryClient = new QueryClient({
       staleTime: 15_000,
       // Never retry client errors (403, 404, 422); back off on the rest.
       retry: (count, err) => !(err instanceof ApiError && err.status < 500 && err.status !== 429) && count < 2,
+      // 429 and 503 say how long to wait (Retry-After); otherwise exponential back-off.
+      retryDelay: (count, err) => (err instanceof ApiError && err.retryAfterSeconds
+        ? Math.min(err.retryAfterSeconds, 60) * 1000
+        : Math.min(1000 * 2 ** count, 30_000)),
       refetchOnWindowFocus: true,
     },
   },

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
-import { api, call, newIdempotencyKey, type Schemas } from '../api/client';
+import { api, call, newIdempotencyKey, uploadFile, type Schemas } from '../api/client';
 import { useSession } from '../auth/session';
 import {
-  Banner, Button, Card, Chip, DataTable, Details, Dialog, DialogActions, Money, PageHeader, Select, Skeleton, Tabs,
+  Button, Card, Chip, DataTable, Details, Dialog, DialogActions, Money, PageHeader, Select, Skeleton, Tabs,
   TextArea, TextField, useToast, ui, When, type Tone,
 } from '../components/ui';
 import { formatDate, formatPesewas, humanize, parseCedis, shortId } from '../lib/format';
@@ -219,17 +219,14 @@ export function ReconciliationPage() {
   const [form, setForm] = useState<{ file: File | null; from: string; to: string }>({ file: null, from: '', to: '' });
   const [selected, setSelected] = useState<Schemas['ReconciliationReport'] | null>(null);
   const run = useAction(async () => {
-    const file = form.file!;
-    const slot = await call(api.POST('/uploads', { body: { purpose: 'provider_statement', contentType: file.type as Schemas['UploadRequest']['contentType'], sizeBytes: file.size } }));
-    await fetch(slot.uploadUrl, { method: slot.method, body: file, headers: slot.headers }).catch(() => undefined);
-    return call(api.POST('/admin/reconciliation/reports', { body: { statementUploadId: slot.uploadId, periodFrom: form.from, periodTo: form.to } }));
+    const statementUploadId = await uploadFile('provider_statement', form.file!);
+    return call(api.POST('/admin/reconciliation/reports', { body: { statementUploadId, periodFrom: form.from, periodTo: form.to } }));
   }, [['recon']]);
   const report = selected ?? list.rows?.[0] ?? null;
   return (
     <>
       <PageHeader title="Reconciliation" description="Compare our top-ups with the Payaza collections statement. Every difference becomes an exception to work."
         actions={<Button variant="primary" onClick={() => setOpen(true)}>Run reconciliation</Button>} />
-      <Banner tone="warning">The contract does not accept CSV uploads yet (CONTRACT_REQUESTS A1). Until it does, upload the statement as a PDF.</Banner>
       {list.loading ? <Card><Skeleton /></Card> : report ? (
         <Card title={`Report for ${formatDate(report.periodFrom)} to ${formatDate(report.periodTo)}`}>
           <div className={ui.grid4}>
@@ -261,7 +258,8 @@ export function ReconciliationPage() {
           { header: 'Run', cell: (r) => <When iso={r.createdAt} /> },
         ]} />
       <Dialog open={open} onClose={() => setOpen(false)} title="Run reconciliation">
-        <TextField label="Payaza statement" type="file" accept="application/pdf,image/png,image/jpeg,text/csv" onChange={(e) => setForm({ ...form, file: e.target.files?.[0] ?? null })} />
+        <TextField label="Payaza statement" type="file" accept=".csv,text/csv,application/pdf,image/png,image/jpeg" onChange={(e) => setForm({ ...form, file: e.target.files?.[0] ?? null })}
+          hint="The collections export from the Payaza dashboard, as CSV (or PDF), up to 10 MB." />
         <div className={ui.grid2} style={{ gridTemplateColumns: '1fr 1fr' }}>
           <TextField label="From" type="date" value={form.from} onChange={(e) => setForm({ ...form, from: e.target.value })} />
           <TextField label="To" type="date" value={form.to} onChange={(e) => setForm({ ...form, to: e.target.value })} />
