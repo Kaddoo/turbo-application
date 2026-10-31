@@ -1,0 +1,91 @@
+//
+// AUTO-GENERATED FILE, DO NOT MODIFY!
+//
+
+// ignore_for_file: unused_element
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'problem_errors_inner.g.dart';
+
+
+@CopyWith()
+@JsonSerializable(
+  checked: true,
+  createToJson: true,
+  disallowUnrecognizedKeys: false,
+  explicitToJson: true,
+)
+class ProblemErrorsInner {
+  /// Returns a new [ProblemErrorsInner] instance.
+  ProblemErrorsInner({
+
+    required  this.field,
+
+    required  this.message,
+
+     this.code,
+  });
+
+      /// JSON pointer or dotted path
+  @JsonKey(
+    
+    name: r'field',
+    required: true,
+    includeIfNull: false,
+  )
+
+
+  final String field;
+
+
+
+  @JsonKey(
+    
+    name: r'message',
+    required: true,
+    includeIfNull: false,
+  )
+
+
+  final String message;
+
+
+
+  @JsonKey(
+    
+    name: r'code',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? code;
+
+
+
+
+
+    @override
+    bool operator ==(Object other) => identical(this, other) || other is ProblemErrorsInner &&
+      other.field == field &&
+      other.message == message &&
+      other.code == code;
+
+    @override
+    int get hashCode =>
+        field.hashCode +
+        message.hashCode +
+        code.hashCode;
+
+  factory ProblemErrorsInner.fromJson(Map<String, dynamic> json) => _$ProblemErrorsInnerFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProblemErrorsInnerToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+}
+
