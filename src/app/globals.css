@@ -86,17 +86,17 @@ html.bg-scroll [data-bg] { background-color: transparent; }
 .door-loader { display: none; }
 html.door .door-loader {
   display: block; position: fixed; inset: 0; z-index: 200; perspective: 1800px;
-  animation: door-done 0s 1.7s forwards;
+  animation: door-done 0s 3.4s forwards;
 }
 .door-panel {
   position: absolute; inset: 0; transform-origin: left center; backface-visibility: hidden;
   background: radial-gradient(120% 80% at 70% 60%, #1c1f1b, #0b0c0a 70%);
   box-shadow: inset -3px 0 0 #d4ff3a, 40px 0 80px rgba(0, 0, 0, 0.6);
-  animation: door-open 1s cubic-bezier(0.65, 0, 0.25, 1) 0.6s forwards;
+  animation: door-open 2s cubic-bezier(0.65, 0, 0.25, 1) 1.4s forwards;
 }
 .door-panel::after {
   content: ""; position: absolute; inset: 0; background: #000; opacity: 0;
-  animation: door-shade 1s cubic-bezier(0.65, 0, 0.25, 1) 0.6s forwards;
+  animation: door-shade 2s cubic-bezier(0.65, 0, 0.25, 1) 1.4s forwards;
 }
 .door-window {
   position: absolute; left: 7%; right: 9%; top: 7%; height: 36%;
@@ -111,7 +111,7 @@ html.door .door-loader {
 .door-handle {
   position: absolute; right: 11%; top: 50%; width: clamp(5rem, 11vw, 10rem); height: 0.9rem; border-radius: 999px;
   background: #d4ff3a; box-shadow: 0 6px 18px rgba(212, 255, 58, 0.25);
-  animation: handle-pull 0.35s ease-out 0.2s forwards;
+  animation: handle-pull 0.7s ease-in-out 0.5s forwards;
 }
 .door-brand {
   position: absolute; left: 7%; bottom: 9%; font-weight: 600; font-size: clamp(1.5rem, 3vw, 2.25rem);
