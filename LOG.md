@@ -2,6 +2,36 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: student app phase 2, part 1 (wallet and top-up)
+
+**Task:** Move on without place search: drop-offs from official points, then the wallet, top-up and activity screens, behind the bottom bar.
+
+**Files touched:**
+- apps/student_app: features/wallet (wallet, top-up, waiting, transactions), features/activity, features/shell (bottom bar), destination screen, quote screen, router, flow, ARB
+- tools/complete-topup.sh (dev: sends the signed webhook Payaza would), tools/seed-dev-places.sh (dev: demo pickup points)
+
+**What changed:**
+- Drop-off: official pickup points are offered as drop-offs ("Campus and popular places"); place search stays off until it has a key or a backend endpoint (CR-2). The "not available in this version" message is gone.
+- Bottom bar (Ride, Wallet, Activity) with the ride and money flows full screen above it.
+- Wallet: available in large type, held, owed (icon and words), recent entries; See all with filters and paging. Holds and releases read "Held" and "Released".
+- Top-up: chips and a typed amount parsed to integer pesewas, range checked before sending, one idempotency key per intention (same amount retried reuses it, a new amount does not), waiting screen with polling, check-now, resume check, and a timeout that says "still waiting, don't pay again" and never calls a payment failed. Quote's "Top up" pre-fills the shortfall and the quote renews when money lands.
+- Activity: list of my rides with status chips (empty and error states).
+
+**Checked on the real backend (curl):** top-up created, webhook helper credited it, wallet and transaction list updated.
+
+**Acceptance criteria:**
+- [x] `flutter analyze` clean; student app 86 tests, turbo_ui 48
+- [x] Top-up path against the running backend
+- [ ] Seen on the phone: installed, not yet used
+- [ ] Booking, ride tracking, PIN, completion, cancel, receipt, rating: next (phase 2 part 2)
+
+**Deviations from plan or contract:**
+- Top-up limits (GH₵5 to GH₵500) are constants from decision D20; the server decides. The contract has no field for them.
+- The contract has no network chooser or phone field on a top-up (the backend uses the account number), so none is shown.
+- Demo pickup points on the local backend are approximate and not approved by Turbo (D1).
+
+**Status:** done, part 1. Branch: student-wallet. **Next step:** booking (`POST /rides` with an idempotency key), searching, driver assigned with the PIN, in trip, done, cancel.
+
 ## 2026-10-31, Kevin with Claude, code: run the real backend locally
 
 **Task:** Make `api/contract/openapi.yaml` the source of truth and run the backend from `origin/main` for the phone apps.
