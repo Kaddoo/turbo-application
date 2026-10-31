@@ -9,7 +9,9 @@ import 'features/auth/phone_screen.dart';
 import 'features/auth/terms_screen.dart';
 import 'features/auth/welcome_screen.dart';
 import 'features/gate/gate_screens.dart';
-import 'features/home/home_placeholder.dart';
+import 'features/home/destination_screen.dart';
+import 'features/home/home_screen.dart';
+import 'features/home/quote_screen.dart';
 import 'features/verification/verification_capture_screen.dart';
 import 'features/verification/verification_status_screen.dart';
 
@@ -34,7 +36,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/terms', builder: (_, _) => const TermsScreen()),
       GoRoute(path: '/verification', builder: (_, _) => const VerificationCaptureScreen()),
       GoRoute(path: '/verification/status', builder: (_, _) => const VerificationStatusScreen()),
-      GoRoute(path: '/home', builder: (_, _) => const HomePlaceholder()),
+      GoRoute(
+        path: '/home',
+        builder: (_, _) => const HomeScreen(),
+        routes: [
+          GoRoute(path: 'destination', builder: (_, _) => const DestinationScreen()),
+          GoRoute(path: 'quote', builder: (_, _) => const QuoteScreen()),
+        ],
+      ),
     ],
   );
 });

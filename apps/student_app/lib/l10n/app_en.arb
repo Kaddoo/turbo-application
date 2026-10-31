@@ -108,5 +108,65 @@
   "statusApprovedTitle": "You're verified",
   "statusApprovedBody": "You can now book rides.",
   "statusRefreshFailed": "We couldn't check just now. Pull down to try again.",
-  "statusSubmittedAt": "Sent {date}"
+  "statusSubmittedAt": "Sent {date}",
+  "homeWhereTo": "Where to?",
+  "homeWalletChip": "Wallet {amount}",
+  "homeWalletLow": "Wallet {amount}, low",
+  "homeSavedPlaces": "Saved places",
+  "homeOfflineMap": "You're offline. The map and prices may be out of date.",
+  "homeBookingsPaused": "Booking is paused for now.",
+  "homeLocationDeniedTitle": "Location is off",
+  "homeLocationDeniedBody": "{appName} uses your location to find the nearest pickup point. You can also choose a pickup point from the list.",
+  "homeAllowLocation": "Allow location",
+  "homeChoosePickup": "Choose a pickup point",
+  "homeLocationServicesOff": "Switch on location in your phone's settings to find the nearest pickup point.",
+  "homeLoadFailed": "We couldn't load the map details. Check your connection and try again.",
+  "destTitle": "Where to?",
+  "destPickupLabel": "Pickup",
+  "destPickupCurrent": "Nearest pickup point",
+  "destPickupChoose": "Choose a pickup point",
+  "destPickupNone": "Using your location",
+  "destSearchLabel": "Search for a place",
+  "destSearchUnavailable": "Place search isn't available in this version. Pick a saved place instead.",
+  "destSearchNoResults": "No places found. Try different words.",
+  "destSearchFailed": "We couldn't search just now. Try again.",
+  "destSavedTitle": "Saved places",
+  "destSavedEmpty": "You have no saved places yet.",
+  "destContinue": "Continue",
+  "destNeedPickup": "Choose where we pick you up first.",
+  "quoteTitle": "Your ride",
+  "quoteFixed": "Fixed. It won't change.",
+  "quoteRoute": "{km} km · about {minutes} min",
+  "quotePickupEta": "Driver reaches you in about {minutes} min",
+  "quoteWalletLine": "Wallet {balance}, {after} after this ride",
+  "quoteCancelRule": "Cancel for free until you're in the car.",
+  "quoteBook": "Book for {fare}",
+  "quoteTopUp": "Top up {amount}",
+  "quoteShortfall": "Your wallet is short by {amount}.",
+  "quoteBookingSoon": "Booking opens in the next update.",
+  "quoteIneligibleTitle": "We can't book this trip",
+  "quoteChangeLocation": "Change location",
+  "quoteExpired": "That price expired, so we got you a new one.",
+  "quoteLoadFailed": "We couldn't get a price. Check your connection and try again.",
+  "quoteGettingPrice": "Getting your price",
+  "@quoteWalletLine": {
+    "placeholders": {
+      "balance": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      }
+    }
+  },
+  "@quoteRoute": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
 }

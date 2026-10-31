@@ -19,3 +19,6 @@ node_modules/
 .claude/
 .graphify/
 .secrets/
+
+# Local secrets, never committed
+**/ios/Flutter/Secrets.xcconfig

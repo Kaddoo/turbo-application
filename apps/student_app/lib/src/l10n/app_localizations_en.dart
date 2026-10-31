@@ -393,4 +393,147 @@ class AppLocalizationsEn extends AppLocalizations {
   String statusSubmittedAt(Object date) {
     return 'Sent $date';
   }
+
+  @override
+  String get homeWhereTo => 'Where to?';
+
+  @override
+  String homeWalletChip(Object amount) {
+    return 'Wallet $amount';
+  }
+
+  @override
+  String homeWalletLow(Object amount) {
+    return 'Wallet $amount, low';
+  }
+
+  @override
+  String get homeSavedPlaces => 'Saved places';
+
+  @override
+  String get homeOfflineMap =>
+      'You\'re offline. The map and prices may be out of date.';
+
+  @override
+  String get homeBookingsPaused => 'Booking is paused for now.';
+
+  @override
+  String get homeLocationDeniedTitle => 'Location is off';
+
+  @override
+  String homeLocationDeniedBody(Object appName) {
+    return '$appName uses your location to find the nearest pickup point. You can also choose a pickup point from the list.';
+  }
+
+  @override
+  String get homeAllowLocation => 'Allow location';
+
+  @override
+  String get homeChoosePickup => 'Choose a pickup point';
+
+  @override
+  String get homeLocationServicesOff =>
+      'Switch on location in your phone\'s settings to find the nearest pickup point.';
+
+  @override
+  String get homeLoadFailed =>
+      'We couldn\'t load the map details. Check your connection and try again.';
+
+  @override
+  String get destTitle => 'Where to?';
+
+  @override
+  String get destPickupLabel => 'Pickup';
+
+  @override
+  String get destPickupCurrent => 'Nearest pickup point';
+
+  @override
+  String get destPickupChoose => 'Choose a pickup point';
+
+  @override
+  String get destPickupNone => 'Using your location';
+
+  @override
+  String get destSearchLabel => 'Search for a place';
+
+  @override
+  String get destSearchUnavailable =>
+      'Place search isn\'t available in this version. Pick a saved place instead.';
+
+  @override
+  String get destSearchNoResults => 'No places found. Try different words.';
+
+  @override
+  String get destSearchFailed => 'We couldn\'t search just now. Try again.';
+
+  @override
+  String get destSavedTitle => 'Saved places';
+
+  @override
+  String get destSavedEmpty => 'You have no saved places yet.';
+
+  @override
+  String get destContinue => 'Continue';
+
+  @override
+  String get destNeedPickup => 'Choose where we pick you up first.';
+
+  @override
+  String get quoteTitle => 'Your ride';
+
+  @override
+  String get quoteFixed => 'Fixed. It won\'t change.';
+
+  @override
+  String quoteRoute(String km, int minutes) {
+    return '$km km · about $minutes min';
+  }
+
+  @override
+  String quotePickupEta(Object minutes) {
+    return 'Driver reaches you in about $minutes min';
+  }
+
+  @override
+  String quoteWalletLine(String balance, String after) {
+    return 'Wallet $balance, $after after this ride';
+  }
+
+  @override
+  String get quoteCancelRule => 'Cancel for free until you\'re in the car.';
+
+  @override
+  String quoteBook(Object fare) {
+    return 'Book for $fare';
+  }
+
+  @override
+  String quoteTopUp(Object amount) {
+    return 'Top up $amount';
+  }
+
+  @override
+  String quoteShortfall(Object amount) {
+    return 'Your wallet is short by $amount.';
+  }
+
+  @override
+  String get quoteBookingSoon => 'Booking opens in the next update.';
+
+  @override
+  String get quoteIneligibleTitle => 'We can\'t book this trip';
+
+  @override
+  String get quoteChangeLocation => 'Change location';
+
+  @override
+  String get quoteExpired => 'That price expired, so we got you a new one.';
+
+  @override
+  String get quoteLoadFailed =>
+      'We couldn\'t get a price. Check your connection and try again.';
+
+  @override
+  String get quoteGettingPrice => 'Getting your price';
 }

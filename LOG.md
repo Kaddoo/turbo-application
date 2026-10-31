@@ -2,6 +2,36 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: group 4 (student app phase 1)
+
+**Task:** Student app phase 1: shell and app-config gate, phone and code, terms, verification capture and status, map home, destination, quote.
+
+**Files touched:**
+- apps/student_app: lib/src/core (session, gate, me, flow, auth draft, problem messages, semver), features/auth, gate, verification, home; l10n ARB; router; iOS and Android permissions; Maps key plumbing; tests
+- packages/turbo_api: 401 refresh interceptor; mock contract test for every phase 1 call
+- CONTRACT_REQUESTS.md (CR-1, CR-2), .gitignore (Secrets.xcconfig)
+
+**What changed:** App starts on the app-config gate (update, maintenance, 426) then restores the session (refresh rotation, secure storage), then reads the profile and routes: signed out, terms, verification, home. Sign-in is phone then 6-box code; a first sign-in that needs terms shows them and re-sends the held code with the versions. Verification: details with live Ghana Card format, camera capture with guide frame and a blur/glare/dark check, uploads with progress and retry, draft saved across restarts, status screen (pending, needs attention with Send again, rejected, approved then Continue). Home: map with official pickup points, wallet chip (amber and "low" when under the cheapest fare), Where to bar, saved-place chips, paused-bookings and location-denied states. Destination: nearest pickup point by default, pickup list, saved places, optional place search. Quote: fixed fare in large type, wallet line, shortfall, every ineligibility reason from the server, quiet re-quote on expiry, 429 wait.
+
+**Acceptance criteria:**
+- [x] `flutter analyze` clean; student app 70 tests, turbo_ui 48 (including the hard-coded style scan over the student app), turbo_api tests
+- [x] Every phase 1 call is answered by the Prism mock and decoded by the generated client
+- [x] Four states on every screen built here (loading, empty, error, full), copy from ARB
+- [x] iOS debug build compiles with maps and camera
+- [ ] Not run on a device or simulator: nothing in this group has been seen on screen except through widget tests. The camera screen and the real map are untested.
+- [ ] Place search is untested against live Google (no billing on the project, no Places key). Off unless `--dart-define=PLACES_API_KEY` is set. See CR-2.
+
+**Deviations from plan or contract:**
+- Wallet chip is not tappable and the Book and Top up buttons are present but off: wallet and booking are phase 2.
+- Not built yet from prompt 04: active-ride card, announcements banner (no contract field found), Safety button, "add saved place" chip, cut-off edge detection in the photo check (blur, glare and darkness only), "Contact support" button on a duplicate Ghana Card (support is phase 3), Android pre-permission screen (Android paused).
+- A needs-attention decision shows the reviewer's message first; "Send again" opens the form. The brief's flow listed capture first, but the message has to be seen.
+- First-sign-in terms depend on the server not consuming the code on 403 (CR-1). If it does, the app falls back to asking for a new code.
+- Prism returns `resendInSeconds: 0` because the schema has no example. Add one (planning).
+
+**Status:** built and tested against the mock; not seen on a device. Branches: student-phase1, student-verification, student-home-quote.
+
+**Next step:** Look at it on a real screen (install on the phone), then group 5 (driver app phase 1) or phase 2 for the student app.
+
 ## 2026-10-31, Kevin with Claude, code: group 3 (driver location spike)
 
 **Task:** Background-location spike for the driver app (risk R7), before anything else in the driver app.

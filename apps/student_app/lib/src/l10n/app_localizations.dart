@@ -747,6 +747,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sent {date}'**
   String statusSubmittedAt(Object date);
+
+  /// No description provided for @homeWhereTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to?'**
+  String get homeWhereTo;
+
+  /// No description provided for @homeWalletChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet {amount}'**
+  String homeWalletChip(Object amount);
+
+  /// No description provided for @homeWalletLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet {amount}, low'**
+  String homeWalletLow(Object amount);
+
+  /// No description provided for @homeSavedPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved places'**
+  String get homeSavedPlaces;
+
+  /// No description provided for @homeOfflineMap.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. The map and prices may be out of date.'**
+  String get homeOfflineMap;
+
+  /// No description provided for @homeBookingsPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking is paused for now.'**
+  String get homeBookingsPaused;
+
+  /// No description provided for @homeLocationDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off'**
+  String get homeLocationDeniedTitle;
+
+  /// No description provided for @homeLocationDeniedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{appName} uses your location to find the nearest pickup point. You can also choose a pickup point from the list.'**
+  String homeLocationDeniedBody(Object appName);
+
+  /// No description provided for @homeAllowLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location'**
+  String get homeAllowLocation;
+
+  /// No description provided for @homeChoosePickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a pickup point'**
+  String get homeChoosePickup;
+
+  /// No description provided for @homeLocationServicesOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch on location in your phone\'s settings to find the nearest pickup point.'**
+  String get homeLocationServicesOff;
+
+  /// No description provided for @homeLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load the map details. Check your connection and try again.'**
+  String get homeLoadFailed;
+
+  /// No description provided for @destTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to?'**
+  String get destTitle;
+
+  /// No description provided for @destPickupLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup'**
+  String get destPickupLabel;
+
+  /// No description provided for @destPickupCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest pickup point'**
+  String get destPickupCurrent;
+
+  /// No description provided for @destPickupChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a pickup point'**
+  String get destPickupChoose;
+
+  /// No description provided for @destPickupNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Using your location'**
+  String get destPickupNone;
+
+  /// No description provided for @destSearchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a place'**
+  String get destSearchLabel;
+
+  /// No description provided for @destSearchUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Place search isn\'t available in this version. Pick a saved place instead.'**
+  String get destSearchUnavailable;
+
+  /// No description provided for @destSearchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No places found. Try different words.'**
+  String get destSearchNoResults;
+
+  /// No description provided for @destSearchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t search just now. Try again.'**
+  String get destSearchFailed;
+
+  /// No description provided for @destSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved places'**
+  String get destSavedTitle;
+
+  /// No description provided for @destSavedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no saved places yet.'**
+  String get destSavedEmpty;
+
+  /// No description provided for @destContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get destContinue;
+
+  /// No description provided for @destNeedPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where we pick you up first.'**
+  String get destNeedPickup;
+
+  /// No description provided for @quoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ride'**
+  String get quoteTitle;
+
+  /// No description provided for @quoteFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed. It won\'t change.'**
+  String get quoteFixed;
+
+  /// No description provided for @quoteRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km · about {minutes} min'**
+  String quoteRoute(String km, int minutes);
+
+  /// No description provided for @quotePickupEta.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver reaches you in about {minutes} min'**
+  String quotePickupEta(Object minutes);
+
+  /// No description provided for @quoteWalletLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet {balance}, {after} after this ride'**
+  String quoteWalletLine(String balance, String after);
+
+  /// No description provided for @quoteCancelRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel for free until you\'re in the car.'**
+  String get quoteCancelRule;
+
+  /// No description provided for @quoteBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book for {fare}'**
+  String quoteBook(Object fare);
+
+  /// No description provided for @quoteTopUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up {amount}'**
+  String quoteTopUp(Object amount);
+
+  /// No description provided for @quoteShortfall.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet is short by {amount}.'**
+  String quoteShortfall(Object amount);
+
+  /// No description provided for @quoteBookingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking opens in the next update.'**
+  String get quoteBookingSoon;
+
+  /// No description provided for @quoteIneligibleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t book this trip'**
+  String get quoteIneligibleTitle;
+
+  /// No description provided for @quoteChangeLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Change location'**
+  String get quoteChangeLocation;
+
+  /// No description provided for @quoteExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'That price expired, so we got you a new one.'**
+  String get quoteExpired;
+
+  /// No description provided for @quoteLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t get a price. Check your connection and try again.'**
+  String get quoteLoadFailed;
+
+  /// No description provided for @quoteGettingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting your price'**
+  String get quoteGettingPrice;
 }
 
 class _AppLocalizationsDelegate
