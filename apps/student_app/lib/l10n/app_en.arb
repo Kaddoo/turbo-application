@@ -169,5 +169,84 @@
     }
   },
   "destPlacesTitle": "Campus and popular places",
-  "destPlacesEmpty": "No places are set up yet."
+  "destPlacesEmpty": "No places are set up yet.",
+  "navRide": "Ride",
+  "navWallet": "Wallet",
+  "navActivity": "Activity",
+  "walletTitle": "Wallet",
+  "walletAvailable": "Available",
+  "walletHeld": "{amount} held for your ride",
+  "walletOwed": "You owe {amount}. Top up to book again.",
+  "walletTopUp": "Top up",
+  "walletRecent": "Recent activity",
+  "walletSeeAll": "See all",
+  "walletNoTransactions": "No transactions yet.",
+  "walletLoadFailed": "We couldn't load your wallet. Check your connection and try again.",
+  "transactionsTitle": "Transactions",
+  "transactionsLoadMore": "Show more",
+  "txTopUp": "Top-up",
+  "txHeld": "Held",
+  "txReleased": "Released",
+  "txRide": "Ride",
+  "txRefund": "Refund",
+  "txAdjustment": "Adjustment",
+  "txReversal": "Reversed",
+  "topupTitle": "Top up",
+  "topupAmount": "Choose an amount",
+  "topupCustom": "Other amount in cedis",
+  "topupCustomHint": "Between {min} and {max}",
+  "topupPay": "Pay {amount}",
+  "topupPhoneNote": "We'll send a payment prompt to {phone}.",
+  "topupPendingTitle": "A top-up is still waiting",
+  "topupPendingBody": "You started a top-up that hasn't finished. If you start another, you could pay twice.",
+  "topupPendingWait": "Go back",
+  "topupPendingAnother": "Start another",
+  "topupWaitTitle": "Approve the payment on your phone",
+  "topupStep1": "A prompt appears on your phone.",
+  "topupStep2": "Enter your mobile money PIN to approve.",
+  "topupStep3": "Come back here. This updates by itself.",
+  "topupWaitSeconds": "Checking for {seconds} more seconds",
+  "topupCheckStatus": "Check status",
+  "topupLeave": "Leave this screen",
+  "topupSuccessTitle": "Money added",
+  "topupSuccessBody": "Your wallet now has {amount} available.",
+  "topupDone": "Done",
+  "topupFailedTitle": "The payment didn't go through",
+  "topupFailedBody": "You haven't been charged. You can try again.",
+  "topupSlowTitle": "Still waiting",
+  "topupSlowBody": "We'll add the money when it arrives. You don't need to pay again.",
+  "topupTryAgain": "Try again",
+  "topupAmountRange": "Choose an amount between {min} and {max}.",
+  "problemTopupRange": "That amount isn't allowed. Choose a different amount.",
+  "problemPaymentProvider": "The payment service isn't answering. Try again in a moment.",
+  "problemInsufficient": "Your wallet doesn't have enough for this ride. Top up and try again.",
+  "@topupCustomHint": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "@topupAmountRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTitle": "Activity",
+  "activityEmpty": "Your rides will appear here.",
+  "activityLoadFailed": "We couldn't load your rides. Check your connection and try again.",
+  "rideStatusSearching": "Finding a driver",
+  "rideStatusAssigned": "Driver on the way",
+  "rideStatusArrived": "Driver has arrived",
+  "rideStatusInProgress": "On the way",
+  "rideStatusCompleted": "Completed",
+  "rideStatusCancelled": "Cancelled"
 }

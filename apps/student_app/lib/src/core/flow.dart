@@ -62,8 +62,11 @@ FlowStep computeStep(FlowInputs i) {
   return switch (i.verification) {
     VerificationStatus.approved => FlowStep.home,
     VerificationStatus.needsAttention =>
-      i.resubmitting ? FlowStep.verificationCapture : FlowStep.verificationStatus,
-    VerificationStatus.pending || VerificationStatus.rejected => FlowStep.verificationStatus,
+      i.resubmitting
+          ? FlowStep.verificationCapture
+          : FlowStep.verificationStatus,
+    VerificationStatus.pending ||
+    VerificationStatus.rejected => FlowStep.verificationStatus,
     _ => FlowStep.verificationCapture,
   };
 }
@@ -77,29 +80,37 @@ bool locationFitsStep(FlowStep step, String location) {
     FlowStep.bootError => location == '/offline',
     FlowStep.updateRequired => location == '/update',
     FlowStep.maintenance => location == '/maintenance',
-    FlowStep.signedOut =>
-      const ['/welcome', '/phone', '/code', '/terms'].contains(location),
+    FlowStep.signedOut => const [
+      '/welcome',
+      '/phone',
+      '/code',
+      '/terms',
+    ].contains(location),
     FlowStep.terms => location == '/terms',
     FlowStep.suspended => location == '/suspended',
     FlowStep.verificationCapture =>
       within('/verification') && location != '/verification/status',
     FlowStep.verificationStatus => location == '/verification/status',
-    FlowStep.home => within('/home') || location == '/verification/status',
+    FlowStep.home =>
+      within('/home') ||
+          within('/wallet') ||
+          within('/activity') ||
+          location == '/verification/status',
   };
 }
 
 String defaultLocation(FlowStep step) => switch (step) {
-      FlowStep.loading => '/loading',
-      FlowStep.bootError => '/offline',
-      FlowStep.updateRequired => '/update',
-      FlowStep.maintenance => '/maintenance',
-      FlowStep.signedOut => '/welcome',
-      FlowStep.terms => '/terms',
-      FlowStep.suspended => '/suspended',
-      FlowStep.verificationCapture => '/verification',
-      FlowStep.verificationStatus => '/verification/status',
-      FlowStep.home => '/home',
-    };
+  FlowStep.loading => '/loading',
+  FlowStep.bootError => '/offline',
+  FlowStep.updateRequired => '/update',
+  FlowStep.maintenance => '/maintenance',
+  FlowStep.signedOut => '/welcome',
+  FlowStep.terms => '/terms',
+  FlowStep.suspended => '/suspended',
+  FlowStep.verificationCapture => '/verification',
+  FlowStep.verificationStatus => '/verification/status',
+  FlowStep.home => '/home',
+};
 
 /// Null means stay where you are.
 String? redirectFor(FlowStep step, String location) =>

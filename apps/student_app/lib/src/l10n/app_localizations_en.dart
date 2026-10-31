@@ -538,4 +538,204 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get destPlacesEmpty => 'No places are set up yet.';
+
+  @override
+  String get navRide => 'Ride';
+
+  @override
+  String get navWallet => 'Wallet';
+
+  @override
+  String get navActivity => 'Activity';
+
+  @override
+  String get walletTitle => 'Wallet';
+
+  @override
+  String get walletAvailable => 'Available';
+
+  @override
+  String walletHeld(Object amount) {
+    return '$amount held for your ride';
+  }
+
+  @override
+  String walletOwed(Object amount) {
+    return 'You owe $amount. Top up to book again.';
+  }
+
+  @override
+  String get walletTopUp => 'Top up';
+
+  @override
+  String get walletRecent => 'Recent activity';
+
+  @override
+  String get walletSeeAll => 'See all';
+
+  @override
+  String get walletNoTransactions => 'No transactions yet.';
+
+  @override
+  String get walletLoadFailed =>
+      'We couldn\'t load your wallet. Check your connection and try again.';
+
+  @override
+  String get transactionsTitle => 'Transactions';
+
+  @override
+  String get transactionsLoadMore => 'Show more';
+
+  @override
+  String get txTopUp => 'Top-up';
+
+  @override
+  String get txHeld => 'Held';
+
+  @override
+  String get txReleased => 'Released';
+
+  @override
+  String get txRide => 'Ride';
+
+  @override
+  String get txRefund => 'Refund';
+
+  @override
+  String get txAdjustment => 'Adjustment';
+
+  @override
+  String get txReversal => 'Reversed';
+
+  @override
+  String get topupTitle => 'Top up';
+
+  @override
+  String get topupAmount => 'Choose an amount';
+
+  @override
+  String get topupCustom => 'Other amount in cedis';
+
+  @override
+  String topupCustomHint(String min, String max) {
+    return 'Between $min and $max';
+  }
+
+  @override
+  String topupPay(Object amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String topupPhoneNote(Object phone) {
+    return 'We\'ll send a payment prompt to $phone.';
+  }
+
+  @override
+  String get topupPendingTitle => 'A top-up is still waiting';
+
+  @override
+  String get topupPendingBody =>
+      'You started a top-up that hasn\'t finished. If you start another, you could pay twice.';
+
+  @override
+  String get topupPendingWait => 'Go back';
+
+  @override
+  String get topupPendingAnother => 'Start another';
+
+  @override
+  String get topupWaitTitle => 'Approve the payment on your phone';
+
+  @override
+  String get topupStep1 => 'A prompt appears on your phone.';
+
+  @override
+  String get topupStep2 => 'Enter your mobile money PIN to approve.';
+
+  @override
+  String get topupStep3 => 'Come back here. This updates by itself.';
+
+  @override
+  String topupWaitSeconds(Object seconds) {
+    return 'Checking for $seconds more seconds';
+  }
+
+  @override
+  String get topupCheckStatus => 'Check status';
+
+  @override
+  String get topupLeave => 'Leave this screen';
+
+  @override
+  String get topupSuccessTitle => 'Money added';
+
+  @override
+  String topupSuccessBody(Object amount) {
+    return 'Your wallet now has $amount available.';
+  }
+
+  @override
+  String get topupDone => 'Done';
+
+  @override
+  String get topupFailedTitle => 'The payment didn\'t go through';
+
+  @override
+  String get topupFailedBody => 'You haven\'t been charged. You can try again.';
+
+  @override
+  String get topupSlowTitle => 'Still waiting';
+
+  @override
+  String get topupSlowBody =>
+      'We\'ll add the money when it arrives. You don\'t need to pay again.';
+
+  @override
+  String get topupTryAgain => 'Try again';
+
+  @override
+  String topupAmountRange(String min, String max) {
+    return 'Choose an amount between $min and $max.';
+  }
+
+  @override
+  String get problemTopupRange =>
+      'That amount isn\'t allowed. Choose a different amount.';
+
+  @override
+  String get problemPaymentProvider =>
+      'The payment service isn\'t answering. Try again in a moment.';
+
+  @override
+  String get problemInsufficient =>
+      'Your wallet doesn\'t have enough for this ride. Top up and try again.';
+
+  @override
+  String get activityTitle => 'Activity';
+
+  @override
+  String get activityEmpty => 'Your rides will appear here.';
+
+  @override
+  String get activityLoadFailed =>
+      'We couldn\'t load your rides. Check your connection and try again.';
+
+  @override
+  String get rideStatusSearching => 'Finding a driver';
+
+  @override
+  String get rideStatusAssigned => 'Driver on the way';
+
+  @override
+  String get rideStatusArrived => 'Driver has arrived';
+
+  @override
+  String get rideStatusInProgress => 'On the way';
+
+  @override
+  String get rideStatusCompleted => 'Completed';
+
+  @override
+  String get rideStatusCancelled => 'Cancelled';
 }

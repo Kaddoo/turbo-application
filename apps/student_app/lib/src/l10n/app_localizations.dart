@@ -993,6 +993,360 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No places are set up yet.'**
   String get destPlacesEmpty;
+
+  /// No description provided for @navRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride'**
+  String get navRide;
+
+  /// No description provided for @navWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get navWallet;
+
+  /// No description provided for @navActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get navActivity;
+
+  /// No description provided for @walletTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get walletTitle;
+
+  /// No description provided for @walletAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get walletAvailable;
+
+  /// No description provided for @walletHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} held for your ride'**
+  String walletHeld(Object amount);
+
+  /// No description provided for @walletOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe {amount}. Top up to book again.'**
+  String walletOwed(Object amount);
+
+  /// No description provided for @walletTopUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up'**
+  String get walletTopUp;
+
+  /// No description provided for @walletRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent activity'**
+  String get walletRecent;
+
+  /// No description provided for @walletSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get walletSeeAll;
+
+  /// No description provided for @walletNoTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet.'**
+  String get walletNoTransactions;
+
+  /// No description provided for @walletLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your wallet. Check your connection and try again.'**
+  String get walletLoadFailed;
+
+  /// No description provided for @transactionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get transactionsTitle;
+
+  /// No description provided for @transactionsLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get transactionsLoadMore;
+
+  /// No description provided for @txTopUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Top-up'**
+  String get txTopUp;
+
+  /// No description provided for @txHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Held'**
+  String get txHeld;
+
+  /// No description provided for @txReleased.
+  ///
+  /// In en, this message translates to:
+  /// **'Released'**
+  String get txReleased;
+
+  /// No description provided for @txRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride'**
+  String get txRide;
+
+  /// No description provided for @txRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get txRefund;
+
+  /// No description provided for @txAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment'**
+  String get txAdjustment;
+
+  /// No description provided for @txReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversed'**
+  String get txReversal;
+
+  /// No description provided for @topupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up'**
+  String get topupTitle;
+
+  /// No description provided for @topupAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an amount'**
+  String get topupAmount;
+
+  /// No description provided for @topupCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Other amount in cedis'**
+  String get topupCustom;
+
+  /// No description provided for @topupCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Between {min} and {max}'**
+  String topupCustomHint(String min, String max);
+
+  /// No description provided for @topupPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount}'**
+  String topupPay(Object amount);
+
+  /// No description provided for @topupPhoneNote.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a payment prompt to {phone}.'**
+  String topupPhoneNote(Object phone);
+
+  /// No description provided for @topupPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A top-up is still waiting'**
+  String get topupPendingTitle;
+
+  /// No description provided for @topupPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You started a top-up that hasn\'t finished. If you start another, you could pay twice.'**
+  String get topupPendingBody;
+
+  /// No description provided for @topupPendingWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get topupPendingWait;
+
+  /// No description provided for @topupPendingAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Start another'**
+  String get topupPendingAnother;
+
+  /// No description provided for @topupWaitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve the payment on your phone'**
+  String get topupWaitTitle;
+
+  /// No description provided for @topupStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'A prompt appears on your phone.'**
+  String get topupStep1;
+
+  /// No description provided for @topupStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your mobile money PIN to approve.'**
+  String get topupStep2;
+
+  /// No description provided for @topupStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back here. This updates by itself.'**
+  String get topupStep3;
+
+  /// No description provided for @topupWaitSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for {seconds} more seconds'**
+  String topupWaitSeconds(Object seconds);
+
+  /// No description provided for @topupCheckStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Check status'**
+  String get topupCheckStatus;
+
+  /// No description provided for @topupLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this screen'**
+  String get topupLeave;
+
+  /// No description provided for @topupSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money added'**
+  String get topupSuccessTitle;
+
+  /// No description provided for @topupSuccessBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet now has {amount} available.'**
+  String topupSuccessBody(Object amount);
+
+  /// No description provided for @topupDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get topupDone;
+
+  /// No description provided for @topupFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment didn\'t go through'**
+  String get topupFailedTitle;
+
+  /// No description provided for @topupFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t been charged. You can try again.'**
+  String get topupFailedBody;
+
+  /// No description provided for @topupSlowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Still waiting'**
+  String get topupSlowTitle;
+
+  /// No description provided for @topupSlowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll add the money when it arrives. You don\'t need to pay again.'**
+  String get topupSlowBody;
+
+  /// No description provided for @topupTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get topupTryAgain;
+
+  /// No description provided for @topupAmountRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an amount between {min} and {max}.'**
+  String topupAmountRange(String min, String max);
+
+  /// No description provided for @problemTopupRange.
+  ///
+  /// In en, this message translates to:
+  /// **'That amount isn\'t allowed. Choose a different amount.'**
+  String get problemTopupRange;
+
+  /// No description provided for @problemPaymentProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment service isn\'t answering. Try again in a moment.'**
+  String get problemPaymentProvider;
+
+  /// No description provided for @problemInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet doesn\'t have enough for this ride. Top up and try again.'**
+  String get problemInsufficient;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get activityTitle;
+
+  /// No description provided for @activityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rides will appear here.'**
+  String get activityEmpty;
+
+  /// No description provided for @activityLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your rides. Check your connection and try again.'**
+  String get activityLoadFailed;
+
+  /// No description provided for @rideStatusSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding a driver'**
+  String get rideStatusSearching;
+
+  /// No description provided for @rideStatusAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver on the way'**
+  String get rideStatusAssigned;
+
+  /// No description provided for @rideStatusArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver has arrived'**
+  String get rideStatusArrived;
+
+  /// No description provided for @rideStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way'**
+  String get rideStatusInProgress;
+
+  /// No description provided for @rideStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get rideStatusCompleted;
+
+  /// No description provided for @rideStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get rideStatusCancelled;
 }
 
 class _AppLocalizationsDelegate

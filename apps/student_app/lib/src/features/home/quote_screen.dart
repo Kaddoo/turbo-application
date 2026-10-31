@@ -9,6 +9,8 @@ import 'package:turbo_ui/turbo_ui.dart';
 import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../wallet/wallet_providers.dart';
+import 'service_area.dart';
 import 'trip_draft.dart';
 
 /// Asks for a price for the chosen pickup and drop-off. The result is the
@@ -25,7 +27,11 @@ class QuoteController extends AsyncNotifier<Quote> {
       throw const ApiProblem(code: ApiProblem.unknown, title: '');
     }
     try {
-      final response = await ref.read(clientProvider).api.getRidesApi().createQuote(
+      final response = await ref
+          .read(clientProvider)
+          .api
+          .getRidesApi()
+          .createQuote(
             quoteRequest: QuoteRequest(pickup: pickup, dropoff: dropoff),
           );
       return response.data!;
@@ -40,7 +46,9 @@ class QuoteController extends AsyncNotifier<Quote> {
   }
 }
 
-final quoteProvider = AsyncNotifierProvider.autoDispose<QuoteController, Quote>(QuoteController.new);
+final quoteProvider = AsyncNotifierProvider.autoDispose<QuoteController, Quote>(
+  QuoteController.new,
+);
 
 class QuoteScreen extends ConsumerStatefulWidget {
   const QuoteScreen({super.key});
@@ -78,6 +86,12 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
     final text = Theme.of(context).textTheme;
     final quote = ref.watch(quoteProvider);
     ref.listen(quoteProvider, (_, next) => next.whenData(_watchExpiry));
+    // Once money lands, the wallet part of this price is out of date: ask again.
+    ref.listen(topupProvider, (prev, next) {
+      final done = next?.topup.status == TopupStatusEnum.succeeded;
+      final was = prev?.topup.status == TopupStatusEnum.succeeded;
+      if (done && !was) ref.read(quoteProvider.notifier).refresh();
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -86,9 +100,14 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
       ),
       body: SafeArea(
         child: quote.when(
-          loading: () => Semantics(label: l10n.quoteGettingPrice, child: const LoadingState()),
+          loading: () => Semantics(
+            label: l10n.quoteGettingPrice,
+            child: const LoadingState(),
+          ),
           error: (e, _) => ErrorState(
-            message: e is ApiProblem && e.code != ApiProblem.unknown ? problemMessage(l10n, e) : l10n.quoteLoadFailed,
+            message: e is ApiProblem && e.code != ApiProblem.unknown
+                ? problemMessage(l10n, e)
+                : l10n.quoteLoadFailed,
             onRetry: () => ref.read(quoteProvider.notifier).refresh(),
           ),
           data: (q) {
@@ -96,7 +115,13 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
               return ListView(
                 padding: const EdgeInsets.all(TurboSpacing.xl),
                 children: [
-                  Semantics(header: true, child: Text(l10n.quoteIneligibleTitle, style: text.headlineMedium)),
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      l10n.quoteIneligibleTitle,
+                      style: text.headlineMedium,
+                    ),
+                  ),
                   const SizedBox(height: TurboSpacing.lg),
                   // The server's own plain-language reasons, every one of them.
                   for (final r in q.reasons)
@@ -108,7 +133,9 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                           children: [
                             Icon(Icons.info_outline, color: t.colors.warning),
                             const SizedBox(width: TurboSpacing.md),
-                            Expanded(child: Text(r.message, style: text.bodyLarge)),
+                            Expanded(
+                              child: Text(r.message, style: text.bodyLarge),
+                            ),
                           ],
                         ),
                       ),
@@ -127,24 +154,32 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
             final available = q.wallet.availablePesewas;
             final km = ((q.routeDistanceMeters ?? 0) / 1000).toStringAsFixed(1);
             final minutes = ((q.routeDurationSeconds ?? 0) / 60).ceil();
-            final eta = q.pickupEtaSeconds == null ? null : (q.pickupEtaSeconds! / 60).ceil();
+            final eta = q.pickupEtaSeconds == null
+                ? null
+                : (q.pickupEtaSeconds! / 60).ceil();
             return ListView(
               padding: const EdgeInsets.all(TurboSpacing.xl),
               children: [
                 if (_renewed)
                   Padding(
                     padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                    child: Semantics(liveRegion: true, child: Text(l10n.quoteExpired, style: text.bodyMedium)),
+                    child: Semantics(
+                      liveRegion: true,
+                      child: Text(l10n.quoteExpired, style: text.bodyMedium),
+                    ),
                   ),
                 Text(l10n.quoteRoute(km, minutes), style: text.bodyLarge),
-                if (eta != null) Text(l10n.quotePickupEta(eta), style: text.bodyMedium),
+                if (eta != null)
+                  Text(l10n.quotePickupEta(eta), style: text.bodyMedium),
                 const SizedBox(height: TurboSpacing.xl),
                 Semantics(
                   label: formatPesewas(fare),
                   excludeSemantics: true,
                   child: Text(
                     formatPesewas(fare),
-                    style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 2),
+                    style: text.headlineMedium?.copyWith(
+                      fontSize: text.headlineMedium!.fontSize! * 2,
+                    ),
                   ),
                 ),
                 Text(l10n.quoteFixed, style: text.bodyLarge),
@@ -153,7 +188,13 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.quoteWalletLine(formatPesewas(available), formatPesewas(available - fare)), style: text.bodyLarge),
+                      Text(
+                        l10n.quoteWalletLine(
+                          formatPesewas(available),
+                          formatPesewas(available - fare),
+                        ),
+                        style: text.bodyLarge,
+                      ),
                       const SizedBox(height: TurboSpacing.sm),
                       Text(l10n.quoteCancelRule, style: text.bodyMedium),
                       if (!q.wallet.sufficient) ...[
@@ -163,7 +204,12 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                             Icon(Icons.warning_amber, color: t.colors.warning),
                             const SizedBox(width: TurboSpacing.sm),
                             Expanded(
-                              child: Text(l10n.quoteShortfall(formatPesewas(q.wallet.shortfallPesewas)), style: text.bodyMedium),
+                              child: Text(
+                                l10n.quoteShortfall(
+                                  formatPesewas(q.wallet.shortfallPesewas),
+                                ),
+                                style: text.bodyMedium,
+                              ),
                             ),
                           ],
                         ),
@@ -175,11 +221,33 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                 // Booking and top-up arrive in phase 2; the buttons are here so
                 // the screen is complete, and are off until then.
                 if (q.wallet.sufficient)
-                  TurboButton(label: l10n.quoteBook(formatPesewas(fare)), large: true, onPressed: null)
+                  TurboButton(
+                    label: l10n.quoteBook(formatPesewas(fare)),
+                    large: true,
+                    onPressed: null,
+                  )
                 else
-                  TurboButton(label: l10n.quoteTopUp(formatPesewas(q.wallet.shortfallPesewas)), large: true, onPressed: null),
+                  TurboButton(
+                    label: l10n.quoteTopUp(
+                      formatPesewas(q.wallet.shortfallPesewas),
+                    ),
+                    large: true,
+                    onPressed: () async {
+                      await context.push(
+                        '/wallet/topup',
+                        extra: q.wallet.shortfallPesewas,
+                      );
+                      // Back from topping up: the wallet has changed, so ask again.
+                      ref.invalidate(walletProvider);
+                      await ref.read(quoteProvider.notifier).refresh();
+                    },
+                  ),
                 const SizedBox(height: TurboSpacing.sm),
-                Text(l10n.quoteBookingSoon, style: text.bodySmall, textAlign: TextAlign.center),
+                Text(
+                  l10n.quoteBookingSoon,
+                  style: text.bodySmall,
+                  textAlign: TextAlign.center,
+                ),
               ],
             );
           },

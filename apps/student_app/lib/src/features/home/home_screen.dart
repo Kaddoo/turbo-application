@@ -168,7 +168,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                         .reduce((a, b) => a < b ? a : b);
                               final low = w.availablePesewas < cheapest;
                               final amount = formatPesewas(w.availablePesewas);
-                              return StatusChip(
+                              return InkWell(
+                                onTap: () => context.go('/wallet'),
+                                borderRadius: BorderRadius.circular(t.radiusFull),
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
+                                  child: Center(child: StatusChip(
                                 label: low
                                     ? l10n.homeWalletLow(amount)
                                     : l10n.homeWalletChip(amount),
@@ -178,6 +183,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 tone: low
                                     ? StatusTone.warning
                                     : StatusTone.neutral,
+                              )),
+                                ),
                               );
                             },
                             loading: () => const TurboSkeleton(
