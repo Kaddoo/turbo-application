@@ -867,6 +867,792 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Help and support'**
   String get meHelp;
+
+  /// No description provided for @assignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New ride'**
+  String get assignTitle;
+
+  /// No description provided for @assignAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get assignAccept;
+
+  /// No description provided for @assignDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get assignDecline;
+
+  /// No description provided for @assignSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}'**
+  String assignSeconds(int seconds);
+
+  /// No description provided for @assignPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup'**
+  String get assignPickup;
+
+  /// No description provided for @assignDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km away · about {minutes} min'**
+  String assignDistance(String km, int minutes);
+
+  /// No description provided for @assignStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Student: {name}'**
+  String assignStudent(String name);
+
+  /// No description provided for @assignTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip: {km} km'**
+  String assignTrip(String km);
+
+  /// No description provided for @assignFare.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare: {amount}'**
+  String assignFare(String amount);
+
+  /// No description provided for @assignPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride passed to another driver'**
+  String get assignPassed;
+
+  /// No description provided for @assignPassedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re back in the queue. No action needed.'**
+  String get assignPassedBody;
+
+  /// No description provided for @declineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you declining?'**
+  String get declineTitle;
+
+  /// No description provided for @declineVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Car problem'**
+  String get declineVehicle;
+
+  /// No description provided for @declineFar.
+  ///
+  /// In en, this message translates to:
+  /// **'Too far'**
+  String get declineFar;
+
+  /// No description provided for @declineUnwell.
+  ///
+  /// In en, this message translates to:
+  /// **'Unwell'**
+  String get declineUnwell;
+
+  /// No description provided for @declineOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get declineOther;
+
+  /// No description provided for @pickupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to the pickup'**
+  String get pickupTitle;
+
+  /// No description provided for @pickupNavigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate'**
+  String get pickupNavigate;
+
+  /// No description provided for @pickupArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve arrived'**
+  String get pickupArrived;
+
+  /// No description provided for @pickupFarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You look far from the pickup'**
+  String get pickupFarTitle;
+
+  /// No description provided for @pickupFarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as arrived anyway?'**
+  String get pickupFarBody;
+
+  /// No description provided for @pickupFarConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I\'ve arrived'**
+  String get pickupFarConfirm;
+
+  /// No description provided for @pickupMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick messages'**
+  String get pickupMessages;
+
+  /// No description provided for @navigateGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Maps'**
+  String get navigateGoogle;
+
+  /// No description provided for @navigateWaze.
+  ///
+  /// In en, this message translates to:
+  /// **'Waze'**
+  String get navigateWaze;
+
+  /// No description provided for @navigateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open a maps app.'**
+  String get navigateFailed;
+
+  /// No description provided for @waitingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the student'**
+  String get waitingTitle;
+
+  /// No description provided for @waitingTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting {time}'**
+  String waitingTimer(String time);
+
+  /// No description provided for @waitingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start trip'**
+  String get waitingStart;
+
+  /// No description provided for @waitingNotHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Student not here'**
+  String get waitingNotHere;
+
+  /// No description provided for @waitingNotHereConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the student as not here?'**
+  String get waitingNotHereConfirmTitle;
+
+  /// No description provided for @waitingNotHereConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The ride will be cancelled. The student isn\'t charged and no fee applies.'**
+  String get waitingNotHereConfirmBody;
+
+  /// No description provided for @waitingNotHereConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, not here'**
+  String get waitingNotHereConfirm;
+
+  /// No description provided for @waitingNotHereAt.
+  ///
+  /// In en, this message translates to:
+  /// **'You can mark the student as not here at {time}.'**
+  String waitingNotHereAt(String time);
+
+  /// No description provided for @pinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the student\'s PIN'**
+  String get pinTitle;
+
+  /// No description provided for @pinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the student for their PIN. Never accept it by message.'**
+  String get pinHint;
+
+  /// No description provided for @pinStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get pinStart;
+
+  /// No description provided for @pinDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get pinDelete;
+
+  /// No description provided for @pinLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries'**
+  String get pinLockedTitle;
+
+  /// No description provided for @pinLockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Call your supervisor.'**
+  String get pinLockedBody;
+
+  /// No description provided for @tripTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip in progress'**
+  String get tripTitle;
+
+  /// No description provided for @tripNavigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to drop-off'**
+  String get tripNavigate;
+
+  /// No description provided for @tripDropoff.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off: {name}'**
+  String tripDropoff(String name);
+
+  /// No description provided for @tripElapsed.
+  ///
+  /// In en, this message translates to:
+  /// **'On the trip for {time}'**
+  String tripElapsed(String time);
+
+  /// No description provided for @tripComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete trip'**
+  String get tripComplete;
+
+  /// No description provided for @tripCompleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the trip?'**
+  String get tripCompleteConfirmTitle;
+
+  /// No description provided for @tripCompleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only do this at the drop-off.'**
+  String get tripCompleteConfirmBody;
+
+  /// No description provided for @tripCompleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, complete'**
+  String get tripCompleteConfirm;
+
+  /// No description provided for @tripWaitingSignal.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for signal to finish your trip'**
+  String get tripWaitingSignal;
+
+  /// No description provided for @tripWaitingSignalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll keep trying. You don\'t need to do anything.'**
+  String get tripWaitingSignalBody;
+
+  /// No description provided for @tripReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem'**
+  String get tripReport;
+
+  /// No description provided for @doneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip complete'**
+  String get doneTitle;
+
+  /// No description provided for @doneDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km · {minutes} min'**
+  String doneDetails(String km, int minutes);
+
+  /// No description provided for @doneBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to waiting'**
+  String get doneBack;
+
+  /// No description provided for @cancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride cancelled'**
+  String get cancelledTitle;
+
+  /// No description provided for @cancelledByStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'The student cancelled the ride.'**
+  String get cancelledByStudent;
+
+  /// No description provided for @cancelledByStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'The office cancelled the ride.'**
+  String get cancelledByStaff;
+
+  /// No description provided for @cancelledBySystem.
+  ///
+  /// In en, this message translates to:
+  /// **'The ride was cancelled.'**
+  String get cancelledBySystem;
+
+  /// No description provided for @cancelledBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to your waiting position.'**
+  String get cancelledBody;
+
+  /// No description provided for @cancelledNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'The student wasn\'t there. No fee applies.'**
+  String get cancelledNoShow;
+
+  /// No description provided for @rideMessageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That message didn\'t send. Try again.'**
+  String get rideMessageFailed;
+
+  /// No description provided for @rideLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your ride. Check your connection and try again.'**
+  String get rideLoadFailed;
+
+  /// No description provided for @rideActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Try again.'**
+  String get rideActionFailed;
+
+  /// No description provided for @qmRunningLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Running late'**
+  String get qmRunningLate;
+
+  /// No description provided for @qmImHere.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m here'**
+  String get qmImHere;
+
+  /// No description provided for @qmAtTheGate.
+  ///
+  /// In en, this message translates to:
+  /// **'At the gate'**
+  String get qmAtTheGate;
+
+  /// No description provided for @qmCannotFindYou.
+  ///
+  /// In en, this message translates to:
+  /// **'I can\'t find you'**
+  String get qmCannotFindYou;
+
+  /// No description provided for @qmOnMyWay.
+  ///
+  /// In en, this message translates to:
+  /// **'On my way'**
+  String get qmOnMyWay;
+
+  /// No description provided for @qmPleaseComeOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Please come out'**
+  String get qmPleaseComeOut;
+
+  /// No description provided for @sosHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold for SOS'**
+  String get sosHold;
+
+  /// No description provided for @sosHoldSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold for 3 seconds'**
+  String get sosHoldSeconds;
+
+  /// No description provided for @sosSecondsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds'**
+  String sosSecondsLeft(int seconds);
+
+  /// No description provided for @sosAlerted.
+  ///
+  /// In en, this message translates to:
+  /// **'Help has been alerted'**
+  String get sosAlerted;
+
+  /// No description provided for @sosAlertedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff at {appName} can see your location and will call you. Stay where it is safe.'**
+  String sosAlertedBody(String appName);
+
+  /// No description provided for @sosFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send the alert'**
+  String get sosFailed;
+
+  /// No description provided for @sosFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Call the emergency number now.'**
+  String get sosFailedBody;
+
+  /// No description provided for @sosCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {number}'**
+  String sosCall(String number);
+
+  /// No description provided for @sosNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find your location. Call the emergency number now.'**
+  String get sosNoLocation;
+
+  /// No description provided for @sosDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get sosDismiss;
+
+  /// No description provided for @shiftsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shifts'**
+  String get shiftsTitle;
+
+  /// No description provided for @shiftsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No shifts scheduled. Your supervisor sets these.'**
+  String get shiftsEmpty;
+
+  /// No description provided for @shiftUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get shiftUpcoming;
+
+  /// No description provided for @shiftPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get shiftPast;
+
+  /// No description provided for @shiftScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get shiftScheduled;
+
+  /// No description provided for @shiftInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get shiftInProgress;
+
+  /// No description provided for @shiftCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get shiftCompleted;
+
+  /// No description provided for @shiftMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get shiftMissed;
+
+  /// No description provided for @attendanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get attendanceTitle;
+
+  /// No description provided for @attendanceEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No attendance records yet.'**
+  String get attendanceEmpty;
+
+  /// No description provided for @attendanceIn.
+  ///
+  /// In en, this message translates to:
+  /// **'In {time}'**
+  String attendanceIn(String time);
+
+  /// No description provided for @attendanceOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Out {time}'**
+  String attendanceOut(String time);
+
+  /// No description provided for @attendanceMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min worked'**
+  String attendanceMinutes(int minutes);
+
+  /// No description provided for @attendanceCorrected.
+  ///
+  /// In en, this message translates to:
+  /// **'Corrected by staff: {note}'**
+  String attendanceCorrected(String note);
+
+  /// No description provided for @attendanceWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Think something is wrong?'**
+  String get attendanceWrong;
+
+  /// No description provided for @attendanceOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time'**
+  String get attendanceOnTime;
+
+  /// No description provided for @attendanceLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Late'**
+  String get attendanceLate;
+
+  /// No description provided for @attendanceAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get attendanceAbsent;
+
+  /// No description provided for @attendanceCorrectedChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Corrected'**
+  String get attendanceCorrectedChip;
+
+  /// No description provided for @salaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary history'**
+  String get salaryTitle;
+
+  /// No description provided for @salaryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments recorded yet.'**
+  String get salaryEmpty;
+
+  /// No description provided for @salaryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a record. Payment is made by your employer outside the app.'**
+  String get salaryNote;
+
+  /// No description provided for @salaryPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}'**
+  String salaryPeriod(String from, String to);
+
+  /// No description provided for @salaryPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {date}'**
+  String salaryPaid(String date);
+
+  /// No description provided for @salaryReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference {ref}'**
+  String salaryReference(String ref);
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help and support'**
+  String get supportTitle;
+
+  /// No description provided for @supportNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an issue'**
+  String get supportNew;
+
+  /// No description provided for @supportMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get supportMine;
+
+  /// No description provided for @supportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No tickets yet. If something goes wrong, tell us here.'**
+  String get supportEmpty;
+
+  /// No description provided for @supportLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your tickets. Check your connection and try again.'**
+  String get supportLoadFailed;
+
+  /// No description provided for @supportAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'What is it about?'**
+  String get supportAbout;
+
+  /// No description provided for @catVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get catVehicle;
+
+  /// No description provided for @catStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Student behaviour'**
+  String get catStudent;
+
+  /// No description provided for @catApp.
+  ///
+  /// In en, this message translates to:
+  /// **'App problem'**
+  String get catApp;
+
+  /// No description provided for @catSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get catSafety;
+
+  /// No description provided for @catOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get catOther;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubject;
+
+  /// No description provided for @supportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get supportMessage;
+
+  /// No description provided for @supportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get supportSend;
+
+  /// No description provided for @supportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. We\'ll reply here.'**
+  String get supportSent;
+
+  /// No description provided for @supportNeedFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a topic and write a short message.'**
+  String get supportNeedFields;
+
+  /// No description provided for @supportReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a reply'**
+  String get supportReplyHint;
+
+  /// No description provided for @supportReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reply'**
+  String get supportReply;
+
+  /// No description provided for @supportFromStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportFromStaff;
+
+  /// No description provided for @supportFromYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportFromYou;
+
+  /// No description provided for @supportReplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send that. Try again.'**
+  String get supportReplyFailed;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Being looked at'**
+  String get supportStatusProgress;
+
+  /// No description provided for @supportStatusWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for you'**
+  String get supportStatusWaiting;
+
+  /// No description provided for @supportStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get supportStatusResolved;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get supportStatusClosed;
+
+  /// No description provided for @supportCallSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor'**
+  String get supportCallSupervisor;
 }
 
 class _AppLocalizationsDelegate

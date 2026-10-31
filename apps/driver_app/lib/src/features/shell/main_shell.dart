@@ -7,6 +7,7 @@ import 'package:turbo_ui/turbo_ui.dart';
 import '../../core/profile.dart';
 import '../../l10n/app_localizations.dart';
 import '../duty/location_sharing.dart';
+import '../ride/ride_providers.dart';
 
 /// The signed-in frame: Home, Trips, Me. It also keeps location sharing in step
 /// with the server's duty status: on duty means sharing, anything else means not.
@@ -44,6 +45,12 @@ class _MainShellState extends ConsumerState<MainShell> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     ref.listen(profileProvider, (_, next) => _sync(next.value));
+    // A ride takes over the whole screen until it is over.
+    ref.listen(currentRideProvider, (_, next) {
+      if (next.value != null && !GoRouterState.of(context).matchedLocation.startsWith('/ride')) {
+        context.go('/ride');
+      }
+    });
     final location = GoRouterState.of(context).matchedLocation;
     final index = MainShell._paths.indexWhere((p) => location == p || location.startsWith('$p/'));
     return Scaffold(

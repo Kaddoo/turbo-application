@@ -11,7 +11,10 @@ import 'features/auth/welcome_screen.dart';
 import 'features/gate/gate_screens.dart';
 import 'features/home/home_screen.dart';
 import 'features/me/me_screen.dart';
+import 'features/me/record_screens.dart';
 import 'features/me/trips_screen.dart';
+import 'features/support/support_screens.dart';
+import 'features/ride/ride_screen.dart';
 import 'features/shell/main_shell.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
@@ -49,6 +52,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/me', builder: (_, _) => const MeScreen()),
         ],
       ),
+      GoRoute(path: '/me/shifts', parentNavigatorKey: _rootKey, builder: (_, _) => const ShiftsScreen()),
+      GoRoute(path: '/me/attendance', parentNavigatorKey: _rootKey, builder: (_, _) => const AttendanceScreen()),
+      GoRoute(path: '/me/salary', parentNavigatorKey: _rootKey, builder: (_, _) => const SalaryScreen()),
+      GoRoute(path: '/support', parentNavigatorKey: _rootKey, builder: (_, _) => const SupportListScreen()),
+      GoRoute(path: '/support/new', parentNavigatorKey: _rootKey, builder: (_, state) => NewTicketScreen(rideId: state.extra as String?)),
+      GoRoute(
+        path: '/support/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) => TicketScreen(ticketId: state.pathParameters['id']!),
+      ),
+      GoRoute(path: '/ride', parentNavigatorKey: _rootKey, builder: (_, _) => const DriverRideScreen()),
       // Developer screen for the background-location test; not linked from the app.
       GoRoute(path: '/spike', parentNavigatorKey: _rootKey, builder: (_, _) => const LocationSpikeScreen(brand: turboBrand)),
     ],

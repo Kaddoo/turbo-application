@@ -200,5 +200,285 @@
         "type": "String"
       }
     }
+  },
+  "assignTitle": "New ride",
+  "assignAccept": "Accept",
+  "assignDecline": "Decline",
+  "assignSeconds": "{seconds}",
+  "assignPickup": "Pickup",
+  "assignDistance": "{km} km away · about {minutes} min",
+  "assignStudent": "Student: {name}",
+  "assignTrip": "Trip: {km} km",
+  "assignFare": "Fare: {amount}",
+  "assignPassed": "Ride passed to another driver",
+  "assignPassedBody": "You're back in the queue. No action needed.",
+  "declineTitle": "Why are you declining?",
+  "declineVehicle": "Car problem",
+  "declineFar": "Too far",
+  "declineUnwell": "Unwell",
+  "declineOther": "Other",
+  "pickupTitle": "Go to the pickup",
+  "pickupNavigate": "Navigate",
+  "pickupArrived": "I've arrived",
+  "pickupFarTitle": "You look far from the pickup",
+  "pickupFarBody": "Mark as arrived anyway?",
+  "pickupFarConfirm": "Yes, I've arrived",
+  "pickupMessages": "Quick messages",
+  "navigateGoogle": "Google Maps",
+  "navigateWaze": "Waze",
+  "navigateFailed": "We couldn't open a maps app.",
+  "waitingTitle": "Waiting for the student",
+  "waitingTimer": "Waiting {time}",
+  "waitingStart": "Start trip",
+  "waitingNotHere": "Student not here",
+  "waitingNotHereConfirmTitle": "Mark the student as not here?",
+  "waitingNotHereConfirmBody": "The ride will be cancelled. The student isn't charged and no fee applies.",
+  "waitingNotHereConfirm": "Yes, not here",
+  "waitingNotHereAt": "You can mark the student as not here at {time}.",
+  "pinTitle": "Enter the student's PIN",
+  "pinHint": "Ask the student for their PIN. Never accept it by message.",
+  "pinStart": "Start",
+  "pinDelete": "Delete",
+  "pinLockedTitle": "Too many tries",
+  "pinLockedBody": "Call your supervisor.",
+  "tripTitle": "Trip in progress",
+  "tripNavigate": "Navigate to drop-off",
+  "tripDropoff": "Drop-off: {name}",
+  "tripElapsed": "On the trip for {time}",
+  "tripComplete": "Complete trip",
+  "tripCompleteConfirmTitle": "Complete the trip?",
+  "tripCompleteConfirmBody": "Only do this at the drop-off.",
+  "tripCompleteConfirm": "Yes, complete",
+  "tripWaitingSignal": "Waiting for signal to finish your trip",
+  "tripWaitingSignalBody": "We'll keep trying. You don't need to do anything.",
+  "tripReport": "Report a problem",
+  "doneTitle": "Trip complete",
+  "doneDetails": "{km} km · {minutes} min",
+  "doneBack": "Back to waiting",
+  "cancelledTitle": "Ride cancelled",
+  "cancelledByStudent": "The student cancelled the ride.",
+  "cancelledByStaff": "The office cancelled the ride.",
+  "cancelledBySystem": "The ride was cancelled.",
+  "cancelledBody": "Return to your waiting position.",
+  "cancelledNoShow": "The student wasn't there. No fee applies.",
+  "rideMessageFailed": "That message didn't send. Try again.",
+  "rideLoadFailed": "We couldn't load your ride. Check your connection and try again.",
+  "rideActionFailed": "That didn't go through. Try again.",
+  "qmRunningLate": "Running late",
+  "qmImHere": "I'm here",
+  "qmAtTheGate": "At the gate",
+  "qmCannotFindYou": "I can't find you",
+  "qmOnMyWay": "On my way",
+  "qmPleaseComeOut": "Please come out",
+  "sosHold": "Hold for SOS",
+  "sosHoldSeconds": "Hold for 3 seconds",
+  "sosSecondsLeft": "{seconds} seconds",
+  "sosAlerted": "Help has been alerted",
+  "sosAlertedBody": "Staff at {appName} can see your location and will call you. Stay where it is safe.",
+  "sosFailed": "We couldn't send the alert",
+  "sosFailedBody": "Call the emergency number now.",
+  "sosCall": "Call {number}",
+  "sosNoLocation": "We couldn't find your location. Call the emergency number now.",
+  "sosDismiss": "Close",
+  "@assignSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@assignDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@assignStudent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@assignTrip": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "@assignFare": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@waitingTimer": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@waitingNotHereAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@tripDropoff": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@tripElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@doneDetails": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@sosSecondsLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@sosAlertedBody": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "@sosCall": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "shiftsTitle": "Shifts",
+  "shiftsEmpty": "No shifts scheduled. Your supervisor sets these.",
+  "shiftUpcoming": "Upcoming",
+  "shiftPast": "Past",
+  "shiftScheduled": "Scheduled",
+  "shiftInProgress": "In progress",
+  "shiftCompleted": "Completed",
+  "shiftMissed": "Missed",
+  "attendanceTitle": "Attendance",
+  "attendanceEmpty": "No attendance records yet.",
+  "attendanceIn": "In {time}",
+  "attendanceOut": "Out {time}",
+  "attendanceMinutes": "{minutes} min worked",
+  "attendanceCorrected": "Corrected by staff: {note}",
+  "attendanceWrong": "Think something is wrong?",
+  "attendanceOnTime": "On time",
+  "attendanceLate": "Late",
+  "attendanceAbsent": "Absent",
+  "attendanceCorrectedChip": "Corrected",
+  "salaryTitle": "Salary history",
+  "salaryEmpty": "No payments recorded yet.",
+  "salaryNote": "This is a record. Payment is made by your employer outside the app.",
+  "salaryPeriod": "{from} to {to}",
+  "salaryPaid": "Paid {date}",
+  "salaryReference": "Reference {ref}",
+  "supportTitle": "Help and support",
+  "supportNew": "Report an issue",
+  "supportMine": "My tickets",
+  "supportEmpty": "No tickets yet. If something goes wrong, tell us here.",
+  "supportLoadFailed": "We couldn't load your tickets. Check your connection and try again.",
+  "supportAbout": "What is it about?",
+  "catVehicle": "Vehicle",
+  "catStudent": "Student behaviour",
+  "catApp": "App problem",
+  "catSafety": "Safety",
+  "catOther": "Other",
+  "supportSubject": "Subject",
+  "supportMessage": "Message",
+  "supportSend": "Send",
+  "supportSent": "Sent. We'll reply here.",
+  "supportNeedFields": "Choose a topic and write a short message.",
+  "supportReplyHint": "Write a reply",
+  "supportReply": "Send reply",
+  "supportFromStaff": "Support",
+  "supportFromYou": "You",
+  "supportReplyFailed": "We couldn't send that. Try again.",
+  "supportStatusOpen": "Open",
+  "supportStatusProgress": "Being looked at",
+  "supportStatusWaiting": "Waiting for you",
+  "supportStatusResolved": "Resolved",
+  "supportStatusClosed": "Closed",
+  "supportCallSupervisor": "Supervisor",
+  "@attendanceIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@attendanceOut": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@attendanceMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@attendanceCorrected": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "@salaryPeriod": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "@salaryPaid": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@salaryReference": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
   }
 }

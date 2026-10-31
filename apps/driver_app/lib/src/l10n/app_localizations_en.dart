@@ -461,4 +461,445 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get meHelp => 'Help and support';
+
+  @override
+  String get assignTitle => 'New ride';
+
+  @override
+  String get assignAccept => 'Accept';
+
+  @override
+  String get assignDecline => 'Decline';
+
+  @override
+  String assignSeconds(int seconds) {
+    return '$seconds';
+  }
+
+  @override
+  String get assignPickup => 'Pickup';
+
+  @override
+  String assignDistance(String km, int minutes) {
+    return '$km km away · about $minutes min';
+  }
+
+  @override
+  String assignStudent(String name) {
+    return 'Student: $name';
+  }
+
+  @override
+  String assignTrip(String km) {
+    return 'Trip: $km km';
+  }
+
+  @override
+  String assignFare(String amount) {
+    return 'Fare: $amount';
+  }
+
+  @override
+  String get assignPassed => 'Ride passed to another driver';
+
+  @override
+  String get assignPassedBody => 'You\'re back in the queue. No action needed.';
+
+  @override
+  String get declineTitle => 'Why are you declining?';
+
+  @override
+  String get declineVehicle => 'Car problem';
+
+  @override
+  String get declineFar => 'Too far';
+
+  @override
+  String get declineUnwell => 'Unwell';
+
+  @override
+  String get declineOther => 'Other';
+
+  @override
+  String get pickupTitle => 'Go to the pickup';
+
+  @override
+  String get pickupNavigate => 'Navigate';
+
+  @override
+  String get pickupArrived => 'I\'ve arrived';
+
+  @override
+  String get pickupFarTitle => 'You look far from the pickup';
+
+  @override
+  String get pickupFarBody => 'Mark as arrived anyway?';
+
+  @override
+  String get pickupFarConfirm => 'Yes, I\'ve arrived';
+
+  @override
+  String get pickupMessages => 'Quick messages';
+
+  @override
+  String get navigateGoogle => 'Google Maps';
+
+  @override
+  String get navigateWaze => 'Waze';
+
+  @override
+  String get navigateFailed => 'We couldn\'t open a maps app.';
+
+  @override
+  String get waitingTitle => 'Waiting for the student';
+
+  @override
+  String waitingTimer(String time) {
+    return 'Waiting $time';
+  }
+
+  @override
+  String get waitingStart => 'Start trip';
+
+  @override
+  String get waitingNotHere => 'Student not here';
+
+  @override
+  String get waitingNotHereConfirmTitle => 'Mark the student as not here?';
+
+  @override
+  String get waitingNotHereConfirmBody =>
+      'The ride will be cancelled. The student isn\'t charged and no fee applies.';
+
+  @override
+  String get waitingNotHereConfirm => 'Yes, not here';
+
+  @override
+  String waitingNotHereAt(String time) {
+    return 'You can mark the student as not here at $time.';
+  }
+
+  @override
+  String get pinTitle => 'Enter the student\'s PIN';
+
+  @override
+  String get pinHint =>
+      'Ask the student for their PIN. Never accept it by message.';
+
+  @override
+  String get pinStart => 'Start';
+
+  @override
+  String get pinDelete => 'Delete';
+
+  @override
+  String get pinLockedTitle => 'Too many tries';
+
+  @override
+  String get pinLockedBody => 'Call your supervisor.';
+
+  @override
+  String get tripTitle => 'Trip in progress';
+
+  @override
+  String get tripNavigate => 'Navigate to drop-off';
+
+  @override
+  String tripDropoff(String name) {
+    return 'Drop-off: $name';
+  }
+
+  @override
+  String tripElapsed(String time) {
+    return 'On the trip for $time';
+  }
+
+  @override
+  String get tripComplete => 'Complete trip';
+
+  @override
+  String get tripCompleteConfirmTitle => 'Complete the trip?';
+
+  @override
+  String get tripCompleteConfirmBody => 'Only do this at the drop-off.';
+
+  @override
+  String get tripCompleteConfirm => 'Yes, complete';
+
+  @override
+  String get tripWaitingSignal => 'Waiting for signal to finish your trip';
+
+  @override
+  String get tripWaitingSignalBody =>
+      'We\'ll keep trying. You don\'t need to do anything.';
+
+  @override
+  String get tripReport => 'Report a problem';
+
+  @override
+  String get doneTitle => 'Trip complete';
+
+  @override
+  String doneDetails(String km, int minutes) {
+    return '$km km · $minutes min';
+  }
+
+  @override
+  String get doneBack => 'Back to waiting';
+
+  @override
+  String get cancelledTitle => 'Ride cancelled';
+
+  @override
+  String get cancelledByStudent => 'The student cancelled the ride.';
+
+  @override
+  String get cancelledByStaff => 'The office cancelled the ride.';
+
+  @override
+  String get cancelledBySystem => 'The ride was cancelled.';
+
+  @override
+  String get cancelledBody => 'Return to your waiting position.';
+
+  @override
+  String get cancelledNoShow => 'The student wasn\'t there. No fee applies.';
+
+  @override
+  String get rideMessageFailed => 'That message didn\'t send. Try again.';
+
+  @override
+  String get rideLoadFailed =>
+      'We couldn\'t load your ride. Check your connection and try again.';
+
+  @override
+  String get rideActionFailed => 'That didn\'t go through. Try again.';
+
+  @override
+  String get qmRunningLate => 'Running late';
+
+  @override
+  String get qmImHere => 'I\'m here';
+
+  @override
+  String get qmAtTheGate => 'At the gate';
+
+  @override
+  String get qmCannotFindYou => 'I can\'t find you';
+
+  @override
+  String get qmOnMyWay => 'On my way';
+
+  @override
+  String get qmPleaseComeOut => 'Please come out';
+
+  @override
+  String get sosHold => 'Hold for SOS';
+
+  @override
+  String get sosHoldSeconds => 'Hold for 3 seconds';
+
+  @override
+  String sosSecondsLeft(int seconds) {
+    return '$seconds seconds';
+  }
+
+  @override
+  String get sosAlerted => 'Help has been alerted';
+
+  @override
+  String sosAlertedBody(String appName) {
+    return 'Staff at $appName can see your location and will call you. Stay where it is safe.';
+  }
+
+  @override
+  String get sosFailed => 'We couldn\'t send the alert';
+
+  @override
+  String get sosFailedBody => 'Call the emergency number now.';
+
+  @override
+  String sosCall(String number) {
+    return 'Call $number';
+  }
+
+  @override
+  String get sosNoLocation =>
+      'We couldn\'t find your location. Call the emergency number now.';
+
+  @override
+  String get sosDismiss => 'Close';
+
+  @override
+  String get shiftsTitle => 'Shifts';
+
+  @override
+  String get shiftsEmpty => 'No shifts scheduled. Your supervisor sets these.';
+
+  @override
+  String get shiftUpcoming => 'Upcoming';
+
+  @override
+  String get shiftPast => 'Past';
+
+  @override
+  String get shiftScheduled => 'Scheduled';
+
+  @override
+  String get shiftInProgress => 'In progress';
+
+  @override
+  String get shiftCompleted => 'Completed';
+
+  @override
+  String get shiftMissed => 'Missed';
+
+  @override
+  String get attendanceTitle => 'Attendance';
+
+  @override
+  String get attendanceEmpty => 'No attendance records yet.';
+
+  @override
+  String attendanceIn(String time) {
+    return 'In $time';
+  }
+
+  @override
+  String attendanceOut(String time) {
+    return 'Out $time';
+  }
+
+  @override
+  String attendanceMinutes(int minutes) {
+    return '$minutes min worked';
+  }
+
+  @override
+  String attendanceCorrected(String note) {
+    return 'Corrected by staff: $note';
+  }
+
+  @override
+  String get attendanceWrong => 'Think something is wrong?';
+
+  @override
+  String get attendanceOnTime => 'On time';
+
+  @override
+  String get attendanceLate => 'Late';
+
+  @override
+  String get attendanceAbsent => 'Absent';
+
+  @override
+  String get attendanceCorrectedChip => 'Corrected';
+
+  @override
+  String get salaryTitle => 'Salary history';
+
+  @override
+  String get salaryEmpty => 'No payments recorded yet.';
+
+  @override
+  String get salaryNote =>
+      'This is a record. Payment is made by your employer outside the app.';
+
+  @override
+  String salaryPeriod(String from, String to) {
+    return '$from to $to';
+  }
+
+  @override
+  String salaryPaid(String date) {
+    return 'Paid $date';
+  }
+
+  @override
+  String salaryReference(String ref) {
+    return 'Reference $ref';
+  }
+
+  @override
+  String get supportTitle => 'Help and support';
+
+  @override
+  String get supportNew => 'Report an issue';
+
+  @override
+  String get supportMine => 'My tickets';
+
+  @override
+  String get supportEmpty =>
+      'No tickets yet. If something goes wrong, tell us here.';
+
+  @override
+  String get supportLoadFailed =>
+      'We couldn\'t load your tickets. Check your connection and try again.';
+
+  @override
+  String get supportAbout => 'What is it about?';
+
+  @override
+  String get catVehicle => 'Vehicle';
+
+  @override
+  String get catStudent => 'Student behaviour';
+
+  @override
+  String get catApp => 'App problem';
+
+  @override
+  String get catSafety => 'Safety';
+
+  @override
+  String get catOther => 'Other';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportMessage => 'Message';
+
+  @override
+  String get supportSend => 'Send';
+
+  @override
+  String get supportSent => 'Sent. We\'ll reply here.';
+
+  @override
+  String get supportNeedFields => 'Choose a topic and write a short message.';
+
+  @override
+  String get supportReplyHint => 'Write a reply';
+
+  @override
+  String get supportReply => 'Send reply';
+
+  @override
+  String get supportFromStaff => 'Support';
+
+  @override
+  String get supportFromYou => 'You';
+
+  @override
+  String get supportReplyFailed => 'We couldn\'t send that. Try again.';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusProgress => 'Being looked at';
+
+  @override
+  String get supportStatusWaiting => 'Waiting for you';
+
+  @override
+  String get supportStatusResolved => 'Resolved';
+
+  @override
+  String get supportStatusClosed => 'Closed';
+
+  @override
+  String get supportCallSupervisor => 'Supervisor';
 }

@@ -10,7 +10,9 @@ import 'package:driver_app/src/features/duty/connectivity.dart';
 import 'package:driver_app/src/features/duty/location_sharing.dart';
 import 'package:driver_app/src/features/duty/readiness.dart';
 import 'package:driver_app/src/features/map/map_view.dart';
+import 'package:driver_app/src/features/ride/position.dart';
 import 'package:driver_app/src/location/location_access.dart';
+import 'package:turbo_api/turbo_api.dart';
 import 'package:driver_app/src/location/tracked_point.dart';
 
 import 'fake_server.dart';
@@ -57,6 +59,15 @@ class FakeReadiness implements ReadinessSource {
   Future<bool> requestNotifications() async => notificationsOn = true;
 }
 
+class FakePosition implements PositionReader {
+  FakePosition([this.point]);
+
+  GeoPoint? point;
+
+  @override
+  Future<GeoPoint?> current() async => point;
+}
+
 /// A position source tests can push fixes into.
 class FakePositions {
   final controller = StreamController<TrackedPoint>.broadcast();
@@ -83,6 +94,7 @@ Future<void> bootDriver(
   FakePositions? positions,
   bool signedIn = true,
   bool online = true,
+  FakePosition? position,
   Size size = const Size(390, 900),
   List<Override> extra = const [],
 }) async {
@@ -98,6 +110,7 @@ Future<void> bootDriver(
         positionSourceProvider.overrideWithValue((positions ?? FakePositions()).call),
         onlineProvider.overrideWith((_) => Stream.value(online)),
         mapBuilderProvider.overrideWithValue((context, spec) => const SizedBox.expand(key: Key('map'))),
+        positionReaderProvider.overrideWithValue(position ?? FakePosition(GeoPoint(lat: 5.7203, lng: 0.0757))),
         ...extra,
       ],
       child: const App(),
