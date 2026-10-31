@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/vite-env.d.ts","./src/api/client.ts","./src/api/schema.d.ts","./src/app/app.tsx","./src/app/env.ts","./src/app/strings.ts","./src/brand/brand.ts","./src/theme/theme.ts","./test/contrast.test.ts","./test/hardcoded-style.test.ts","./vite.config.ts"],"version":"5.9.3"}
