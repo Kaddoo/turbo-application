@@ -1,0 +1,5 @@
+extends:
+  - recommended
+rules:
+  # localhost is the Prism mock server, on purpose
+  no-server-example.com: off
