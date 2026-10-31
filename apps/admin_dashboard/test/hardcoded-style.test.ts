@@ -7,7 +7,8 @@ import { describe, expect, it } from 'vitest';
  * or the product name. This is what keeps a rebrand to one file.
  */
 const root = join(__dirname, '..', 'src');
-const allowed = [/^brand\//, /^theme\/theme\.ts$/, /^api\/schema\.d\.ts$/];
+// demo/ is sample data for presentations (SVG document placeholders), not UI styling.
+const allowed = [/^brand\//, /^theme\/theme\.ts$/, /^api\/schema\.d\.ts$/, /^demo\//];
 
 export const patterns: Record<string, RegExp> = {
   'colour literal': /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/,

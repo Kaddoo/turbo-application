@@ -1,0 +1,12 @@
+.wrap { min-height: 100%; display: grid; place-items: center; padding: 32px 16px; }
+.panel {
+  width: min(26rem, 100%); display: grid; gap: 20px; padding: 32px;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+}
+.brand { font-weight: 600; font-size: var(--text-title); letter-spacing: -0.02em; }
+.title { margin: 0; font-size: var(--text-display); font-weight: 600; letter-spacing: -0.02em; }
+.text { margin: 0; color: var(--color-text-secondary); }
+.links { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: var(--text-caption); }
+.links a, .link { color: var(--color-accent-text); background: none; border: none; font: inherit; cursor: pointer; padding: 0; }
+.secret { font-family: var(--font-mono); word-break: break-all; padding: 12px; border-radius: var(--radius-input); background: var(--color-background); border: 1px solid var(--color-border); }
+.notice { font-size: var(--text-caption); color: var(--color-text-secondary); border-left: 2px solid var(--color-accent-text); padding-left: 10px; }

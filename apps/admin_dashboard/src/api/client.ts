@@ -1,5 +1,6 @@
 import createClient, { type Middleware } from 'openapi-fetch';
 import type { components, paths } from './schema';
+import { ApiError } from '../lib/problems';
 
 export type Schemas = components['schemas'];
 export type Problem = Schemas['Problem'];
@@ -21,7 +22,19 @@ export function hasAccessToken(): boolean {
   return accessToken !== null;
 }
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:4010';
+/** Same-origin '/api' in development (Vite proxies it to the mock), a full URL in real builds. */
+const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
+
+/**
+ * Demo mode serves realistic sample data from `src/demo` for presentations.
+ * It is only reachable when VITE_APP_ENV=demo; real builds never load it.
+ */
+export const isDemo = import.meta.env.VITE_APP_ENV === 'demo';
+let transport: typeof fetch = (input, init) => globalThis.fetch(input, init);
+
+export function setDemoTransport(demoFetch: typeof fetch): void {
+  transport = demoFetch;
+}
 
 /** Calls that must not carry a bearer token or trigger a refresh. */
 const PUBLIC_AUTH = /^\/auth\/(admin\/|refresh$)/;
@@ -32,7 +45,7 @@ let refreshing: Promise<boolean> | null = null;
 async function refreshAccessToken(): Promise<boolean> {
   refreshing ??= (async () => {
     try {
-      const res = await fetch(`${baseUrl}/auth/refresh`, {
+      const res = await transport(`${baseUrl}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'X-App-Version': APP_VERSION },
@@ -67,14 +80,42 @@ const authMiddleware: Middleware = {
     if (request.bodyUsed || !(await refreshAccessToken())) return undefined;
     const retry = new Request(request);
     retry.headers.set('Authorization', `Bearer ${accessToken}`);
-    return fetch(retry);
+    return transport(retry);
   },
 };
 
-export const api = createClient<paths>({ baseUrl, credentials: 'include' });
+export const api = createClient<paths>({
+  baseUrl,
+  credentials: 'include',
+  fetch: (request: Request) => transport(request),
+});
 api.use(authMiddleware);
 
 /** Narrow an unknown error body to an RFC 9457 problem with a stable code. */
 export function isProblem(value: unknown): value is Problem {
   return typeof value === 'object' && value !== null && 'code' in value && 'status' in value;
+}
+
+/** Try to restore a session from the refresh cookie (page load). */
+export function restoreSession(): Promise<boolean> {
+  return refreshAccessToken();
+}
+
+/**
+ * Unwraps an openapi-fetch result: returns the data or throws an ApiError
+ * carrying the RFC 9457 problem, so screens can switch on its `code`.
+ */
+export async function call<T>(
+  pending: Promise<{ data?: T; error?: unknown; response: Response }>,
+): Promise<T> {
+  const { data, error, response } = await pending;
+  if (!response.ok || error !== undefined) {
+    throw new ApiError(response.status, isProblem(error) ? error : null);
+  }
+  return data as T;
+}
+
+/** One UUID per user intention; keep it while the same intention is retried. */
+export function newIdempotencyKey(): string {
+  return crypto.randomUUID();
 }

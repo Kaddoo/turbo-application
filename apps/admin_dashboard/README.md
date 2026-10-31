@@ -10,6 +10,14 @@ npm run gen:api                     # regenerate src/api/schema.d.ts from the co
 npm run check                       # schema up to date, typecheck, tests: must pass before every commit
 ```
 
+## Demo mode
+
+```bash
+VITE_APP_ENV=demo npm run dev       # no API needed: sample data served in the browser from src/demo
+```
+
+Any email, a 10-character password and any 6-digit code sign in. Start the email with a role (`verifier@`, `dispatcher@`, `finance@`, `support@`, `hr@`) to see that role's menu; anything else is super admin. Actions change the in-memory data until the page reloads. Real builds leave `src/demo` out of the bundle. `test/routes.smoke.test.tsx` signs in through the demo server and renders every screen.
+
 ## Brand
 
 Three layers, as in the Flutter apps:
