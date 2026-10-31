@@ -19,6 +19,7 @@ declare global {
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
  *   data-scrub     headline words brighten as it scrolls through
  *   data-words     words rise, unblur and fade in one by one; [data-pop] tags pop in
+ *   data-bg        "ink" | "paper": #main's background fades between section colours
  *   data-tilt      device swings up into its resting tilt (value: ±1 direction)
  *   data-tapaway   pinned scene: phones rise into the glow (≥1024px)
  *   data-drift / data-drift-track   card strip slides sideways with scroll (≥1024px)
@@ -42,7 +43,7 @@ export function Motion() {
         if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
 
-        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+        const lenis = new Lenis({ lerp: 0.14, wheelMultiplier: 1 });
         lenis.on("scroll", ScrollTrigger.update);
         const tick = (t: number) => lenis.raf(t * 1000);
         gsap.ticker.add(tick);
@@ -139,11 +140,33 @@ export function Motion() {
             });
           });
 
+          // Page background blends between section colours instead of switching at hard edges.
+          const bgSections = gsap.utils.toArray<HTMLElement>("[data-bg]");
+          const main = document.getElementById("main");
+          if (main && bgSections.length) {
+            const colour = (el: HTMLElement) => (el.dataset.bg === "paper" ? "#f3f1ea" : "#0b0c0a");
+            root.classList.add("bg-scroll");
+            gsap.set(main, { backgroundColor: colour(bgSections[0]) });
+            bgSections.forEach((el, i) => {
+              if (i === 0 || colour(el) === colour(bgSections[i - 1])) return;
+              gsap.fromTo(
+                main,
+                { backgroundColor: colour(bgSections[i - 1]) },
+                {
+                  backgroundColor: colour(el),
+                  ease: "none",
+                  immediateRender: false,
+                  scrollTrigger: { trigger: el, start: "top 80%", end: "top 35%", scrub: true },
+                },
+              );
+            });
+          }
+
           gsap.utils.toArray<HTMLElement>("[data-tilt]").forEach((el) => {
             const dir = parseFloat(el.dataset.tilt || "1");
             gsap.from(el, {
               y: 140,
-              rotation: 10 * dir,
+              rotation: 6 * dir,
               opacity: 0.4,
               ease: "none",
               scrollTrigger: { trigger: el.closest("section") ?? el, start: "top bottom", end: "center 60%", scrub: 0.8 },
@@ -195,6 +218,11 @@ export function Motion() {
           });
         });
 
+        // Triggers were created by type, not page order; re-order so pinned sections
+        // push every later trigger (background fades included) down by their pin length.
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
+
         // Bars are rendered after data arrives; observe them as they appear.
         const animateBars = () => {
           document.querySelectorAll<HTMLElement>("[data-bar]:not([data-bar-done])").forEach((bar) => {
@@ -220,6 +248,7 @@ export function Motion() {
         window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
 
         cleanup = () => {
+          root.classList.remove("bg-scroll");
           mo.disconnect();
           document.removeEventListener("click", onClick);
           ctx.revert();

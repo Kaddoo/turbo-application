@@ -21,7 +21,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" aria-labelledby="how-title" className="on-light relative bg-paper py-28 text-ink sm:py-40">
+    <section id="how-it-works" data-bg="paper" aria-labelledby="how-title" className="on-light relative bg-paper py-28 text-ink sm:py-40">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
           <div>

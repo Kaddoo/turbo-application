@@ -22,8 +22,8 @@ const ORIENT = JSON.parse(process.env.ORIENT ?? "[0,0,0]");
 /** rot: Euler XYZ in degrees applied to the upright phone. */
 export const poses = {
   front: { rot: [0, 0, 0], width: 900, height: 1800 },
-  tiltLeft: { rot: [14, 22, -16], width: 1300, height: 1800 },
-  tiltRight: { rot: [12, -20, 15], width: 1300, height: 1800 },
+  tiltLeft: { rot: [4, 9, -13], width: 1000, height: 1800 },
+  tiltRight: { rot: [4, -9, 13], width: 1000, height: 1800 },
 };
 
 const types = { ".html": "text/html", ".js": "text/javascript" };

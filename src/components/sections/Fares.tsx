@@ -58,11 +58,11 @@ export function Fares() {
   const state = useApi(getServiceArea, hasBands);
 
   return (
-    <section id="fares" aria-labelledby="fares-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
+    <section id="fares" data-bg="ink" aria-labelledby="fares-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="flex justify-center lg:justify-start lg:pl-10">
           <div data-tilt="-1">
-            <Phone pose="tiltLeft" className="w-[19rem] sm:w-[25rem]">
+            <Phone pose="tiltLeft" className="w-[19rem] sm:w-[23rem] lg:w-[26rem]">
               <FareScreen />
             </Phone>
           </div>

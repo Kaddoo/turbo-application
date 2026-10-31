@@ -33,7 +33,7 @@ function DriverScreen() {
         <path d="M150 568 C 150 470, 140 400, 136 330" stroke="#d4ff3a" strokeOpacity=".35" strokeWidth="46" strokeLinecap="round" />
         <path d="M150 568 C 150 470, 140 400, 136 330" stroke="#d4ff3a" strokeWidth="5" strokeLinecap="round" />
       </svg>
-      <div className="absolute inset-x-3 top-12 flex items-center gap-2.5 rounded-2xl bg-black/35 p-2.5 backdrop-blur-md">
+      <div className="absolute inset-x-3 top-12 flex items-center gap-2.5 rounded-2xl bg-black/60 p-2.5">
         <img src="/photos/avatar-kofi.jpg" alt="" className="size-9 rounded-full object-cover" />
         <div className="text-[11px] leading-tight">
           <p className="font-medium">Kofi · your driver</p>
@@ -78,8 +78,8 @@ function ArrivingScreen() {
  */
 export function TapAway() {
   return (
-    <section id="tap-away" aria-labelledby="tapaway-title" data-tapaway className="relative overflow-hidden bg-ink">
-      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28">
+    <section id="tap-away" data-bg="ink" aria-labelledby="tapaway-title" data-tapaway className="relative overflow-hidden bg-ink">
+      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 [mask-image:linear-gradient(to_bottom,black_80%,transparent)] sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28">
         <div
           data-tapaway-glow
           aria-hidden
@@ -95,29 +95,27 @@ export function TapAway() {
 
         <div data-tapaway-phones className="relative mt-0 flex w-full justify-center sm:-mt-8 lg:-mt-8">
           <div data-tapaway-side="-1" className="absolute left-1/2 top-24 -translate-x-[118%] sm:-translate-x-[122%]">
-            <Phone className="w-[12rem] sm:w-[14.5rem] lg:w-[17rem]">
+            <Phone className="w-[13rem] sm:w-[17rem] lg:w-[22rem]">
               <DriverScreen />
             </Phone>
           </div>
           <div data-tapaway-side="1" className="absolute left-1/2 top-24 translate-x-[18%] sm:translate-x-[22%]">
-            <Phone className="w-[12rem] sm:w-[14.5rem] lg:w-[17rem]">
+            <Phone className="w-[13rem] sm:w-[17rem] lg:w-[22rem]">
               <ArrivingScreen />
             </Phone>
           </div>
           <div className="relative z-10">
-            <Phone className="lg:w-[20rem]">
+            <Phone className="w-[17rem] sm:w-[21rem] lg:w-[27rem]">
               <HomeScreen />
             </Phone>
             <a
               href={links.playStoreUrl}
-              className="absolute bottom-[34%] left-1/2 z-20 inline-flex h-10 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-paper px-4 text-sm font-medium text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-white sm:bottom-[38%]"
+              className="absolute left-1/2 top-[44%] z-20 inline-flex h-10 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-paper px-4 text-sm font-medium text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-white"
             >
               <Play aria-hidden className="size-3.5 fill-ink" /> Google Play
             </a>
           </div>
         </div>
-
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-24 bg-gradient-to-t from-ink to-transparent" />
       </div>
     </section>
   );

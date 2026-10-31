@@ -8,7 +8,7 @@ const facts = [
 
 export function Wallet() {
   return (
-    <section aria-labelledby="wallet-title" className="on-light relative bg-paper py-20 text-ink sm:py-28">
+    <section aria-labelledby="wallet-title" data-bg="paper" className="on-light relative bg-paper py-20 text-ink sm:py-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 id="wallet-title" className="sr-only">
           Your money, your wallet

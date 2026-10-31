@@ -9,7 +9,7 @@ function RouteScreen() {
   return (
     <div className="relative flex-1">
       <MapScreen />
-      <div className="absolute inset-x-3 top-9 flex items-center justify-between rounded-2xl bg-white/10 p-2.5 backdrop-blur-md">
+      <div className="absolute inset-x-3 top-9 flex items-center justify-between rounded-2xl bg-white/10 p-2.5">
         <div className="flex items-center gap-2.5">
           <span className="inline-flex size-8 items-center justify-center rounded-full bg-paper text-ink">
             <Navigation className="size-3.5" />
@@ -31,7 +31,7 @@ function RouteScreen() {
 
 export function Coverage() {
   return (
-    <section id="where-we-go" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-24 text-ink sm:py-32">
+    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-24 text-ink sm:py-32">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="max-w-md lg:order-1">
           <Tag icon={MapPin}>Where we go</Tag>
@@ -50,7 +50,7 @@ export function Coverage() {
 
         <div className="flex justify-center lg:order-2 lg:justify-end lg:pr-10">
           <div data-tilt="1">
-            <Phone pose="tiltRight" className="w-[19rem] sm:w-[25rem]">
+            <Phone pose="tiltRight" className="w-[19rem] sm:w-[23rem] lg:w-[26rem]">
               <RouteScreen />
             </Phone>
           </div>

@@ -39,7 +39,7 @@ export function Header() {
       <div
         className={cn(
           "mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto] items-center rounded-2xl px-2 transition-all duration-500 md:grid-cols-[1fr_auto_1fr]",
-          scrolled || open ? "bg-ink/70 backdrop-blur-xl" : "bg-transparent",
+          scrolled || open ? "bg-ink/90 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.6)]" : "bg-transparent",
         )}
       >
         <a href="/" className="inline-flex items-center gap-2.5 justify-self-start text-lg text-paper" aria-label="Turbo home">
@@ -55,7 +55,7 @@ export function Header() {
               <li key={n.href}>
                 <a
                   href={n.href}
-                  className="inline-flex h-9 items-center rounded-full bg-white/[0.07] px-4 text-[13px] text-paper/75 backdrop-blur-md transition-colors hover:bg-white/15 hover:text-paper"
+                  className="inline-flex h-9 items-center rounded-full bg-white/[0.07] px-4 text-[13px] text-paper/75 transition-colors hover:bg-white/15 hover:text-paper"
                 >
                   {n.label}
                 </a>
@@ -88,7 +88,7 @@ export function Header() {
         id="mobile-nav"
         aria-label="Mobile"
         hidden={!open}
-        className="mx-auto mt-2 max-w-6xl rounded-3xl border border-white/10 bg-ink/95 p-3 backdrop-blur-xl md:hidden"
+        className="mx-auto mt-2 max-w-6xl rounded-3xl border border-white/10 bg-ink p-3 md:hidden"
       >
         <ul>
           {nav.map((n) => (

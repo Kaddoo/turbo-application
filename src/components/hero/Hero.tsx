@@ -28,7 +28,7 @@ function RouteSketch() {
 function FloatCard({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-ink-2/80 p-3.5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md ${className ?? ""}`}
+      className={`rounded-2xl border border-white/10 bg-ink-2/95 p-3.5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] ${className ?? ""}`}
     >
       {children}
     </div>
@@ -51,12 +51,12 @@ export function Hero() {
       <div aria-hidden className="grain pointer-events-none absolute inset-0 -z-10" />
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-40 top-1/3 -z-10 size-[36rem] rounded-full bg-turbo/10 blur-[120px]"
+        className="pointer-events-none absolute -left-72 top-0 -z-10 size-[56rem] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,58,0.10),transparent)]"
       />
 
       {/* 3D stage (desktop/tablet) */}
       <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[72%] [mask-image:linear-gradient(to_right,transparent,black_35%)] md:block">
-        <div className="absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_60%_50%,black,transparent_70%)]">
+        <div className="absolute inset-0 opacity-40">
           <div className="absolute inset-x-[10%] top-1/2 -translate-y-1/2">
             <RouteSketch />
           </div>
@@ -72,7 +72,7 @@ export function Hero() {
             <p className="mt-1 text-2xl font-semibold tracking-tight">Seen before you confirm</p>
           </FloatCard>
         </div>
-        <div data-parallax="0.3" className="absolute bottom-[24%] right-[34%]">
+        <div data-parallax="0.3" className="absolute bottom-[14%] right-[6%]">
           <FloatCard className="flex items-center gap-3">
             <span className="inline-flex size-9 items-center justify-center rounded-full bg-turbo text-ink">
               <Navigation className="size-4" aria-hidden />
@@ -83,7 +83,7 @@ export function Hero() {
             </div>
           </FloatCard>
         </div>
-        <div data-parallax="0.22" className="absolute right-[12%] bottom-[34%]">
+        <div data-parallax="0.22" className="absolute right-[10%] bottom-[34%]">
           <FloatCard className="flex items-center gap-2 py-2.5 pr-4">
             <BadgeCheck className="size-4 text-turbo" aria-hidden />
             <span className="text-sm">Verified student</span>

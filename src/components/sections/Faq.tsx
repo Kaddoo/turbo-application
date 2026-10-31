@@ -61,7 +61,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 export function Faq() {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="bg-ink py-24 sm:py-32">
+    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-24 sm:py-32">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
         <div>
           <Tag tone="dot">FAQ</Tag>
