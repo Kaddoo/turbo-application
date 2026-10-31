@@ -29,6 +29,7 @@ class FlowInputs {
     required this.termsRequired,
     required this.suspended,
     required this.verification,
+    this.resubmitting = false,
   });
 
   final bool gateLoading;
@@ -41,6 +42,9 @@ class FlowInputs {
   final bool termsRequired;
   final bool suspended;
   final VerificationStatus? verification;
+
+  /// The student chose "send again" after a needs-attention decision.
+  final bool resubmitting;
 }
 
 FlowStep computeStep(FlowInputs i) {
@@ -57,6 +61,8 @@ FlowStep computeStep(FlowInputs i) {
   if (i.suspended) return FlowStep.suspended;
   return switch (i.verification) {
     VerificationStatus.approved => FlowStep.home,
+    VerificationStatus.needsAttention =>
+      i.resubmitting ? FlowStep.verificationCapture : FlowStep.verificationStatus,
     VerificationStatus.pending || VerificationStatus.rejected => FlowStep.verificationStatus,
     _ => FlowStep.verificationCapture,
   };

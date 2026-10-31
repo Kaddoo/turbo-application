@@ -441,6 +441,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That price has expired. We\'ll get you a new one.'**
   String get problemQuoteExpired;
+
+  /// No description provided for @verifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm you\'re a student'**
+  String get verifyTitle;
+
+  /// No description provided for @verifyIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'You only do this once. It takes about two minutes and you\'ll need your Ghana Card and student ID.'**
+  String get verifyIntro;
+
+  /// No description provided for @verifyPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Only our verification team sees these. They are deleted after review.'**
+  String get verifyPrivacyNote;
+
+  /// No description provided for @verifyFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name as on your Ghana Card'**
+  String get verifyFullName;
+
+  /// No description provided for @verifyGhanaCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghana Card number'**
+  String get verifyGhanaCard;
+
+  /// No description provided for @verifyGhanaCardHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks like GHA-123456789-0'**
+  String get verifyGhanaCardHelper;
+
+  /// No description provided for @verifyGhanaCardInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the number as shown on the card, like GHA-123456789-0.'**
+  String get verifyGhanaCardInvalid;
+
+  /// No description provided for @verifyStudentId.
+  ///
+  /// In en, this message translates to:
+  /// **'Student ID number'**
+  String get verifyStudentId;
+
+  /// No description provided for @verifyFieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This is needed.'**
+  String get verifyFieldRequired;
+
+  /// No description provided for @verifyPhotosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get verifyPhotosTitle;
+
+  /// No description provided for @verifySubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get verifySubmit;
+
+  /// No description provided for @verifySubmitting.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending'**
+  String get verifySubmitting;
+
+  /// No description provided for @verifyDetailsKept.
+  ///
+  /// In en, this message translates to:
+  /// **'We keep what you\'ve typed if you close the app.'**
+  String get verifyDetailsKept;
+
+  /// No description provided for @docGhanaCardFront.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghana Card, front'**
+  String get docGhanaCardFront;
+
+  /// No description provided for @docGhanaCardBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghana Card, back'**
+  String get docGhanaCardBack;
+
+  /// No description provided for @docStudentId.
+  ///
+  /// In en, this message translates to:
+  /// **'Student ID'**
+  String get docStudentId;
+
+  /// No description provided for @docSelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Selfie holding your Ghana Card'**
+  String get docSelfie;
+
+  /// No description provided for @docTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get docTake;
+
+  /// No description provided for @docRetake.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake'**
+  String get docRetake;
+
+  /// No description provided for @docUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending {percent}%'**
+  String docUploading(Object percent);
+
+  /// No description provided for @docUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get docUploaded;
+
+  /// No description provided for @docNotTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Not taken yet'**
+  String get docNotTaken;
+
+  /// No description provided for @docFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t send'**
+  String get docFailed;
+
+  /// No description provided for @docRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try sending again'**
+  String get docRetry;
+
+  /// No description provided for @captureGuideCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit the card inside the frame, flat and in good light.'**
+  String get captureGuideCard;
+
+  /// No description provided for @captureGuideSelfie.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your Ghana Card next to your face and look at the camera.'**
+  String get captureGuideSelfie;
+
+  /// No description provided for @captureShutter.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get captureShutter;
+
+  /// No description provided for @captureUsePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this photo'**
+  String get captureUsePhoto;
+
+  /// No description provided for @captureCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get captureCancel;
+
+  /// No description provided for @captureIssueBlurry.
+  ///
+  /// In en, this message translates to:
+  /// **'This looks blurry. Hold still and try again.'**
+  String get captureIssueBlurry;
+
+  /// No description provided for @captureIssueGlare.
+  ///
+  /// In en, this message translates to:
+  /// **'There is glare on the photo. Tilt the card away from the light.'**
+  String get captureIssueGlare;
+
+  /// No description provided for @captureIssueDark.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s too dark. Move to a brighter place.'**
+  String get captureIssueDark;
+
+  /// No description provided for @captureIssueUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t read that photo. Please take it again.'**
+  String get captureIssueUnreadable;
+
+  /// No description provided for @captureLooksGood.
+  ///
+  /// In en, this message translates to:
+  /// **'This looks clear.'**
+  String get captureLooksGood;
+
+  /// No description provided for @captureCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'{appName} needs the camera to photograph your documents. Turn it on in Settings.'**
+  String captureCameraDenied(Object appName);
+
+  /// No description provided for @captureOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get captureOpenSettings;
+
+  /// No description provided for @captureCameraFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera didn\'t start. Close other apps that use it and try again.'**
+  String get captureCameraFailed;
+
+  /// No description provided for @verifyDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'This Ghana Card is already linked to another account. Contact support.'**
+  String get verifyDuplicate;
+
+  /// No description provided for @verifyResubmitNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Some documents were no longer valid. Please photograph them again.'**
+  String get verifyResubmitNote;
+
+  /// No description provided for @statusPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re checking your documents'**
+  String get statusPendingTitle;
+
+  /// No description provided for @statusPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This usually takes a day. We\'ll text you.'**
+  String get statusPendingBody;
+
+  /// No description provided for @statusNeedsAttentionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We need a little more'**
+  String get statusNeedsAttentionTitle;
+
+  /// No description provided for @statusNeedsAttentionFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Some of your documents couldn\'t be read. Please send them again.'**
+  String get statusNeedsAttentionFallback;
+
+  /// No description provided for @statusResubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send again'**
+  String get statusResubmit;
+
+  /// No description provided for @statusRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t confirm you'**
+  String get statusRejectedTitle;
+
+  /// No description provided for @statusRejectedFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents didn\'t meet our checks.'**
+  String get statusRejectedFallback;
+
+  /// No description provided for @statusRejectedContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact support if you think this is a mistake.'**
+  String get statusRejectedContact;
+
+  /// No description provided for @statusApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re verified'**
+  String get statusApprovedTitle;
+
+  /// No description provided for @statusApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now book rides.'**
+  String get statusApprovedBody;
+
+  /// No description provided for @statusRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t check just now. Pull down to try again.'**
+  String get statusRefreshFailed;
+
+  /// No description provided for @statusSubmittedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent {date}'**
+  String statusSubmittedAt(Object date);
 }
 
 class _AppLocalizationsDelegate

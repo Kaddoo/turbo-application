@@ -26,6 +26,15 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used once, to photograph your Ghana Card, your student ID and a selfie so we can confirm you are a student. The photos are deleted after review.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is used while the app is open to show your pickup point on the map and help your driver find you.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

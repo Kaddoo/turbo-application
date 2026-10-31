@@ -47,7 +47,8 @@ class FakeServer implements HttpClientAdapter {
   @override
   void close({bool force = false}) {}
 
-  List<Override> overrides({String version = '1.0.0', MemoryTokenStore? store}) => [
+  List<Override> overrides({String version = '1.0.0', MemoryTokenStore? store, List<Override> extra = const []}) => [
+        ...extra,
         appVersionProvider.overrideWith((_) async => version),
         tokenStoreProvider.overrideWithValue(store ?? MemoryTokenStore()),
         clientProvider.overrideWith((ref) {

@@ -10,7 +10,8 @@ import 'features/auth/terms_screen.dart';
 import 'features/auth/welcome_screen.dart';
 import 'features/gate/gate_screens.dart';
 import 'features/home/home_placeholder.dart';
-import 'features/verification/verification_placeholders.dart';
+import 'features/verification/verification_capture_screen.dart';
+import 'features/verification/verification_status_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final changed = ValueNotifier<int>(0);

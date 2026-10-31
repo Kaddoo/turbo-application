@@ -218,4 +218,179 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get problemQuoteExpired =>
       'That price has expired. We\'ll get you a new one.';
+
+  @override
+  String get verifyTitle => 'Confirm you\'re a student';
+
+  @override
+  String get verifyIntro =>
+      'You only do this once. It takes about two minutes and you\'ll need your Ghana Card and student ID.';
+
+  @override
+  String get verifyPrivacyNote =>
+      'Only our verification team sees these. They are deleted after review.';
+
+  @override
+  String get verifyFullName => 'Full name as on your Ghana Card';
+
+  @override
+  String get verifyGhanaCard => 'Ghana Card number';
+
+  @override
+  String get verifyGhanaCardHelper => 'Looks like GHA-123456789-0';
+
+  @override
+  String get verifyGhanaCardInvalid =>
+      'Enter the number as shown on the card, like GHA-123456789-0.';
+
+  @override
+  String get verifyStudentId => 'Student ID number';
+
+  @override
+  String get verifyFieldRequired => 'This is needed.';
+
+  @override
+  String get verifyPhotosTitle => 'Photos';
+
+  @override
+  String get verifySubmit => 'Submit';
+
+  @override
+  String get verifySubmitting => 'Sending';
+
+  @override
+  String get verifyDetailsKept =>
+      'We keep what you\'ve typed if you close the app.';
+
+  @override
+  String get docGhanaCardFront => 'Ghana Card, front';
+
+  @override
+  String get docGhanaCardBack => 'Ghana Card, back';
+
+  @override
+  String get docStudentId => 'Student ID';
+
+  @override
+  String get docSelfie => 'Selfie holding your Ghana Card';
+
+  @override
+  String get docTake => 'Take photo';
+
+  @override
+  String get docRetake => 'Retake';
+
+  @override
+  String docUploading(Object percent) {
+    return 'Sending $percent%';
+  }
+
+  @override
+  String get docUploaded => 'Sent';
+
+  @override
+  String get docNotTaken => 'Not taken yet';
+
+  @override
+  String get docFailed => 'Didn\'t send';
+
+  @override
+  String get docRetry => 'Try sending again';
+
+  @override
+  String get captureGuideCard =>
+      'Fit the card inside the frame, flat and in good light.';
+
+  @override
+  String get captureGuideSelfie =>
+      'Hold your Ghana Card next to your face and look at the camera.';
+
+  @override
+  String get captureShutter => 'Take photo';
+
+  @override
+  String get captureUsePhoto => 'Use this photo';
+
+  @override
+  String get captureCancel => 'Cancel';
+
+  @override
+  String get captureIssueBlurry =>
+      'This looks blurry. Hold still and try again.';
+
+  @override
+  String get captureIssueGlare =>
+      'There is glare on the photo. Tilt the card away from the light.';
+
+  @override
+  String get captureIssueDark => 'It\'s too dark. Move to a brighter place.';
+
+  @override
+  String get captureIssueUnreadable =>
+      'We couldn\'t read that photo. Please take it again.';
+
+  @override
+  String get captureLooksGood => 'This looks clear.';
+
+  @override
+  String captureCameraDenied(Object appName) {
+    return '$appName needs the camera to photograph your documents. Turn it on in Settings.';
+  }
+
+  @override
+  String get captureOpenSettings => 'Open Settings';
+
+  @override
+  String get captureCameraFailed =>
+      'The camera didn\'t start. Close other apps that use it and try again.';
+
+  @override
+  String get verifyDuplicate =>
+      'This Ghana Card is already linked to another account. Contact support.';
+
+  @override
+  String get verifyResubmitNote =>
+      'Some documents were no longer valid. Please photograph them again.';
+
+  @override
+  String get statusPendingTitle => 'We\'re checking your documents';
+
+  @override
+  String get statusPendingBody => 'This usually takes a day. We\'ll text you.';
+
+  @override
+  String get statusNeedsAttentionTitle => 'We need a little more';
+
+  @override
+  String get statusNeedsAttentionFallback =>
+      'Some of your documents couldn\'t be read. Please send them again.';
+
+  @override
+  String get statusResubmit => 'Send again';
+
+  @override
+  String get statusRejectedTitle => 'We couldn\'t confirm you';
+
+  @override
+  String get statusRejectedFallback =>
+      'Your documents didn\'t meet our checks.';
+
+  @override
+  String get statusRejectedContact =>
+      'Contact support if you think this is a mistake.';
+
+  @override
+  String get statusApprovedTitle => 'You\'re verified';
+
+  @override
+  String get statusApprovedBody => 'You can now book rides.';
+
+  @override
+  String get statusRefreshFailed =>
+      'We couldn\'t check just now. Pull down to try again.';
+
+  @override
+  String statusSubmittedAt(Object date) {
+    return 'Sent $date';
+  }
 }

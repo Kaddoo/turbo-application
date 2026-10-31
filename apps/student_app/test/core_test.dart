@@ -18,6 +18,7 @@ FlowInputs inputs({
   bool termsRequired = false,
   bool suspended = false,
   VerificationStatus? verification = VerificationStatus.approved,
+  bool resubmitting = false,
 }) =>
     FlowInputs(
       gateLoading: gateLoading,
@@ -30,6 +31,7 @@ FlowInputs inputs({
       termsRequired: termsRequired,
       suspended: suspended,
       verification: verification,
+      resubmitting: resubmitting,
     );
 
 void main() {
@@ -54,13 +56,17 @@ void main() {
     });
 
     test('routes by verification status', () {
-      for (final s in [VerificationStatus.notSubmitted, VerificationStatus.needsAttention]) {
-        expect(computeStep(inputs(verification: s)), FlowStep.verificationCapture);
-      }
-      for (final s in [VerificationStatus.pending, VerificationStatus.rejected]) {
+      expect(computeStep(inputs(verification: VerificationStatus.notSubmitted)), FlowStep.verificationCapture);
+      for (final s in [VerificationStatus.pending, VerificationStatus.rejected, VerificationStatus.needsAttention]) {
         expect(computeStep(inputs(verification: s)), FlowStep.verificationStatus);
       }
       expect(computeStep(inputs(verification: VerificationStatus.approved)), FlowStep.home);
+    });
+
+    test('needs attention shows the reviewer message first, then the form on Resubmit', () {
+      expect(computeStep(inputs(verification: VerificationStatus.needsAttention)), FlowStep.verificationStatus);
+      expect(computeStep(inputs(verification: VerificationStatus.needsAttention, resubmitting: true)),
+          FlowStep.verificationCapture);
     });
 
     test('terms and suspension come before verification', () {
