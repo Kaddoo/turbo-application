@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:turbo_ui/turbo_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'src/location/spike_screen.dart';
+import 'src/app.dart';
+import 'src/features/push/push_service.dart';
 
-void main() => runApp(const App());
-
-class App extends StatelessWidget {
-  const App({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: turboBrand.appName,
-      theme: buildTurboTheme(turboBrand, Brightness.light),
-      darkTheme: buildTurboTheme(turboBrand, Brightness.dark),
-      themeMode: ThemeMode.system,
-      localizationsDelegates: TurboUiLocalizations.localizationsDelegates,
-      supportedLocales: TurboUiLocalizations.supportedLocales,
-      // The spike screen stands in for the duty screen until group 5.
-      home: const LocationSpikeScreen(brand: turboBrand),
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final hasPush = await initFirebase();
+  runApp(
+    // Riverpod retries failed providers on its own by default. Our providers
+    // decide for themselves what a failure means, so retries are off.
+    ProviderScope(
+      retry: (_, _) => null,
+      overrides: [pushPlatformProvider.overrideWithValue(hasPush ? const FirebasePushPlatform() : null)],
+      child: const App(),
+    ),
+  );
 }

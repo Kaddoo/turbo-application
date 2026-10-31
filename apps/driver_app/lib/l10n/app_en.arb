@@ -1,0 +1,204 @@
+{
+  "@@locale": "en",
+  "problemGeneric": "Something went wrong. Please try again.",
+  "problemNetwork": "No connection. Check your internet and try again.",
+  "problemRateLimited": "Too many tries. Please wait a moment and try again.",
+  "problemRateLimitedWait": "Too many tries. Please wait {seconds} s and try again.",
+  "problemOtpInvalid": "That code isn't right. Check it and try again.",
+  "problemOtpExpired": "That code has expired. Ask for a new one.",
+  "problemOtpRateLimited": "Too many codes asked for. Please wait before asking again.",
+  "problemSmsBudget": "We can't send codes right now. Try again soon.",
+  "problemAccountSuspended": "This account is suspended. Contact support for help.",
+  "problemUpgradeRequired": "Please update the app to carry on.",
+  "problemDuplicateIdentity": "This Ghana Card is already linked to another account. Contact support.",
+  "problemVerificationRequired": "Your student check isn't finished yet.",
+  "problemVerificationNotResubmittable": "Your documents can't be sent again right now.",
+  "problemUploadExpired": "That upload took too long. Please try the photo again.",
+  "problemValidation": "Some details aren't right. Check them and try again.",
+  "problemNoDrivers": "No drivers are available right now. Try again soon.",
+  "problemOutsideArea": "That place is outside the area we cover.",
+  "problemRouteTooLong": "This trip is over {km} km, which is the longest we do.",
+  "problemRouteUnavailable": "We couldn't find a route between those places.",
+  "problemBookingsPaused": "Booking is paused for now. Please try again later.",
+  "problemAccountOwes": "You owe money on your wallet. Top up to book again.",
+  "problemActiveRide": "You already have a ride in progress.",
+  "problemQuoteExpired": "That price has expired. We'll get you a new one.",
+  "problemTopupRange": "That amount isn't allowed. Choose a different amount.",
+  "problemPaymentProvider": "The payment service isn't answering. Try again in a moment.",
+  "problemInsufficient": "Your wallet doesn't have enough for this ride. Top up and try again.",
+  "continueAction": "Continue",
+  "tryAgain": "Try again",
+  "back": "Back",
+  "offlineBanner": "You're offline. Some things may be out of date.",
+  "bootErrorTitle": "We couldn't start up",
+  "bootErrorBody": "Check your connection and try again.",
+  "updateRequiredTitle": "Please update the app",
+  "updateRequiredBody": "This version of {appName} is too old to keep working. Update it from the store to carry on.",
+  "maintenanceTitle": "We're doing some maintenance",
+  "maintenanceBody": "{appName} is paused for a short while. Please try again soon.",
+  "maintenanceCheckAgain": "Check again",
+  "phoneTitle": "Your phone number",
+  "phoneFieldLabel": "Phone number",
+  "phoneHelper": "We'll text you a 6-digit code",
+  "phoneSendCode": "Send code",
+  "phoneInvalid": "Enter your 9-digit number, for example 24 123 4567.",
+  "codeTitle": "Enter your code",
+  "codeSentTo": "We sent a 6-digit code to {phone}.",
+  "codeVerify": "Verify",
+  "codeResend": "Send a new code",
+  "codeResendIn": "Send a new code in {seconds} s",
+  "codeWrongNumber": "Wrong number?",
+  "termsTitle": "Before you start",
+  "termsAgree": "I agree",
+  "termsReadTerms": "Read the full terms",
+  "termsReadPrivacy": "Read the privacy notice",
+  "termsLoadFailed": "We couldn't load the terms. Check your connection and try again.",
+  "navProfile": "Profile",
+  "welcomeTagline": "Drive for the campus, one ride at a time",
+  "welcomeAudience": "For {appName} drivers",
+  "@welcomeAudience": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "termsBulletRules": "{appName} assigns rides to you automatically. You accept or decline each one.",
+  "@termsBulletRules": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "termsBulletData": "Your position is shared only while you are on duty. Your trips, shifts and attendance are recorded for payroll.",
+  "termsWhyLocationTitle": "Why we need your location all the time",
+  "termsWhyLocation": "So rides can be assigned to the nearest driver and students can see you arrive, even when the screen is locked. Sharing stops when you go off duty.",
+  "problemNotADriver": "This number isn't registered as a driver. Contact your supervisor.",
+  "problemDocumentExpired": "A document has expired. Contact your supervisor.",
+  "problemHasActiveRide": "You can't go off duty during a ride.",
+  "problemPinLocked": "Too many tries. Call your supervisor.",
+  "problemInvalidPin": "That PIN isn't right. Ask the student again.",
+  "problemNoShowEarly": "It's too early to mark the student as not here.",
+  "suspendedTitle": "Your account is suspended",
+  "suspendedBody": "Contact your supervisor to find out why.",
+  "homeGreeting": "Hello, {name}",
+  "homeVehicle": "{colour} {make} {model} · {plate}",
+  "homeNoVehicle": "No vehicle assigned yet. Contact your supervisor.",
+  "homeOffDuty": "Off duty",
+  "homeGoOnDuty": "Go on duty",
+  "homeGoOffDuty": "Go off duty",
+  "homeOnDutyWaiting": "On duty. Waiting for a ride.",
+  "homeOnDutyFor": "On duty for {time}",
+  "homeOffDutyConfirmTitle": "Go off duty?",
+  "homeOffDutyConfirmBody": "You won't get new rides until you go on duty again.",
+  "homeOffDutyConfirm": "Go off duty",
+  "homeStayOn": "Stay on duty",
+  "readinessTitle": "Before you go on duty",
+  "readinessLocation": "Location set to Always",
+  "readinessBattery": "Battery above 20% or charging",
+  "readinessInternet": "Internet connected",
+  "readinessNotifications": "Notifications on",
+  "readinessDocuments": "Documents checked when you go on duty",
+  "readinessFix": "Fix",
+  "readinessOk": "Ready",
+  "readinessProblem": "Needs attention",
+  "readinessLocationFix": "Allow location always",
+  "readinessOpenSettings": "Open Settings",
+  "dutyFailed": "We couldn't change your duty. Check your connection and try again.",
+  "bannerNotSharing": "Your location isn't being shared. Open the app.",
+  "bannerOffline": "You're offline. You won't get rides until you're back online.",
+  "bannerServer": "We can't reach the server. Your position is kept and will be sent.",
+  "indicatorGps": "GPS",
+  "indicatorConnection": "Connection",
+  "indicatorBattery": "Battery {percent}%",
+  "notificationTitle": "{appName}",
+  "notificationText": "{appName} is sharing your location while you are on duty.",
+  "navHome": "Home",
+  "navTrips": "Trips",
+  "navMe": "Me",
+  "shareStopped": "Location sharing stopped",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@homeVehicle": {
+    "placeholders": {
+      "colour": {
+        "type": "String"
+      },
+      "make": {
+        "type": "String"
+      },
+      "model": {
+        "type": "String"
+      },
+      "plate": {
+        "type": "String"
+      }
+    }
+  },
+  "@homeOnDutyFor": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@indicatorBattery": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "@notificationTitle": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationText": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "tripsTitle": "Trips",
+  "tripsEmpty": "No trips yet.",
+  "tripsLoadFailed": "We couldn't load your trips. Check your connection and try again.",
+  "rideStatusSearching": "Finding a driver",
+  "rideStatusAssigned": "Assigned",
+  "rideStatusArrived": "Arrived",
+  "rideStatusInProgress": "On the way",
+  "rideStatusCompleted": "Completed",
+  "rideStatusCancelled": "Cancelled",
+  "meTitle": "Me",
+  "meVehicle": "Vehicle",
+  "meSignOut": "Sign out",
+  "meVersion": "App version",
+  "meTerms": "Terms",
+  "mePrivacy": "Privacy notice",
+  "meDevices": "Signed-in devices",
+  "meThisDevice": "This phone",
+  "meSignOutDevice": "Sign out",
+  "meSignOutOthers": "Sign out everywhere else",
+  "meLastUsed": "Last used {when}",
+  "meLoadFailed": "We couldn't load this. Check your connection and try again.",
+  "meShifts": "Shifts",
+  "meAttendance": "Attendance",
+  "meSalary": "Salary history",
+  "meHelp": "Help and support",
+  "@meLastUsed": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  }
+}
