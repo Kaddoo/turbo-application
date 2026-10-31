@@ -155,7 +155,7 @@ class _SosResult extends StatelessWidget {
         Semantics(liveRegion: true, header: true, child: Text(ok ? l10n.sosAlerted : l10n.sosFailed, style: text.titleLarge)),
         const SizedBox(height: TurboSpacing.sm),
         Text(
-          ok ? l10n.sosAlertedBody : (failure == 'no_location' ? l10n.sosNoLocation : l10n.sosFailedBody),
+          ok ? l10n.sosAlertedBody(t.brand.appName) : (failure == 'no_location' ? l10n.sosNoLocation : l10n.sosFailedBody),
           style: text.bodyLarge,
         ),
         const SizedBox(height: TurboSpacing.xl),

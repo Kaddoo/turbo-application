@@ -1819,8 +1819,8 @@ abstract class AppLocalizations {
   /// No description provided for @sosAlertedBody.
   ///
   /// In en, this message translates to:
-  /// **'Turbo staff can see your location and will call you. Stay where it is safe.'**
-  String get sosAlertedBody;
+  /// **'Staff at {appName} can see your location and will call you. Stay where it is safe.'**
+  String sosAlertedBody(String appName);
 
   /// No description provided for @sosFailed.
   ///

@@ -1013,8 +1013,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sosAlerted => 'Help has been alerted';
 
   @override
-  String get sosAlertedBody =>
-      'Turbo staff can see your location and will call you. Stay where it is safe.';
+  String sosAlertedBody(String appName) {
+    return 'Staff at $appName can see your location and will call you. Stay where it is safe.';
+  }
 
   @override
   String get sosFailed => 'We couldn\'t send the alert';

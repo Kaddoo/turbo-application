@@ -371,7 +371,7 @@
   "sosLetGo": "Let go to stop. Nothing is sent yet.",
   "sosSecondsLeft": "{seconds} seconds",
   "sosAlerted": "Help has been alerted",
-  "sosAlertedBody": "Turbo staff can see your location and will call you. Stay where it is safe.",
+  "sosAlertedBody": "Staff at {appName} can see your location and will call you. Stay where it is safe.",
   "sosFailed": "We couldn't send the alert",
   "sosFailedBody": "Call the emergency number now.",
   "sosCall": "Call {number}",
@@ -485,6 +485,13 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "@sosAlertedBody": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
       }
     }
   }
