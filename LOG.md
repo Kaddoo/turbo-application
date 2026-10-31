@@ -2,6 +2,38 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: group 2 (turbo_ui)
+
+**Task:** `turbo_ui` brand layer, theme, safeguards, base components, shared states, gallery.
+
+**Files touched:**
+- packages/turbo_ui: brand/, theme/, components/, states/, motion/, haptics/, format/, gallery/, l10n (ARB), tests, goldens, BRANDING.md
+- apps/student_app, apps/driver_app: main.dart now runs the component gallery on the Turbo theme; smoke tests
+
+**What changed:** Three layers: `brand_tokens.dart` (only raw values), a `TurboTheme` extension with semantic roles for light and dark, then components. Components: button (3 variants), text field, OTP field, money text, status chip, card, list row, sheet, toast, confirm dialog (with type-to-confirm), skeleton, map container (placeholder until the maps key exists), timeline, wordmark; loading, empty and error states. `formatPesewas` shows `GH₵35.00` with integer maths only.
+
+**Acceptance criteria:**
+- [x] Hard-coded style test passes and is proven to catch each violation kind
+- [x] Second brand fixture restyles components with no widget change
+- [x] Contrast test passes for both brands, light and dark
+- [x] Goldens for controls, content and states, light and dark
+- [x] Gallery lays out at 200% text scale with no overflow
+- [x] `flutter analyze` clean, all tests pass
+- [ ] Gallery seen on a device (no simulator; waiting for the phone on a cable). Goldens use the test font, so they show blocks for text.
+
+**Deviations from plan or contract:**
+- Added role `controlBorder` (input and secondary button edges). The listed `border` is about 1.4:1 on black, which fails the 3:1 rule for control edges; `border` stays for dividers and cards.
+- Light `success` is `#117A59` (was `#12805C`) and light `danger` is `#CF2A1E` (was `#D92D20`). The listed values fall just under 4.5:1 on the light surface `#F4F4F2` (4.47 and 4.39). Dark values unchanged.
+- Added role `accentBorder` (black in light, none in dark) for the 1.5 px edge the rules ask for on light.
+- The gallery has English hard-coded (developer-only). Everything shipped uses ARB.
+- Support email and phone in `turboBrand` are null until Turbo supplies them.
+- Native display names live in Info.plist and AndroidManifest, listed in BRANDING.md step 3.
+- Bug caught by the semantics test and fixed: wrapping the button in `excludeSemantics` hid its tap action from screen readers.
+
+**Status:** done, awaiting review. Branch: turbo-ui-theme (cut from mock-and-generator).
+
+**Next step:** Group 3, the driver background-location spike on a real device.
+
 ## 2026-10-31, Kevin with Claude, code: group 1 (workspace, mock, client)
 
 **Task:** Workspace, tooling, `turbo_api` generation, mock running.
