@@ -1,0 +1,9 @@
+name: turbo_workspace
+publish_to: none
+environment:
+  sdk: ^3.13.3
+workspace:
+  - apps/student_app
+  - apps/driver_app
+  - packages/turbo_api
+  - packages/turbo_ui
