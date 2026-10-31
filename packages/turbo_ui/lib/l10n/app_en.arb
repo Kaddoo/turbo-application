@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "tryAgain": "Try again",
+  "cancel": "Cancel",
+  "paste": "Paste",
+  "loading": "Loading",
+  "errorDefault": "Something went wrong. Check your connection and try again.",
+  "otpDigit": "Digit {position} of {total}",
+  "@otpDigit": {
+    "placeholders": { "position": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "mapUnavailable": "The map isn't available right now.",
+  "typeToConfirm": "Type {phrase} to confirm",
+  "@typeToConfirm": { "placeholders": { "phrase": { "type": "String" } } },
+  "timelineDone": "Done",
+  "timelineCurrent": "In progress",
+  "timelineUpcoming": "Not yet",
+  "lastUpdated": "Last updated {time}",
+  "@lastUpdated": { "placeholders": { "time": { "type": "String" } } }
+}

@@ -1,0 +1,6 @@
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: turbo_ui_localizations.dart
+output-class: TurboUiLocalizations
+output-dir: lib/src/l10n
+nullable-getter: false
