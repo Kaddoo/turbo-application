@@ -77,8 +77,54 @@ html.lenis, html.lenis body { height: auto; }
 [data-words] .rw { display: inline-block; }
 /* Sections go transparent while Motion fades #main between their colours. */
 html.bg-scroll [data-bg] { background-color: transparent; }
-.hero-intro [data-hero-shade] { opacity: 0; }
-.hero-intro [data-hero-copy] { pointer-events: none; }
+.motion.hero-intro [data-hero-shade] { opacity: 0; }
+.motion.hero-intro [data-hero-copy] { pointer-events: none; }
+
+/* Car-door loader: shown once per visit (head script adds html.door). The door
+   handle pulls, then the door swings open on its hinge to reveal the page.
+   Pure CSS, so it always finishes and hides itself. */
+.door-loader { display: none; }
+html.door .door-loader {
+  display: block; position: fixed; inset: 0; z-index: 200; perspective: 1800px;
+  animation: door-done 0s 1.7s forwards;
+}
+.door-panel {
+  position: absolute; inset: 0; transform-origin: left center; backface-visibility: hidden;
+  background: radial-gradient(120% 80% at 70% 60%, #1c1f1b, #0b0c0a 70%);
+  box-shadow: inset -3px 0 0 #d4ff3a, 40px 0 80px rgba(0, 0, 0, 0.6);
+  animation: door-open 1s cubic-bezier(0.65, 0, 0.25, 1) 0.6s forwards;
+}
+.door-panel::after {
+  content: ""; position: absolute; inset: 0; background: #000; opacity: 0;
+  animation: door-shade 1s cubic-bezier(0.65, 0, 0.25, 1) 0.6s forwards;
+}
+.door-window {
+  position: absolute; left: 7%; right: 9%; top: 7%; height: 36%;
+  clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(165deg, #20262a 0%, #0d1012 55%), #0d1012;
+}
+.door-window::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.07) 38%, transparent 46%);
+}
+.door-crease { position: absolute; left: 4%; right: 0; top: 57%; height: 1px; background: rgba(243, 241, 234, 0.09); }
+.door-handle {
+  position: absolute; right: 11%; top: 50%; width: clamp(5rem, 11vw, 10rem); height: 0.9rem; border-radius: 999px;
+  background: #d4ff3a; box-shadow: 0 6px 18px rgba(212, 255, 58, 0.25);
+  animation: handle-pull 0.35s ease-out 0.2s forwards;
+}
+.door-brand {
+  position: absolute; left: 7%; bottom: 9%; font-weight: 600; font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.04em; color: #f3f1ea;
+}
+.door-brand::before {
+  content: ""; display: inline-block; width: 0.5em; height: 0.5em; margin-right: 0.3em; border-radius: 999px;
+  background: #d4ff3a; vertical-align: 0.08em;
+}
+@keyframes handle-pull { to { transform: translateX(-0.5rem) scaleY(1.25); } }
+@keyframes door-open { to { transform: rotateY(-105deg); } }
+@keyframes door-shade { to { opacity: 0.7; } }
+@keyframes door-done { to { visibility: hidden; } }
 
 /* FAQ disclosure */
 details > summary { list-style: none; }

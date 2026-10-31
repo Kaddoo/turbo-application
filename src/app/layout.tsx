@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 // visible content if the animation chunk has not started within 3s.
 // A reload starts at the top (or at the linked section): the browser's own scroll
 // restore lands in the wrong place once pinned sections change the page height.
-const motionBoot = `(function(d){try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');if(matchMedia('(min-width: 768px)').matches)d.documentElement.classList.add('hero-intro');setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
+const motionBoot = `(function(d){try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');d.documentElement.classList.add('hero-intro');try{if(!sessionStorage.getItem('turbo-door')){sessionStorage.setItem('turbo-door','1');d.documentElement.classList.add('door');window.__doorEnd=Date.now()+1700}}catch(e){}setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -43,6 +43,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <div className="door-loader" aria-hidden>
+          <div className="door-panel">
+            <div className="door-window" />
+            <div className="door-crease" />
+            <div className="door-handle" />
+            <span className="door-brand">Turbo</span>
+          </div>
+        </div>
         {children}
       </body>
     </html>
