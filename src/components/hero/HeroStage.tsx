@@ -38,11 +38,12 @@ function canRun3D() {
 type Scene = { play(): void; dispose(): void };
 
 /**
- * Hero sequence: the ride video (a student hails and gets in, then the
- * overhead shot of the car pulling away), handing over to the map as it
- * ends. Large screens get the 3D map, which picks up straight overhead and
- * zooms out; phones get the flat map (passed in as `flatMap`). Reduced
- * motion and data-saver skip the video and show the map at once.
+ * Hero sequence: the ride video (a student hails the Turbo car, gets in and
+ * it pulls away), handing over to the map as the car moves off. Large
+ * screens get the 3D map, which picks up behind the same car at street level
+ * and rises into the overview; phones get the flat map (passed in as
+ * `flatMap`). Reduced motion and data-saver skip the video and show the map
+ * at once.
  */
 export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -122,8 +123,9 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     video.poster = `/video/hero-${wide ? "wide" : "tall"}.jpg`;
     video.src = `/video/hero-${wide ? "wide" : "tall"}.${webm ? "webm" : "mp4"}`;
 
+    // Hand over as the car pulls away; the last frame holds under the cross-fade.
     const onTime = () => {
-      if (video.duration && video.currentTime > video.duration - 1.6) handOver();
+      if (video.duration && video.currentTime > video.duration - 0.8) handOver();
     };
     video.addEventListener("timeupdate", onTime);
     video.addEventListener("ended", handOver);

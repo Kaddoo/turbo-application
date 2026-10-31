@@ -31,6 +31,8 @@ import {
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import mapJson from "./mapData.json";
+import regionJson from "./regionData.json";
+import placesJson from "./placesData.json";
 
 /** Streets, buildings and land use around the Miotso campus (scripts/map/campus.mjs, © OpenStreetMap contributors). */
 type MapData = {
@@ -42,6 +44,27 @@ type MapData = {
   tour: number[];
 };
 const map = mapJson as MapData;
+/** Streets beyond the campus export, out to Miotso Junction (scripts/map/region.mjs, © OpenStreetMap contributors). */
+type RegionData = { roads: Record<"major" | "minor" | "service", number[][]> };
+const region = regionJson as RegionData;
+/** Campus places and the rides between them, each under 18 km (scripts/map/places.mjs). */
+type PlacesData = {
+  stops: { id: string; name: string; x: number; z: number }[];
+  rides: { from: string; to: string; p: number[] }[];
+};
+const { stops: STOPS, rides: RIDES } = placesJson as PlacesData;
+const ROAD_RADIUS = 6000; // region streets drawn this close to campus; nothing farther out
+/** The campus streets already come from mapData; only draw region roads that leave its area. */
+const CAMPUS_EXTENT = 1850;
+const outside = (l: number[]) => {
+  let out = false;
+  let near = false;
+  for (let i = 0; i < l.length; i += 2) {
+    if (Math.abs(l[i]) > CAMPUS_EXTENT || Math.abs(l[i + 1]) > CAMPUS_EXTENT) out = true;
+    if (Math.hypot(l[i], l[i + 1]) < ROAD_RADIUS) near = true;
+  }
+  return out && near;
+};
 
 const INK = 0x0b0c0a;
 const TURBO = 0xd4ff3a;
@@ -73,6 +96,7 @@ const OVERVIEW_AZIMUTH = -0.32; // slight turn off north for depth
 const SPEED_START = 12; // m/s, close to the car in the clip
 const SPEED_CRUISE = 30; // m/s once zoomed out, so rides read at map scale
 const DECEL = 9; // m/s², braking into the drop-off
+const RIDE_SECONDS = 40; // longer rides between stops speed up so none takes longer than about this
 const HOLD = 1.8; // seconds parked at a drop-off before the next ride
 
 const smooth = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // ease in-out cubic
@@ -237,48 +261,7 @@ function routeMesh(pts: Vector3[], cum: number[], width: { value: number }, car:
   return mesh;
 }
 
-/** Street graph for picking and routing the rides after the first. */
-function buildGraph() {
-  const adj = new Map<number, [number, number][]>();
-  for (const { n } of map.roads) {
-    for (let i = 1; i < n.length; i++) {
-      const w = node(n[i - 1]).distanceTo(node(n[i]));
-      for (const [a, b] of [
-        [n[i - 1], n[i]],
-        [n[i], n[i - 1]],
-      ]) {
-        if (!adj.has(a)) adj.set(a, []);
-        adj.get(a)!.push([b, w]);
-      }
-    }
-  }
-  const shortest = (from: number, to: number) => {
-    const d = new Map([[from, 0]]);
-    const prev = new Map<number, number>();
-    const open = new Set([from]);
-    while (open.size) {
-      let u = -1;
-      for (const v of open) if (u < 0 || d.get(v)! < d.get(u)!) u = v;
-      open.delete(u);
-      if (u === to) break;
-      for (const [v, w] of adj.get(u) ?? []) {
-        const nd = d.get(u)! + w;
-        if (nd < (d.get(v) ?? Infinity)) {
-          d.set(v, nd);
-          prev.set(v, u);
-          open.add(v);
-        }
-      }
-    }
-    if (!prev.has(to)) return null;
-    const path = [to];
-    while (path[0] !== from) path.unshift(prev.get(path[0])!);
-    return path;
-  };
-  return { nodes: [...adj.keys()], shortest };
-}
-
-type Trip = { pts: Vector3[]; cum: number[]; len: number; end: number; meshes: Mesh[] };
+type Trip = { pts: Vector3[]; cum: number[]; len: number; meshes: Mesh[]; cruise: number; decel: number; far: number };
 
 /**
  * Hero map: a dark navigation-style map of the real streets around the
@@ -303,7 +286,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   scene.add(sun);
 
   // Ground, land use, streets, buildings, labels.
-  const ground = new Mesh(new PlaneGeometry(6000, 6000), flat(PALETTE.ground, 0));
+  const ground = new Mesh(new PlaneGeometry(16000, 16000), flat(PALETTE.ground, 0));
   ground.rotation.x = -Math.PI / 2;
   scene.add(ground);
 
@@ -317,6 +300,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
 
   (["service", "minor", "major"] as const).forEach((k, i) => {
     const lines = map.roads.filter((r) => r.k === k).map((r) => r.n.flatMap((n) => [map.nodes[2 * n], map.nodes[2 * n + 1]]));
+    lines.push(...region.roads[k].filter(outside));
     scene.add(new Mesh(strokes(lines, ROAD_WIDTH[k]), flat(PALETTE[k], 3 + i)));
   });
 
@@ -367,18 +351,31 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     scene.add(m);
   }
 
+  // The app's pickup points: a pin and a name on each.
+  const stopPins = STOPS.map((st) => {
+    const pin = new Group();
+    pin.add(new Mesh(new CircleGeometry(1, 32), markerMat(0xf3f1ea)), new Mesh(new CircleGeometry(0.45, 32), markerMat(INK)));
+    pin.children[1].position.z = 0.01;
+    pin.rotation.x = -Math.PI / 2;
+    pin.position.set(st.x, 0.55, st.z);
+    pin.traverse((o) => (o.renderOrder = 5));
+    const name = label(st.name, 30);
+    name.position.set(st.x, 0.5, st.z - 34);
+    // Above the buildings, so a name is never hidden behind campus blocks.
+    (name.material as Material).depthTest = false;
+    name.renderOrder = 6;
+    scene.add(pin, name);
+    return { pin, name };
+  });
+
   const car = makeCar();
   scene.add(car);
 
   // Rides.
-  const graph = buildGraph();
-  let seed = 7;
-  const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
   const routeWidth = { value: 8 };
   const glowWidth = { value: 20 };
   const driven = { value: 0 };
-  const makeTrip = (path: number[]): Trip => {
-    const pts = path.map((n) => node(n));
+  const makeTrip = (pts: Vector3[], fast = false): Trip => {
     const cum = [0];
     for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
     const glow = routeMesh(pts, cum, glowWidth, driven, 0.16);
@@ -388,20 +385,23 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     pickup.position.set(pts[0].x, 0.6, pts[0].z);
     dropoff.position.set(pts[pts.length - 1].x, 0.7, pts[pts.length - 1].z);
     pulse.position.copy(dropoff.position);
-    return { pts, cum, len: cum[cum.length - 1], end: path[path.length - 1], meshes: [glow, line] };
+    const len = cum[cum.length - 1];
+    const cruise = fast ? Math.max(SPEED_CRUISE, len / RIDE_SECONDS) : SPEED_CRUISE;
+    // Brake over the last 12% of a fast ride; pull the camera back a little for the long ones.
+    const decel = fast ? Math.max(DECEL, (cruise * cruise) / (0.24 * len)) : DECEL;
+    const far = fast ? MathUtils.clamp(len / 5, FAR_DIST, 2600) : FAR_DIST;
+    return { pts, cum, len, meshes: [glow, line], cruise, decel, far };
   };
-  const nextPath = (from: number) => {
-    const here = node(from);
-    for (let tries = 0; tries < 40; tries++) {
-      const to = graph.nodes[Math.floor(rand() * graph.nodes.length)];
-      const there = node(to);
-      if (Math.abs(there.x) > 900 || Math.abs(there.z) > 900) continue;
-      const d = here.distanceTo(there);
-      if (d < 450 || d > 950) continue;
-      const path = graph.shortest(from, to);
-      if (path && path.length > 3) return path;
-    }
-    return [...map.tour].reverse();
+  const ridePts = (p: number[]) => {
+    const pts: Vector3[] = [];
+    for (let i = 0; i < p.length; i += 2) pts.push(new Vector3(p[i], 0, p[i + 1]));
+    return pts;
+  };
+  // Rides loop from place to place, opening on the short Trinity Hall to Cafeteria ride as the video hands over.
+  let rideIndex = 0;
+  const nextPts = () => {
+    rideIndex = (rideIndex + 1) % RIDES.length;
+    return ridePts(RIDES[rideIndex].p);
   };
   const dropTrip = (t: Trip) => {
     for (const m of t.meshes) {
@@ -411,8 +411,9 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     }
   };
 
-  let trip = makeTrip(map.tour);
+  let trip = RIDES.length ? makeTrip(ridePts(RIDES[rideIndex].p), true) : makeTrip(map.tour.map((n) => node(n)));
   let dist = 0;
+  let speed = SPEED_START;
   let parkedFor = -1;
 
   const pointAt = (d: number, out: Vector3) => {
@@ -424,7 +425,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   };
 
   // Camera.
-  const camera = new PerspectiveCamera(40, 1, 5, 7000);
+  const camera = new PerspectiveCamera(40, 1, 5, 12000);
   let aspect = 1;
   const resize = () => {
     const { clientWidth: w, clientHeight: h } = canvas.parentElement!;
@@ -440,6 +441,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   const desired = new Vector3();
   const fwd = new Vector3();
   const right = new Vector3();
+  let farDist = FAR_DIST;
   let heading = 0; // azimuth of the car, 0 = north (-z), clockwise
   let headingInit = false;
   let playing = false;
@@ -460,16 +462,18 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     if (parkedFor >= 0) {
       parkedFor += dt;
       if (parkedFor > HOLD) {
-        const from = trip.end;
+        const pts = nextPts();
         dropTrip(trip);
-        trip = makeTrip(nextPath(from));
+        trip = makeTrip(pts, true);
         dist = 0;
+        speed = 0;
         parkedFor = -1;
       }
     } else if (dt > 0) {
       const remaining = trip.len - dist;
-      const cruise = MathUtils.lerp(SPEED_START, SPEED_CRUISE, k);
-      const speed = Math.min(cruise, Math.sqrt(2 * DECEL * Math.max(remaining, 0)) + 0.5);
+      const cruise = MathUtils.lerp(SPEED_START, trip.cruise, k);
+      // Ease up to cruise (fast rides would otherwise jump straight to speed), brake into the drop-off.
+      speed = Math.min(cruise, speed + Math.max(DECEL, trip.decel) * dt, Math.sqrt(2 * trip.decel * Math.max(remaining, 0)) + 0.5);
       dist = Math.min(trip.len, dist + speed * dt);
       if (trip.len - dist < 0.5) parkedFor = 0;
     }
@@ -486,7 +490,8 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     car.rotation.y = Math.PI / 2 - heading;
 
     // Camera rig: distance grows exponentially (reads as a steady zoom), tilt and azimuth ease to the overview.
-    const camDist = NEAR_DIST * Math.pow(FAR_DIST / NEAR_DIST, k);
+    farDist += (trip.far - farDist) * (1 - Math.exp(-dt * 0.8));
+    const camDist = NEAR_DIST * Math.pow(farDist / NEAR_DIST, k);
     const tilt = TILT * k;
     const azimuth = angleLerp(heading, OVERVIEW_AZIMUTH, k);
     fwd.set(Math.sin(azimuth), 0, -Math.cos(azimuth));
@@ -496,7 +501,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     // Keep the ride right of the hero copy on wide screens.
     if (aspect > 1.25) desired.addScaledVector(right, -0.3 * viewW * k);
     if (k < 1) target.copy(desired);
-    else target.lerp(desired, 1 - Math.exp(-dt * 1.2));
+    else target.lerp(desired, 1 - Math.exp(-dt * Math.max(1.2, speed / 50))); // keeps up on the long rides
 
     camera.up.copy(fwd);
     camera.position.copy(target).addScaledVector(fwd, -Math.sin(tilt) * camDist);
@@ -514,6 +519,12 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     dropoff.scale.setScalar(1.8 * s);
     const q = (clock * 0.8) % 1;
     pulse.scale.setScalar(1.8 * s * (1 + q * 1.6));
+    for (const { pin, name } of stopPins) {
+      pin.scale.setScalar(1.2 * s);
+      const ls = Math.max(1, camDist / FAR_DIST);
+      name.scale.setScalar(ls);
+      name.position.z = pin.position.z - 70 * ls;
+    }
     (pulse.material as MeshBasicMaterial).opacity = (1 - q) * 0.8;
   };
 

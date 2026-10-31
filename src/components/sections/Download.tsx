@@ -40,8 +40,8 @@ function RouteDots() {
         strokeLinecap="round"
       />
       {[
-        [tx, ty, "Ashaiman"],
-        [fx, fy, "Miotso"],
+        [tx, ty, "Miostso Junction"],
+        [fx, fy, "Central University"],
       ].map(([x, y, label]) => (
         <g key={label} transform={`translate(${x} ${y})`}>
           <path d="M0 0 C -9 -12, -12 -18, -12 -24 A 12 12 0 1 1 12 -24 C 12 -18, 9 -12, 0 0 Z" fill="#0b0c0a" />
