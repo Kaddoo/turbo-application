@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 
 // Opts in to reveal animations before first paint; falls back to fully
 // visible content if the animation chunk has not started within 3s.
-const motionBoot = `(function(d){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
+const motionBoot = `(function(d){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');if(matchMedia('(min-width: 768px)').matches)d.documentElement.classList.add('hero-intro');setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

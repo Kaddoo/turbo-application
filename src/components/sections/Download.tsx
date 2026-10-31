@@ -53,7 +53,7 @@ function StoreLink({ href, icon: Icon, children }: { href: string; icon: typeof 
 export async function Download() {
   const svg = await qrSvg(links.webAppUrl);
   return (
-    <section id="download" data-bg="ink" aria-labelledby="download-title" className="on-light bg-ink px-4 pb-10 pt-6 sm:px-6">
+    <section id="download" data-bg="paper" aria-labelledby="download-title" className="on-light bg-paper px-4 pb-10 pt-6 sm:px-6">
       <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl bg-turbo p-7 text-ink sm:p-12">
         <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[62%] md:block">
           <RouteDots />

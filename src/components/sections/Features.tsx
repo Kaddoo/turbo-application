@@ -5,7 +5,7 @@ import { Tag } from "../ui/Tag";
 /** Centred intro for the feature rows that follow (Fares, Coverage). */
 export function Features() {
   return (
-    <section aria-labelledby="features-title" data-bg="ink" className="bg-ink pt-24 sm:pt-36">
+    <section aria-labelledby="features-title" data-bg="paper" className="on-light bg-paper pt-14 text-ink sm:pt-20">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <Tag tone="dot">Features</Tag>
         <h2

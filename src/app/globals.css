@@ -57,11 +57,6 @@
   }
 }
 
-/* Lenis */
-html.lenis, html.lenis body { height: auto; }
-.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
-.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
-
 /* Motion: content is hidden only once JS has opted in, and only when the
    visitor has not asked for reduced motion. A timeout in the head script
    removes `.motion` if animation code never loads, so nothing stays hidden. */
@@ -69,14 +64,16 @@ html.lenis, html.lenis body { height: auto; }
   .motion [data-reveal] { opacity: 0; transform: translateY(28px); }
   .motion [data-split] .w > span { transform: translateY(110%); }
   .motion [data-scrub] .sw { opacity: 0.18; }
-  .motion [data-words] .rw { opacity: 0; transform: translateY(0.45em); filter: blur(6px); }
+  .motion [data-words] .rw { opacity: 0; transform: translateY(0.45em); }
   .motion [data-words] [data-pop] { opacity: 0; transform: scale(0.85); }
 }
 [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
-[data-split] .w > span { display: inline-block; will-change: transform; }
+[data-split] .w > span { display: inline-block; }
 [data-words] .rw { display: inline-block; }
 /* Sections go transparent while Motion fades #main between their colours. */
 html.bg-scroll [data-bg] { background-color: transparent; }
+.hero-intro [data-hero-shade] { opacity: 0; }
+.hero-intro [data-hero-copy] { pointer-events: none; }
 
 /* FAQ disclosure */
 details > summary { list-style: none; }

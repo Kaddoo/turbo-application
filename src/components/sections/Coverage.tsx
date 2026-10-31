@@ -31,7 +31,7 @@ function RouteScreen() {
 
 export function Coverage() {
   return (
-    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-24 text-ink sm:py-32">
+    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-10 text-ink sm:py-14">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="max-w-md lg:order-1">
           <Tag icon={MapPin}>Where we go</Tag>
@@ -48,9 +48,9 @@ export function Coverage() {
           </div>
         </div>
 
-        <div className="flex justify-center lg:order-2 lg:justify-end lg:pr-10">
+        <div className="-my-8 flex justify-center lg:order-2 lg:-my-12 lg:justify-end lg:pr-10">
           <div data-tilt="1">
-            <Phone pose="tiltRight" className="w-[19rem] sm:w-[23rem] lg:w-[26rem]">
+            <Phone pose="tiltRight" className="w-[16rem] sm:w-[19rem] lg:w-[22rem]">
               <RouteScreen />
             </Phone>
           </div>

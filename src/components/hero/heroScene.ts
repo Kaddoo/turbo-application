@@ -65,26 +65,20 @@ function mulberry32(seed: number) {
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
-/** Closed loop along street centre lines with rounded corners. */
-function buildLoop(points: [number, number][], radius: number) {
+/** Trip along street centre lines with rounded corners. */
+function buildPath(points: [number, number][], radius: number) {
   const v = points.map(([x, z]) => new Vector3(x, 0, z));
-  const n = v.length;
-  const ends = v.map((c, i) => {
-    const prev = v[(i - 1 + n) % n];
-    const next = v[(i + 1) % n];
-    return {
-      a: c.clone().addScaledVector(c.clone().sub(prev).normalize(), -radius),
-      b: c.clone().addScaledVector(next.clone().sub(c).normalize(), radius),
-      c,
-    };
-  });
   const path = new CurvePath<Vector3>();
-  for (let i = 0; i < n; i++) {
-    const cur = ends[i];
-    const nxt = ends[(i + 1) % n];
-    path.add(new LineCurve3(cur.b.clone(), nxt.a.clone()));
-    path.add(new QuadraticBezierCurve3(nxt.a.clone(), nxt.c.clone(), nxt.b.clone()));
+  let cursor = v[0].clone();
+  for (let i = 1; i < v.length - 1; i++) {
+    const c = v[i];
+    const a = c.clone().addScaledVector(c.clone().sub(v[i - 1]).normalize(), -radius);
+    const b = c.clone().addScaledVector(v[i + 1].clone().sub(c).normalize(), radius);
+    path.add(new LineCurve3(cursor, a));
+    path.add(new QuadraticBezierCurve3(a, c.clone(), b));
+    cursor = b;
   }
+  path.add(new LineCurve3(cursor, v[v.length - 1].clone()));
   path.updateArcLengths();
   return path;
 }
@@ -261,12 +255,13 @@ function makeCar(track: <T extends { dispose(): void }>(x: T) => T) {
 
 /**
  * Hero scene: a street-level chase of a Turbo car through a dusk city, then
- * a crane move up into the map, where buildings fold flat and the car keeps
- * driving its loop as a marker with a glowing trail.
+ * a crane move up into the map, where buildings fold flat and the car
+ * finishes its trip to the destination pin. `onMap` fires once the map has
+ * settled; rendering stops shortly after the car parks.
  */
-export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boolean }) {
+export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boolean; onMap?: () => void }) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -422,15 +417,14 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   });
   scene.add(canopies, trunks, poles, bulbs);
 
-  // The ride: a loop around several blocks.
-  const route = buildLoop(
+  // The ride: pickup on the long east-bound street, a few turns, drop-off.
+  const route = buildPath(
     [
-      [-2 * BLOCK, BLOCK],
+      [-2.9 * BLOCK, BLOCK],
       [BLOCK, BLOCK],
-      [BLOCK, -2 * BLOCK],
-      [-BLOCK, -2 * BLOCK],
-      [-BLOCK, 0],
-      [-2 * BLOCK, 0],
+      [BLOCK, -BLOCK],
+      [2 * BLOCK, -BLOCK],
+      [2 * BLOCK, -2.4 * BLOCK],
     ],
     3,
   );
@@ -441,7 +435,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   const tmpR = new Vector3();
   /** Point in the right-hand lane at arc fraction t. */
   const lanePoint = (t: number, out: Vector3) => {
-    const u = ((t % 1) + 1) % 1;
+    const u = MathUtils.clamp(t, 0, 0.9999);
     route.getPointAt(u, out);
     route.getTangentAt(u, tmpT);
     tmpR.crossVectors(tmpT, up).normalize();
@@ -457,7 +451,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   for (let i = 0; i <= SAMPLES; i++) {
     const t = i / SAMPLES;
     lanePoint(t, p);
-    route.getTangentAt(t % 1, tmpT);
+    route.getTangentAt(Math.min(t, 0.9999), tmpT);
     tmpR.crossVectors(tmpT, up).normalize();
     const hw = 0.42;
     pos.push(p.x - tmpR.x * hw, 0.05, p.z - tmpR.z * hw, p.x + tmpR.x * hw, 0.05, p.z + tmpR.z * hw);
@@ -480,14 +474,14 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
       vertexShader:
         "attribute float aT; varying float vT; void main(){ vT = aT; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
       fragmentShader:
-        "uniform float uMap; uniform float uCar; uniform vec3 uColor; varying float vT; void main(){ float behind = fract(uCar - vT); float trail = behind < 0.55 ? 1.0 - behind / 0.55 : 0.0; gl_FragColor = vec4(uColor, uMap * (0.22 + 0.78 * trail)); }",
+        "uniform float uMap; uniform float uCar; uniform vec3 uColor; varying float vT; void main(){ gl_FragColor = vec4(uColor, uMap * (vT <= uCar ? 1.0 : 0.22)); }",
     }),
   );
   const ribbon = new Mesh(ribbonGeo, ribbonMat);
   ribbon.renderOrder = 2;
   scene.add(ribbon);
 
-  // Destination pin and pulse rings under the car (map only).
+  // Destination pin and pulse rings where the car parks (map only).
   const pinMat = track(new MeshBasicMaterial({ color: TURBO, transparent: true }));
   const pin = new Group();
   const stem = new Mesh(track(new CylinderGeometry(0.08, 0.08, 2.2, 8)), pinMat);
@@ -495,7 +489,7 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   const head = new Mesh(track(new SphereGeometry(0.55, 20, 16)), pinMat);
   head.position.y = 2.6;
   pin.add(stem, head);
-  const dest = lanePoint(0.62, new Vector3());
+  const dest = lanePoint(1, new Vector3());
   pin.position.set(dest.x, 0, dest.z);
   scene.add(pin);
   const ringGeo = track(new RingGeometry(0.8, 0.95, 48));
@@ -521,18 +515,10 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   const camera = new PerspectiveCamera(42, 1, 0.1, 220);
   const chasePos = new Vector3();
   const chaseLook = new Vector3();
-  const mapCentre = new Vector3(-BLOCK / 2, 0, -BLOCK / 2);
   const mapPos = new Vector3();
   const mapLook = new Vector3();
   const camPos = new Vector3();
   const camLook = new Vector3();
-
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  const onPointer = (e: PointerEvent) => {
-    pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
-    pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
-  };
-  window.addEventListener("pointermove", onPointer, { passive: true });
 
   let aspect = 1;
   const resize = () => {
@@ -544,32 +530,51 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
   };
 
   const carPos = new Vector3();
-  const ahead = new Vector3();
   const fwd = new Vector3();
   const side = new Vector3();
-  const START = 0.02; // on the long straight heading east
+  const viewRight = new Vector3();
+  const focus = new Vector3();
+  const START = 0.01 * routeLen; // pickup on the long straight heading east
+  const END = routeLen - 4.5; // stop just short of the pin
+  const BRAKE = 9; // distance over which the car slows to a stop
+  const brakeTime = (2 * BRAKE) / SPEED;
+  const cruiseTime = (END - START - BRAKE) / SPEED;
+  const parkedAt = cruiseTime + brakeTime;
+  const HOLD = 3; // seconds of pin pulses after parking, then rendering stops
+  /** Distance along the route at time s: cruise, then brake evenly to a stop. */
+  const travelled = (s: number) => {
+    if (s <= cruiseTime) return START + s * SPEED;
+    const tau = Math.min(s - cruiseTime, brakeTime);
+    return START + cruiseTime * SPEED + SPEED * tau - (SPEED * SPEED * tau * tau) / (4 * BRAKE);
+  };
   let clock = 0; // seconds of animation actually shown (pauses while off screen)
   let last = -1;
+  let mapShown = false;
+  let done = false;
 
   const render = (now: number) => {
     if (last >= 0) clock += Math.min((now - last) / 1000, 0.1);
     last = now;
-    const s = opts.reduced ? CHASE + LIFT + 2 : clock;
+    const s = opts.reduced ? parkedAt + HOLD : Math.min(clock, parkedAt + HOLD);
     const k = smooth(MathUtils.clamp((s - CHASE) / LIFT, 0, 1));
     uMap.value = k;
+    if (!mapShown && k > 0.85) {
+      mapShown = true;
+      opts.onMap?.();
+    }
 
-    // Car along the loop.
-    const tCar = START + (opts.reduced ? 0.3 : (s * SPEED) / routeLen);
+    // Car along the route.
+    const dist = travelled(s);
+    const tCar = dist / routeLen;
     lanePoint(tCar, carPos);
-    lanePoint(tCar + 0.004, ahead);
-    fwd.subVectors(ahead, carPos).normalize();
+    route.getTangentAt(Math.min(tCar, 0.9999), fwd);
     side.crossVectors(fwd, up).normalize();
     rig.position.copy(carPos);
     rig.rotation.y = Math.atan2(-fwd.z, fwd.x);
-    rig.scale.setScalar(MathUtils.lerp(1, 2.4, k));
-    wheels.forEach((w) => (w.rotation.z = -(s * SPEED) / 0.24));
+    rig.scale.setScalar(MathUtils.lerp(1, 1.5, k));
+    wheels.forEach((w) => (w.rotation.z = -dist / 0.24));
     beam.intensity = 60 * (1 - k);
-    uCar.value = ((tCar % 1) + 1) % 1;
+    uCar.value = tCar;
 
     // Streets turn into map.
     asphaltMat.color.lerpColors(asphaltA, asphaltB, k);
@@ -578,11 +583,14 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     pinMat.opacity = k;
     pin.position.y = k * (0.2 + Math.sin(s * 2.4) * 0.25);
     pin.scale.setScalar(Math.max(0.001, k));
+    // Rings pulse at the drop-off once the car has parked, then fade out.
+    const since = s - parkedAt;
+    const fade = since < 0 ? 0 : 1 - smooth(MathUtils.clamp((since - HOLD + 0.8) / 0.8, 0, 1));
     rings.forEach((r, i) => {
-      const q = (s * 0.7 + i * 0.5) % 1;
-      r.position.set(carPos.x, 0.06, carPos.z);
+      const q = (Math.max(since, 0) * 0.7 + i * 0.5) % 1;
+      r.position.set(dest.x, 0.06, dest.z);
       r.scale.setScalar(1 + q * 3.2);
-      (r.material as MeshBasicMaterial).opacity = k * 0.9 * (1 - q);
+      (r.material as MeshBasicMaterial).opacity = k * fade * 0.9 * (1 - q);
     });
     fog.near = MathUtils.lerp(14, 70, k);
     fog.far = MathUtils.lerp(60, 160, k);
@@ -591,12 +599,12 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     // Behind and slightly toward the centre line, so kerbside trees never block the shot.
     chasePos.copy(carPos).addScaledVector(fwd, -6.8).addScaledVector(side, -1.1).setY(2.4);
     chaseLook.copy(carPos).addScaledVector(fwd, 4).setY(0.7);
-    pointer.x += (pointer.tx - pointer.x) * 0.04;
-    pointer.y += (pointer.ty - pointer.y) * 0.04;
-    const scroll = Math.min(window.scrollY / window.innerHeight, 1.2);
-    const pull = aspect < 1.2 ? 1.25 : 1;
-    mapPos.set(mapCentre.x + 22 * pull + pointer.x * 3, 46 * pull - pointer.y * 3 + scroll * 10, mapCentre.z + 34 * pull);
-    mapLook.copy(mapCentre).setY(-scroll * 4);
+    // Map view: close over the trip, following the car, framed right of the hero copy.
+    const pull = aspect < 1.2 ? 1.35 : 1;
+    focus.lerpVectors(carPos, dest, 0.3);
+    viewRight.set(22, 0, -12).normalize();
+    mapLook.copy(focus).addScaledVector(viewRight, aspect > 1.3 ? -9 : 0).setY(0);
+    mapPos.set(mapLook.x + 15 * pull, 37 * pull, mapLook.z + 27 * pull);
     camPos.lerpVectors(chasePos, mapPos, k);
     camPos.y += Math.sin(k * Math.PI) * 8;
     camLook.lerpVectors(chaseLook, mapLook, k);
@@ -605,16 +613,20 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     camera.position.copy(camPos);
     camera.lookAt(camLook);
     renderer.render(scene, camera);
+    if (!done && s >= parkedAt + HOLD) {
+      done = true;
+      stopLoop();
+    }
   };
 
   let raf = 0;
   let visible = true;
   const loop = (t: number) => {
-    render(t);
     raf = requestAnimationFrame(loop);
+    render(t);
   };
   const startLoop = () => {
-    if (raf || !visible || document.hidden || opts.reduced) return;
+    if (raf || done || !visible || document.hidden || opts.reduced) return;
     last = -1; // resume without a jump
     raf = requestAnimationFrame(loop);
   };
@@ -647,7 +659,6 @@ export function mountHeroScene(canvas: HTMLCanvasElement, opts: { reduced: boole
     io.disconnect();
     ro.disconnect();
     document.removeEventListener("visibilitychange", onVis);
-    window.removeEventListener("pointermove", onPointer);
     [slabs, dashes, buildings, canopies, trunks, poles, bulbs].forEach((m) => m.dispose());
     disposables.forEach((d) => d.dispose());
     renderer.dispose();

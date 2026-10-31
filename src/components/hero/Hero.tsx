@@ -1,4 +1,4 @@
-import { BadgeCheck, LockKeyhole, MapPin, Navigation } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { ButtonLink } from "../Button";
 import { SplitHeading } from "../SectionLabel";
 import { HeroCanvas } from "./HeroCanvas";
@@ -25,16 +25,6 @@ function RouteSketch() {
   );
 }
 
-function FloatCard({ className, children }: { className?: string; children: React.ReactNode }) {
-  return (
-    <div
-      className={`rounded-2xl border border-white/10 bg-ink-2/95 p-3.5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] ${className ?? ""}`}
-    >
-      {children}
-    </div>
-  );
-}
-
 const ticker = [
   "No cash",
   "No haggling",
@@ -55,44 +45,24 @@ export function Hero() {
       />
 
       {/* 3D stage (desktop/tablet) */}
-      <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[72%] [mask-image:linear-gradient(to_right,transparent,black_35%)] md:block">
-        <div className="absolute inset-0 opacity-40">
+      <div aria-hidden className="absolute inset-0 hidden md:block">
+        <div className="absolute inset-y-0 right-0 w-[60%] opacity-40">
           <div className="absolute inset-x-[10%] top-1/2 -translate-y-1/2">
             <RouteSketch />
           </div>
         </div>
         <HeroCanvas />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
+        {/* Shade behind the copy; fades in with it once the map has settled. */}
+        <div
+          data-hero-shade
+          className="pointer-events-none absolute inset-y-0 left-0 w-[62%] bg-gradient-to-r from-ink via-ink/80 to-transparent transition-opacity duration-1000"
+        />
 
-        <div data-parallax="0.15" className="absolute right-[8%] top-[22%]">
-          <FloatCard className="w-56">
-            <p className="flex items-center gap-2 text-xs text-mute">
-              <LockKeyhole className="size-3.5 text-turbo" aria-hidden /> Fare locked
-            </p>
-            <p className="mt-1 text-2xl font-semibold tracking-tight">Seen before you confirm</p>
-          </FloatCard>
-        </div>
-        <div data-parallax="0.3" className="absolute bottom-[14%] right-[6%]">
-          <FloatCard className="flex items-center gap-3">
-            <span className="inline-flex size-9 items-center justify-center rounded-full bg-turbo text-ink">
-              <Navigation className="size-4" aria-hidden />
-            </span>
-            <div>
-              <p className="text-xs text-mute">Meet your driver</p>
-              <p className="font-mono text-lg tracking-[0.35em]">• • • •</p>
-            </div>
-          </FloatCard>
-        </div>
-        <div data-parallax="0.22" className="absolute right-[10%] bottom-[34%]">
-          <FloatCard className="flex items-center gap-2 py-2.5 pr-4">
-            <BadgeCheck className="size-4 text-turbo" aria-hidden />
-            <span className="text-sm">Verified student</span>
-          </FloatCard>
-        </div>
       </div>
 
       <div className="relative mx-auto flex max-w-6xl flex-col px-4 sm:px-6 md:min-h-[100svh] md:justify-center md:pb-24">
-        <div className="max-w-xl lg:max-w-2xl">
+        <div data-hero-copy className="max-w-xl lg:max-w-2xl">
           <p data-reveal className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-paper/80">
             <MapPin className="size-3.5 text-turbo" aria-hidden />
             Central University · Miotso

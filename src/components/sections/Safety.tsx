@@ -14,7 +14,7 @@ const items = [
 /** Card strip that drifts sideways as you scroll on large screens and swipes on small ones. */
 export function Safety() {
   return (
-    <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-hidden bg-ink py-24 sm:py-36">
+    <section id="safety" data-bg="paper" aria-labelledby="safety-title" className="on-light relative overflow-hidden bg-paper py-20 text-ink sm:py-28">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <Tag tone="dot">Safety</Tag>
         <h2
@@ -53,7 +53,7 @@ export function Safety() {
             <li
               key={title}
               className={cn(
-                "group relative flex w-[15rem] shrink-0 flex-col overflow-hidden rounded-xl p-5 sm:w-[17rem]",
+                "group relative flex w-[15rem] shrink-0 flex-col overflow-hidden rounded-xl p-5 text-paper sm:w-[17rem]",
                 photo ? "h-[22rem] justify-end bg-ink-2 sm:h-[24rem]" : "h-[13rem] justify-between bg-[#1c1d1f]",
               )}
             >

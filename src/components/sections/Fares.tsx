@@ -13,7 +13,7 @@ function Skeleton() {
   return (
     <div aria-hidden className="space-y-px">
       {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="h-14 animate-pulse bg-white/5" />
+        <div key={i} className="h-14 animate-pulse bg-ink/5" />
       ))}
     </div>
   );
@@ -48,7 +48,7 @@ function FareScreen() {
       </div>
       <div className="mt-3 flex items-center gap-2">
         <span className="inline-flex h-9 flex-1 items-center justify-center rounded-full bg-paper text-xs font-medium text-ink">Confirm</span>
-        <span className="text-xs text-paper/60">GH₵ ··</span>
+        <span className="text-xs text-ink/70">GH₵ ··</span>
       </div>
     </div>
   );
@@ -58,11 +58,11 @@ export function Fares() {
   const state = useApi(getServiceArea, hasBands);
 
   return (
-    <section id="fares" data-bg="ink" aria-labelledby="fares-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
+    <section id="fares" data-bg="paper" aria-labelledby="fares-title" className="on-light relative overflow-hidden bg-paper py-10 text-ink sm:py-14">
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
-        <div className="flex justify-center lg:justify-start lg:pl-10">
+        <div className="-my-8 flex justify-center lg:-my-12 lg:justify-start lg:pl-10">
           <div data-tilt="-1">
-            <Phone pose="tiltLeft" className="w-[19rem] sm:w-[23rem] lg:w-[26rem]">
+            <Phone pose="tiltLeft" className="w-[16rem] sm:w-[19rem] lg:w-[22rem]">
               <FareScreen />
             </Phone>
           </div>
@@ -74,8 +74,8 @@ export function Fares() {
             One price per distance band.
           </RiseHeading>
           {state.status !== "error" && (
-            <p data-reveal className="mt-5 flex gap-2.5 text-[15px] leading-relaxed text-paper/60">
-              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-turbo" aria-hidden />
+            <p data-reveal className="mt-5 flex gap-2.5 text-[15px] leading-relaxed text-ink/70">
+              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden />
               You see the exact fare before you confirm. It never changes after.
             </p>
           )}
@@ -84,7 +84,7 @@ export function Fares() {
             {state.status === "loading" && <Skeleton />}
 
             {state.status === "error" && (
-              <p data-reveal className="text-[15px] leading-relaxed text-paper/60">
+              <p data-reveal className="text-[15px] leading-relaxed text-ink/70">
                 Fares are shown in the app before you book. You see the exact price before you confirm, and it never
                 changes after.
               </p>
@@ -92,7 +92,7 @@ export function Fares() {
 
             {state.status === "ok" && (
               <>
-                <table className="w-full border-y border-white/10">
+                <table className="w-full border-y border-ink/10">
                   <caption className="sr-only">Fare by trip distance, in Ghana cedis</caption>
                   <thead className="sr-only">
                     <tr>
@@ -100,7 +100,7 @@ export function Fares() {
                       <th scope="col">Fare</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/10">
+                  <tbody className="divide-y divide-ink/10">
                     {state.data.fareBands.map((b, i, all) => {
                       const max = all[all.length - 1].maxDistanceMeters;
                       return (
@@ -109,13 +109,13 @@ export function Fares() {
                             <span
                               aria-hidden
                               data-bar={i}
-                              className="absolute bottom-0 left-0 h-px bg-turbo"
+                              className="absolute bottom-0 left-0 h-0.5 bg-turbo"
                               style={{ width: `${Math.max(12, (b.maxDistanceMeters / max) * 100)}%` }}
                             />
-                            <span className="text-paper/55">Up to </span>
+                            <span className="text-ink/60">Up to </span>
                             <span className="font-medium">{formatKm(b.maxDistanceMeters)}</span>
                           </th>
-                          <td className="py-4 text-right text-xl font-medium tracking-tight tabular-nums text-turbo">
+                          <td className="py-4 text-right text-xl font-medium tracking-tight tabular-nums text-ink">
                             {formatCedis(b.fareMinor)}
                           </td>
                         </tr>
@@ -124,7 +124,7 @@ export function Fares() {
                   </tbody>
                 </table>
                 {state.data.maxTripDistanceMeters != null && (
-                  <p className="mt-4 flex items-center gap-2 text-sm text-mute">
+                  <p className="mt-4 flex items-center gap-2 text-sm text-ink/60">
                     <Info className="size-4" aria-hidden />
                     Trips over {formatKm(state.data.maxTripDistanceMeters)} are not available.
                   </p>

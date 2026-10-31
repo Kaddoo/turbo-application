@@ -9,9 +9,9 @@ declare global {
 }
 
 /**
- * Loads GSAP, ScrollTrigger and Lenis after hydration (kept out of the
+ * Loads GSAP and ScrollTrigger after hydration (kept out of the
  * critical bundle) and wires declarative data-attributes:
- *   data-split     headline words rise in
+ *   data-split     headline words rise in (the hero's wait for "turbo:hero-reveal")
  *   data-reveal    fade up on enter (batched + staggered)
  *   data-draw      SVG path draws as it scrolls through the viewport
  *   data-bar       horizontal bar grows from 0
@@ -19,7 +19,7 @@ declare global {
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
  *   data-scrub     headline words brighten as it scrolls through
  *   data-words     words rise, unblur and fade in one by one; [data-pop] tags pop in
- *   data-bg        "ink" | "paper": #main's background fades between section colours
+ *   data-bg        "ink" | "paper": the page background fades between section colours
  *   data-tilt      device swings up into its resting tilt (value: ±1 direction)
  *   data-tapaway   pinned scene: phones rise into the glow (≥1024px)
  *   data-drift / data-drift-track   card strip slides sideways with scroll (≥1024px)
@@ -38,16 +38,10 @@ export function Motion() {
     let cleanup = () => {};
     let cancelled = false;
 
-    Promise.all([import("gsap"), import("gsap/ScrollTrigger"), import("lenis")])
-      .then(([{ gsap }, { ScrollTrigger }, { default: Lenis }]) => {
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
+      .then(([{ gsap }, { ScrollTrigger }]) => {
         if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
-
-        const lenis = new Lenis({ lerp: 0.14, wheelMultiplier: 1 });
-        lenis.on("scroll", ScrollTrigger.update);
-        const tick = (t: number) => lenis.raf(t * 1000);
-        gsap.ticker.add(tick);
-        gsap.ticker.lagSmoothing(0);
 
         // Same-page anchor links scroll smoothly and move focus to the target.
         const onClick = (e: MouseEvent) => {
@@ -58,7 +52,8 @@ export function Motion() {
           const target = document.querySelector<HTMLElement>(hash);
           if (!target) return;
           e.preventDefault();
-          lenis.scrollTo(target, { offset: hash === "#main" ? 0 : -24, duration: 1.4 });
+          const top = hash === "#main" ? 0 : target.getBoundingClientRect().top + window.scrollY - 24;
+          window.scrollTo({ top, behavior: "smooth" });
           history.pushState(null, "", hash);
           if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
           target.focus({ preventScroll: true });
@@ -66,28 +61,38 @@ export function Motion() {
         document.addEventListener("click", onClick);
 
         const animateIn = root.classList.contains("motion");
+        let onHeroReveal = () => {};
         const ctx = gsap.context(() => {
           if (animateIn) {
             gsap.utils.toArray<HTMLElement>("[data-split]").forEach((el) => {
-              const words = el.querySelectorAll(".w > span");
-              gsap.to(words, {
+              if (el.closest("[data-hero]")) return;
+              gsap.to(el.querySelectorAll(".w > span"), {
                 yPercent: 0,
                 y: 0,
                 duration: 1.1,
                 ease: "expo.out",
                 stagger: 0.06,
-                delay: el.closest("[data-hero]") ? 0.15 : 0,
-                scrollTrigger: el.closest("[data-hero]") ? undefined : { trigger: el, start: "top 88%", once: true },
-                onStart: () => gsap.set(words, { clearProps: "willChange" }),
+                scrollTrigger: { trigger: el, start: "top 88%", once: true },
               });
             });
+
+            // Hero copy: plays once the 3D scene has risen into the map (or straight away without it).
+            const hero = document.querySelector<HTMLElement>("[data-hero]");
+            if (hero) {
+              const heroIn = gsap
+                .timeline({ paused: true, delay: 0.1 })
+                .to(hero.querySelectorAll("[data-split] .w > span"), { yPercent: 0, y: 0, duration: 1.1, ease: "expo.out", stagger: 0.06 })
+                .to(hero.querySelectorAll("[data-reveal]"), { opacity: 1, y: 0, duration: 1, ease: "expo.out", stagger: 0.1 }, 0.25);
+              onHeroReveal = () => heroIn.play();
+              if (window.__heroRevealed || !root.classList.contains("hero-intro")) heroIn.play();
+              else window.addEventListener("turbo:hero-reveal", onHeroReveal, { once: true });
+            }
 
             gsap.utils.toArray<HTMLElement>("[data-words]").forEach((el) => {
               const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 85%", once: true } });
               tl.to(el.querySelectorAll(".rw"), {
                 opacity: 1,
                 y: 0,
-                filter: "blur(0px)",
                 duration: 0.9,
                 ease: "power3.out",
                 stagger: 0.09,
@@ -103,7 +108,7 @@ export function Motion() {
               });
             });
 
-            ScrollTrigger.batch("[data-reveal]", {
+            ScrollTrigger.batch("main > :not([data-hero]) [data-reveal]", {
               start: "top 90%",
               once: true,
               onEnter: (els) =>
@@ -141,16 +146,17 @@ export function Motion() {
           });
 
           // Page background blends between section colours instead of switching at hard edges.
+          // The footer takes part too, so the body (not #main) carries the colour.
           const bgSections = gsap.utils.toArray<HTMLElement>("[data-bg]");
-          const main = document.getElementById("main");
-          if (main && bgSections.length) {
+          const page = document.body;
+          if (bgSections.length) {
             const colour = (el: HTMLElement) => (el.dataset.bg === "paper" ? "#f3f1ea" : "#0b0c0a");
             root.classList.add("bg-scroll");
-            gsap.set(main, { backgroundColor: colour(bgSections[0]) });
+            gsap.set(page, { backgroundColor: colour(bgSections[0]) });
             bgSections.forEach((el, i) => {
               if (i === 0 || colour(el) === colour(bgSections[i - 1])) return;
               gsap.fromTo(
-                main,
+                page,
                 { backgroundColor: colour(bgSections[i - 1]) },
                 {
                   backgroundColor: colour(el),
@@ -249,11 +255,10 @@ export function Motion() {
 
         cleanup = () => {
           root.classList.remove("bg-scroll");
+          window.removeEventListener("turbo:hero-reveal", onHeroReveal);
           mo.disconnect();
           document.removeEventListener("click", onClick);
           ctx.revert();
-          gsap.ticker.remove(tick);
-          lenis.destroy();
         };
       })
       .catch(() => root.classList.remove("motion"));
