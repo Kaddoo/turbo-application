@@ -1,0 +1,8 @@
+[Unit]
+Description=Turbo alert checks (schedule)
+[Timer]
+OnCalendar=*
+Persistent=true
+RandomizedDelaySec=20
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,35 @@
+# /etc/systemd/system/turbo-api.service
+[Unit]
+Description=Turbo API (clustered, one process per core)
+After=network-online.target postgresql.service pgbouncer.service
+Wants=network-online.target
+
+[Service]
+User=turbo
+WorkingDirectory=/opt/turbo/turbo-api
+EnvironmentFile=/etc/turbo/api.env
+Environment=NODE_ENV=production
+Environment=UV_THREADPOOL_SIZE=8          # password hashing and file writes run on this pool
+ExecStart=/usr/bin/node src/server.js
+Restart=always
+RestartSec=2
+LimitNOFILE=100000
+KillSignal=SIGTERM
+TimeoutStopSec=15
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/turbo
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+SystemCallFilter=@system-service
+CapabilityBoundingSet=
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

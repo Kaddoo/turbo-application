@@ -1,0 +1,6 @@
+[Unit]
+Description=Turbo alert checks
+After=network-online.target postgresql.service
+[Service]
+Type=oneshot
+ExecStart=0/2:/opt/turbo/turbo-api/deploy/alert-check.sh

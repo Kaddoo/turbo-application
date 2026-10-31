@@ -1,0 +1,6 @@
+[Unit]
+Description=Turbo nightly backup
+After=network-online.target postgresql.service
+[Service]
+Type=oneshot
+ExecStart=30:00:/opt/turbo/turbo-api/deploy/backup.sh

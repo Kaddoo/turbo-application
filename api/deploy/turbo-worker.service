@@ -1,0 +1,23 @@
+# /etc/systemd/system/turbo-worker.service
+[Unit]
+Description=Turbo background worker (assignment, timeouts, stuck-ride flags)
+After=network-online.target postgresql.service pgbouncer.service
+Wants=network-online.target
+
+[Service]
+User=turbo
+WorkingDirectory=/opt/turbo/turbo-api
+EnvironmentFile=/etc/turbo/api.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node src/worker.js
+Restart=always
+RestartSec=2
+LimitNOFILE=100000
+KillSignal=SIGTERM
+TimeoutStopSec=15
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

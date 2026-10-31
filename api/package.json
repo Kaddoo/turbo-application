@@ -1,0 +1,37 @@
+{
+  "name": "turbo-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "worker": "node --env-file-if-exists=.env src/worker.js",
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "create-admin": "node --env-file-if-exists=.env scripts/create-admin.js",
+    "seed": "node --env-file-if-exists=.env scripts/seed.js",
+    "demo": "node --env-file-if-exists=.env scripts/demo.js",
+    "loadtest": "node --env-file-if-exists=.env scripts/loadtest.js",
+    "test": "node --env-file-if-exists=.env --test --test-concurrency=1 test/staff.test.js test/walk1.test.js test/walk2.test.js test/walk3.test.js test/walk4.test.js test/concurrency.test.js test/uploads.test.js test/safety.test.js test/security.test.js test/driver.test.js test/push.test.js",
+    "contract:gap": "node --env-file-if-exists=.env scripts/contract-gap.mjs",
+    "contract:sync": "cp ../Docs/api/openapi.yaml contract/openapi.yaml",
+    "pushload": "node --env-file-if-exists=.env scripts/pushload.js"
+  },
+  "dependencies": {
+    "compression": "^1.8.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.0",
+    "pino": "^9.5.0"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "autocannon": "^8.0.0",
+    "yaml": "^2.9.1"
+  }
+}
