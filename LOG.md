@@ -2,6 +2,29 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Kevin with Claude, code: group 1 (workspace, mock, client)
+
+**Task:** Workspace, tooling, `turbo_api` generation, mock running.
+
+**Files touched:**
+- pubspec.yaml (pub workspace), package.json (Prism and generator, dev only), .gitignore
+- apps/student_app (ios, android, web; `gh.turbo.student`, "Turbo"), apps/driver_app (ios, android; `gh.turbo.driver`, "Turbo Driver")
+- packages/turbo_api (generated/ via tool/generate.sh, wrapper, tests), packages/turbo_ui (empty scaffold)
+
+**What changed:** Git initialised here. Client generated with dart-dio and json_serializable; regeneration gives no diff. Wrapper adds X-App-Version, bearer token, GET-only retry, typed `ApiProblem`, `IdempotencyKey`.
+
+**Acceptance criteria:**
+- [x] `flutter analyze` clean, `flutter test` passes
+- [x] `getAppConfig` through the generated client against Prism returns 200
+- [x] Regeneration produces no diff
+- [ ] Apps launched on a device (no simulator; waiting for the phone on a cable)
+
+**Deviations from plan or contract:** The generated package sits outside the workspace (its dev dependencies conflict with the Flutter SDK pins) and generate.sh raises its SDK constraint, since the generator emits syntax newer than its own constraint. No contract problems found. Android is built but not tested for now.
+
+**Status:** done, awaiting review. Branches: workspace-and-apps, mock-and-generator.
+
+**Next step:** Group 2, `turbo_ui` brand layer and theme.
+
 ## 2026-10-31 06:10, Kevin with Claude, planning
 
 **Task:** Write build prompts for each surface so work can start before the brand guide.
