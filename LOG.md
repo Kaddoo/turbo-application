@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: wallet and fare (branch `design-wallet`, on `design-trip`)
+
+**What changed:** S21 wallet has the kit header (title, avatar), a lime balance card (dark while money is owed, with a danger banner), the balance in the 50 px hero style, held amount, the name in mono capitals, Top up under the card. S22 top-up has the round back button, amounts as mono tiles (selected = light fill) and a danger banner for errors. S15 quote has the round back button, the 22 pt padding, an icon slot for "can't book this trip" and a warning banner for the shortfall. Review fixes: welcome corner mark reads "Tb" (first and last letter), and "Wrong number?" and resend sit under the code boxes.
+
+**Checks:** analyze clean; student 130 pass. Wallet viewed in a browser in dark and light before this change; the new card is not yet viewed.
+
+**Not done:** quote map and bottom sheet, Balance and Held bento tiles on the wallet card, the pay-with sheet, S23 waiting and success screens (3D icons), S24 transaction filter chips.
+
 ## 2026-11-02, Kevin with Claude, code: trip screens (branch `design-trip`, on `design-destination`)
 
 **What changed:** the ride screen (S16-S20) uses the kit pieces: bottom sheet with the 36 radius, the start PIN as `TripPin` inside an `InnerPanel` (still read digit by digit, via the new `digitLabel` on `TripPin`), "driver arrived" as a success `TurboBanner`, quick messages as `TurboChip`s, the driver as `TurboAvatar`, the plate in the mono plate style. `large:` removed.

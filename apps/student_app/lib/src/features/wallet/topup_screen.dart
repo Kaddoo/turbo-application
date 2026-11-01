@@ -97,7 +97,6 @@ class _TopupScreenState extends ConsumerState<TopupScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final phone = switch (ref.watch(meProvider).value) {
       MeLoaded(:final student) => displayPhone(student.phone),
@@ -107,17 +106,28 @@ class _TopupScreenState extends ConsumerState<TopupScreen> {
         max = formatPesewas(topupMaxPesewas);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.topupTitle)),
       body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.md, TurboSpacing.screen, 0),
+              child: Row(
+                children: [
+                  TurboIconButton(icon: Icons.arrow_back, label: l10n.back, onPressed: () => context.pop()),
+                  Expanded(
+                    child: Semantics(header: true, child: Text(l10n.topupTitle, textAlign: TextAlign.center, style: text.titleMedium)),
+                  ),
+                  const SizedBox.square(dimension: TurboSizes.iconButton),
+                ],
+              ),
+            ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(TurboSpacing.xl),
+                padding: const EdgeInsets.all(TurboSpacing.screen),
                 children: [
                   Semantics(
                     header: true,
-                    child: Text(l10n.topupAmount, style: text.titleLarge),
+                    child: Text(l10n.topupAmount, style: text.headlineMedium),
                   ),
                   const SizedBox(height: TurboSpacing.md),
                   GridView.count(
@@ -162,26 +172,17 @@ class _TopupScreenState extends ConsumerState<TopupScreen> {
                   ],
                   if (_error != null) ...[
                     const SizedBox(height: TurboSpacing.md),
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(
-                        _error!,
-                        style: text.bodyMedium?.copyWith(
-                          color: t.colors.danger,
-                        ),
-                      ),
-                    ),
+                    TurboBanner(icon: Icons.error_outline, message: _error!, tone: StatusTone.danger, liveRegion: true),
                   ],
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(TurboSpacing.lg),
+              padding: const EdgeInsets.all(TurboSpacing.screen),
               child: TurboButton(
                 label: _amount != null && _inRange
                     ? l10n.topupPay(formatPesewas(_amount!))
                     : l10n.walletTopUp,
-                large: true,
                 loading: _busy,
                 onPressed: _amount == null ? null : _pay,
               ),
@@ -211,15 +212,18 @@ class _AmountTile extends StatelessWidget {
       onTap: onTap,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(t.radiusCard),
+        borderRadius: BorderRadius.circular(t.radiusListCard),
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: t.colors.surface,
-            borderRadius: BorderRadius.circular(t.radiusCard),
-            border: Border.all(color: selected ? t.colors.textPrimary : t.colors.border, width: selected ? 2 : 1),
+            color: selected ? t.colors.textPrimary : t.colors.surface,
+            borderRadius: BorderRadius.circular(t.radiusListCard),
+            border: Border.all(color: selected ? t.colors.textPrimary : t.colors.border),
           ),
-          child: Text(label, style: Theme.of(context).textTheme.titleLarge),
+          child: Text(
+            label,
+            style: t.styles.monoMoneyLarge.copyWith(color: selected ? t.colors.background : t.colors.textPrimary),
+          ),
         ),
       ),
     );

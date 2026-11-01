@@ -83,7 +83,8 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
           return;
         }
       }
-      if (p.code == ProblemCode.quoteExpired.value || p.code == ProblemCode.insufficientBalance.value) {
+      if (p.code == ProblemCode.quoteExpired.value ||
+          p.code == ProblemCode.insufficientBalance.value) {
         // The price or the wallet moved; show the new numbers.
         await ref.read(quoteProvider.notifier).refresh();
         ref.invalidate(walletProvider);
@@ -129,208 +130,297 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
     final draft = ref.watch(tripDraftProvider);
 
     Widget pinned(Widget? error, Widget button) => Padding(
-          padding: const EdgeInsets.all(TurboSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [?error, button],
-          ),
-        );
+      padding: const EdgeInsets.all(TurboSpacing.screen),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [?error, button]),
+    );
 
     Widget stop(IconData icon, String? label) => Row(
-          children: [
-            Icon(icon, size: TurboSizes.iconSm, color: t.colors.textSecondary),
-            const SizedBox(width: TurboSpacing.md),
-            Expanded(child: Text(label ?? '', style: text.bodyLarge)),
-          ],
-        );
+      children: [
+        Icon(icon, size: TurboSizes.iconSm, color: t.colors.textSecondary),
+        const SizedBox(width: TurboSpacing.md),
+        Expanded(child: Text(label ?? '', style: text.bodyLarge)),
+      ],
+    );
 
     return Scaffold(
-      appBar: AppBar(leading: BackButton(onPressed: () => context.go('/home/destination'))),
       body: SafeArea(
-        child: quote.when(
-          loading: () => Semantics(label: l10n.quoteGettingPrice, child: const LoadingState()),
-          error: (e, _) => ErrorState(
-            message: e is ApiProblem && e.code != ApiProblem.unknown ? problemMessage(l10n, e) : l10n.quoteLoadFailed,
-            onRetry: () => ref.read(quoteProvider.notifier).refresh(),
-          ),
-          data: (q) {
-            if (!q.eligible) {
-              return Column(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                TurboSpacing.screen,
+                TurboSpacing.md,
+                TurboSpacing.screen,
+                0,
+              ),
+              child: Row(
                 children: [
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.all(TurboSpacing.xl),
-                      children: [
-                        Icon(Icons.location_off_outlined, size: TurboSizes.iconLg, color: t.colors.textSecondary),
-                        const SizedBox(height: TurboSpacing.lg),
-                        Semantics(header: true, child: Text(l10n.quoteIneligibleTitle, style: text.headlineMedium)),
-                        const SizedBox(height: TurboSpacing.lg),
-                        // The server's own plain-language reasons, every one of them.
-                        for (final r in q.reasons)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                            child: TurboCard(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(Icons.info_outline, color: t.colors.warning),
-                                  const SizedBox(width: TurboSpacing.md),
-                                  Expanded(child: Text(r.message, style: text.bodyLarge)),
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  pinned(
-                    null,
-                    TurboButton(
-                      label: l10n.quoteChangeLocation,
-                      onPressed: () => context.go('/home/destination'),
-                    ),
+                  TurboIconButton(
+                    icon: Icons.arrow_back,
+                    label: l10n.back,
+                    onPressed: () => context.go('/home/destination'),
                   ),
                 ],
-              );
-            }
-
-            final fare = q.farePesewas ?? 0;
-            final available = q.wallet.availablePesewas;
-            final km = ((q.routeDistanceMeters ?? 0) / 1000).toStringAsFixed(1);
-            final minutes = ((q.routeDurationSeconds ?? 0) / 60).ceil();
-            final eta = q.pickupEtaSeconds == null ? null : (q.pickupEtaSeconds! / 60).ceil();
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(TurboSpacing.xl),
-                    children: [
-                      if (_renewed)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                          child: Semantics(liveRegion: true, child: Text(l10n.quoteExpired, style: text.bodyMedium)),
-                        ),
-                      Row(
-                        children: [
-                          Expanded(child: Semantics(header: true, child: Text(l10n.quoteTitle, style: text.titleLarge))),
-                          Text(l10n.quoteRoute(km, minutes), style: text.bodySmall),
-                        ],
-                      ),
-                      const SizedBox(height: TurboSpacing.md),
-                      Semantics(
-                        label: formatPesewas(fare),
-                        excludeSemantics: true,
-                        child: Text(
-                          formatPesewas(fare),
-                          style: text.displayLarge,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.lock_outline, size: TurboSizes.iconSm, color: t.colors.textSecondary),
-                          const SizedBox(width: TurboSpacing.sm),
-                          Expanded(child: Text(l10n.quoteFixed, style: text.bodyLarge)),
-                        ],
-                      ),
-                      const SizedBox(height: TurboSpacing.xl),
-                      TurboCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            stop(Icons.trip_origin, draft.pickup?.label),
-                            const SizedBox(height: TurboSpacing.md),
-                            stop(Icons.flag_outlined, draft.dropoff?.label),
-                            if (eta != null) ...[
-                              const SizedBox(height: TurboSpacing.md),
-                              Text(l10n.quotePickupEta(eta), style: text.bodySmall),
+              ),
+            ),
+            Expanded(
+              child: quote.when(
+                loading: () => Semantics(
+                  label: l10n.quoteGettingPrice,
+                  child: const LoadingState(),
+                ),
+                error: (e, _) => ErrorState(
+                  message: e is ApiProblem && e.code != ApiProblem.unknown
+                      ? problemMessage(l10n, e)
+                      : l10n.quoteLoadFailed,
+                  onRetry: () => ref.read(quoteProvider.notifier).refresh(),
+                ),
+                data: (q) {
+                  if (!q.eligible) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: ListView(
+                            padding: const EdgeInsets.all(TurboSpacing.screen),
+                            children: [
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: HeroIcon(
+                                  icon: Icons.location_off_outlined,
+                                ),
+                              ),
+                              const SizedBox(height: TurboSpacing.lg),
+                              Semantics(
+                                header: true,
+                                child: Text(
+                                  l10n.quoteIneligibleTitle,
+                                  style: text.headlineMedium,
+                                ),
+                              ),
+                              const SizedBox(height: TurboSpacing.lg),
+                              // The server's own plain-language reasons, every one of them.
+                              for (final r in q.reasons)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: TurboSpacing.md,
+                                  ),
+                                  child: TurboCard(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline,
+                                          color: t.colors.warning,
+                                        ),
+                                        const SizedBox(width: TurboSpacing.md),
+                                        Expanded(
+                                          child: Text(
+                                            r.message,
+                                            style: text.bodyLarge,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                             ],
-                          ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: TurboSpacing.md),
-                      TurboCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        pinned(
+                          null,
+                          TurboButton(
+                            label: l10n.quoteChangeLocation,
+                            onPressed: () => context.go('/home/destination'),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  final fare = q.farePesewas ?? 0;
+                  final available = q.wallet.availablePesewas;
+                  final km = ((q.routeDistanceMeters ?? 0) / 1000)
+                      .toStringAsFixed(1);
+                  final minutes = ((q.routeDurationSeconds ?? 0) / 60).ceil();
+                  final eta = q.pickupEtaSeconds == null
+                      ? null
+                      : (q.pickupEtaSeconds! / 60).ceil();
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          padding: const EdgeInsets.all(TurboSpacing.screen),
                           children: [
+                            if (_renewed)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: TurboSpacing.md,
+                                ),
+                                child: Semantics(
+                                  liveRegion: true,
+                                  child: Text(
+                                    l10n.quoteExpired,
+                                    style: text.bodyMedium,
+                                  ),
+                                ),
+                              ),
                             Row(
                               children: [
-                                Icon(Icons.account_balance_wallet_outlined, size: TurboSizes.iconSm, color: t.colors.textSecondary),
-                                const SizedBox(width: TurboSpacing.md),
+                                Expanded(
+                                  child: Semantics(
+                                    header: true,
+                                    child: Text(
+                                      l10n.quoteTitle,
+                                      style: text.titleLarge,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  l10n.quoteRoute(km, minutes),
+                                  style: text.bodySmall,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: TurboSpacing.md),
+                            Semantics(
+                              label: formatPesewas(fare),
+                              excludeSemantics: true,
+                              child: Text(
+                                formatPesewas(fare),
+                                style: text.displayLarge,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.lock_outline,
+                                  size: TurboSizes.iconSm,
+                                  color: t.colors.textSecondary,
+                                ),
+                                const SizedBox(width: TurboSpacing.sm),
                                 Expanded(
                                   child: Text(
-                                    l10n.quoteWalletLine(formatPesewas(available), formatPesewas(available - fare)),
+                                    l10n.quoteFixed,
                                     style: text.bodyLarge,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: TurboSpacing.sm),
-                            Text(l10n.quoteCancelRule, style: text.bodySmall),
+                            const SizedBox(height: TurboSpacing.xl),
+                            TurboCard(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  stop(Icons.trip_origin, draft.pickup?.label),
+                                  const SizedBox(height: TurboSpacing.md),
+                                  stop(
+                                    Icons.flag_outlined,
+                                    draft.dropoff?.label,
+                                  ),
+                                  if (eta != null) ...[
+                                    const SizedBox(height: TurboSpacing.md),
+                                    Text(
+                                      l10n.quotePickupEta(eta),
+                                      style: text.bodySmall,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: TurboSpacing.md),
+                            TurboCard(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.account_balance_wallet_outlined,
+                                        size: TurboSizes.iconSm,
+                                        color: t.colors.textSecondary,
+                                      ),
+                                      const SizedBox(width: TurboSpacing.md),
+                                      Expanded(
+                                        child: Text(
+                                          l10n.quoteWalletLine(
+                                            formatPesewas(available),
+                                            formatPesewas(available - fare),
+                                          ),
+                                          style: text.bodyLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: TurboSpacing.sm),
+                                  Text(
+                                    l10n.quoteCancelRule,
+                                    style: text.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (!q.wallet.sufficient) ...[
+                              const SizedBox(height: TurboSpacing.md),
+                              TurboBanner(
+                                icon: Icons.warning_amber,
+                                message: l10n.quoteShortfall(
+                                  formatPesewas(q.wallet.shortfallPesewas),
+                                ),
+                                tone: StatusTone.warning,
+                                liveRegion: true,
+                              ),
+                            ],
                           ],
                         ),
                       ),
-                      if (!q.wallet.sufficient) ...[
-                        const SizedBox(height: TurboSpacing.md),
-                        Container(
-                          padding: const EdgeInsets.all(TurboSpacing.lg),
-                          decoration: BoxDecoration(
-                            color: t.colors.warning.withValues(alpha: 0.12),
-                            border: Border.all(color: t.colors.warning),
-                            borderRadius: BorderRadius.circular(t.radiusCard),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.warning_amber, color: t.colors.warning),
-                              const SizedBox(width: TurboSpacing.md),
-                              Expanded(
+                      pinned(
+                        _bookError == null
+                            ? null
+                            : Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: TurboSpacing.md,
+                                ),
                                 child: Semantics(
                                   liveRegion: true,
                                   child: Text(
-                                    l10n.quoteShortfall(formatPesewas(q.wallet.shortfallPesewas)),
-                                    style: text.bodyMedium,
+                                    _bookError!,
+                                    style: text.bodyMedium?.copyWith(
+                                      color: t.colors.danger,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        q.wallet.sufficient
+                            ? TurboButton(
+                                label: l10n.quoteBook(formatPesewas(fare)),
+                                loading: _booking,
+                                onPressed: () => _book(q),
+                              )
+                            : TurboButton(
+                                label: l10n.quoteTopUp(
+                                  formatPesewas(q.wallet.shortfallPesewas),
+                                ),
+                                onPressed: () async {
+                                  await context.push(
+                                    '/wallet/topup',
+                                    extra: q.wallet.shortfallPesewas,
+                                  );
+                                  // Back from topping up: the wallet has changed, so ask again.
+                                  ref.invalidate(walletProvider);
+                                  await ref
+                                      .read(quoteProvider.notifier)
+                                      .refresh();
+                                },
+                              ),
+                      ),
                     ],
-                  ),
-                ),
-                pinned(
-                  _bookError == null
-                      ? null
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                          child: Semantics(
-                            liveRegion: true,
-                            child: Text(
-                              _bookError!,
-                              style: text.bodyMedium?.copyWith(color: t.colors.danger),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                  q.wallet.sufficient
-                      ? TurboButton(
-                          label: l10n.quoteBook(formatPesewas(fare)),
-                          loading: _booking,
-                          onPressed: () => _book(q),
-                        )
-                      : TurboButton(
-                          label: l10n.quoteTopUp(formatPesewas(q.wallet.shortfallPesewas)),
-                          onPressed: () async {
-                            await context.push('/wallet/topup', extra: q.wallet.shortfallPesewas);
-                            // Back from topping up: the wallet has changed, so ask again.
-                            ref.invalidate(walletProvider);
-                            await ref.read(quoteProvider.notifier).refresh();
-                          },
-                        ),
-                ),
-              ],
-            );
-          },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
