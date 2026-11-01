@@ -39,7 +39,7 @@ class MeScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.meTitle)),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(TurboSpacing.lg),
+          padding: const EdgeInsets.all(TurboSpacing.screen),
           children: [
             Row(
               children: [
@@ -49,7 +49,7 @@ class MeScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(profile.fullName, style: text.titleLarge),
+                      Text(profile.fullName, style: context.turbo.styles.emphasis),
                       Text(displayPhone(profile.phone), style: text.bodyMedium),
                     ],
                   ),
@@ -66,7 +66,7 @@ class MeScreen extends ConsumerWidget {
                       title: l10n.meVehicle,
                       subtitle: '${v.colour} ${v.make} ${v.model}',
                       leading: const Icon(Icons.directions_car_outlined),
-                      trailing: Text(v.plateNumber, style: text.titleLarge),
+                      trailing: Text(v.plateNumber, style: context.turbo.styles.monoPlate),
                     ),
                     const Divider(),
                   ],
@@ -81,7 +81,7 @@ class MeScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: TurboSpacing.xl),
-            Semantics(header: true, child: Text(l10n.meDevices, style: text.titleLarge)),
+            Semantics(header: true, child: Text(l10n.meDevices, style: text.titleSmall)),
             const SizedBox(height: TurboSpacing.sm),
             sessions.when(
               loading: () => const LoadingState(rows: 1),
@@ -143,7 +143,7 @@ class MeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.xl),
             // Drivers cannot delete their account here; staff handle it.
-            TurboButton(label: l10n.meSignOut, variant: TurboButtonVariant.secondary, onPressed: () => ref.read(sessionProvider.notifier).signOut()),
+            TurboButton(label: l10n.meSignOut, driver: true, variant: TurboButtonVariant.secondary, onPressed: () => ref.read(sessionProvider.notifier).signOut()),
           ],
         ),
       ),

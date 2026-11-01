@@ -253,7 +253,7 @@ class _OfferState extends ConsumerState<_Offer> {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.all(TurboSpacing.xl),
+            padding: const EdgeInsets.all(TurboSpacing.screen),
             children: [
               Center(
                 child: Semantics(
@@ -269,15 +269,13 @@ class _OfferState extends ConsumerState<_Offer> {
                             strokeWidth: 10,
                             color: left <= 10
                                 ? t.colors.danger
-                                : t.colors.textPrimary,
+                                : t.colors.accentText,
                             backgroundColor: t.colors.border,
                           ),
                         ),
                         Text(
                           l10n.assignSeconds(left),
-                          style: text.headlineMedium?.copyWith(
-                            fontSize: text.headlineMedium!.fontSize! * 1.5,
-                          ),
+                          style: t.styles.monoCountdown,
                         ),
                       ],
                     ),
@@ -296,15 +294,13 @@ class _OfferState extends ConsumerState<_Offer> {
               ),
               Text(
                 r.pickup.label ?? '',
-                style: text.headlineMedium?.copyWith(
-                  fontSize: text.headlineMedium!.fontSize! * 1.5,
-                ),
+                style: t.styles.driverTitle,
                 textAlign: TextAlign.center,
               ),
               if (r.pickup.landmark != null)
                 Text(
                   r.pickup.landmark!,
-                  style: text.titleLarge,
+                  style: text.bodyLarge?.copyWith(color: t.colors.textSecondary),
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: TurboSpacing.xl),
@@ -346,13 +342,7 @@ class _OfferState extends ConsumerState<_Offer> {
               if (_error != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                  child: Semantics(
-                    liveRegion: true,
-                    child: Text(
-                      _error!,
-                      style: text.bodyLarge?.copyWith(color: t.colors.danger),
-                    ),
-                  ),
+                  child: TurboBanner(icon: Icons.error_outline, message: _error!, tone: StatusTone.danger, liveRegion: true),
                 ),
               TurboButton(
                 label: l10n.assignAccept,
@@ -363,6 +353,7 @@ class _OfferState extends ConsumerState<_Offer> {
               const SizedBox(height: TurboSpacing.md),
               TurboButton(
                 label: l10n.assignDecline,
+                driver: true,
                 variant: TurboButtonVariant.secondary,
                 onPressed: _busy ? null : _decline,
               ),

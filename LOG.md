@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: driver app finish (branch `design-driver-finish`, on `design-photos`)
+
+**What changed:** driver phone and code screens use `AuthLayout` (accent titles "Your phone number" and "Enter your code", the 80 pt action, resend and wrong-number under the boxes); the new-assignment screen has a lime countdown ring (red in the last 10 seconds) with the mono countdown, the pickup name in the driver title style and a danger banner; driver SOS uses the separate SOS red; Me has the plate in the mono style, the emphasis name and 80 pt sign out.
+
+**Checks:** analyze clean; driver 61 pass. Not viewed on a device.
+
+**Not done:** the document tiles on Me (D12) and expiry on home (D02, "insurance expired") need document fields the driver profile does not return, so no contract request was written yet; the bento detail tiles on the assignment, the D03 map sheet, and 3D icons.
+
 ## 2026-11-02, Kevin with Claude, code: photos in the screens (branch `design-photos`, on `design-driver`)
 
 **What changed:** new `PhotoCard` in `turbo_ui` (photo, fade, text on top; picture hidden from screen readers). Used for the driver welcome (the Ghanaian taxi driver, with the lime-accent "Drive for campus" title and a slide to continue), the student "You're verified" screen (campus student) and the in-trip card (trotro street, with the route on it). Driver welcome tagline is now "Drive for campus".
