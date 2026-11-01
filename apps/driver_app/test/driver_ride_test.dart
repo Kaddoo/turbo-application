@@ -2,6 +2,7 @@ import 'package:driver_app/src/features/ride/ride_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:turbo_api/turbo_api.dart';
+import 'package:turbo_ui/turbo_ui.dart' show TurboKeypad;
 
 import 'support/fake_server.dart';
 import 'support/harness.dart';
@@ -190,7 +191,7 @@ void main() {
 
     Future<void> typePin(WidgetTester tester, String pin) async {
       for (final d in pin.split('')) {
-        await tester.tap(find.widgetWithText(FilledButton, d));
+        await tester.tap(find.descendant(of: find.byType(TurboKeypad), matching: find.text(d)));
         await tester.pump();
       }
     }

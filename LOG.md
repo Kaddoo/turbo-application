@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: driver app first pass (branch `design-driver`, on `design-activity`)
+
+**What changed in `apps/driver_app`:** primary actions are the 80 pt `driver` buttons (go on duty, arrived, start trip, complete, done); the start-PIN entry is `TripPin` plus the new `TurboKeypad`; the four record views are `TurboSegmented`; the boot error, update, maintenance and suspended screens use `SystemMessage`; home uses the avatar, list-card readiness rows and a danger banner; Me uses `TurboAvatar`. Test taps the keypad inside `TurboKeypad`.
+
+**Checks:** analyze clean; driver 61 pass. Not viewed in a browser or on a device.
+
+**Not done:** the driver welcome and sign-in (D01, still on the old shared auth layout with its own screens), the pickup-to-drop-off screens' bento tiles and countdown ring, the assignment accept countdown (D04), SOS tile (D11), documents tiles on Me (D12), 3D icons and photos.
+
 ## 2026-11-02, Kevin with Claude, code: activity, safety, support, profile (branch `design-activity`, on `design-wallet`)
 
 **What changed:** S25 Activity has the large title and All rides / Completed / Cancelled chips (filtering the list on the device, no new endpoint) with mono fares. S26 Safety has the round back button and a bento share tile; contacts are list cards with avatars; section titles are smaller. SOS uses the separate red (`sos`, `onSos`), never the accent or the error red. Share trip, support and profile use `TurboAvatar`, the 22 pt padding, smaller section titles and a banner for the contact error; `large:` removed.

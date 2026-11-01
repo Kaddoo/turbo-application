@@ -26,7 +26,6 @@ class MeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final loaded = ref.watch(profileProvider).value;
     final profile = loaded is ProfileLoaded ? loaded.profile : null;
@@ -44,7 +43,7 @@ class MeScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(radius: TurboSpacing.xxl, backgroundColor: t.colors.surface, child: Text(profile.fullName.characters.first, style: text.titleLarge)),
+                TurboAvatar(name: profile.fullName),
                 const SizedBox(width: TurboSpacing.lg),
                 Expanded(
                   child: Column(

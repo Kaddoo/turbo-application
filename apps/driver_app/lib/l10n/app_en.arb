@@ -34,6 +34,7 @@
   "back": "Back",
   "offlineBanner": "You're offline. Some things may be out of date.",
   "bootErrorTitle": "We couldn't start up",
+  "tryAgain": "Try again",
   "bootErrorBody": "Check your connection and try again.",
   "updateRequiredTitle": "Please update the app",
   "updateRequiredBody": "This version of {appName} is too old to keep working. Update it from the store to carry on.",

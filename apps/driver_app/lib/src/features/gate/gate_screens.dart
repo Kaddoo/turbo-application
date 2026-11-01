@@ -7,43 +7,6 @@ import '../../core/profile.dart';
 import '../../core/session.dart';
 import '../../l10n/app_localizations.dart';
 
-class _Centered extends StatelessWidget {
-  const _Centered({required this.icon, required this.title, this.body, this.action});
-
-  final IconData icon;
-  final String title;
-  final String? body;
-  final Widget? action;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.turbo;
-    final text = Theme.of(context).textTheme;
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(TurboSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: TurboSizes.iconLg, color: t.colors.textSecondary),
-                const SizedBox(height: TurboSpacing.lg),
-                Semantics(header: true, child: Text(title, style: text.titleLarge, textAlign: TextAlign.center)),
-                if (body != null) ...[
-                  const SizedBox(height: TurboSpacing.md),
-                  Text(body!, style: text.bodyLarge, textAlign: TextAlign.center),
-                ],
-                if (action != null) ...[const SizedBox(height: TurboSpacing.xl), action!],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
@@ -61,16 +24,18 @@ class BootErrorScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: ErrorState(
-          message: '${l10n.bootErrorTitle}. ${l10n.bootErrorBody}',
-          onRetry: () {
-            ref.invalidate(sessionProvider);
-            ref.invalidate(profileProvider);
-            ref.read(gateProvider.notifier).recheck();
-          },
-        ),
+    return SystemMessage(
+      icon: Icons.warning_amber_rounded,
+      title: l10n.bootErrorTitle,
+      message: l10n.bootErrorBody,
+      action: TurboButton(
+        label: l10n.tryAgain,
+        driver: true,
+        onPressed: () {
+          ref.invalidate(sessionProvider);
+          ref.invalidate(profileProvider);
+          ref.read(gateProvider.notifier).recheck();
+        },
       ),
     );
   }
@@ -82,10 +47,10 @@ class UpdateRequiredScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return _Centered(
+    return SystemMessage(
       icon: Icons.system_update_outlined,
       title: l10n.updateRequiredTitle,
-      body: l10n.updateRequiredBody(context.turbo.brand.appName),
+      message: l10n.updateRequiredBody(context.turbo.brand.appName),
     );
   }
 }
@@ -97,14 +62,13 @@ class MaintenanceScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final message = ref.watch(gateProvider).value?.maintenanceMessage;
-    return _Centered(
+    return SystemMessage(
       icon: Icons.construction_outlined,
       title: l10n.maintenanceTitle,
-      body: message ?? l10n.maintenanceBody(context.turbo.brand.appName),
+      message: message ?? l10n.maintenanceBody(context.turbo.brand.appName),
       action: TurboButton(
         label: l10n.maintenanceCheckAgain,
-        expand: false,
-        variant: TurboButtonVariant.secondary,
+        driver: true,
         onPressed: () => ref.read(gateProvider.notifier).recheck(),
       ),
     );
@@ -117,10 +81,10 @@ class SuspendedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return _Centered(
-      icon: Icons.block,
+    return SystemMessage(
+      icon: Icons.lock_outline,
       title: l10n.suspendedTitle,
-      body: l10n.suspendedBody,
+      message: l10n.suspendedBody,
     );
   }
 }

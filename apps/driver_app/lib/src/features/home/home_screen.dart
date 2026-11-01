@@ -102,7 +102,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final text = Theme.of(context).textTheme;
     final loaded = ref.watch(profileProvider).value;
     final profile = loaded is ProfileLoaded ? loaded.profile : null;
-    if (profile == null) return const Scaffold(body: SafeArea(child: LoadingState()));
+    if (profile == null) {
+      return const Scaffold(body: SafeArea(child: LoadingState()));
+    }
     final on = profile.dutyStatus == DriverProfileDutyStatusEnum.onDuty;
     final sharing = ref.watch(locationSharingProvider);
     final online = ref.watch(onlineProvider).value ?? true;
@@ -140,7 +142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.all(TurboSpacing.xl),
+                  padding: const EdgeInsets.all(TurboSpacing.screen),
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,7 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             ],
                           ),
                         ),
-                        Text(t.brand.wordmark, style: text.titleLarge),
+                        TurboAvatar(name: firstName),
                       ],
                     ),
                     const SizedBox(height: TurboSpacing.lg),
@@ -203,6 +205,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           VoidCallback? fix,
                           String? fixLabel,
                         }) => TurboListRow(
+                          card: true,
                           title: label,
                           leading: Icon(
                             ok ? Icons.check : Icons.close,
@@ -233,53 +236,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                   ),
                                 ),
                         );
-                        return TurboCard(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: TurboSpacing.lg,
-                          ),
-                          child: Column(
-                            children: [
-                              row(
-                                l10n.readinessLocation,
-                                r.locationOk,
-                                fixLabel:
-                                    r.location ==
-                                            DriverLocationAccess.whileInUse ||
-                                        r.location ==
-                                            DriverLocationAccess.deniedForever
-                                    ? l10n.readinessOpenSettings
-                                    : l10n.readinessLocationFix,
-                                fix: () async {
-                                  if (r.location ==
+                        return Column(
+                          children: [
+                            row(
+                              l10n.readinessLocation,
+                              r.locationOk,
+                              fixLabel:
+                                  r.location ==
                                           DriverLocationAccess.whileInUse ||
                                       r.location ==
-                                          DriverLocationAccess.deniedForever) {
-                                    await source.openSettings();
-                                  } else {
-                                    await source.requestLocation();
-                                  }
-                                  ref.invalidate(readinessProvider);
-                                },
+                                          DriverLocationAccess.deniedForever
+                                  ? l10n.readinessOpenSettings
+                                  : l10n.readinessLocationFix,
+                              fix: () async {
+                                if (r.location ==
+                                        DriverLocationAccess.whileInUse ||
+                                    r.location ==
+                                        DriverLocationAccess.deniedForever) {
+                                  await source.openSettings();
+                                } else {
+                                  await source.requestLocation();
+                                }
+                                ref.invalidate(readinessProvider);
+                              },
+                            ),
+                            row(l10n.readinessBattery, r.batteryOk),
+                            row(l10n.readinessInternet, r.online),
+                            row(
+                              l10n.readinessNotifications,
+                              r.notifications,
+                              fix: () async {
+                                if (!await source.requestNotifications()) {
+                                  await source.openSettings();
+                                }
+                                ref.invalidate(readinessProvider);
+                              },
+                            ),
+                            TurboListRow(
+                              card: true,
+                              title: l10n.readinessDocuments,
+                              leading: Icon(
+                                Icons.description_outlined,
+                                color: t.colors.textSecondary,
                               ),
-                              row(l10n.readinessBattery, r.batteryOk),
-                              row(l10n.readinessInternet, r.online),
-                              row(
-                                l10n.readinessNotifications,
-                                r.notifications,
-                                fix: () async {
-                                  if (!await source.requestNotifications()) await source.openSettings();
-                                  ref.invalidate(readinessProvider);
-                                },
-                              ),
-                              TurboListRow(
-                                title: l10n.readinessDocuments,
-                                leading: Icon(
-                                  Icons.description_outlined,
-                                  color: t.colors.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -296,17 +297,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         padding: const EdgeInsets.only(bottom: TurboSpacing.md),
                         child: Semantics(
                           liveRegion: true,
-                          child: Text(
-                            _error!,
-                            style: text.bodyLarge?.copyWith(
-                              color: t.colors.danger,
-                            ),
+                          child: TurboBanner(
+                            icon: Icons.error_outline,
+                            message: _error!,
+                            tone: StatusTone.danger,
                           ),
                         ),
                       ),
                     TurboButton(
                       label: l10n.homeGoOnDuty,
-                      large: true,
+                      driver: true,
                       loading: _busy,
                       onPressed: () => _setDuty(true),
                     ),

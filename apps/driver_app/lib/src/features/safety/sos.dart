@@ -190,7 +190,7 @@ class _SosResult extends StatelessWidget {
             child: TurboButton(
               label: l10n.sosCall(emergencyNumber),
               variant: TurboButtonVariant.destructive,
-              large: true,
+              driver: true,
               onPressed: () => callNumber(emergencyNumber),
             ),
           ),
