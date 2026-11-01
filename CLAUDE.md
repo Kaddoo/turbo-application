@@ -7,7 +7,7 @@ Cashless campus ride-hailing for Central University students at Miotso (Ghana). 
 
 1. `LOG.md` (newest entry first): where the last session stopped.
 2. `prompts/00-shared-rules.md` and the prompt for the surface you are building (`04` student app, `05` driver app, `03` student web).
-3. `api/openapi.yaml` for any endpoint you touch; `docs/04-business-rules.md` and `docs/03-domain-and-state-machines.md` for behaviour.
+3. `api/contract/openapi.yaml` for any endpoint you touch; `docs/04-business-rules.md` and `docs/03-domain-and-state-machines.md` for behaviour.
 4. `prompts/06-app-build-brief.md` for structure, the theme architecture and the work order.
 
 ## Layout
@@ -17,7 +17,7 @@ api/                 the contract (planning owns this; read only here)
 docs/ prompts/       planning docs (read only here, except LOG.md)
 apps/student_app/    Flutter: iOS, Android, web build
 apps/driver_app/     Flutter: iOS, Android
-packages/turbo_api/  generated Dart client from api/openapi.yaml (never hand-edit)
+packages/turbo_api/  generated Dart client from api/contract/openapi.yaml (never hand-edit)
 packages/turbo_ui/   brand layer, theme, shared components, motion and haptics
 CONTRACT_REQUESTS.md things the apps need that the contract lacks (you write, planning applies)
 ```
@@ -43,7 +43,7 @@ CONTRACT_REQUESTS.md things the apps need that the contract lacks (you write, pl
 ## Commands
 
 ```bash
-cd api && npx @stoplight/prism-cli mock openapi.yaml        # mock API, http://localhost:4010
+npm run mock                                                # mock API, http://localhost:4010 (root package.json)
 # Android emulator reaches the host at http://10.0.2.2:4010; iOS simulator at http://localhost:4010
 flutter run --dart-define=API_BASE_URL=http://localhost:4010
 flutter analyze && flutter test                              # must pass before every commit

@@ -17,7 +17,7 @@
     "loadtest": "node --env-file-if-exists=.env scripts/loadtest.js",
     "test": "node --env-file-if-exists=.env --test --test-concurrency=1 test/staff.test.js test/walk1.test.js test/walk2.test.js test/walk3.test.js test/walk4.test.js test/concurrency.test.js test/uploads.test.js test/safety.test.js test/security.test.js test/driver.test.js test/push.test.js test/alerts.test.js test/logpulse.test.js",
     "contract:gap": "node --env-file-if-exists=.env scripts/contract-gap.mjs",
-    "contract:sync": "cp ../Docs/api/openapi.yaml contract/openapi.yaml",
+    "contract:check": "node ../tools/check-contract.mjs",
     "pushload": "node --env-file-if-exists=.env scripts/pushload.js"
   },
   "dependencies": {

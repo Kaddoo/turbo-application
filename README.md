@@ -20,7 +20,7 @@ Status: **planning**. API contract is a draft (`0.2.0`). Nothing is built yet.
 | 8 | [docs/08-payaza-integration.md](docs/08-payaza-integration.md) | Payaza facts from their docs, the approval blocker, mapping to our contract |
 | 9 | [docs/09-feature-audit.md](docs/09-feature-audit.md) | Completeness audit: 26 gaps ranked S0 to S3, top 10 actions, 6 new decisions |
 | 10 | [prompts/](prompts/) | Build prompts per surface: shared rules, landing page, admin portal, student web, student app, driver app |
-| | [api/openapi.yaml](api/openapi.yaml) | **The API contract.** Source of truth |
+| | [api/contract/openapi.yaml](api/contract/openapi.yaml) | **The API contract.** Source of truth |
 | | [api/README.md](api/README.md) | Mock server, client generation, change process |
 | | [LOG.md](LOG.md) | Session log and the entry template |
 | | [docs/source/](docs/source/) | The original requirements PDF from Turbo |
@@ -35,12 +35,12 @@ Status: **planning**. API contract is a draft (`0.2.0`). Nothing is built yet.
 
 ## The one rule
 
-**Contract first.** No endpoint is coded until it exists in `api/openapi.yaml` and all three developers have seen the change.
+**Contract first.** No endpoint is coded until it exists in `api/contract/openapi.yaml` and all three developers have seen the change.
 Everyone builds against the mock server from day one, so nobody waits for the API.
 
 ```bash
 cd api
-npx @stoplight/prism-cli mock openapi.yaml      # mock API on http://localhost:4010
-npx @redocly/cli lint openapi.yaml              # must pass before every commit
-npx @redocly/cli preview-docs openapi.yaml      # browsable docs
+npx @stoplight/prism-cli mock contract/openapi.yaml      # mock API on http://localhost:4010
+npx @redocly/cli lint contract/openapi.yaml              # must pass before every commit
+npx @redocly/cli preview-docs contract/openapi.yaml      # browsable docs
 ```
