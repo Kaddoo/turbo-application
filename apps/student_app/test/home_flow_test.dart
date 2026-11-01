@@ -129,7 +129,7 @@ void main() {
 
     testWidgets('a saved-place chip on home jumps straight to the destination screen', (tester) async {
       await bootHome(tester, homeServer());
-      await tester.tap(find.widgetWithText(ActionChip, 'Hostel'));
+      await tester.tap(find.text('Hostel'));
       await tester.pumpAndSettle();
       expect(find.text('Hostel place'), findsWidgets);
       expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Continue')).onPressed, isNotNull);
@@ -154,7 +154,7 @@ void main() {
   group('quote', () {
     Future<void> toQuote(WidgetTester tester, FakeServer server) async {
       await bootHome(tester, server);
-      await tester.tap(find.widgetWithText(ActionChip, 'Hostel'));
+      await tester.tap(find.text('Hostel'));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
       await tester.pumpAndSettle();

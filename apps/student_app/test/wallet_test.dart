@@ -268,7 +268,7 @@ void main() {
         })
         ..on('POST /wallet/topups', status: 201, body: topup('pending', amount: 1500));
       await bootHome(tester, server);
-      await tester.tap(find.widgetWithText(ActionChip, 'Hostel'));
+      await tester.tap(find.text('Hostel'));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
       await tester.pumpAndSettle();

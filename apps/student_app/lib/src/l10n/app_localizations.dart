@@ -820,6 +820,18 @@ abstract class AppLocalizations {
   /// **'Saved places'**
   String get homeSavedPlaces;
 
+  /// No description provided for @homeHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String homeHello(String name);
+
+  /// No description provided for @homeHelloNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello'**
+  String get homeHelloNoName;
+
   /// No description provided for @homeOfflineMap.
   ///
   /// In en, this message translates to:

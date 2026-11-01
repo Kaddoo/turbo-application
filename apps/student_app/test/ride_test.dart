@@ -56,7 +56,7 @@ FakeServer rideServer({String status = 'searching'}) {
 }
 
 Future<void> bookFromHome(WidgetTester tester) async {
-  await tester.tap(find.widgetWithText(ActionChip, 'Hostel'));
+  await tester.tap(find.text('Hostel'));
   await tester.pumpAndSettle();
   await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
   await tester.pumpAndSettle();

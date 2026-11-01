@@ -5,6 +5,7 @@ import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../core/gate.dart';
+import '../../core/me.dart';
 import '../../l10n/app_localizations.dart';
 import 'geo.dart';
 import 'location_service.dart';
@@ -58,6 +59,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final location = ref.watch(userLocationProvider);
     final gate = ref.watch(gateProvider).value ?? const GateState();
     final wallet = ref.watch(walletProvider);
+    final me = switch (ref.watch(meProvider).value) {
+      MeLoaded(:final student) => student,
+      _ => null,
+    };
     final saved = ref.watch(savedPlacesProvider);
     final active = ref.watch(activeRideProvider).value;
     // Opening the app with a ride running goes straight to it, once.
@@ -132,6 +137,128 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               );
             }
 
+            Widget greeting() {
+              final name = (me?.fullName ?? '').trim();
+              final first = name.isEmpty ? null : name.split(RegExp(r'\s+')).first;
+              final initial = first?.substring(0, 1).toUpperCase();
+              final walletLine = wallet.when(
+                data: (w) {
+                  // Amber when the wallet cannot cover the cheapest fare.
+                  final cheapest = data.area.fareBands.isEmpty
+                      ? 0
+                      : data.area.fareBands.map((b) => b.farePesewas).reduce((a, b) => a < b ? a : b);
+                  final low = w.availablePesewas < cheapest;
+                  final amount = formatPesewas(w.availablePesewas);
+                  return InkWell(
+                    onTap: () => context.go('/wallet'),
+                    borderRadius: BorderRadius.circular(t.radiusFull),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: StatusChip(
+                          label: low ? l10n.homeWalletLow(amount) : l10n.homeWalletChip(amount),
+                          icon: low ? Icons.warning_amber : Icons.account_balance_wallet_outlined,
+                          tone: low ? StatusTone.warning : StatusTone.neutral,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                loading: () => const TurboSkeleton(width: 80, height: TurboSpacing.xl),
+                error: (_, _) => const SizedBox.shrink(),
+              );
+              return Container(
+                padding: const EdgeInsets.all(TurboSpacing.md),
+                decoration: BoxDecoration(
+                  color: t.colors.surface,
+                  border: Border.all(color: t.colors.border),
+                  borderRadius: BorderRadius.circular(t.radiusCard),
+                ),
+                child: Row(
+                  children: [
+                    ExcludeSemantics(
+                      child: CircleAvatar(
+                        radius: TurboSpacing.xl,
+                        backgroundColor: t.colors.background,
+                        child: initial == null
+                            ? const Wordmark()
+                            : Text(initial, style: text.titleLarge),
+                      ),
+                    ),
+                    const SizedBox(width: TurboSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Semantics(
+                            header: true,
+                            child: Text(first == null ? l10n.homeHelloNoName : l10n.homeHello(first), style: text.labelLarge),
+                          ),
+                          walletLine,
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: l10n.safetyTitle,
+                      constraints: const BoxConstraints(minWidth: TurboSizes.minTap, minHeight: TurboSizes.minTap),
+                      icon: const Icon(Icons.shield_outlined),
+                      onPressed: () => context.push('/safety'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            Widget savedTiles() => saved.maybeWhen(
+                  data: (places) => places.isEmpty
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: const EdgeInsets.only(top: TurboSpacing.lg),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Semantics(header: true, child: Text(l10n.homeSavedPlaces, style: text.labelMedium)),
+                              const SizedBox(height: TurboSpacing.sm),
+                              SizedBox(
+                                height: TurboSizes.primaryAction + TurboSpacing.xxl,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    for (final p in places)
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: TurboSpacing.sm),
+                                        child: SizedBox(
+                                          width: TurboSizes.primaryAction + TurboSpacing.xxl,
+                                          child: TurboCard(
+                                            padding: const EdgeInsets.all(TurboSpacing.sm),
+                                            semanticLabel: p.label,
+                                            onTap: gate.bookingsPaused
+                                                ? null
+                                                : () {
+                                                    ref.read(tripDraftProvider.notifier).setDropoff(p.location);
+                                                    _start(context, points, loc);
+                                                  },
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(Icons.bookmark_border),
+                                                const SizedBox(height: TurboSpacing.xs),
+                                                Text(p.label, style: text.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                  orElse: () => const SizedBox.shrink(),
+                );
+
             return Column(
               children: [
                 if (data.stale)
@@ -141,103 +268,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     padding: const EdgeInsets.all(TurboSpacing.md),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.cloud_off_outlined,
-                          size: TurboSizes.iconSm,
-                          color: t.colors.warning,
-                        ),
+                        Icon(Icons.cloud_off_outlined, size: TurboSizes.iconSm, color: t.colors.warning),
                         const SizedBox(width: TurboSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            l10n.homeOfflineMap,
-                            style: text.bodySmall,
-                          ),
-                        ),
+                        Expanded(child: Text(l10n.homeOfflineMap, style: text.bodySmall)),
                       ],
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    TurboSpacing.lg,
-                    TurboSpacing.md,
-                    TurboSpacing.lg,
-                    TurboSpacing.sm,
-                  ),
-                  child: Row(
+                Expanded(
+                  child: Stack(
                     children: [
-                      const Wordmark(),
-                      const SizedBox(width: TurboSpacing.sm),
-                      IconButton(
-                        tooltip: l10n.safetyTitle,
-                        constraints: const BoxConstraints(
-                          minWidth: TurboSizes.minTap,
-                          minHeight: TurboSizes.minTap,
-                        ),
-                        icon: const Icon(Icons.shield_outlined),
-                        onPressed: () => context.push('/safety'),
-                      ),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: wallet.when(
-                            data: (w) {
-                              // Amber when the wallet cannot cover the cheapest fare.
-                              final cheapest = data.area.fareBands.isEmpty
-                                  ? 0
-                                  : data.area.fareBands
-                                        .map((b) => b.farePesewas)
-                                        .reduce((a, b) => a < b ? a : b);
-                              final low = w.availablePesewas < cheapest;
-                              final amount = formatPesewas(w.availablePesewas);
-                              return InkWell(
-                                onTap: () => context.go('/wallet'),
-                                borderRadius: BorderRadius.circular(t.radiusFull),
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
-                                  child: Center(child: StatusChip(
-                                label: low
-                                    ? l10n.homeWalletLow(amount)
-                                    : l10n.homeWalletChip(amount),
-                                icon: low
-                                    ? Icons.warning_amber
-                                    : Icons.account_balance_wallet_outlined,
-                                tone: low
-                                    ? StatusTone.warning
-                                    : StatusTone.neutral,
-                              )),
-                                ),
-                              );
-                            },
-                            loading: () => const TurboSkeleton(
-                              width: 80,
-                              height: TurboSpacing.xl,
+                      Positioned.fill(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
+                          child: LayoutBuilder(
+                            builder: (context, c) => HomeMap(
+                              height: c.maxHeight,
+                              spec: MapSpec(center: loc?.point, pickupPoints: points, showMyLocation: granted),
                             ),
-                            error: (_, _) => const SizedBox.shrink(),
                           ),
                         ),
+                      ),
+                      Positioned(
+                        left: TurboSpacing.xl,
+                        right: TurboSpacing.xl,
+                        top: TurboSpacing.md,
+                        child: greeting(),
                       ),
                     ],
                   ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: TurboSpacing.lg,
-                    ),
-                    child: LayoutBuilder(
-                      builder: (context, c) => HomeMap(
-                        height: c.maxHeight,
-                        spec: MapSpec(
-                          center: loc?.point,
-                          pickupPoints: points,
-                          showMyLocation: granted,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
+                Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.all(TurboSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: t.colors.surface,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(t.radiusCard)),
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,10 +324,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(l10n.homeActiveRide, style: text.labelLarge),
-                                      Text(
-                                        '${active.pickup.label ?? ''} → ${active.dropoff.label ?? ''}',
-                                        style: text.bodySmall,
-                                      ),
+                                      Text('${active.pickup.label ?? ''} → ${active.dropoff.label ?? ''}', style: text.bodySmall),
                                     ],
                                   ),
                                 ),
@@ -272,24 +335,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         ),
                       if (gate.bookingsPaused)
                         Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: TurboSpacing.md,
-                          ),
+                          padding: const EdgeInsets.only(bottom: TurboSpacing.md),
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.pause_circle_outline,
-                                color: t.colors.warning,
-                              ),
+                              Icon(Icons.pause_circle_outline, color: t.colors.warning),
                               const SizedBox(width: TurboSpacing.sm),
                               Expanded(
                                 child: Semantics(
                                   liveRegion: true,
-                                  child: Text(
-                                    gate.pauseMessage ??
-                                        l10n.homeBookingsPaused,
-                                    style: text.bodyMedium,
-                                  ),
+                                  child: Text(gate.pauseMessage ?? l10n.homeBookingsPaused, style: text.bodyMedium),
                                 ),
                               ),
                             ],
@@ -299,41 +353,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         label: l10n.homeWhereTo,
                         large: true,
                         icon: Icons.search,
-                        onPressed: gate.bookingsPaused || active != null
-                            ? null
-                            : () => _start(context, points, loc),
+                        onPressed: gate.bookingsPaused || active != null ? null : () => _start(context, points, loc),
                       ),
-                      saved.maybeWhen(
-                        data: (places) => places.isEmpty
-                            ? const SizedBox.shrink()
-                            : Padding(
-                                padding: const EdgeInsets.only(
-                                  top: TurboSpacing.md,
-                                ),
-                                child: Wrap(
-                                  spacing: TurboSpacing.sm,
-                                  runSpacing: TurboSpacing.sm,
-                                  children: [
-                                    for (final p in places)
-                                      ActionChip(
-                                        label: Text(p.label),
-                                        onPressed: gate.bookingsPaused
-                                            ? null
-                                            : () {
-                                                ref
-                                                    .read(
-                                                      tripDraftProvider
-                                                          .notifier,
-                                                    )
-                                                    .setDropoff(p.location);
-                                                _start(context, points, loc);
-                                              },
-                                      ),
-                                  ],
-                                ),
-                              ),
-                        orElse: () => const SizedBox.shrink(),
-                      ),
+                      savedTiles(),
                     ],
                   ),
                 ),

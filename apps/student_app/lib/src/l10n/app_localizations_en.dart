@@ -439,6 +439,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeSavedPlaces => 'Saved places';
 
   @override
+  String homeHello(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get homeHelloNoName => 'Hello';
+
+  @override
   String get homeOfflineMap =>
       'You\'re offline. The map and prices may be out of date.';
 
