@@ -1,0 +1,25 @@
+name: contract
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  one-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      # Fails if a second OpenAPI file exists, or the Dart client or dashboard schema was built from another version.
+      - run: node tools/check-contract.mjs
+  dashboard-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+        working-directory: apps/admin_dashboard
+      # Regenerates the schema and fails if it differs from what is committed.
+      - run: npm run gen:api && git diff --exit-code src/api
+        working-directory: apps/admin_dashboard
