@@ -1,5 +1,7 @@
 # Contract and API questions for the backend
 
+**Sent** 2026-11-01 as https://github.com/KosherKev/turbo/issues/1 (no separate backend repo is visible to us). Follow up there.
+
 From the admin dashboard team, 2026-10-31. Found while building `docs/api-tracker.md` against `api/openapi.yaml` and `docs/api-integration.md` (0.2.2). Numbers match the tracker's "Backend inconsistencies" table. Each item says what we found, why it matters to the apps, and what we suggest.
 
 ## 0. `api.turbogh.app`: is it staging or production?
