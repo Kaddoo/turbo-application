@@ -89,7 +89,8 @@ describe.skipIf(accounts.size === 0)(`role enforcement on ${base}`, () => {
       setAccessToken(t.accessToken);
       const wrong: string[] = [];
       for (const [path, xRoles] of reads) {
-        const allowed = xRoles.includes('admin:any') || xRoles.includes(`admin:${role}`);
+        // Super admin may use every admin operation (contract convention), so it is never expected to be refused.
+        const allowed = role === 'super_admin' || xRoles.includes('admin:any') || xRoles.includes(`admin:${role}`);
         // Typed paths are checked at compile time elsewhere; here the path comes from the contract file.
         const status = await call(api.GET(path as never))
           .then(() => 200)
