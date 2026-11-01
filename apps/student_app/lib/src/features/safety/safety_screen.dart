@@ -29,7 +29,7 @@ class SafetyScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(TurboSpacing.lg),
           children: [
-            HoldToSos(rideId: rideId),
+            HoldToSos(rideId: rideId, tall: true),
             const SizedBox(height: TurboSpacing.sm),
             Text(l10n.safetySosNote, style: text.bodySmall),
             const SizedBox(height: TurboSpacing.lg),
