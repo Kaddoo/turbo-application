@@ -1,0 +1,64 @@
+/*
+ * Overview layout after the reference: header and three queue cards on the
+ * left, the promo card on the right, a rule under them, then the live panel.
+ * More than three queues scroll sideways inside the row (never the page).
+ */
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  gap: var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border);
+}
+.topMain {
+  display: grid;
+  align-content: start;
+  gap: var(--space-6);
+  min-width: 0;
+}
+.cards {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 2 * var(--space-4)) / 3);
+  gap: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding-bottom: var(--space-2);
+  border-radius: var(--radius-card);
+}
+.heroCell {
+  display: grid;
+}
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 1280px) {
+  .top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .heroCell {
+    order: -1;
+  }
+}
+@media (max-width: 1024px) {
+  .cards {
+    grid-auto-columns: calc((100% - var(--space-4)) / 2);
+  }
+}
+@media (max-width: 640px) {
+  .top {
+    gap: var(--space-5);
+    padding-bottom: var(--space-6);
+  }
+  .cards {
+    grid-auto-columns: 86%;
+    gap: var(--space-3);
+  }
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+}

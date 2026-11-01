@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { turboBrand, type BrandPalette } from '../src/brand/brand';
+import { turboBrand, type BrandPalette } from '@/brand/brand';
 
 function channel(v: number): number {
   const c = v / 255;

@@ -2,6 +2,192 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: data-changing checks on staging for 0.3.1
+
+**Task:** Re-run the data-changing checks against staging and say what still mismatches (backend request; Kevin approved data changes, with the dev-seed accounts).
+
+**Files touched:** `docs/api-tracker.md` (verification log). Probe script kept out of the repo (scratchpad `writes-probe.mjs`).
+
+**What changed:** 48 checks, 39 passed. Of the 9 failures:
+- 3 are API mismatches: approving your own adjustment gives 403 where the contract says 409; `ticket_state_invalid` is missing from the contract's ticket update; a plate without its hyphen is accepted as a new vehicle.
+- The other 6 could not run: staging has no rides, top-ups, incidents or tickets; the minimum web version is 0.0.0; and the probe used a wrong path for the boundary (`GET /service-area`).
+- Also, the dev-seed staff accounts do sign in on staging, though the backend said they could not.
+
+**Dashboard mismatches (branch `dashboard-ui-match`, still built on 0.2.0):**
+- Add driver, Resolve top-up and Run reconciliation send no Idempotency-Key, so staging answers 422 to all three.
+- None of the new 409 codes, `service_busy`, `link_invalid` or `link_expired` are handled; invite and reset still look for `invalid_token`.
+- The approval threshold is read from settings (super admin only), not `/admin/me`.
+- Support cannot open a student and finance cannot open a ride in the dashboard yet.
+
+**Status:** Report done. No dashboard code changed.
+
+**Next step:** Rebase the dashboard restructure onto `main`, regenerate from 0.3.1, then fix the four dashboard mismatches above.
+
+## 2026-11-01, Claude, code: staff onboarding, and one contract
+
+**Task:** Build the approved first-run onboarding for each staff role. Then consolidate on one contract (`api/contract/openapi.yaml`), add the staging note, and make CI catch drift.
+
+**Files touched:**
+- `dashboard-ui-match` (`0480dea`): `src/utils/onboarding.ts`, `src/features/onboarding/` (new), `pages/OverviewPage.tsx`, `demo/server.ts` (`?demo=fresh`, `demo-<role>` invite tokens), `features/auth/SignIn.tsx` (keep-this-page-open warning on invite step 2), `Configuration.tsx` (`?tab=`), empty-state text in Drivers, Vehicles and Workforce, `utils/problems.ts`, `test/onboarding.test.tsx`.
+- `admin-contract-requests` (`4361d1a`): A32 in `CONTRACT_REQUESTS.md`.
+- `contract-one-source`, cut from `main` (`ccd3fc1`): `docs/api-integration.md` (staging/production note at the top, changelog to 0.3.1), contract pointers in `CONTRACT_REQUESTS.md`, `docs/02`, `docs/05`, `docs/07`; `.github/workflows/contract.yml` (new `dart-client` and `mock` jobs).
+- GitHub issue #2 for the backend.
+
+**What changed:**
+- Onboarding:
+  - Super admin gets a six-step pilot checklist; HR gets a four-step driver checklist, with salary marked "can wait".
+  - Ticks come from live data, so progress resumes anywhere. "Hide for now" folds it into a bar.
+  - Verifier, dispatcher, finance and support get one card naming their job.
+  - Once put away it does not return in that browser (localStorage until A32).
+- One contract: `main` already had most of it from the backend: `api/openapi.yaml` was deleted, `tools/check-contract.mjs` was in place, and both generated clients were stamped from 0.3.1. On top of that:
+  - Here I regenerated the dashboard schema and built the mock spec from 0.3.1. Both were unchanged.
+  - New CI jobs rebuild the Dart client and the mock spec, and fail on any difference.
+
+**Acceptance:** `npm run check` passes (321 tests) and `node tools/check-contract.mjs` passes.
+
+**Deviations:**
+- The user said 0.2.2, but the repo contract is 0.3.1; the docs say 0.3.1.
+- The Dart client was not regenerated on this Mac (no Dart, Flutter or Java), so the new `dart-client` CI job is unproven until its first run.
+- `api/README.md` and `api/README copy.md` are stale, but they are backend files; this is raised in issue #2.
+
+**Status:** Branches `dashboard-ui-match`, `admin-contract-requests` and `contract-one-source` are ready for Kevin. Not done:
+- Dashboard work for 0.3.1: new problem codes, required Idempotency-Key on the three operations, item-17 reduced views and the threshold. The dashboard restructure branches are not on `main`, and `main`'s item-17 edits use the old file layout, so this needs the restructure rebased onto `main` first.
+- The data-changing re-run on staging, which needs a real invited account.
+
+**Next step:** Rebase the dashboard restructure onto `main`, regenerate from 0.3.1 and handle the new codes. Then re-run the write checks on staging with an invited account.
+
+## 2026-11-01, Claude, code: browser run of sign-in on staging
+
+**Task:** Run the whole sign-in flow in a real browser against staging.
+
+**Files touched:** `apps/admin_dashboard/src/app/App.tsx` (deliberate sign-out starts fresh), `vite.config.ts` (`strictPort` on 5173), `test/auth-routes.test.tsx`, `docs/api-tracker.md`. The browser script stays outside the repo (it needs playwright-core, which the dashboard does not depend on).
+
+**What changed:** 24 checks in Chrome against staging, passed on two full runs (details in the tracker's verification log). Fixed: after a deliberate sign-out the sign-in link kept the last page, so the next person landed there. Found: staging only sets the refresh cookie for `localhost:5173` and `admin.turbogh.app`; the dev server on 5174 lost the session on every reload, so the port is now strict.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes
+- [x] Browser run 24/24 on staging (twice)
+
+**Deviations from plan or contract:** One run passed 23/24 without naming the failing step; the next two were clean. The last run stopped on staging's sign-in rate limit (3 minutes), shown correctly on the sign-in page.
+
+**Status:** done. Branch: dashboard-ui-match.
+
+**Next step:** Kevin stops the old dev server holding port 5173 (started 31 Oct, its proxy returns 404 on sign-in) so `npm run dev` can start. Backend: `Secure` on the cookie; add every dashboard address to the cookie allowlist.
+
+## 2026-11-01, Claude, code: live auth and role checks on staging
+
+**Task:** Staging MFA removed; run the checks that were waiting for accounts.
+
+**Files touched:** `apps/admin_dashboard/test/live/roles.live.ts` (super admin is allowed everything), `apps/admin_dashboard/.gitignore` (role results file), `docs/api-tracker.md`.
+
+**What changed:** Ran the critical checks (14 passed, 10 write checks skipped) and the per-role sweep with the six dev-seed accounts: 114/114 checks as the contract says, so the API itself refuses every role outside its x-roles on all admin list reads. Probed the refresh cookie (attributes only, no values): rotation, reuse revocation, Origin check and logout clearing work. Tracker: Tested 12 → 28.
+
+**Acceptance criteria:**
+- [x] Every non-admin role gets 403 on each admin list read the contract denies it
+- [x] Refresh, reuse detection, Origin check and logout verified on staging
+
+**Deviations from plan or contract:** none. Single-record reads and writes were not swept by role.
+
+**Status:** done. Branch: dashboard-ui-match.
+
+**Next step:** Backend: add `Secure` to the `turbo_rt` cookie (tracker inconsistency 22).
+
+## 2026-11-01, Claude, code: dashboard sign-in, sessions and role access
+
+**Task:** Kevin's auth brief: login and logout, token storage, refresh with many failing calls, session persistence, expired-session handling, protected routes, role and permission based UI, blocking direct URLs, password reset, profile. Plan approved; built on `dashboard-ui-match` as asked.
+
+**Files touched:** apps/admin_dashboard: `services/http.ts` (refresh on its own typed client, cross-tab refresh lock, replay of a request with its body after a refresh, session-expired signal); `state/session.tsx` (localStorage marker, expiry, sign-in and sign-out shared between tabs, query cache cleared on sign-out); `hooks/useIdleTimer.ts` (activity shared between tabs); new `hooks/usePermissions.ts`, `utils/permissions.ts` (action → role from x-roles), `utils/returnPath.ts`; `utils/roles.ts` (area reads and labels); `app/App.tsx` (return to the page asked for); `app/Layout.tsx` (access-denied screen); `features/auth/SignIn.tsx` (notices, link token removed from the address bar), `Account.tsx`; `features/students`, `rides`, `finance/Adjustments` (action checks); `components/Icon.tsx` (lock); `eslint.config.js` (no-console); `index.html` (referrer policy); tests `test/auth.test.ts`, `test/auth-routes.test.tsx`, `test/contract-roles.test.ts`, `test/live/roles.live.ts`. Repo: `tool/api-tracker.cjs` (follows the new services → hooks → pages layout), `docs/api-tracker.md`.
+
+**What changed:** Access token in memory, refresh token in the API's httpOnly cookie, nothing secret in browser storage. Calls that fail together share one refresh, and tabs take turns (Web Locks) because refresh tokens rotate. A POST is replayed with the same body and idempotency key. A refused refresh signs the tab out, clears cached data and sends the user to sign-in with the page kept (`?next=`, same-app paths only) and "Your session ended. Sign in again to carry on." Signing out in one tab signs out all; signing in picks up in others. Typing a URL the role cannot use shows "You don't have access to …" and the page's data is never requested. Actions are checked against a table built from the contract's x-roles; a test fails if the table drifts from `api/openapi.yaml`. Reset and invite tokens are taken out of the address bar as soon as they are read.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: 306 tests
+- [x] One refresh for three failing calls; POST replayed with body and key; refused refresh ends the session once; network failure does not
+- [x] Signed-out direct URL goes to sign-in and back after it; verifier at `/staff` sees the access screen and `GET /admin/staff` is never called
+- [x] Tokens never in errors (test), no console output (lint rule)
+
+**Deviations from plan or contract:** Profile edit is read-only: no `PATCH /admin/me` (A31). Not tested against staging: no MFA-enrolled account, so `/auth/refresh` is Integrated Y, Tested N.
+
+**Status:** done, awaiting review. Branch: dashboard-ui-match. A31 on admin-contract-requests.
+
+**Next step:** Backend: one MFA-enrolled staging account per role (and its setup key) so `test/live/roles.live.ts` can prove each role is refused; confirm cookie flags, Origin check and logout clearing the cookie (tracker inconsistencies 21 to 24).
+
+## 2026-11-01, Claude, code: dashboard matched to the inspiration, live map on phones
+
+**Task:** Kevin: "the ui is not what i asked for look at the inspo i gave, i want the same design but turbo colors and data so fix it", then "this live map on mobile view is not ok fix the design".
+
+**Files touched:** apps/admin_dashboard: `brand/brand.ts` (type scale, radii, layout sizes); `components/ui.module.css` (lighter weights, gradient cards, soft badges, thin ticked slider); `components/Field.tsx` (Slider `labelHidden`, tick marks); `components/charts/` (smooth glowing Sparkline with average line, peak and latest markers; new RangeLines); `components/dashboard/` (rewritten: IconTile, SectionHeader, ChangePill, MetricCard, HeroCard, Panel, DetailCard, BigNumber, ControlCard, StatTile, SortHeaderRow); `components/MapView.tsx` (optional `className`, redraws on resize); `app/shell/` and `app/Layout.tsx`, `app/routes.tsx` (sidebar, top bar and search laid out as in the inspiration; primary action has an icon); `features/overview/` (rebuilt to the inspiration's layout); `features/rides/Rides.tsx` and new `rides.module.css` (live map layout); `utils/series.ts` (`smoothForDisplay`, `expiryCurve`).
+
+**What changed:** Overview follows the reference section by section: header with caption, count chip and filter chips; three queue cards (icon tile, caption and title, big number, change pill, glowing line chart running to the card edge; the Documents card draws expiries as a line, red when any have expired); promo-style hero card with the most urgent item; "Live operations" panel with a dotted inner card, big active-rides number, a refresh-rate slider card, sortable header row and four stat tiles. Chart curves are smoothed for display only; totals and screen-reader summaries use the raw counts. Live map: the map and ride list were forced into two columns by an inline style, so on phones the map was a narrow strip. Now side by side at equal height on desktop, stacked (map first, full width) on tablets and phones; rides are a divided list with status, flags, names, distance, fare and time.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: 224 tests, including hardcoded-style and contrast
+- [x] No horizontal scroll at 390, 900 and 1440 px, dark and light (Overview and Live map, checked in Chrome against the demo server)
+
+**Deviations from plan or contract:** none new. Overview series still come from one page of each list (A30).
+
+**Status:** done, awaiting review. Branch: dashboard-ui-match (cut from dashboard-ui-shell).
+
+**Next step:** Kevin reviews Overview and Live map at phone and desktop sizes. Other screens still use the older page layout; bring them to this style next.
+
+## 2026-11-01, Claude, code: dashboard shell and component library
+
+**Task:** Rebuild the dashboard shell and shared components to match the dark dashboard inspiration Kevin attached, using Turbo's colours (neon lime) and Turbo data, and fix the phone layout. Approved list: shell (sidebar, top bar, bottom nav), overview blocks, component library with every variant and state; a search contract request; phone tab bar.
+
+**Files touched:** apps/admin_dashboard: `brand/brand.ts` and `theme/theme.ts` (new tokens: spacing, layout sizes, motion, hero/micro type, panel/small radii, hero gradient, scrim, shadow); `components/` (rewritten: Button, Chip, Field with Checkbox/Switch/Slider, Toast, Banner, Skeleton, EmptyState, ErrorState, Dialog with Drawer, DataTable, Card, PageHeader, ui.module.css; new: Icon, IconButton, Badge, Avatar, SegmentedControl, Menu/FilterChip, usePopover, SearchInput, Pagination/LoadMore, Tooltip, `charts/` and `dashboard/`); `app/Layout.tsx`, `app/routes.tsx`, new `app/shell/` (Sidebar, GlobalSearch, Notifications, UserMenu, BottomNav, shell.module.css), removed `app/layout.module.css`; `features/overview/` (rebuilt); `features/uikit/` and `pages/UiKitPage.tsx` (dev and demo only); `hooks/` (useSort, useFilters, useMediaQuery, nav-count queries); `utils/series.ts`; tests (`test/components.test.tsx`, smoke test names the main navigation). docs/api-tracker.md (U18, U19). On branch `admin-contract-requests`: CONTRACT_REQUESTS.md A29 (search) and A30 (overview series).
+
+**What changed:** Sidebar with brand, Operations/Back office toggle, icons, count badges (verification, support, incidents), open SOS or active rides list, environment card; collapses to icons on desktop and always on tablets. Top bar with user menu and role badge, the role's main action, notification bell, page search ("/" focuses it), Settings. Phones: menu drawer, search sheet, bottom tab bar (4 tabs by role plus More), tables become cards, dialogs become bottom sheets. Overview: header with period, area and order filters; metric cards with sparkline or bars and change pill; hero card picking the most pressing item; live operations panel with a refresh slider, sortable stat tiles and an active rides table. No colour, size or radius literal outside brand and theme.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: 223 tests, including hardcoded-style and contrast
+- [x] No horizontal scroll at 390, 900 and 1440 px (checked in Chrome against the demo server), light and dark
+- [x] Production build excludes the gallery and the demo server
+- [x] Every shared component shown in each state at `/ui-kit` (dev/demo)
+
+**Deviations from plan or contract:** Overview charts use timestamps from one page of each list, so busy queues are undercounted (A30). Search finds pages only (A29). Metric cards for roles with no queues: the page shows an empty state; the live panel shows only for roles with the live map.
+
+**Status:** done, awaiting review. Branch: dashboard-ui-shell (cut from dashboard-foundation); A29/A30 committed on admin-contract-requests.
+
+**Next step:** Kevin reviews `/ui-kit` and the Overview (run with `VITE_APP_ENV=demo`), then merges dashboard-foundation and dashboard-ui-shell. Other screens still use the older page layout inside the new shell; give them the section header and filter chips next.
+
+## 2026-11-01, Claude, code: admin dashboard foundation restructure
+
+**Task:** Phase 2 of the approved foundation plan: folders, service layer, routing from one table, HTTP timeouts and error codes, ESLint and Prettier, README. No new product features; nothing in `api/` touched.
+
+**Files touched:** apps/admin_dashboard only. Moved: `api/client.ts` to `services/http.ts`, `api/schema.d.ts` to `types/`, `lib/*` and `auth/roles.ts` to `utils/` and `hooks/`, `auth/session.tsx` to `state/`. Split: `components/ui.tsx` into one file per component; the 9 multi-screen page files into `features/<area>/` (screens plus `queries.ts`) and 30 one-line route files in `pages/`. New: 25 `services/<resource>.ts`, `hooks/sharedQueries.ts`, `app/routes.tsx`, `types/index.ts`, `eslint.config.js`, `.prettierrc.json`, `.prettierignore`. README and `.env.example` updated.
+
+**What changed:** Screens call feature hooks, hooks call services, only `services/http.ts` talks HTTP (ESLint enforces the layers). Query keys are unchanged, so refreshes after a change behave as before. New in the HTTP layer: a 15 s timeout (2 min for uploads), and `network`, `timeout` and `unexpected` codes so every failure is an `ApiError`; requests with no response are retried by React Query as before. Routes and the left rail come from one table; pages behind sign-in load on first visit (main bundle 666 KB to 363 KB).
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: schema, typecheck, lint, format, 184 tests (style test now scans each component file)
+- [x] Smoke test signs in on the demo server and renders all 25 routes, and now proves each lazy page really rendered
+- [x] Production build excludes the demo server; demo build works; running dev server serves the new modules
+- [x] New tests for network, timeout and non-problem errors
+
+**Deviations from plan or contract:** The geist font import stays a `node_modules` path: the package does not export its font files, so the planned package import fails (ESLint exempts that one file). Sign-in, forgot, reset and invite screens call the `auth` service directly instead of React Query hooks: they are one-off form submits with local busy state. Announcements got its own feature folder (not in the plan list). Live checks: staging now refuses password-only sign-in (403 `mfa_enrollment_required`, confirmed with a plain request), so the 9 signed-in live checks fail until a staff account with MFA is set up; the 5 that need no sign-in pass.
+
+**Status:** done, awaiting review. Branch: dashboard-foundation (cut from api-tracker).
+
+**Next step:** Kevin merges api-tracker, then dashboard-foundation. To run the live checks again, staging needs an MFA-enrolled test account (the suite would then need a TOTP code).
+
+## 2026-11-01, Claude, code: live checks of critical dashboard endpoints
+
+**Task:** Test the critical dashboard endpoints against `api.turbogh.app` and mark them Tested; prepare inconsistencies 5 to 11 and 17 for the backend.
+
+**Files touched:** docs/api-tracker.md, docs/backend-feedback.md, LOG.md (plus, on 2026-10-31: apps/admin_dashboard/test/live/critical.live.ts, vitest.live.config.ts, `npm run test:live`).
+
+**What changed:** The API was down on 2026-10-31 (empty Caddy 503) and up on 2026-11-01. `npm run test:live` passed 14/14; each of the six dev accounts signs in with the right role. Tested = Y for 8 endpoints (login, logout, me, verifications list and detail, live rides, incidents, service area); invite accept and MFA confirm stay N (only the bad-token path checked). Later, with staging confirmed and Kevin approving: `LIVE_WRITES=1` passed for boundary save, verification claim (and 409 for a second reviewer), vehicle create (and 409 for a duplicate plate) and edit, so Tested = Y for 4 more (12 in all); decision, create driver, assign vehicle and acknowledge incident skipped (they text real people, or nothing open). Feedback sent as https://github.com/KosherKev/turbo/issues/1. Feedback item 0 now asks whether the host is staging or production and flags that MFA is not enforced (every seed account has `mfaEnrolled: false`).
+
+**Acceptance criteria:**
+- [x] Only endpoints with a passing live check are marked Tested, each in the verification log
+- [x] No tokens or passwords printed in output or files
+
+**Deviations from plan or contract:** The full 0.2.2 `openapi.yaml` arrived (Downloads); not copied into `api/` (planning owns it). Versus 0.2.0 it only adds `text/csv` on `/uploads` and three `DriverRide` fields. Feedback not sent anywhere yet.
+
+**Status:** done, awaiting review. Branch: api-tracker.
+
+**Next step:** Planning places 0.2.2 in `api/`, then `npm run gen:api`, drop the CSV cast in `uploadContentType`, `npm run api-tracker`. Once the host is confirmed non-production, write the LIVE_WRITES checks. Send docs/backend-feedback.md where Kevin says.
+
 ## 2026-10-31, Claude, code: API endpoint tracker
 
 **Task:** One tracking sheet for every documented endpoint: page, action, params, body, responses, auth, role, Integrated, Tested, notes; plus undocumented endpoints, backend inconsistencies and critical endpoints.

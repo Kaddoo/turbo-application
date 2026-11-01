@@ -1,150 +1,419 @@
-import { useCallback, useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
-import { api, call, onUpgradeRequired } from '../api/client';
-import { canUse, roleLabels, type Area } from '../auth/roles';
-import { useIdleTimer, useSession } from '../auth/session';
-import { Banner, Button, Dialog, DialogActions } from '../components/ui';
-import { formatRelative } from '../lib/format';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate, useNavigation } from 'react-router';
+import { onUpgradeRequired } from '@/services/http';
+import { areaLabels, canUse, roleLabels, type Area } from '@/utils/roles';
+import {
+  useIdleTimer,
+  useLiveRides,
+  useMediaQuery,
+  useOpenTickets,
+  usePendingVerifications,
+  useServiceArea,
+  useSettings,
+  useSosBanner,
+} from '@/hooks';
+import { useSession } from '@/state/session';
+import { Banner, Button, Dialog, DialogActions, Drawer, EmptyState, IconButton, type Tone } from '@/components';
+import { formatRelative } from '@/utils/format';
 import { appEnv, showEnvBadge } from './env';
+import { mobileTabOrder, navGroups, navSides, primaryAction, type NavSide } from './routes';
+import { BottomNav } from './shell/BottomNav';
+import { GlobalSearch } from './shell/GlobalSearch';
+import { NotificationBell, type Notice } from './shell/Notifications';
+import { Sidebar, type SidebarNotice } from './shell/Sidebar';
+import { UserMenu } from './shell/UserMenu';
 import { strings } from './strings';
-import l from './layout.module.css';
+import sh from './shell/shell.module.css';
 
-interface NavItem { to: string; label: string; area: Area }
-const nav: { group: string; items: NavItem[] }[] = [
-  { group: '', items: [{ to: '/', label: 'Overview', area: 'overview' }] },
-  { group: 'People', items: [
-    { to: '/verification', label: 'Verification', area: 'verification' },
-    { to: '/students', label: 'Students', area: 'students' },
-    { to: '/drivers', label: 'Drivers', area: 'drivers' },
-    { to: '/vehicles', label: 'Vehicles', area: 'vehicles' },
-  ] },
-  { group: 'Operations', items: [
-    { to: '/live', label: 'Live map', area: 'liveMap' },
-    { to: '/rides', label: 'Rides', area: 'rides' },
-    { to: '/announcements', label: 'Announcements', area: 'announcements' },
-  ] },
-  { group: 'Finance', items: [
-    { to: '/finance/topups', label: 'Top-ups', area: 'finance' },
-    { to: '/finance/adjustments', label: 'Adjustments', area: 'finance' },
-    { to: '/finance/reconciliation', label: 'Reconciliation', area: 'finance' },
-  ] },
-  { group: 'Care', items: [
-    { to: '/support', label: 'Support', area: 'support' },
-    { to: '/incidents', label: 'Incidents', area: 'incidents' },
-  ] },
-  { group: 'Workforce', items: [
-    { to: '/salary/shifts', label: 'Shifts', area: 'salary' },
-    { to: '/salary/attendance', label: 'Attendance', area: 'salary' },
-    { to: '/salary/payments', label: 'Salary payments', area: 'salary' },
-  ] },
-  { group: 'Admin', items: [
-    { to: '/configuration', label: 'Configuration', area: 'configuration' },
-    { to: '/staff', label: 'Staff', area: 'staff' },
-    { to: '/audit-log', label: 'Audit log', area: 'auditLog' },
-  ] },
-];
+const COLLAPSE_KEY = 'admin.sidebarCollapsed';
+const readCollapsed = () => {
+  try {
+    return localStorage.getItem(COLLAPSE_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+/** "50+" when the list had more than one page; the contract returns no totals (A5). */
+const countOf = (rows: unknown[] | undefined, hasMore?: boolean) => ({
+  count: rows?.length ?? 0,
+  text: rows ? (hasMore ? `${rows.length}+` : String(rows.length)) : '',
+});
 
 export function Layout() {
   const { me, signOut } = useSession();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  // A page chunk is loading: the main area reports busy until it arrives.
+  const loadingPage = useNavigation().state === 'loading';
   const role = me?.staffRole;
+  const can = useCallback((a: Area) => canUse(role, a), [role]);
   const onIdle = useCallback(() => void signOut('idle'), [signOut]);
   const idle = useIdleTimer(onIdle);
   const [outdated, setOutdated] = useState(false);
   useEffect(() => onUpgradeRequired(() => setOutdated(true)), []);
 
-  // SOS banner: polls open incidents for roles the contract lets read them (x-roles: support).
-  const sos = useQuery({
-    queryKey: ['incidents', 'open-banner'],
-    queryFn: () => call(api.GET('/admin/incidents', { params: { query: { status: 'open', limit: 10 } } })),
-    enabled: canUse(role, 'incidents'),
-    refetchInterval: 10_000,
-  });
-  const open = sos.data?.data ?? [];
+  // Shell state: drawer (phones), search sheet (phones), collapsed rail (desktop; always on tablets).
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [userCollapsed, setUserCollapsed] = useState(readCollapsed);
+  const tablet = useMediaQuery('(max-width: 1024px)');
+  const collapsed = userCollapsed || tablet;
+  const toggleCollapsed = () =>
+    setUserCollapsed((c) => {
+      try {
+        localStorage.setItem(COLLAPSE_KEY, c ? '0' : '1');
+      } catch {
+        /* storage blocked: the choice lasts until reload */
+      }
+      return !c;
+    });
+  useEffect(() => {
+    setMenuOpen(false);
+    setSearchOpen(false);
+  }, [pathname]);
+
+  // SOS: polls open incidents for roles the contract lets read them (x-roles: support).
+  const sos = useSosBanner(can('incidents'));
+  const open = useMemo(() => sos.data?.data ?? [], [sos.data]);
   const oldest = open.reduce<string | null>((o, i) => (!o || i.createdAt < o ? i.createdAt : o), null);
   const overdue = oldest ? Date.now() - new Date(oldest).getTime() > 120_000 : false;
 
   // Pilot gate: no approved boundary yet (D1). Pause state from settings.
-  const area = useQuery({ queryKey: ['service-area'], queryFn: () => call(api.GET('/service-area')), enabled: !!role });
-  const settings = useQuery({
-    queryKey: ['settings'], queryFn: () => call(api.GET('/admin/settings')), enabled: canUse(role, 'configuration'),
-  });
+  const area = useServiceArea(!!role);
+  const settings = useSettings(can('configuration'));
+  const pending = usePendingVerifications(can('verification'));
+  const tickets = useOpenTickets(can('support'));
+  const live = useLiveRides({ enabled: !can('incidents') && can('liveMap'), refetchInterval: 30_000 });
+
+  // Menu: items the role can use, split into the two halves.
+  const allItems = useMemo(() => navGroups.flatMap((g) => g.items).filter((i) => can(i.area)), [can]);
+  const sideOf = (path: string): NavSide => {
+    const group = allItems.find((i) => i.to !== '/' && path.startsWith(i.to))?.group;
+    return group && navSides.backOffice.groups.includes(group) ? 'backOffice' : 'operations';
+  };
+  const hasBoth =
+    allItems.some((i) => i.group && navSides.operations.groups.includes(i.group)) &&
+    allItems.some((i) => i.group && navSides.backOffice.groups.includes(i.group));
+  const [side, setSide] = useState<NavSide>(() => sideOf(pathname));
+  useEffect(() => {
+    if (pathname !== '/') setSide(sideOf(pathname));
+    // Follow the page; `sideOf` only reads the role's items.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+  const menuItems = hasBoth ? allItems.filter((i) => navSides[side].groups.includes(i.group)) : allItems;
+
+  const pendingCount = countOf(pending.data?.data, pending.data?.page.hasMore);
+  const ticketCount = countOf(tickets.data?.data, tickets.data?.page.hasMore);
+  const sosCount = countOf(open, sos.data?.page.hasMore);
+  const badges: Partial<Record<string, { count: number; tone: Tone; label: string }>> = {
+    '/verification': { count: pendingCount.count, tone: 'accent', label: `${pendingCount.text} waiting` },
+    '/support': { count: ticketCount.count, tone: 'accent', label: `${ticketCount.text} open` },
+    '/incidents': { count: sosCount.count, tone: 'danger', label: `${sosCount.text} open` },
+  };
+
+  // Sidebar live list: open SOS for support, else active rides for dispatch.
+  const list = can('incidents')
+    ? {
+        title: 'Open SOS',
+        icon: 'incidents' as const,
+        loading: sos.isPending,
+        empty: 'No open SOS or safety reports.',
+        onViewAll: () => navigate('/incidents'),
+        items: open.map((i) => ({
+          id: i.id,
+          icon: 'incidents' as const,
+          tone: 'danger' as const,
+          caption: i.type === 'sos' ? 'SOS alert' : 'Safety report',
+          value: `Raised ${formatRelative(i.createdAt)}`,
+          onSelect: () => navigate('/incidents'),
+        })),
+      }
+    : can('liveMap')
+      ? {
+          title: 'Active rides',
+          icon: 'rides' as const,
+          loading: live.isPending,
+          empty: 'No rides on the road.',
+          onViewAll: () => navigate('/live'),
+          items: (live.data?.rides ?? []).map(({ ride }) => ({
+            id: ride.id,
+            icon: 'rides' as const,
+            tone: ride.status === 'searching' ? ('warning' as const) : ('accent' as const),
+            caption: `Student ${ride.studentName ?? ''}`.trim(),
+            value: ride.driverName ? `Driver ${ride.driverName}` : 'Finding a driver',
+            onSelect: () => navigate(`/rides/${ride.id}`),
+          })),
+        }
+      : undefined;
+
+  // Bottom card: the pilot gate first, else which environment this is.
+  const boundaryMissing = !!area.data && area.data.boundary === null;
+  const notice: SidebarNotice | null = boundaryMissing
+    ? {
+        icon: 'warning',
+        tone: 'warning',
+        title: 'No service boundary',
+        body: can('configuration') ? 'Draw it to unblock the pilot' : 'The pilot is blocked until it is set',
+        onSelect: can('configuration') ? () => navigate('/configuration') : undefined,
+      }
+    : showEnvBadge
+      ? {
+          icon: 'info',
+          tone: 'warning',
+          title: strings.environment(appEnv),
+          body: appEnv === 'demo' ? 'Sample data, nothing is real' : 'For testing only',
+        }
+      : null;
+
+  // Bell: everything on the banners, as a list.
+  const notices: Notice[] = [
+    ...(outdated
+      ? [
+          {
+            id: 'outdated',
+            tone: 'warning' as const,
+            title: 'Newer version available',
+            body: 'Reload to keep working.',
+            onSelect: () => window.location.reload(),
+          },
+        ]
+      : []),
+    ...open.map((i) => ({
+      id: `sos-${i.id}`,
+      tone: 'danger' as const,
+      title: i.type === 'sos' ? 'SOS alert' : 'Safety report',
+      body: i.status === 'open' ? 'Not acknowledged yet' : undefined,
+      time: formatRelative(i.createdAt),
+      onSelect: () => navigate('/incidents'),
+    })),
+    ...(settings.data?.bookingsPaused
+      ? [
+          {
+            id: 'paused',
+            tone: 'danger' as const,
+            title: 'New bookings are paused',
+            onSelect: () => navigate('/configuration'),
+          },
+        ]
+      : []),
+    ...(boundaryMissing
+      ? [
+          {
+            id: 'boundary',
+            tone: 'warning' as const,
+            title: 'No service boundary approved yet',
+            body: `The pilot is blocked. A super admin draws it under Configuration once ${strings.appName} approves it.`,
+            onSelect: can('configuration') ? () => navigate('/configuration') : undefined,
+          },
+        ]
+      : []),
+  ];
+
+  const brand = {
+    mark: strings.appName.slice(0, 1),
+    name: strings.appName,
+    subtitle: 'Admin dashboard',
+  };
+  const action = role ? primaryAction[role] : null;
+  const openSettings = () => navigate(can('configuration') ? '/configuration' : '/account');
+  const roleLabel = role ? roleLabels[role] : '';
+  const tabs = mobileTabOrder
+    .map((to) => allItems.find((i) => i.to === to))
+    .filter((i): i is NonNullable<typeof i> => !!i)
+    .slice(0, 4);
+  const searchTargets = [
+    ...allItems,
+    { to: '/account', label: 'Account and security', group: '', icon: 'account' as const },
+  ];
+
+  const sidebarProps = {
+    brand,
+    badges,
+    side,
+    onSideChange: setSide,
+    showSideToggle: hasBoth,
+    list,
+    notice,
+    navLabel: strings.navLabel,
+  };
 
   return (
-    <div className={l.shell}>
-      <header className={l.topBar}>
-        <NavLink to="/" className={l.wordmark}>{strings.appName}</NavLink>
-        {showEnvBadge && <span className={l.badge} aria-label={strings.environment(appEnv)}>{appEnv}</span>}
-        <span className={l.spacer} />
-        {me && (
-          <span className={l.who}>
-            <span className={l.whoName}>{me.fullName}</span>
-            <span className={l.whoRole}>{roleLabels[me.staffRole]}</span>
+    <div className={sh.shell} data-collapsed={collapsed || undefined}>
+      <a href="#main" className={sh.skip}>
+        Skip to content
+      </a>
+      <aside className={sh.sidebar}>
+        <Sidebar
+          {...sidebarProps}
+          items={collapsed ? allItems : menuItems}
+          collapsed={collapsed}
+          onToggleCollapsed={tablet ? undefined : toggleCollapsed}
+        />
+      </aside>
+
+      <div className={sh.column}>
+        <header className={sh.topBar}>
+          <IconButton
+            icon="menu"
+            label="Open menu"
+            variant="ghost"
+            className={sh.mobileOnly}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          />
+          <NavLink to="/" className={sh.mobileBrand} aria-label={`${strings.appName} overview`}>
+            <span className={sh.brandMark} aria-hidden="true">
+              {brand.mark}
+            </span>
+            {showEnvBadge && (
+              <span className={sh.envBadge} aria-label={strings.environment(appEnv)}>
+                {appEnv}
+              </span>
+            )}
+          </NavLink>
+          {me && (
+            <span className={sh.desktopOnly}>
+              <UserMenu
+                name={me.fullName}
+                email={me.email}
+                role={roleLabel}
+                onAccount={() => navigate('/account')}
+                onSignOut={() => void signOut()}
+              />
+            </span>
+          )}
+          <span className={sh.divider} aria-hidden="true" />
+          {action && (
+            <Button
+              variant="primary"
+              iconEnd={action.icon}
+              className={sh.desktopOnly}
+              onClick={() => navigate(action.to)}
+            >
+              {action.label}
+            </Button>
+          )}
+          <span className={sh.spacer} />
+          <NotificationBell items={notices} loading={sos.isPending && can('incidents')} />
+          <span className={sh.wideOnly}>
+            <GlobalSearch targets={searchTargets} onOpen={navigate} />
           </span>
-        )}
-        <Button small variant="ghost" onClick={() => navigate('/account')}>Account</Button>
-        <Button small onClick={() => void signOut()}>Sign out</Button>
-      </header>
-      <nav className={l.rail} aria-label={strings.navLabel}>
-        {nav.map((g) => {
-          const items = g.items.filter((i) => canUse(role, i.area));
-          if (!items.length) return null;
-          return (
-            <div key={g.group || 'top'} style={{ display: 'contents' }}>
-              {g.group && <span className={l.group}>{g.group}</span>}
-              {items.map((i) => (
-                <NavLink key={i.to} to={i.to} end={i.to === '/'} className={({ isActive }) => `${l.link} ${isActive ? l.active : ''}`}>
-                  {i.label}
-                </NavLink>
-              ))}
-            </div>
-          );
-        })}
-      </nav>
-      <main className={l.main} id="main">
-        <div className={l.banners}>
-          {outdated && (
-            <Banner tone="warning" action={<Button small variant="primary" onClick={() => window.location.reload()}>Reload</Button>}>
-              A newer version of the dashboard is out. Reload to keep working.
-            </Banner>
+          <IconButton
+            icon="search"
+            label="Search pages"
+            className={sh.narrowOnly}
+            onClick={() => setSearchOpen(true)}
+          />
+          <Button iconEnd="configuration" className={sh.wideOnly} onClick={openSettings}>
+            Settings
+          </Button>
+          <IconButton icon="configuration" label="Settings" className={sh.tabletOnly} onClick={openSettings} />
+          {me && (
+            <span className={sh.mobileOnly}>
+              <UserMenu
+                compact
+                name={me.fullName}
+                email={me.email}
+                role={roleLabel}
+                onAccount={() => navigate('/account')}
+                onSignOut={() => void signOut()}
+              />
+            </span>
           )}
-          {open.length > 0 && (
-            <Banner tone="danger" action={<Button small variant="danger" onClick={() => navigate('/incidents')}>Open incidents</Button>}>
-              {open.length === 1 ? '1 open SOS or safety incident' : `${open.length} open SOS or safety incidents`}
-              {oldest && `, oldest raised ${formatRelative(oldest)}`}
-              {overdue && '. Not acknowledged for over 2 minutes: act now.'}
-            </Banner>
-          )}
-          {settings.data?.bookingsPaused && (
-            <Banner tone="danger" action={<Button small onClick={() => navigate('/configuration')}>Settings</Button>}>
-              New bookings are paused. Students see: “{settings.data.pauseMessage ?? 'Bookings are paused.'}”
-            </Banner>
-          )}
-          {area.data && area.data.boundary === null && (
-            <Banner tone="warning">
-              No service boundary is approved yet, so the pilot is blocked. A super admin draws it under Configuration once Turbo approves it.
-            </Banner>
-          )}
-        </div>
-        <Outlet />
-      </main>
-      <Dialog open={idle.warning} onClose={idle.stayActive} title="Still there?">
-        <p style={{ margin: 0 }}>You will be signed out in about a minute because there has been no activity.</p>
+        </header>
+
+        <main className={sh.main} id="main" tabIndex={-1} aria-busy={loadingPage || undefined}>
+          <div className={sh.banners}>
+            {outdated && (
+              <Banner
+                tone="warning"
+                action={
+                  <Button small variant="primary" onClick={() => window.location.reload()}>
+                    Reload
+                  </Button>
+                }
+              >
+                A newer version of the dashboard is out. Reload to keep working.
+              </Banner>
+            )}
+            {open.length > 0 && (
+              <Banner
+                tone="danger"
+                action={
+                  <Button small variant="danger" onClick={() => navigate('/incidents')}>
+                    Open incidents
+                  </Button>
+                }
+              >
+                {open.length === 1 ? '1 open SOS or safety incident' : `${open.length} open SOS or safety incidents`}
+                {oldest && `, oldest raised ${formatRelative(oldest)}`}
+                {overdue && '. Not acknowledged for over 2 minutes: act now.'}
+              </Banner>
+            )}
+            {settings.data?.bookingsPaused && (
+              <Banner
+                tone="danger"
+                action={
+                  <Button small onClick={() => navigate('/configuration')}>
+                    Settings
+                  </Button>
+                }
+              >
+                New bookings are paused. Students see: “{settings.data.pauseMessage ?? 'Bookings are paused.'}”
+              </Banner>
+            )}
+          </div>
+          <Outlet />
+        </main>
+      </div>
+
+      <BottomNav tabs={tabs} badges={badges} moreOpen={menuOpen} onMore={() => setMenuOpen(true)} />
+
+      <Drawer open={menuOpen} onClose={() => setMenuOpen(false)} label="Menu">
+        <Sidebar {...sidebarProps} items={menuItems} onClose={() => setMenuOpen(false)} />
+      </Drawer>
+
+      <Dialog open={searchOpen} onClose={() => setSearchOpen(false)} title="Search" size="sm">
+        <GlobalSearch targets={searchTargets} onOpen={navigate} autoFocus shortcut={false} />
+      </Dialog>
+
+      <Dialog open={idle.warning} onClose={idle.stayActive} title="Still there?" size="sm">
+        <p className={sh.dialogText}>You will be signed out in about a minute because there has been no activity.</p>
         <DialogActions>
-          <Button variant="ghost" onClick={() => void signOut()}>Sign out now</Button>
-          <Button variant="primary" onClick={idle.stayActive}>Stay signed in</Button>
+          <Button variant="ghost" onClick={() => void signOut()}>
+            Sign out now
+          </Button>
+          <Button variant="primary" onClick={idle.stayActive}>
+            Stay signed in
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 }
 
-/** Route guard: hides what a role cannot use. The API still refuses with 403. */
+/**
+ * Route guard for typed or bookmarked URLs. The page component (and so every
+ * request it would make) never mounts for a role that cannot use the area.
+ * This is for clarity only: the API refuses the same calls with 403.
+ */
 export function RequireArea({ area, children }: { area: Area; children: React.ReactNode }) {
   const { me } = useSession();
+  const navigate = useNavigate();
   if (!canUse(me?.staffRole, area)) {
-    return <Banner tone="warning">You do not have access to this.</Banner>;
+    return (
+      <EmptyState
+        icon="lock"
+        title={`You don't have access to ${areaLabels[area]}`}
+        body={`Your role is ${me ? roleLabels[me.staffRole] : 'not set'}. If you need this page for your work, ask a super admin to change your role.`}
+        action={
+          <Button variant="primary" onClick={() => navigate('/', { replace: true })}>
+            Go to the overview
+          </Button>
+        }
+      />
+    );
   }
   return <>{children}</>;
 }

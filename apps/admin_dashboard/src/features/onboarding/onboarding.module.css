@@ -1,0 +1,196 @@
+/* First-run card: same surface as the dashboard cards, accent glow kept for the hero. */
+.card {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
+}
+.cardDone {
+  border-color: var(--color-accent-border);
+}
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.head {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.caption {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caption);
+}
+.title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 400;
+}
+.body {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--color-text-secondary);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.track {
+  flex: 1;
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-raised);
+  overflow: hidden;
+}
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  transition: width var(--motion-base);
+}
+.count {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}
+
+.steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+.step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--size-target);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.step:last-child {
+  border-bottom: 0;
+}
+.marker {
+  display: grid;
+  place-items: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: var(--text-caption);
+}
+.markerDone {
+  border-color: transparent;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.stepText {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.stepTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.stepDone .stepTitle {
+  color: var(--color-text-secondary);
+}
+.stepBody {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caption);
+}
+.loading {
+  display: grid;
+  gap: var(--space-3);
+}
+.error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.doneRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+}
+.doneMark {
+  display: grid;
+  place-items: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+.barText {
+  flex: 1;
+  min-width: 0;
+}
+.barText strong {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: var(--space-5);
+  }
+  .topRow {
+    flex-direction: column;
+  }
+  .step {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .step > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .doneRow {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .doneRow > button {
+    grid-column: 1 / -1;
+  }
+}

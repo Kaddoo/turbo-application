@@ -99,41 +99,97 @@ const manual = {
 
 // ---------------------------------------------------------------- dashboard calls (integrated)
 const dashDir = path.join(root, 'apps/admin_dashboard/src');
-const appTsx = fs.readFileSync(path.join(dashDir, 'app/App.tsx'), 'utf8');
+// Routes: app/routes.tsx (signed-in pages, lazy) and app/App.tsx (sign-in pages), each pointing at a page file.
 const routeOf = {};
-for (const m of appTsx.matchAll(/path: '([^']+)', element: (?:guard\('\w+', )?<(\w+) \/>/g)) (routeOf[m[2]] ||= []).push(m[1]);
+const read = (rel) => fs.readFileSync(path.join(dashDir, rel), 'utf8');
+const pageRoutes = [];
+for (const m of read('app/routes.tsx').matchAll(/path: '([^']+)'(?:(?!path: ')[\s\S])*?import\('@\/pages\/(\w+)'\)/g)) pageRoutes.push([m[1], m[2]]);
+for (const m of read('app/App.tsx').matchAll(/path: '([^']+)', element: <(\w+) \/>/g)) pageRoutes.push([m[1], m[2]]);
+for (const [route, page] of pageRoutes) {
+  const file = path.join(dashDir, 'pages', `${page}.tsx`);
+  // A page file renders one feature component; map that component (and the page itself) to the route.
+  const rendered = fs.existsSync(file) ? [...fs.readFileSync(file, 'utf8').matchAll(/<([A-Z]\w+)[\s/>]/g)].map((m) => m[1]) : [];
+  for (const c of [page, ...rendered]) (routeOf[c] ||= []).push(route);
+}
 const pageLabel = { '/': 'Overview', '/verification': 'Verification queue', '/verification/:id': 'Verification review', '/students': 'Students', '/students/:id': 'Student detail',
   '/drivers': 'Drivers', '/drivers/:id': 'Driver detail', '/vehicles': 'Vehicles', '/live': 'Live map', '/rides': 'Rides', '/rides/:id': 'Ride detail', '/announcements': 'Announcements',
   '/finance/topups': 'Top-ups', '/finance/adjustments': 'Adjustments', '/finance/reconciliation': 'Reconciliation', '/support': 'Support tickets', '/support/:id': 'Ticket',
   '/incidents': 'Incidents', '/salary/shifts': 'Shifts', '/salary/attendance': 'Attendance', '/salary/payments': 'Salary payments', '/configuration': 'Configuration',
   '/staff': 'Staff', '/audit-log': 'Audit log', '/account': 'Account', '/sign-in': 'Sign in', '/forgot-password': 'Forgot password', '/reset-password': 'Reset password', '/invite': 'Accept invite' };
-const special = { Layout: 'Every page (shell banners)', SessionProvider: 'App start, sign in, sign out', uploadFile: 'Driver detail, Reconciliation (upload helper)', useDriverNames: 'Shifts, Attendance, Salary payments' };
+const special = {
+  Layout: 'Every page (shell banners)',
+  SessionProvider: 'App start, sign in, sign out',
+  refreshAccessToken: 'App start and any call after the access token expires (session refresh)',
+  uploadFile: 'Driver detail, Reconciliation (upload helper)',
+  useDriverNames: 'Shifts, Attendance, Salary payments',
+};
 const bodies = {};
 const calls = [];
+const files = [];
 (function walk(d) {
   for (const f of fs.readdirSync(d)) {
     const p = path.join(d, f);
     if (fs.statSync(p).isDirectory()) { if (f !== 'demo') walk(p); continue; }
     if (!/\.tsx?$/.test(f) || f.endsWith('.d.ts')) continue;
-    const t = fs.readFileSync(p, 'utf8');
-    const fns = [...t.matchAll(/(?:^|\n)(?:export )?(?:async )?function (\w+)/g)].map((m) => ({ name: m[1], at: m.index }));
-    fns.forEach((fn, i) => { bodies[fn.name] = t.slice(fn.at, fns[i + 1] ? fns[i + 1].at : t.length); });
-    for (const m of t.matchAll(/api\.(GET|POST|PUT|PATCH|DELETE)\('([^']+)'/g)) {
-      const fn = fns.filter((x) => x.at < m.index).pop();
-      calls.push({ k: key(m[1], m[2]), component: fn ? fn.name : null });
-    }
+    files.push(p);
   }
 })(dashDir);
-function routesFor(comp, seen = new Set()) {
-  if (routeOf[comp]) return routeOf[comp];
+const fnsOf = (t) => [...t.matchAll(/(?:^|\n)(?:export )?(?:async )?function (\w+)/g)].map((m) => ({ name: m[1], at: m.index }));
+// 1. Service methods: `export const students = { get: (id) => call(api.GET('/admin/students/{id}' ...` → students.get.
+const serviceOps = {};
+for (const p of files) {
+  const t = fs.readFileSync(p, 'utf8');
+  const fns = fnsOf(t);
+  fns.forEach((fn, i) => { bodies[fn.name] = t.slice(fn.at, fns[i + 1] ? fns[i + 1].at : t.length); });
+  const objects = [...t.matchAll(/export const (\w+) = \{/g)].map((m) => ({ name: m[1], at: m.index }));
+  for (const m of t.matchAll(/(?:api|authClient)\.(GET|POST|PUT|PATCH|DELETE)\('([^']+)'/g)) {
+    const k = key(m[1], m[2]);
+    const obj = objects.filter((x) => x.at < m.index).pop();
+    const fn = fns.filter((x) => x.at < m.index).pop();
+    if (obj && (!fn || fn.at < obj.at)) {
+      // Top-level keys of the service object only (two-space indent), not a parameter on its own line.
+      const prop = [...t.slice(obj.at, m.index).matchAll(/\n {2}(\w+): /g)].pop();
+      if (prop) { (serviceOps[`${obj.name}.${prop[1]}`] ||= []).push(k); continue; }
+    }
+    calls.push({ k, component: fn ? fn.name : null });
+  }
+}
+// 2. Callers of service methods (feature hooks, components, the session state), including renamed imports.
+for (const p of files) {
+  const t = fs.readFileSync(p, 'utf8');
+  const fns = fnsOf(t);
+  const alias = {};
+  for (const m of t.matchAll(/import \{([^}]*)\} from '@\/services\/\w+'/g)) {
+    for (const part of m[1].split(',')) {
+      const [orig, as] = part.trim().split(/\s+as\s+/);
+      if (orig) alias[orig] = as || orig;
+    }
+  }
+  for (const [method, ks] of Object.entries(serviceOps)) {
+    const [obj, prop] = method.split('.');
+    if (!alias[obj]) continue; // only files that import the service (permission keys like 'staff.create' are not calls)
+    const local = alias[obj];
+    // A call (`me.get()`) or a reference handed to React Query (`queryFn: settings.get`).
+    const re = new RegExp(`\\b${local}\\.${prop}\\b(?![\\w$])`, 'g');
+    for (const m of t.matchAll(re)) {
+      const fn = fns.filter((x) => x.at < m.index).pop();
+      ks.forEach((k) => calls.push({ k, component: fn ? fn.name : null }));
+    }
+  }
+}
+/** Page labels for `comp`: its routes, else the routes (or shell parts) of whatever renders it or calls it. */
+function labelsFor(comp, seen = new Set()) {
+  if (routeOf[comp]) return routeOf[comp].map((r) => `${pageLabel[r] || r} \`${r}\``);
+  if (special[comp]) return [special[comp]];
   if (seen.has(comp)) return [];
   seen.add(comp);
-  return Object.entries(bodies).filter(([n, b]) => n !== comp && new RegExp(`<${comp}[\\s/>]`).test(b)).flatMap(([n]) => routesFor(n, seen));
+  const used = new RegExp(`<${comp}[\\s/>]|\\b${comp}\\(`);
+  return [...new Set(Object.entries(bodies).filter(([n, b]) => n !== comp && used.test(b.slice(b.indexOf('{')))).flatMap(([n]) => labelsFor(n, seen)))];
 }
 const dash = {};
 for (const c of calls) {
-  const routes = c.component ? routesFor(c.component) : [];
-  const labels = routes.length ? routes.map((r) => `${pageLabel[r] || r} \`${r}\``) : [special[c.component] || c.component];
+  const found = c.component ? labelsFor(c.component) : [];
+  const labels = found.length ? found : [c.component || 'Shared service'];
   labels.forEach((l) => (dash[c.k] ||= new Set()).add(l));
 }
 

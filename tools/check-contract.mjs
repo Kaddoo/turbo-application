@@ -23,7 +23,7 @@ if (!existsSync(join(root, SOURCE))) problems.push(`${SOURCE} is missing`);
 else {
   const want = sha(SOURCE);
   const version = /^\s{2}version:\s*(\S+)/m.exec(readFileSync(join(root, SOURCE), 'utf8'))?.[1];
-  for (const [label, stamp] of [['Dart client', 'packages/turbo_api/generated/.contract-sha256'], ['dashboard schema', 'apps/admin_dashboard/src/api/.contract-sha256']]) {
+  for (const [label, stamp] of [['Dart client', 'packages/turbo_api/generated/.contract-sha256'], ['dashboard schema', 'apps/admin_dashboard/src/types/.contract-sha256']]) {
     if (!existsSync(join(root, stamp))) { problems.push(`${label}: ${stamp} is missing (regenerate it)`); continue; }
     const got = readFileSync(join(root, stamp), 'utf8').trim();
     if (got !== want) problems.push(`${label} was generated from a different contract (stamp ${got.slice(0, 8)}, contract ${want.slice(0, 8)}, version ${version}). Regenerate it.`);

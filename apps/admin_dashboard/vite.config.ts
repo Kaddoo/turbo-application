@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'node:url';
 
 export default defineConfig(({ mode }) => {
   // Dev only, never bundled (no VITE_ prefix). Prism mock on :4010 by default;
@@ -8,8 +9,13 @@ export default defineConfig(({ mode }) => {
   const target = loadEnv(mode, process.cwd(), '').API_PROXY_TARGET || 'http://localhost:4010';
   return {
     plugins: [react()],
+    resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
+      // Staging sets the refresh cookie only for allowlisted origins, and http://localhost:5173
+      // is the dev one. On any other port sign-in works but a reload signs you out, so fail
+      // loudly when 5173 is taken instead of moving to 5174.
       port: 5173,
+      strictPort: true,
       // Same-origin API in development: no CORS, and the SameSite=Strict refresh
       // cookie lands on this origin. Its path and domain are rewritten so the
       // browser sends it back to /api/auth/refresh.

@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
  */
 const root = join(__dirname, '..', 'src');
 // demo/ is sample data for presentations (SVG document placeholders), not UI styling.
-const allowed = [/^brand\//, /^theme\/theme\.ts$/, /^api\/schema\.d\.ts$/, /^demo\//];
+const allowed = [/^brand\//, /^theme\/theme\.ts$/, /^types\/schema\.d\.ts$/, /^demo\//];
 
 export const patterns: Record<string, RegExp> = {
   'colour literal': /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/,

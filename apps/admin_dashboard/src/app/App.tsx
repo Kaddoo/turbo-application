@@ -1,76 +1,95 @@
-import { Navigate, Outlet, createBrowserRouter, RouterProvider, useLocation } from 'react-router';
-import { useSession } from '../auth/session';
-import { EmptyState, Skeleton } from '../components/ui';
-import { AccountPage, AnnouncementsPage, AuditLogPage, ConfigurationPage, StaffPage } from '../pages/Admin';
-import { IncidentsPage, SupportPage, TicketPage } from '../pages/Care';
-import { AdjustmentsPage, ReconciliationPage, TopupsPage } from '../pages/Finance';
-import { OverviewPage } from '../pages/Overview';
-import { DriverDetailPage, DriversPage, StudentDetailPage, StudentsPage, VehiclesPage } from '../pages/People';
-import { LiveMapPage, RideDetailPage, RidesPage } from '../pages/Rides';
-import { AcceptInvitePage, ForgotPasswordPage, ResetPasswordPage, SignInPage } from '../pages/SignIn';
-import { VerificationQueuePage, VerificationReviewPage } from '../pages/Verification';
-import { AttendancePage, SalaryPaymentsPage, ShiftsPage } from '../pages/Workforce';
+import {
+  Navigate,
+  Outlet,
+  createBrowserRouter,
+  RouterProvider,
+  useLocation,
+  useSearchParams,
+  type RouteObject,
+} from 'react-router';
+import { Skeleton } from '@/components';
+import AcceptInvitePage from '@/pages/AcceptInvitePage';
+import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/ResetPasswordPage';
+import SignInPage from '@/pages/SignInPage';
+import { useSession } from '@/state/session';
+import { safeReturnPath, signInPath } from '@/utils/returnPath';
 import { Layout, RequireArea } from './Layout';
-import type { Area } from '../auth/roles';
+import { signedInRoutes, type PageRoute } from './routes';
 
 function Checking() {
-  return <div style={{ padding: 48, maxWidth: 480, margin: '0 auto', display: 'grid', gap: 12 }} aria-busy="true"><Skeleton /><Skeleton width="60%" /></div>;
+  return (
+    <div style={{ padding: 48, maxWidth: 480, margin: '0 auto', display: 'grid', gap: 12 }} aria-busy="true">
+      <Skeleton />
+      <Skeleton width="60%" />
+    </div>
+  );
 }
 
 function SignedIn() {
-  const { status } = useSession();
+  const { status, signedOutReason } = useSession();
   const location = useLocation();
   if (status === 'checking') return <Checking />;
-  if (status === 'signedOut') return <Navigate to="/sign-in" replace state={{ from: location.pathname }} />;
+  if (status === 'signedOut') {
+    // A deliberate sign-out (here or in another tab) starts fresh, so the next person at this
+    // computer does not land on the last one's page. Otherwise keep the page they asked for.
+    const fresh = signedOutReason === 'signedOut' || signedOutReason === 'elsewhere';
+    return (
+      <Navigate
+        to={fresh ? '/sign-in' : signInPath(`${location.pathname}${location.search}${location.hash}`)}
+        replace
+      />
+    );
+  }
   return <Layout />;
 }
 
 function SignedOut() {
   const { status } = useSession();
+  const [params] = useSearchParams();
   if (status === 'checking') return <Checking />;
-  if (status === 'signedIn') return <Navigate to="/" replace />;
+  if (status === 'signedIn') return <Navigate to={safeReturnPath(params.get('next'))} replace />;
   return <Outlet />;
 }
 
-const guard = (area: Area, el: React.ReactNode) => <RequireArea area={area}>{el}</RequireArea>;
+/** A signed-in route: its page chunk loads on first visit, behind the role guard. */
+function lazyPage({ path, area, load }: PageRoute): RouteObject {
+  return {
+    path,
+    lazy: async () => {
+      const { default: Page } = await load();
+      return {
+        element: area ? (
+          <RequireArea area={area}>
+            <Page />
+          </RequireArea>
+        ) : (
+          <Page />
+        ),
+      };
+    },
+  };
+}
 
+// Sign-in screens ship with the shell; everything behind sign-in is split per page.
 const router = createBrowserRouter([
-  { element: <SignedOut />, children: [
-    { path: '/sign-in', element: <SignInPage /> },
-    { path: '/forgot-password', element: <ForgotPasswordPage /> },
-  ] },
-  { path: '/reset-password', element: <ResetPasswordPage /> },
-  { path: '/invite', element: <AcceptInvitePage /> },
-  // The API's invite email links here (src/routes/staff.js sendInvite).
-  { path: '/accept-invite', element: <AcceptInvitePage /> },
-  { element: <SignedIn />, children: [
-    { path: '/', element: <OverviewPage /> },
-    { path: '/verification', element: guard('verification', <VerificationQueuePage />) },
-    { path: '/verification/:id', element: guard('verification', <VerificationReviewPage />) },
-    { path: '/students', element: guard('students', <StudentsPage />) },
-    { path: '/students/:id', element: guard('studentDetail', <StudentDetailPage />) },
-    { path: '/drivers', element: guard('drivers', <DriversPage />) },
-    { path: '/drivers/:id', element: guard('drivers', <DriverDetailPage />) },
-    { path: '/vehicles', element: guard('vehicles', <VehiclesPage />) },
-    { path: '/live', element: guard('liveMap', <LiveMapPage />) },
-    { path: '/rides', element: guard('rides', <RidesPage />) },
-    { path: '/rides/:id', element: guard('rideDetail', <RideDetailPage />) },
-    { path: '/announcements', element: guard('announcements', <AnnouncementsPage />) },
-    { path: '/finance/topups', element: guard('finance', <TopupsPage />) },
-    { path: '/finance/adjustments', element: guard('finance', <AdjustmentsPage />) },
-    { path: '/finance/reconciliation', element: guard('finance', <ReconciliationPage />) },
-    { path: '/support', element: guard('support', <SupportPage />) },
-    { path: '/support/:id', element: guard('support', <TicketPage />) },
-    { path: '/incidents', element: guard('incidents', <IncidentsPage />) },
-    { path: '/salary/shifts', element: guard('salary', <ShiftsPage />) },
-    { path: '/salary/attendance', element: guard('salary', <AttendancePage />) },
-    { path: '/salary/payments', element: guard('salary', <SalaryPaymentsPage />) },
-    { path: '/configuration', element: guard('configuration', <ConfigurationPage />) },
-    { path: '/staff', element: guard('staff', <StaffPage />) },
-    { path: '/audit-log', element: guard('auditLog', <AuditLogPage />) },
-    { path: '/account', element: <AccountPage /> },
-    { path: '*', element: <EmptyState title="Page not found" body="Use the menu to find what you need." /> },
-  ] },
+  {
+    HydrateFallback: Checking,
+    children: [
+      {
+        element: <SignedOut />,
+        children: [
+          { path: '/sign-in', element: <SignInPage /> },
+          { path: '/forgot-password', element: <ForgotPasswordPage /> },
+        ],
+      },
+      { path: '/reset-password', element: <ResetPasswordPage /> },
+      { path: '/invite', element: <AcceptInvitePage /> },
+      // The API's invite email links here (api/src/routes/staff.js sendInvite).
+      { path: '/accept-invite', element: <AcceptInvitePage /> },
+      { element: <SignedIn />, children: signedInRoutes.map(lazyPage) },
+    ],
+  },
 ]);
 
 export function App() {

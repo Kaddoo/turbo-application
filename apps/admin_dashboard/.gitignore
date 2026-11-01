@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.local
 test/live/results.json
+test/live/roles-results.json
