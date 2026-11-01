@@ -2,6 +2,35 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Kevin with Claude, code: redesign from the design boards
+
+**Task:** Redo both apps' screens from the boards in `design/` (light and dark), on branch `redesign-foundation` (stacked on `driver-app-foundation`, nothing merged).
+
+**Files touched:**
+- packages/turbo_ui: brand tokens (lime accent, new palettes, rounding), new `AuthLayout`, `DarkScope`, `SplashView`, `BigWordmark`, `FloatingNavBar`, `BadgeIcon`; `TurboCard` takes a colour. Goldens regenerated.
+- apps/student_app: splash, welcome slides, phone, code, terms; floating bar; home (greeting card, booking sheet); price; trip screens; activity (This week, Earlier); SOS block and result sheet; share trip; wallet card, top-up amount grid, waiting screen, transactions by day; profile header and counts.
+- apps/driver_app: floating bar (Home, Records, Help, Me); Records as one control (Trips, Shifts, Hours, Salary); new Help tab; home off duty and on duty; offer, to pickup, at pickup, PIN, trip, end screens.
+- Both apps: build 3 (`1.0.0+3`), `ITSAppUsesNonExemptEncryption=false`.
+
+**What changed:** Sign-in screens are always dark; everything else follows the phone's light or dark setting. New screens use theme roles only, so the hard-coded style test still passes.
+
+**Acceptance criteria:**
+- [x] `flutter analyze` clean; student app 129 tests, driver app 61, turbo_ui 49
+- [x] New dark mode plus 200% text tests for student home, trip, wallet, top-up, waiting, share; driver records, home (both states) and four ride states (these caught three overflows, fixed)
+- [x] Student and driver build 3 uploaded to TestFlight (processed by Apple, not yet installed or checked). **Build 3 has no driver changes after "redo driver records, help tab and bottom bar"** (home and ride screens came after it).
+- [ ] **Nothing here has been looked at on a phone or a simulator.**
+
+**Deviations from the boards:**
+- No campus map art or welcome photos (not provided); slides use text and dots.
+- Driver Me has no photo or document chips (CR-5); no supervisor or campus security call buttons (CR-6).
+- Help topics open the ticket form without preselecting a category.
+- Profile has no News and offers or Tips switches (no contract fields seen); Sign out and Delete are full-width buttons.
+- Wallet card has no separate Balance and Held columns (would repeat amounts).
+- Driver offer lists existing sentences, not label and value rows; no shift time on the vehicle card; no battery percentage; trip-complete card and "paid from wallet" note are missing.
+- Not redone: destination and pickup-point screens, cancel-reasons sheet, rating card, student ride detail map and timeline, support new-ticket form, driver Me and trip detail.
+
+**Next:** look at it on a phone; TestFlight build 4 with the driver changes (needs an Xcode sign-in or an App Store Connect key); remaining screens above; production setup for the API (Texify, Payaza, Google server key, terms and privacy URLs, rotate the shared SMTP password).
+
 ## 2026-11-01, Kevin with Claude, code: staging API on the server
 
 **Task:** Run the planning repo's API on the VPS so the apps and the admin developer can use it.
