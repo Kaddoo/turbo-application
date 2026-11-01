@@ -50,6 +50,7 @@ export const config = {
   logpulseUrl: e.TELEMETRY_COLLECTOR_URL || '',
   logpulseKey: e.TELEMETRY_API_KEY || '',
   logpulseAppId: e.TELEMETRY_APP_ID || 'turbo-api',
+  logpulseHealth: e.TELEMETRY_HEALTH_PING === 'true',      // opt in: the key must be issued for this app id with the metrics:write scope
   sosOncallPhone: e.SOS_ONCALL_PHONE || '',                // E.164. Gets a direct SMS when an SOS is not acknowledged in 2 minutes
 };
 if (config.env === 'production') {

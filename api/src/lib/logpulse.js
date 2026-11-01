@@ -75,9 +75,9 @@ export function announceLogpulse(logger) {
   else logger.info('log shipping disabled: TELEMETRY_COLLECTOR_URL / TELEMETRY_API_KEY not set');
 }
 
-/** A health ping once a minute; needs the metrics:write scope, and a refusal is silent. */
+/** A health ping once a minute. Opt in with TELEMETRY_HEALTH_PING=true: the key needs metrics:write and must belong to TELEMETRY_APP_ID. */
 export function startHealthPing() {
-  if (!logpulseEnabled()) return;
+  if (!logpulseEnabled() || !config.logpulseHealth) return;
   const t = setInterval(() => { try { getClient().then((c) => c.reportHealth()).catch(() => {}); } catch { /* ignore */ } }, 60_000);
   t.unref();
 }
