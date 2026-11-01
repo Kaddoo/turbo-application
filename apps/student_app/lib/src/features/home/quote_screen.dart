@@ -223,7 +223,7 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                         excludeSemantics: true,
                         child: Text(
                           formatPesewas(fare),
-                          style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 2),
+                          style: text.displayLarge,
                         ),
                       ),
                       Row(

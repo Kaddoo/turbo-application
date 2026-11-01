@@ -56,7 +56,7 @@ class WalletScreen extends ConsumerWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               formatPesewas(w.availablePesewas),
-                              style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 2),
+                              style: text.displayLarge,
                             ),
                           ),
                         ),
