@@ -22,6 +22,7 @@ import { limit } from './lib/ratelimit.js';
 import { sanitizeRequest } from './lib/sanitize.js';
 import { contractRequest, contractResponse } from './lib/contract.js';
 import { appVersion } from './lib/appversion.js';
+import { trackRequest } from './lib/alerts.js';
 
 export const log = pino({ level: config.logLevel, redact: ['req.headers.authorization', 'body.code', 'body.refreshToken'] });
 
@@ -43,6 +44,7 @@ export function buildApp() {
     res.set('x-request-id', req.id);
     const t = process.hrtime.bigint();
     res.on('finish', () => {
+      if (req.path !== '/health') trackRequest(res.statusCode);          // feeds the 5xx-rate alert
       if (req.path === '/health' && res.statusCode < 400) return;
       log.info({ reqId: req.id, method: req.method, path: req.route?.path || req.path, status: res.statusCode,
         ms: Number(process.hrtime.bigint() - t) / 1e6 | 0 }, 'req');
