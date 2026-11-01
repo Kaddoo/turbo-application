@@ -13,7 +13,10 @@ export function useInviteStaff() {
 }
 
 export function useUpdateStaff() {
-  return useAction(({ id, body }: { id: string; body: Body<'/admin/staff/{id}', 'patch'> }) => staff.update(id, body), [staffKeys.all]);
+  return useAction(
+    ({ id, body }: { id: string; body: Body<'/admin/staff/{id}', 'patch'> }) => staff.update(id, body),
+    [staffKeys.all],
+  );
 }
 
 export function useResendInvite() {

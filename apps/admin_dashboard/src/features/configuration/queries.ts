@@ -6,7 +6,10 @@ import { settings } from '@/services/settings';
 import type { Body } from '@/types';
 
 export function useSaveBoundary() {
-  return useAction((body: Body<'/admin/service-area', 'put'>) => serviceArea.saveBoundary(body), [sharedKeys.serviceArea]);
+  return useAction(
+    (body: Body<'/admin/service-area', 'put'>) => serviceArea.saveBoundary(body),
+    [sharedKeys.serviceArea],
+  );
 }
 
 /** Creates when `id` is null, otherwise updates. */

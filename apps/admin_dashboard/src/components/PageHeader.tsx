@@ -1,7 +1,15 @@
 import { type ReactNode } from 'react';
 import s from './ui.module.css';
 
-export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
+export function PageHeader({
+  title,
+  description,
+  actions,
+}: {
+  title: string;
+  description?: string;
+  actions?: ReactNode;
+}) {
   return (
     <header className={s.pageHeader}>
       <div>

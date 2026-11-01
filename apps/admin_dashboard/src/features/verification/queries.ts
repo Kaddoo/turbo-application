@@ -10,7 +10,9 @@ export const verificationKeys = {
 };
 
 export function useVerificationQueue(status: VerificationStatus) {
-  return useCursorList(verificationKeys.list(status), (cursor) => verifications.list({ status, cursor, limit: PAGE_SIZE }));
+  return useCursorList(verificationKeys.list(status), (cursor) =>
+    verifications.list({ status, cursor, limit: PAGE_SIZE }),
+  );
 }
 
 export function useVerification(id: string) {
@@ -22,9 +24,8 @@ export function useClaimVerification() {
 }
 
 export function useDecideVerification(id: string) {
-  return useAction((body: Body<'/admin/verifications/{id}/decision', 'post'>) => verifications.decide(id, body), [
-    verificationKeys.all,
-    verificationKeys.detail(id),
-    sharedKeys.overview,
-  ]);
+  return useAction(
+    (body: Body<'/admin/verifications/{id}/decision', 'post'>) => verifications.decide(id, body),
+    [verificationKeys.all, verificationKeys.detail(id), sharedKeys.overview],
+  );
 }

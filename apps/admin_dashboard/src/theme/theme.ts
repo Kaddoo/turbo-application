@@ -22,9 +22,7 @@ const roleVars: Record<keyof BrandPalette, string> = {
 const rem = (px: number) => `${px / 16}rem`;
 
 function paletteVars(p: BrandPalette): string {
-  return (Object.keys(roleVars) as (keyof BrandPalette)[])
-    .map((role) => `${roleVars[role]}: ${p[role]};`)
-    .join('\n  ');
+  return (Object.keys(roleVars) as (keyof BrandPalette)[]).map((role) => `${roleVars[role]}: ${p[role]};`).join('\n  ');
 }
 
 /**

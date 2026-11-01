@@ -1,14 +1,32 @@
-import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import {
+  useId,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from 'react';
 import s from './ui.module.css';
 
-interface FieldProps { label: string; hint?: string; error?: string }
+interface FieldProps {
+  label: string;
+  hint?: string;
+  error?: string;
+}
 
 function Field({ label, hint, error, id, children }: FieldProps & { id: string; children: ReactNode }) {
   return (
     <div className={s.field}>
-      <label className={s.label} htmlFor={id}>{label}</label>
+      <label className={s.label} htmlFor={id}>
+        {label}
+      </label>
       {children}
-      {error ? <span className={s.error} id={`${id}-err`}>{error}</span> : hint ? <span className={s.hint}>{hint}</span> : null}
+      {error ? (
+        <span className={s.error} id={`${id}-err`}>
+          {error}
+        </span>
+      ) : hint ? (
+        <span className={s.hint}>{hint}</span>
+      ) : null}
     </div>
   );
 }
@@ -17,8 +35,13 @@ export function TextField({ label, hint, error, ...rest }: FieldProps & InputHTM
   const id = useId();
   return (
     <Field id={id} label={label} hint={hint} error={error}>
-      <input id={id} className={s.input} aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${id}-err` : undefined} {...rest} />
+      <input
+        id={id}
+        className={s.input}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${id}-err` : undefined}
+        {...rest}
+      />
     </Field>
   );
 }
@@ -33,13 +56,21 @@ export function TextArea({ label, hint, error, ...rest }: FieldProps & TextareaH
 }
 
 export function Select({
-  label, hint, error, options, ...rest
+  label,
+  hint,
+  error,
+  options,
+  ...rest
 }: FieldProps & SelectHTMLAttributes<HTMLSelectElement> & { options: { value: string; label: string }[] }) {
   const id = useId();
   return (
     <Field id={id} label={label} hint={hint} error={error}>
       <select id={id} className={s.input} {...rest}>
-        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
       </select>
     </Field>
   );

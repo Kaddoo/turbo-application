@@ -5,7 +5,13 @@ import s from './ui.module.css';
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 
 export function Button({
-  variant = 'secondary', small, busy, className, children, disabled, ...rest
+  variant = 'secondary',
+  small,
+  busy,
+  className,
+  children,
+  disabled,
+  ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; small?: boolean; busy?: boolean }) {
   return (
     <button

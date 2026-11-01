@@ -11,11 +11,14 @@ import tseslint from 'typescript-eslint';
  *   services -> types and utils only, no React
  * Only services/http.ts may import openapi-fetch. Use the @/ alias, not ../ chains.
  */
-const everywhere = [
-  { group: ['../*'], message: 'Use the @/ alias instead of ../ paths.' },
-];
-const noHttpClient = { name: 'openapi-fetch', message: 'Only src/services/http.ts talks HTTP. Call a service instead.' };
-const restrict = (patterns, paths = [noHttpClient]) => ({ 'no-restricted-imports': ['error', { paths, patterns: [...everywhere, ...patterns] }] });
+const everywhere = [{ group: ['../*'], message: 'Use the @/ alias instead of ../ paths.' }];
+const noHttpClient = {
+  name: 'openapi-fetch',
+  message: 'Only src/services/http.ts talks HTTP. Call a service instead.',
+};
+const restrict = (patterns, paths = [noHttpClient]) => ({
+  'no-restricted-imports': ['error', { paths, patterns: [...everywhere, ...patterns] }],
+});
 
 export default defineConfig(
   { ignores: ['dist', 'src/types/schema.d.ts'] },
@@ -35,20 +38,43 @@ export default defineConfig(
   },
   {
     files: ['src/pages/**'],
-    rules: restrict([{ group: ['@/services/*', '@/services'], message: 'Pages compose features; features call services.' }]),
+    rules: restrict([
+      { group: ['@/services/*', '@/services'], message: 'Pages compose features; features call services.' },
+    ]),
   },
   {
     files: ['src/features/**'],
     rules: restrict([
-      { group: ['@/features/*', '@/features/**'], message: 'Features never import another feature. Move shared code to components, hooks or utils.' },
+      {
+        group: ['@/features/*', '@/features/**'],
+        message: 'Features never import another feature. Move shared code to components, hooks or utils.',
+      },
       { group: ['@/pages/*'], message: 'Features never import pages.' },
     ]),
   },
   {
     files: ['src/services/**'],
     rules: restrict(
-      [{ group: ['@/features/*', '@/pages/*', '@/components', '@/components/*', '@/hooks', '@/hooks/*', '@/state/*', '@/app/*'], message: 'Services depend only on types and utils.' }],
-      [noHttpClient, { name: 'react', message: 'Services never import React.' }, { name: '@tanstack/react-query', message: 'Services never import React Query.' }],
+      [
+        {
+          group: [
+            '@/features/*',
+            '@/pages/*',
+            '@/components',
+            '@/components/*',
+            '@/hooks',
+            '@/hooks/*',
+            '@/state/*',
+            '@/app/*',
+          ],
+          message: 'Services depend only on types and utils.',
+        },
+      ],
+      [
+        noHttpClient,
+        { name: 'react', message: 'Services never import React.' },
+        { name: '@tanstack/react-query', message: 'Services never import React Query.' },
+      ],
     ),
   },
   {

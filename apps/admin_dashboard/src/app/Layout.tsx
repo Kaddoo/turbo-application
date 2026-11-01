@@ -35,8 +35,14 @@ export function Layout() {
   return (
     <div className={l.shell}>
       <header className={l.topBar}>
-        <NavLink to="/" className={l.wordmark}>{strings.appName}</NavLink>
-        {showEnvBadge && <span className={l.badge} aria-label={strings.environment(appEnv)}>{appEnv}</span>}
+        <NavLink to="/" className={l.wordmark}>
+          {strings.appName}
+        </NavLink>
+        {showEnvBadge && (
+          <span className={l.badge} aria-label={strings.environment(appEnv)}>
+            {appEnv}
+          </span>
+        )}
         <span className={l.spacer} />
         {me && (
           <span className={l.who}>
@@ -44,8 +50,12 @@ export function Layout() {
             <span className={l.whoRole}>{roleLabels[me.staffRole]}</span>
           </span>
         )}
-        <Button small variant="ghost" onClick={() => navigate('/account')}>Account</Button>
-        <Button small onClick={() => void signOut()}>Sign out</Button>
+        <Button small variant="ghost" onClick={() => navigate('/account')}>
+          Account
+        </Button>
+        <Button small onClick={() => void signOut()}>
+          Sign out
+        </Button>
       </header>
       <nav className={l.rail} aria-label={strings.navLabel}>
         {navGroups.map((g) => {
@@ -55,7 +65,12 @@ export function Layout() {
             <div key={g.group || 'top'} style={{ display: 'contents' }}>
               {g.group && <span className={l.group}>{g.group}</span>}
               {items.map((i) => (
-                <NavLink key={i.to} to={i.to} end={i.to === '/'} className={({ isActive }) => `${l.link} ${isActive ? l.active : ''}`}>
+                <NavLink
+                  key={i.to}
+                  to={i.to}
+                  end={i.to === '/'}
+                  className={({ isActive }) => `${l.link} ${isActive ? l.active : ''}`}
+                >
                   {i.label}
                 </NavLink>
               ))}
@@ -66,25 +81,47 @@ export function Layout() {
       <main className={l.main} id="main" aria-busy={loadingPage || undefined}>
         <div className={l.banners}>
           {outdated && (
-            <Banner tone="warning" action={<Button small variant="primary" onClick={() => window.location.reload()}>Reload</Button>}>
+            <Banner
+              tone="warning"
+              action={
+                <Button small variant="primary" onClick={() => window.location.reload()}>
+                  Reload
+                </Button>
+              }
+            >
               A newer version of the dashboard is out. Reload to keep working.
             </Banner>
           )}
           {open.length > 0 && (
-            <Banner tone="danger" action={<Button small variant="danger" onClick={() => navigate('/incidents')}>Open incidents</Button>}>
+            <Banner
+              tone="danger"
+              action={
+                <Button small variant="danger" onClick={() => navigate('/incidents')}>
+                  Open incidents
+                </Button>
+              }
+            >
               {open.length === 1 ? '1 open SOS or safety incident' : `${open.length} open SOS or safety incidents`}
               {oldest && `, oldest raised ${formatRelative(oldest)}`}
               {overdue && '. Not acknowledged for over 2 minutes: act now.'}
             </Banner>
           )}
           {settings.data?.bookingsPaused && (
-            <Banner tone="danger" action={<Button small onClick={() => navigate('/configuration')}>Settings</Button>}>
+            <Banner
+              tone="danger"
+              action={
+                <Button small onClick={() => navigate('/configuration')}>
+                  Settings
+                </Button>
+              }
+            >
               New bookings are paused. Students see: “{settings.data.pauseMessage ?? 'Bookings are paused.'}”
             </Banner>
           )}
           {area.data && area.data.boundary === null && (
             <Banner tone="warning">
-              No service boundary is approved yet, so the pilot is blocked. A super admin draws it under Configuration once Turbo approves it.
+              No service boundary is approved yet, so the pilot is blocked. A super admin draws it under Configuration
+              once Turbo approves it.
             </Banner>
           )}
         </div>
@@ -93,8 +130,12 @@ export function Layout() {
       <Dialog open={idle.warning} onClose={idle.stayActive} title="Still there?">
         <p style={{ margin: 0 }}>You will be signed out in about a minute because there has been no activity.</p>
         <DialogActions>
-          <Button variant="ghost" onClick={() => void signOut()}>Sign out now</Button>
-          <Button variant="primary" onClick={idle.stayActive}>Stay signed in</Button>
+          <Button variant="ghost" onClick={() => void signOut()}>
+            Sign out now
+          </Button>
+          <Button variant="primary" onClick={idle.stayActive}>
+            Stay signed in
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

@@ -12,10 +12,18 @@ export interface MapMarker {
   onClick?: () => void;
 }
 
-export interface MapLine { id: string; points: [number, number][]; tone: MapMarker['tone'] }
+export interface MapLine {
+  id: string;
+  points: [number, number][];
+  tone: MapMarker['tone'];
+}
 
 const roleVar: Record<MapMarker['tone'], string> = {
-  success: '--color-success', warning: '--color-warning', danger: '--color-danger', accent: '--color-accent', neutral: '--color-text-secondary',
+  success: '--color-success',
+  warning: '--color-warning',
+  danger: '--color-danger',
+  accent: '--color-accent',
+  neutral: '--color-text-secondary',
 };
 const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
@@ -26,8 +34,19 @@ const DEFAULT_CENTER: [number, number] = [5.7425, 0.0675];
  * Interim map on OpenStreetMap tiles. Google Maps replaces it once Turbo's
  * restricted key exists (decision D7); the props stay the same.
  */
-export function MapView({ markers, lines = [], boundary, height = 420, fit = true, onMapClick }: {
-  markers: MapMarker[]; lines?: MapLine[]; boundary?: [number, number][] | null; height?: number; fit?: boolean;
+export function MapView({
+  markers,
+  lines = [],
+  boundary,
+  height = 420,
+  fit = true,
+  onMapClick,
+}: {
+  markers: MapMarker[];
+  lines?: MapLine[];
+  boundary?: [number, number][] | null;
+  height?: number;
+  fit?: boolean;
   onMapClick?: (lat: number, lng: number) => void;
 }) {
   const clickRef = useRef(onMapClick);
@@ -41,11 +60,15 @@ export function MapView({ markers, lines = [], boundary, height = 420, fit = tru
     if (!el.current || map.current) return;
     map.current = L.map(el.current, { zoomControl: true, attributionControl: true }).setView(DEFAULT_CENTER, 13);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19, attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map.current);
     layer.current = L.layerGroup().addTo(map.current);
     map.current.on('click', (e: L.LeafletMouseEvent) => clickRef.current?.(e.latlng.lat, e.latlng.lng));
-    return () => { map.current?.remove(); map.current = null; };
+    return () => {
+      map.current?.remove();
+      map.current = null;
+    };
   }, []);
 
   useEffect(() => {
@@ -62,16 +85,44 @@ export function MapView({ markers, lines = [], boundary, height = 420, fit = tru
     }
     for (const mk of markers) {
       const c = L.circleMarker([mk.lat, mk.lng], {
-        radius: 8, color: bg, weight: 2, fillColor: cssVar(roleVar[mk.tone]), fillOpacity: 1,
-      }).bindTooltip(mk.label).addTo(g);
+        radius: 8,
+        color: bg,
+        weight: 2,
+        fillColor: cssVar(roleVar[mk.tone]),
+        fillOpacity: 1,
+      })
+        .bindTooltip(mk.label)
+        .addTo(g);
       if (mk.onClick) c.on('click', mk.onClick);
     }
     if (fit && !fitted.current) {
-      const pts: [number, number][] = [...markers.map((x) => [x.lat, x.lng] as [number, number]), ...lines.flatMap((x) => x.points), ...(boundary ?? [])];
-      if (pts.length > 1) { m.fitBounds(L.latLngBounds(pts), { padding: [32, 32], maxZoom: 16 }); fitted.current = true; }
-      else if (pts.length === 1) { m.setView(pts[0]!, 15); fitted.current = true; }
+      const pts: [number, number][] = [
+        ...markers.map((x) => [x.lat, x.lng] as [number, number]),
+        ...lines.flatMap((x) => x.points),
+        ...(boundary ?? []),
+      ];
+      if (pts.length > 1) {
+        m.fitBounds(L.latLngBounds(pts), { padding: [32, 32], maxZoom: 16 });
+        fitted.current = true;
+      } else if (pts.length === 1) {
+        m.setView(pts[0]!, 15);
+        fitted.current = true;
+      }
     }
   }, [markers, lines, boundary, fit]);
 
-  return <div ref={el} style={{ height, width: '100%', borderRadius: 'var(--radius-card)', overflow: 'hidden', border: '1px solid var(--color-border)' }} role="application" aria-label="Map" />;
+  return (
+    <div
+      ref={el}
+      style={{
+        height,
+        width: '100%',
+        borderRadius: 'var(--radius-card)',
+        overflow: 'hidden',
+        border: '1px solid var(--color-border)',
+      }}
+      role="application"
+      aria-label="Map"
+    />
+  );
 }

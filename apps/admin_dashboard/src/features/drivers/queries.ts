@@ -43,13 +43,24 @@ export function useCreateDriver() {
 }
 
 export function useUpdateDriver(id: string) {
-  return useAction((body: Body<'/admin/drivers/{id}', 'patch'>) => drivers.update(id, body), [driverKeys.detail(id), driverKeys.all]);
+  return useAction(
+    (body: Body<'/admin/drivers/{id}', 'patch'>) => drivers.update(id, body),
+    [driverKeys.detail(id), driverKeys.all],
+  );
 }
 
 /** Uploads the file first, then attaches it to the driver. */
 export function useAddDriverDocument(id: string) {
   return useAction(
-    async ({ type, expiresOn, file }: { type: Schemas['DriverDocumentCreate']['type']; expiresOn: string; file: File }) => {
+    async ({
+      type,
+      expiresOn,
+      file,
+    }: {
+      type: Schemas['DriverDocumentCreate']['type'];
+      expiresOn: string;
+      file: File;
+    }) => {
       const uploadId = await uploadFile('driver_document', file);
       return drivers.addDocument(id, { type, uploadId, ...(expiresOn ? { expiresOn } : {}) });
     },
@@ -58,7 +69,8 @@ export function useAddDriverDocument(id: string) {
 }
 
 export function useSaveSalaryProfile(id: string) {
-  return useAction((body: Body<'/admin/drivers/{id}/salary-profile', 'put'>) => drivers.setSalaryProfile(id, body), [
-    driverKeys.salaryProfile(id),
-  ]);
+  return useAction(
+    (body: Body<'/admin/drivers/{id}/salary-profile', 'put'>) => drivers.setSalaryProfile(id, body),
+    [driverKeys.salaryProfile(id)],
+  );
 }

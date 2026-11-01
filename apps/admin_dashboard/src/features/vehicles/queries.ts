@@ -11,7 +11,8 @@ export function useVehicles() {
 /** Creates when `id` is null, otherwise updates. */
 export function useSaveVehicle() {
   return useAction(
-    ({ id, form }: { id: string | null; form: Schemas['VehicleWrite'] }) => (id ? vehicles.update(id, form) : vehicles.create(form)),
+    ({ id, form }: { id: string | null; form: Schemas['VehicleWrite'] }) =>
+      id ? vehicles.update(id, form) : vehicles.create(form),
     [vehicleKeys.all, sharedKeys.allVehicles],
   );
 }

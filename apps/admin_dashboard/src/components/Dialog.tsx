@@ -2,8 +2,16 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import s from './ui.module.css';
 
 /** Modal built on the native dialog element: focus trap and Escape for free. */
-export function Dialog({ open, onClose, title, children }: {
-  open: boolean; onClose: () => void; title: string; children: ReactNode;
+export function Dialog({
+  open,
+  onClose,
+  title,
+  children,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -16,7 +24,9 @@ export function Dialog({ open, onClose, title, children }: {
     <dialog ref={ref} className={s.dialog} onClose={onClose} aria-labelledby={`${title}-t`}>
       {open && (
         <div className={s.dialogBody}>
-          <h2 className={s.dialogTitle} id={`${title}-t`}>{title}</h2>
+          <h2 className={s.dialogTitle} id={`${title}-t`}>
+            {title}
+          </h2>
           {children}
         </div>
       )}

@@ -14,7 +14,11 @@ export const students = {
   walletTransactions: (id: string, query: Query<'/admin/students/{id}/wallet/transactions', 'get'>) =>
     call(api.GET('/admin/students/{id}/wallet/transactions', { params: { path: { id }, query } })),
   /** 200 applied at once; 202 sent for a second finance user's approval. */
-  adjustWallet: async (id: string, body: Body<'/admin/students/{id}/wallet/adjustments', 'post'>, idempotencyKey: string) => {
+  adjustWallet: async (
+    id: string,
+    body: Body<'/admin/students/{id}/wallet/adjustments', 'post'>,
+    idempotencyKey: string,
+  ) => {
     const { data, status } = await callWithStatus(
       api.POST('/admin/students/{id}/wallet/adjustments', {
         params: { path: { id }, header: { 'Idempotency-Key': idempotencyKey } },

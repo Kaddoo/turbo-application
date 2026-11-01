@@ -26,12 +26,15 @@ export function useTicket(id: string) {
 }
 
 export function useReplyToTicket(id: string) {
-  return useAction((body: Body<'/admin/support/tickets/{id}/messages', 'post'>) => support.reply(id, body), [ticketKeys.detail(id)]);
+  return useAction(
+    (body: Body<'/admin/support/tickets/{id}/messages', 'post'>) => support.reply(id, body),
+    [ticketKeys.detail(id)],
+  );
 }
 
 export function useUpdateTicket(id: string) {
-  return useAction((body: Body<'/admin/support/tickets/{id}', 'patch'>) => support.update(id, body), [
-    ticketKeys.detail(id),
-    ticketKeys.all,
-  ]);
+  return useAction(
+    (body: Body<'/admin/support/tickets/{id}', 'patch'>) => support.update(id, body),
+    [ticketKeys.detail(id), ticketKeys.all],
+  );
 }

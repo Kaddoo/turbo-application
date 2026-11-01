@@ -64,7 +64,9 @@ export async function send(input: Request | string, init?: RequestInit, timeoutM
   try {
     // Only the real network gets the abort signal; test and demo transports run in memory.
     const pending =
-      transport === networkTransport ? transport(input, { ...init, signal: controller.signal }) : transport(input, init);
+      transport === networkTransport
+        ? transport(input, { ...init, signal: controller.signal })
+        : transport(input, init);
     return await Promise.race([pending, expired]);
   } catch (e) {
     if (e instanceof ApiError) throw e;

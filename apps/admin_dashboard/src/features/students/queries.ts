@@ -5,7 +5,12 @@ import type { AccountStatus, Body, VerificationStatus } from '@/types';
 
 export const studentKeys = {
   all: ['students'],
-  list: (search: string, verificationStatus: string, accountStatus: string) => ['students', search, verificationStatus, accountStatus],
+  list: (search: string, verificationStatus: string, accountStatus: string) => [
+    'students',
+    search,
+    verificationStatus,
+    accountStatus,
+  ],
   detail: (id: string) => ['student', id],
 };
 
@@ -27,14 +32,17 @@ export function useStudent(id: string) {
 }
 
 export function useSetStudentStatus(id: string) {
-  return useAction((body: Body<'/admin/students/{id}', 'patch'>) => students.update(id, body), [
-    studentKeys.detail(id),
-    studentKeys.all,
-  ]);
+  return useAction(
+    (body: Body<'/admin/students/{id}', 'patch'>) => students.update(id, body),
+    [studentKeys.detail(id), studentKeys.all],
+  );
 }
 
 export function useChangeStudentPhone(id: string) {
-  return useAction((body: Body<'/admin/students/{id}/phone', 'put'>) => students.changePhone(id, body), [studentKeys.detail(id)]);
+  return useAction(
+    (body: Body<'/admin/students/{id}/phone', 'put'>) => students.changePhone(id, body),
+    [studentKeys.detail(id)],
+  );
 }
 
 export function useSignOutStudent(id: string) {

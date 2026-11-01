@@ -52,7 +52,11 @@ export class ApiError extends Error {
   private readonly localCode: LocalCode | null;
 
   constructor(status: number, problem: Problem | null, retryAfterHeader?: number, localCode?: LocalCode) {
-    super(problem?.detail ?? problem?.title ?? (status ? `Request failed (${status})` : `Request failed (${localCode ?? 'network'})`));
+    super(
+      problem?.detail ??
+        problem?.title ??
+        (status ? `Request failed (${status})` : `Request failed (${localCode ?? 'network'})`),
+    );
     this.status = status;
     this.problem = problem;
     this.retryAfterSeconds = problem?.retryAfterSeconds ?? retryAfterHeader;

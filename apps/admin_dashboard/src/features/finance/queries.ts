@@ -20,7 +20,12 @@ export const financeKeys = {
 /** Empty status means "any". */
 export function useTopups(flaggedOnly: boolean, status: string) {
   return useCursorList(financeKeys.topupList(flaggedOnly, status), (cursor) =>
-    topups.list({ flagged: flaggedOnly || undefined, status: (status || undefined) as Topup['status'] | undefined, cursor, limit: PAGE_SIZE }),
+    topups.list({
+      flagged: flaggedOnly || undefined,
+      status: (status || undefined) as Topup['status'] | undefined,
+      cursor,
+      limit: PAGE_SIZE,
+    }),
   );
 }
 
@@ -32,7 +37,11 @@ export function useResolveTopup() {
 }
 
 export function useStudentWallet(studentId: string) {
-  return useQuery({ queryKey: financeKeys.wallet(studentId), enabled: !!studentId, queryFn: () => students.wallet(studentId) });
+  return useQuery({
+    queryKey: financeKeys.wallet(studentId),
+    enabled: !!studentId,
+    queryFn: () => students.wallet(studentId),
+  });
 }
 
 export function useWalletTransactions(studentId: string) {
@@ -53,13 +62,17 @@ export function useAdjustWallet(studentId: string) {
 }
 
 export function useAdjustmentRequests(status: Schemas['AdjustmentRequest']['status']) {
-  return useCursorList(financeKeys.adjustmentList(status), (cursor) => walletAdjustments.list({ status, cursor, limit: PAGE_SIZE }));
+  return useCursorList(financeKeys.adjustmentList(status), (cursor) =>
+    walletAdjustments.list({ status, cursor, limit: PAGE_SIZE }),
+  );
 }
 
 export function useDecideAdjustment() {
   return useAction(
     ({ id, approve, note, key }: { id: string; approve: boolean; note: string; key: string }) =>
-      approve ? walletAdjustments.approve(id, note ? { note } : {}, key) : walletAdjustments.reject(id, note ? { note } : {}, key),
+      approve
+        ? walletAdjustments.approve(id, note ? { note } : {}, key)
+        : walletAdjustments.reject(id, note ? { note } : {}, key),
     [financeKeys.adjustments, sharedKeys.overview],
   );
 }

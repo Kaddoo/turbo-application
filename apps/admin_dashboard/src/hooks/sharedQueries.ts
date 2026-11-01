@@ -32,7 +32,10 @@ export function useServiceArea(enabled = true) {
 }
 
 /** Active rides and on-duty drivers. */
-export function useLiveRides({ enabled = true, refetchInterval }: { enabled?: boolean; refetchInterval?: number | false } = {}) {
+export function useLiveRides({
+  enabled = true,
+  refetchInterval,
+}: { enabled?: boolean; refetchInterval?: number | false } = {}) {
   return useQuery({ queryKey: sharedKeys.live, queryFn: liveRides.get, enabled, refetchInterval });
 }
 

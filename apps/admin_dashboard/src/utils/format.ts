@@ -22,14 +22,20 @@ const TZ = 'Africa/Accra';
 export function formatDateTime(iso: string | null | undefined): string {
   if (!iso) return '—';
   return new Intl.DateTimeFormat('en-GB', {
-    timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: TZ,
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   }).format(new Date(iso));
 }
 
 export function formatDate(iso: string | null | undefined): string {
   if (!iso) return '—';
-  return new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' })
-    .format(new Date(iso));
+  return new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'short', year: 'numeric' }).format(
+    new Date(iso),
+  );
 }
 
 export function formatTime(iso: string | null | undefined): string {

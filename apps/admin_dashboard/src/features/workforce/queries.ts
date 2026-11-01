@@ -15,7 +15,9 @@ export const workforceKeys = {
 
 /** Empty driverId means every driver. */
 export function useShifts(driverId: string) {
-  return useCursorList(workforceKeys.shiftList(driverId), (cursor) => shifts.list({ driverId: driverId || undefined, cursor, limit: 50 }));
+  return useCursorList(workforceKeys.shiftList(driverId), (cursor) =>
+    shifts.list({ driverId: driverId || undefined, cursor, limit: 50 }),
+  );
 }
 
 export function useCreateShift() {

@@ -12,5 +12,10 @@ export const rides = {
   complete: (id: string, body: Body<'/admin/rides/{id}/complete', 'post'>) =>
     call(api.POST('/admin/rides/{id}/complete', { params: { path: { id } }, body })),
   refund: (id: string, body: Body<'/admin/rides/{id}/refund', 'post'>, idempotencyKey: string) =>
-    call(api.POST('/admin/rides/{id}/refund', { params: { path: { id }, header: { 'Idempotency-Key': idempotencyKey } }, body })),
+    call(
+      api.POST('/admin/rides/{id}/refund', {
+        params: { path: { id }, header: { 'Idempotency-Key': idempotencyKey } },
+        body,
+      }),
+    ),
 };

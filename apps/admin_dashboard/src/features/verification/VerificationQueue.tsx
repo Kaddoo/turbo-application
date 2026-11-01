@@ -23,8 +23,10 @@ export function VerificationQueue() {
 
   const claim = useClaimVerification();
   async function open(id: string) {
-    try { await claim.mutateAsync(id); navigate(`/verification/${id}`); }
-    catch (e) {
+    try {
+      await claim.mutateAsync(id);
+      navigate(`/verification/${id}`);
+    } catch (e) {
       if (e instanceof ApiError && e.code === 'verification_claimed') toast(problemMessage(e));
       else toast(problemMessage(e));
     }
@@ -35,11 +37,24 @@ export function VerificationQueue() {
       <PageHeader
         title="Verification queue"
         description="Approve or reject students quickly and safely. Opening a submission claims it for 15 minutes so nobody else reviews it at the same time."
-        actions={status === 'pending' && rows?.length ? <Button variant="primary" busy={claim.isPending} onClick={() => open(rows[0]!.id)}>Claim and review the oldest</Button> : undefined}
+        actions={
+          status === 'pending' && rows?.length ? (
+            <Button variant="primary" busy={claim.isPending} onClick={() => open(rows[0]!.id)}>
+              Claim and review the oldest
+            </Button>
+          ) : undefined
+        }
       />
       <div className={ui.filters}>
-        <Select label="Status" value={status} onChange={(e) => setStatus(e.target.value as VStatus)}
-          options={(['pending', 'needs_attention', 'approved', 'rejected'] as VStatus[]).map((v) => ({ value: v, label: humanize(v) }))} />
+        <Select
+          label="Status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as VStatus)}
+          options={(['pending', 'needs_attention', 'approved', 'rejected'] as VStatus[]).map((v) => ({
+            value: v,
+            label: humanize(v),
+          }))}
+        />
       </div>
       <DataTable
         label="Verification submissions"
@@ -54,12 +69,30 @@ export function VerificationQueue() {
         onRowClick={(r) => (r.status === 'pending' ? void open(r.id) : navigate(`/verification/${r.id}`))}
         empty={{ title: 'No submissions waiting', body: 'New submissions appear here oldest first.' }}
         columns={[
-          { header: 'Student', cell: (r) => <><div>{r.student.fullName ?? 'Name not given'}</div><div className={ui.muted}>{maskPhone(r.student.phone)}</div></> },
+          {
+            header: 'Student',
+            cell: (r) => (
+              <>
+                <div>{r.student.fullName ?? 'Name not given'}</div>
+                <div className={ui.muted}>{maskPhone(r.student.phone)}</div>
+              </>
+            ),
+          },
           { header: 'Status', cell: (r) => <Chip tone={verificationTone[r.status]}>{humanize(r.status)}</Chip> },
           { header: 'Submitted', cell: (r) => <When iso={r.submittedAt} exact /> },
-          { header: 'Waiting', cell: (r) => <Chip tone={ageTone(r.submittedAt)}>{formatRelative(r.submittedAt)}</Chip> },
-          { header: 'Claimed', cell: (r) => (r.claimedBy && r.claimExpiresAt && new Date(r.claimExpiresAt) > new Date()
-            ? <span className={ui.muted}>Claimed until {formatTime(r.claimExpiresAt)}</span> : <span className={ui.muted}>Free</span>) },
+          {
+            header: 'Waiting',
+            cell: (r) => <Chip tone={ageTone(r.submittedAt)}>{formatRelative(r.submittedAt)}</Chip>,
+          },
+          {
+            header: 'Claimed',
+            cell: (r) =>
+              r.claimedBy && r.claimExpiresAt && new Date(r.claimExpiresAt) > new Date() ? (
+                <span className={ui.muted}>Claimed until {formatTime(r.claimExpiresAt)}</span>
+              ) : (
+                <span className={ui.muted}>Free</span>
+              ),
+          },
         ]}
       />
     </>
