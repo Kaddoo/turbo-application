@@ -1360,6 +1360,18 @@ abstract class AppLocalizations {
   /// **'Activity'**
   String get activityTitle;
 
+  /// No description provided for @activityThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get activityThisWeek;
+
+  /// No description provided for @activityEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get activityEarlier;
+
   /// No description provided for @activityEmpty.
   ///
   /// In en, this message translates to:

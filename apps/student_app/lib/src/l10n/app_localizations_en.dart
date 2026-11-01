@@ -751,6 +751,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activityTitle => 'Activity';
 
   @override
+  String get activityThisWeek => 'This week';
+
+  @override
+  String get activityEarlier => 'Earlier';
+
+  @override
   String get activityEmpty => 'Your rides will appear here.';
 
   @override

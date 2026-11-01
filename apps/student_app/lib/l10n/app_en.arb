@@ -253,6 +253,8 @@
     }
   },
   "activityTitle": "Activity",
+  "activityThisWeek": "This week",
+  "activityEarlier": "Earlier",
   "activityEmpty": "Your rides will appear here.",
   "activityLoadFailed": "We couldn't load your rides. Check your connection and try again.",
   "rideStatusSearching": "Finding a driver",
