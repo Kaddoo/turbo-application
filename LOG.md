@@ -2,6 +2,18 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Kevin with Claude, code: push switched on
+
+**Task:** Make push work on the real phone.
+
+**Files touched:** apps/student_app and apps/driver_app `ios/Runner.xcodeproj` (push entitlement; `GoogleService-Info.plist` added to the Runner resources).
+
+**What changed:** The apps never asked for notification permission because the Firebase config file was not in the app bundle, so Firebase did not start. It is now bundled (the file itself stays git-ignored). The push entitlement is on in both apps. The local backend runs with `FCM_PROVIDER=fcm` and the service-account file in `.secrets/`.
+
+**Checked on the phone:** the student app registered the phone with the server. Driver quick messages and a test announcement were sent by Firebase without error; Kevin confirmed the driver messages arrived. Not yet checked: tapping a push to open its screen, the driver app's own registration, a push while the app is closed.
+
+**Next:** student web build, public trip-share page, offline "last updated" notes, the 30-minute locked-screen location test.
+
 ## 2026-10-31, Kevin with Claude, code: push and the driver app
 
 **Task:** Push notifications for both apps, then the driver app (prompt 05).
