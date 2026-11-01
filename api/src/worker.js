@@ -12,6 +12,7 @@ import { purgeDocuments } from './domain/retention.js';
 import { provider } from './lib/payments.js';
 import { applyOutcome, receivedPesewas } from './domain/topups.js';
 import { announceAlerts } from './lib/alerts.js';
+import { announceLogpulse, startHealthPing } from './lib/logpulse.js';
 import { alertStuckSearching, alertUnackedSos, alertWalletDrift, alertWorkerError } from './domain/alert_jobs.js';
 
 async function assign(cfg) {
@@ -178,7 +179,7 @@ async function pushTick() {
 }
 
 log.info({ push: config.pushProvider }, 'worker started');
-announceAlerts(log);
+announceAlerts(log); announceLogpulse(log); startHealthPing();
 const t = setInterval(tick, 2000), pt = setInterval(pushTick, 1000);
 const stop = async () => { clearInterval(t); clearInterval(pt); for (let i = 0; (busy || pushBusy) && i < 100; i++) await new Promise((r) => setTimeout(r, 100)); await pool.end(); process.exit(0); };
 process.on('SIGTERM', stop); process.on('SIGINT', stop);
