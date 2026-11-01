@@ -10,6 +10,7 @@ import {
   Button,
   Card,
   Chip,
+  Icon,
   DataTable,
   Details,
   Dialog,
@@ -28,6 +29,7 @@ import {
 } from '@/components';
 import { formatKm, formatPesewas, formatRelative, formatTime, humanize, parseCedis } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
+import r from './rides.module.css';
 import { useLiveRides } from '@/hooks';
 import { useCancelRide, useCompleteRide, useReassignRide, useRefundRide, useRide, useRides } from './queries';
 
@@ -130,54 +132,53 @@ export function LiveMap() {
       {q.data && q.data.onDutyDrivers.length === 0 && (
         <Banner tone="warning">No drivers on duty. Students asking for a ride are being refused.</Banner>
       )}
-      <div className={ui.grid2} style={{ gridTemplateColumns: 'minmax(0, 2fr) minmax(18rem, 1fr)' }}>
-        <MapView markers={markers} height={560} />
-        <Card title={`Active rides (${q.data?.rides.length ?? 0})`}>
+      <div className={r.live}>
+        <MapView markers={markers} className={r.map} />
+        <section className={r.list} aria-labelledby="live-rides-title">
+          <header className={r.listHead}>
+            <h2 id="live-rides-title" className={r.listTitle}>
+              Active rides
+            </h2>
+            <span className={r.count}>{q.data?.rides.length ?? 0}</span>
+          </header>
+          {q.data && (
+            <p className={r.duty}>
+              <span className={r.dot} data-tone="success" aria-hidden="true" />
+              {q.data.onDutyDrivers.length} on duty
+              <span className={r.dot} data-tone="neutral" aria-hidden="true" />
+              {q.data.onDutyDrivers.filter((d) => d.idle).length} idle
+            </p>
+          )}
           {q.isPending ? (
             <Skeleton />
           ) : !q.data?.rides.length ? (
-            <p className={ui.muted} style={{ margin: 0 }}>
-              No rides right now.
-            </p>
+            <p className={r.empty}>No rides right now.</p>
           ) : (
-            <div className={ui.stack} style={{ gap: 12 }}>
+            <ul className={r.rides}>
               {q.data.rides.map(({ ride }) => (
-                <button
-                  key={ride.id}
-                  type="button"
-                  onClick={() => navigate(`/rides/${ride.id}`)}
-                  className={ui.card}
-                  style={{
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    font: 'inherit',
-                    color: 'inherit',
-                    padding: 12,
-                    display: 'grid',
-                    gap: 6,
-                  }}
-                >
-                  <span className={ui.row}>
-                    <Chip tone={rideTone[ride.status]}>{humanize(ride.status)}</Chip>
-                    <Flags flags={ride.flags} />
-                  </span>
-                  <span>
-                    {ride.studentName ?? 'Student'} with {ride.driverName ?? 'no driver yet'}
-                  </span>
-                  <span className={ui.muted}>
-                    {formatKm(ride.routeDistanceMeters)} · {formatPesewas(ride.farePesewas)} · requested{' '}
-                    {formatRelative(ride.requestedAt)}
-                  </span>
-                </button>
+                <li key={ride.id}>
+                  <button type="button" onClick={() => navigate(`/rides/${ride.id}`)} className={r.ride}>
+                    <span className={r.rideTop}>
+                      <Chip tone={rideTone[ride.status]}>{humanize(ride.status)}</Chip>
+                      <Flags flags={ride.flags} />
+                    </span>
+                    <span className={r.rideNames}>
+                      {ride.studentName ?? 'Student'}
+                      <span className={r.rideWith}> with </span>
+                      {ride.driverName ?? 'no driver yet'}
+                    </span>
+                    <span className={r.rideMeta}>
+                      <span>{formatKm(ride.routeDistanceMeters)}</span>
+                      <span>{formatPesewas(ride.farePesewas)}</span>
+                      <span>{formatRelative(ride.requestedAt)}</span>
+                    </span>
+                    <Icon name="arrowUpRight" size="sm" className={r.rideGo} />
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-          <p className={ui.muted} style={{ marginBottom: 0 }}>
-            {q.data
-              ? `${q.data.onDutyDrivers.length} on duty, ${q.data.onDutyDrivers.filter((d) => d.idle).length} idle.`
-              : ''}
-          </p>
-        </Card>
+        </section>
       </div>
     </>
   );

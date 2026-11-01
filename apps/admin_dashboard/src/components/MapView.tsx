@@ -41,6 +41,7 @@ export function MapView({
   height = 420,
   fit = true,
   onMapClick,
+  className,
 }: {
   markers: MapMarker[];
   lines?: MapLine[];
@@ -48,6 +49,8 @@ export function MapView({
   height?: number;
   fit?: boolean;
   onMapClick?: (lat: number, lng: number) => void;
+  /** Size the map from a stylesheet instead of `height` (for responsive layouts). */
+  className?: string;
 }) {
   const clickRef = useRef(onMapClick);
   clickRef.current = onMapClick;
@@ -65,7 +68,11 @@ export function MapView({
     }).addTo(map.current);
     layer.current = L.layerGroup().addTo(map.current);
     map.current.on('click', (e: L.LeafletMouseEvent) => clickRef.current?.(e.latlng.lat, e.latlng.lng));
+    // Leaflet measures its box once; redraw tiles when the layout reflows it.
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => map.current?.invalidateSize());
+    ro?.observe(el.current);
     return () => {
+      ro?.disconnect();
       map.current?.remove();
       map.current = null;
     };
@@ -114,8 +121,9 @@ export function MapView({
   return (
     <div
       ref={el}
+      className={className}
       style={{
-        height,
+        height: className ? undefined : height,
         width: '100%',
         borderRadius: 'var(--radius-card)',
         overflow: 'hidden',
