@@ -3,6 +3,8 @@ import { drivers } from '@/services/drivers';
 import { incidents } from '@/services/incidents';
 import { liveRides } from '@/services/liveRides';
 import { serviceArea } from '@/services/serviceArea';
+import { support } from '@/services/support';
+import { verifications } from '@/services/verifications';
 import { settings } from '@/services/settings';
 import { vehicles } from '@/services/vehicles';
 
@@ -19,6 +21,9 @@ export const sharedKeys = {
   /** Every Overview card sits under this prefix. */
   overview: ['ov'],
   sosBanner: ['incidents', 'open-banner'],
+  /** Counts on the menu badges. */
+  navPending: ['verifications', 'nav-pending'],
+  navTickets: ['tickets', 'nav-open'],
 } as const;
 
 /** Operating settings. super_admin only (x-roles), so pass `enabled` for other roles. */
@@ -56,5 +61,25 @@ export function useSosBanner(enabled: boolean) {
     queryFn: () => incidents.list({ status: 'open', limit: 10 }),
     enabled,
     refetchInterval: 10_000,
+  });
+}
+
+/** Pending verifications, for the menu badge. One page only: the badge shows "50+" past it. */
+export function usePendingVerifications(enabled: boolean) {
+  return useQuery({
+    queryKey: sharedKeys.navPending,
+    queryFn: () => verifications.list({ status: 'pending', limit: 50 }),
+    enabled,
+    refetchInterval: 60_000,
+  });
+}
+
+/** Open support tickets, for the menu badge. */
+export function useOpenTickets(enabled: boolean) {
+  return useQuery({
+    queryKey: sharedKeys.navTickets,
+    queryFn: () => support.list({ status: 'open', limit: 50 }),
+    enabled,
+    refetchInterval: 60_000,
   });
 }

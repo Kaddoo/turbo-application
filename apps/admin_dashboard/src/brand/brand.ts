@@ -31,6 +31,13 @@ export interface BrandPalette {
   success: string;
   warning: string;
   danger: string;
+  /** Start and end of the accent gradient on hero cards; text on it is `onAccent`. */
+  heroFrom: string;
+  heroTo: string;
+  /** Dims the page behind dialogs, drawers and sheets. */
+  scrim: string;
+  /** Lift for popovers, menus and dialogs. */
+  shadow: string;
 }
 
 export interface BrandFont {
@@ -49,9 +56,33 @@ export interface Brand {
   neon: string;
   fonts: { sans: BrandFont; mono: BrandFont };
   /** Type sizes in px, converted to rem by the theme so text scales with the browser. */
-  typeScale: { display: number; title: number; bodyLarge: number; body: number; caption: number };
+  typeScale: {
+    /** The one big number on a panel. */
+    hero: number;
+    display: number;
+    title: number;
+    bodyLarge: number;
+    body: number;
+    caption: number;
+    /** Badges, axis labels and over-lines. */
+    micro: number;
+  };
   /** Corner radii in px. */
-  radius: { card: number; input: number; full: number };
+  radius: { panel: number; card: number; input: number; small: number; full: number };
+  /** Spacing steps in px. Every gap, padding and margin uses one of these. */
+  space: { 1: number; 2: number; 3: number; 4: number; 5: number; 6: number; 8: number; 10: number; 12: number };
+  /** Fixed sizes of the shell, in px. */
+  layout: {
+    sidebar: number;
+    sidebarCollapsed: number;
+    topBar: number;
+    bottomNav: number;
+    /** Smallest touch target. */
+    target: number;
+    contentMax: number;
+  };
+  /** Transition durations in ms. */
+  motion: { fast: number; base: number };
   dark: BrandPalette;
   light: BrandPalette;
 }
@@ -82,8 +113,11 @@ export const turboBrand: Brand = {
       fallback: 'ui-monospace, SFMono-Regular, Menlo, monospace',
     },
   },
-  typeScale: { display: 28, title: 22, bodyLarge: 17, body: 15, caption: 13 },
-  radius: { card: 16, input: 12, full: 9999 },
+  typeScale: { hero: 44, display: 28, title: 22, bodyLarge: 17, body: 15, caption: 13, micro: 12 },
+  radius: { panel: 24, card: 20, input: 12, small: 8, full: 9999 },
+  space: { 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32, 10: 40, 12: 48 },
+  layout: { sidebar: 272, sidebarCollapsed: 80, topBar: 72, bottomNav: 64, target: 44, contentMax: 1600 },
+  motion: { fast: 120, base: 200 },
   dark: {
     background: ink,
     surface: ink2,
@@ -100,6 +134,10 @@ export const turboBrand: Brand = {
     success: '#4CC38A',
     warning: '#F5A524',
     danger: '#FF6B5E',
+    heroFrom: neon,
+    heroTo: '#8FCC1F',
+    scrim: 'rgba(5, 6, 4, 0.72)',
+    shadow: '0 16px 40px rgba(0, 0, 0, 0.5)',
   },
   light: {
     background: paper,
@@ -117,5 +155,9 @@ export const turboBrand: Brand = {
     success: '#0F6E50',
     warning: '#A3400A',
     danger: '#B42318',
+    heroFrom: neon,
+    heroTo: '#A8E02A',
+    scrim: 'rgba(11, 12, 10, 0.45)',
+    shadow: '0 16px 40px rgba(11, 12, 10, 0.16)',
   },
 };

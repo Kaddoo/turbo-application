@@ -97,7 +97,7 @@ describe('every screen renders against the demo server', () => {
         </SessionProvider>
       </QueryClientProvider>,
     );
-    await screen.findByRole('navigation', {}, { timeout: 5000 });
+    await screen.findByRole('navigation', { name: 'Main navigation' }, { timeout: 5000 });
   });
   afterAll(cleanup);
 

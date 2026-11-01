@@ -1,24 +1,46 @@
 /** Shared UI. MapView is imported directly from '@/components/MapView' so Leaflet stays out of the main bundle. */
 import s from './ui.module.css';
 
-export { Button } from './Button';
-export { TextField, TextArea, Select } from './Field';
-export { Chip, type Tone } from './Chip';
-export { Money } from './Money';
-export { When } from './When';
+export { Avatar, initials } from './Avatar';
+export { Badge } from './Badge';
+export { Banner } from './Banner';
+export { Button, type ButtonVariant } from './Button';
 export { Card } from './Card';
-export { PageHeader } from './PageHeader';
-export { Skeleton } from './Skeleton';
+export { Chip, type Tone } from './Chip';
+export { ConfirmDialog } from './ConfirmDialog';
+export { DataTable, type Column } from './DataTable';
+export { Details } from './Details';
+export { Dialog, DialogActions, Drawer } from './Dialog';
 export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
-export { Banner } from './Banner';
+export { Checkbox, Select, Slider, Switch, TextArea, TextField } from './Field';
+export { Icon, type IconName } from './Icon';
+export { IconButton } from './IconButton';
+export { FilterChip, Menu, type MenuItem } from './Menu';
+export { Money } from './Money';
+export { PageHeader } from './PageHeader';
+export { LoadMore, Pagination } from './Pagination';
+export { SearchInput } from './SearchInput';
+export { SegmentedControl } from './SegmentedControl';
+export { Skeleton, SkeletonCard } from './Skeleton';
 export { Stat } from './Stat';
-export { DataTable, type Column } from './DataTable';
-export { Dialog, DialogActions } from './Dialog';
-export { ConfirmDialog } from './ConfirmDialog';
 export { Tabs } from './Tabs';
-export { Details } from './Details';
-export { ToastProvider, useToast } from './Toast';
+export { ToastProvider, useToast, type ToastTone } from './Toast';
+export { Tooltip } from './Tooltip';
+export { usePopover } from './usePopover';
+export { When } from './When';
+export { BarChart, ChartSkeleton, Donut, RangeBars, Sparkline, type ChartTone } from './charts/Charts';
+export {
+  BigNumber,
+  ChangePill,
+  HeroCard,
+  MetricCard,
+  Panel,
+  SectionHeader,
+  SortHeaderRow,
+  StatTile,
+  type Change,
+} from './dashboard/Dashboard';
 export { cx } from './cx';
 
 /** The shared CSS module, for layout helpers such as `ui.stack` and `ui.muted`. */
