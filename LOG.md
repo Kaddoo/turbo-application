@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Kevin with Claude, code: staging API on the server
+
+**Task:** Run the planning repo's API on the VPS so the apps and the admin developer can use it.
+
+**What changed (server only, nothing in the repo):** API code from `origin/main` `api/` at `/opt/turbo/turbo-api`, Node 22, `turbo` service user, systemd units `turbo-api` and `turbo-worker` on 127.0.0.1:3000 behind the existing Caddy. Settings in `/etc/turbo/api.env` (not in git): staging mode, fixed sign-in code 123456, fake payments, push through Firebase, SMTP through Academicx's Zoho sender for now, estimated routes (no Google key yet). Migrations 001 to 014 applied and the dev seed run. `https://api.turbogh.app/health` returns 200. `main` on GitHub now includes the admin dashboard and api-tracker branches.
+
+**Risks, plainly:** anyone can sign in with code 123456, and the seeded staff accounts use a published demo password. Staging only. Before real users: real Texify, Payaza, SMTP sender and terms/privacy URLs, NODE_ENV=production, rotate the shared SMTP password.
+
 ## 2026-11-01, Kevin with Claude, code: push switched on
 
 **Task:** Make push work on the real phone.
