@@ -583,10 +583,11 @@ _responseData = rawData == null ? null : deserialize<AuthTokens, AuthTokens>(raw
   }
 
   /// Send a one-time code by SMS
-  /// **Access:** Public.  Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (&#x60;smsDailyLimit&#x60;) is hit, returns 503 &#x60;sms_budget_exceeded&#x60; and staff are alerted.
+  /// **Access:** Public.  Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (&#x60;smsDailyLimit&#x60;) is hit, returns 503 &#x60;sms_budget_exceeded&#x60; and staff are alerted. Send an &#x60;Idempotency-Key&#x60; (optional, so older apps keep working), a new one for each tap on \&quot;send code\&quot;. A retry of the same tap with the same key within 10 minutes returns the first answer and sends **no** second SMS; the key is scoped to the phone number. The same key with a different body is 409 &#x60;idempotency_key_reused&#x60;. A new key is a deliberate resend: the 30 second cooldown and the hourly limits still apply to it.
   ///
   /// Parameters:
   /// * [otpRequest] 
+  /// * [idempotencyKey] - Client generated UUID, a new one for each deliberate request. Reuse it only when retrying the same request.
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -598,6 +599,7 @@ _responseData = rawData == null ? null : deserialize<AuthTokens, AuthTokens>(raw
   /// Throws [DioException] if API call or serialization fails
   Future<Response<OtpChallenge>> requestOtp({ 
     required OtpRequest otpRequest,
+    String? idempotencyKey,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -609,6 +611,7 @@ _responseData = rawData == null ? null : deserialize<AuthTokens, AuthTokens>(raw
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
+        if (idempotencyKey != null) r'Idempotency-Key': idempotencyKey,
         ...?headers,
       },
       extra: <String, dynamic>{

@@ -18,9 +18,9 @@ void main() {
 
     // Create a driver and invite them by SMS
     //
-    // **Access:** admin:hr.
+    // **Access:** admin:hr. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
     //
-    //Future<DriverDetail> createDriver(DriverCreate driverCreate) async
+    //Future<DriverDetail> createDriver(String idempotencyKey, DriverCreate driverCreate) async
     test('test createDriver', () async {
       // TODO
     });

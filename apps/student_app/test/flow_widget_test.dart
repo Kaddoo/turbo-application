@@ -73,6 +73,8 @@ void main() {
     final body = server.lastBody('POST /auth/otp/request') as Map;
     expect(body['phone'], '+233241234567');
     expect(body['role'], 'student');
+    // Each tap on "send code" carries its own idempotency key.
+    expect(server.calls('POST /auth/otp/request').single.headers['Idempotency-Key'], isNotEmpty);
     expect(find.text('Enter your code'), findsOneWidget);
     expect(find.textContaining('+233 24 123 4567'), findsOneWidget);
     expect(find.textContaining('Send a new code in'), findsOneWidget);

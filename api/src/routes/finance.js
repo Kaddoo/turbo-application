@@ -124,7 +124,7 @@ finance.get('/admin/topups', ...F, async (req, res) => {
   res.json(pageOf(rows, a, (r) => [r.created_at, r.id], (t) => topupView(t, { staff: true })));
 });
 
-finance.post('/admin/topups/:id/resolve', ...F, async (req, res) => {
+finance.post('/admin/topups/:id/resolve', ...F, async (req, res) => idempotent(req, res, `topupresolve:${req.params.id}`, async () => {
   const { resolution, note } = req.body;
   need(req.params.id, 'Top-up');
   const t = await tx(async (c) => {
@@ -136,8 +136,8 @@ finance.post('/admin/topups/:id/resolve', ...F, async (req, res) => {
     await audit(c, req, 'topup.resolve', t.id, { resolution, note: note.trim(), validation: t.validation, amountPesewas: t.amount_pesewas, receivedPesewas: t.amount_received_pesewas });
     return (await c.query('SELECT * FROM topups WHERE id=$1', [t.id])).rows[0];
   });
-  res.json(topupView(t, { staff: true }));
-});
+  return { body: topupView(t, { staff: true }) };
+}));
 
 // ---- reconciliation against the provider's own statement (CSV)
 const reportView = (r) => ({ id: r.id, periodFrom: new Date(r.period_from).toISOString().slice(0, 10), periodTo: new Date(r.period_to).toISOString().slice(0, 10), matchedCount: r.matched_count,
@@ -158,7 +158,7 @@ function parseCsv(text) {
   return rows;
 }
 
-finance.post('/admin/reconciliation/reports', ...F, async (req, res) => {
+finance.post('/admin/reconciliation/reports', ...F, async (req, res) => idempotent(req, res, 'reconrun', async () => {
   const { statementUploadId, periodFrom, periodTo } = req.body;
   if (periodTo < periodFrom) throw invalid('periodTo', 'must not be before periodFrom');
   if (Date.parse(periodTo) - Date.parse(periodFrom) > 93 * 86400_000) throw invalid('periodTo', 'at most 93 days per report');
@@ -202,8 +202,8 @@ finance.post('/admin/reconciliation/reports', ...F, async (req, res) => {
     await audit(c, req, 'reconciliation.run', r.id, { periodFrom, periodTo, exceptions: exceptions.length });
     return r;
   });
-  res.status(201).json(reportView(out));
-});
+  return { status: 201, body: reportView(out) };
+}));
 
 finance.get('/admin/reconciliation/reports', ...F, async (req, res) => {
   const a = pageArgs(req);

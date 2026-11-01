@@ -38,6 +38,7 @@ export interface paths {
          * @description **Access:** Public.
          *
          *     Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (`smsDailyLimit`) is hit, returns 503 `sms_budget_exceeded` and staff are alerted.
+         *     Send an `Idempotency-Key` (optional, so older apps keep working), a new one for each tap on "send code". A retry of the same tap with the same key within 10 minutes returns the first answer and sends **no** second SMS; the key is scoped to the phone number. The same key with a different body is 409 `idempotency_key_reused`. A new key is a deliberate resend: the 30 second cooldown and the hourly limits still apply to it.
          */
         post: operations["requestOtp"];
         delete?: never;
@@ -1223,6 +1224,7 @@ export interface paths {
         /**
          * Create a driver and invite them by SMS
          * @description **Access:** admin:hr.
+         *     Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
          */
         post: operations["createDriver"];
         delete?: never;
@@ -2129,6 +2131,7 @@ export interface paths {
          * @description **Access:** admin:finance.
          *
          *     Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here.
+         *     Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
          */
         post: operations["resolveTopup"];
         delete?: never;
@@ -2155,6 +2158,7 @@ export interface paths {
          * @description **Access:** admin:finance.
          *
          *     Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world.
+         *     Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
          */
         post: operations["runReconciliation"];
         delete?: never;
@@ -3917,6 +3921,8 @@ export interface components {
         Limit: number;
         /** @description Client generated UUID. Reuse it when retrying the same request. */
         IdempotencyKey: string;
+        /** @description Client generated UUID, a new one for each deliberate request. Reuse it only when retrying the same request. */
+        IdempotencyKeyOptional: string;
     };
     requestBodies: never;
     headers: never;
@@ -3948,7 +3954,10 @@ export interface operations {
     requestOtp: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description Client generated UUID, a new one for each deliberate request. Reuse it only when retrying the same request. */
+                "Idempotency-Key"?: components["parameters"]["IdempotencyKeyOptional"];
+            };
             path?: never;
             cookie?: never;
         };
@@ -3967,6 +3976,7 @@ export interface operations {
                     "application/json": components["schemas"]["OtpChallenge"];
                 };
             };
+            409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
@@ -5790,7 +5800,10 @@ export interface operations {
     createDriver: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Client generated UUID. Reuse it when retrying the same request. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
             path?: never;
             cookie?: never;
         };
@@ -7366,7 +7379,10 @@ export interface operations {
     resolveTopup: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Client generated UUID. Reuse it when retrying the same request. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
             path: {
                 id: components["schemas"]["Id"];
             };
@@ -7429,7 +7445,10 @@ export interface operations {
     runReconciliation: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Client generated UUID. Reuse it when retrying the same request. */
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
             path?: never;
             cookie?: never;
         };
@@ -7451,6 +7470,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];

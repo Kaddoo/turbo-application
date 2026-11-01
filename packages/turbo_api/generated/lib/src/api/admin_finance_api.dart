@@ -886,9 +886,10 @@ _responseData = rawData == null ? null : deserialize<AdjustmentRequest, Adjustme
   }
 
   /// Close a flagged top-up
-  /// **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here.
+  /// **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;.
   ///
   /// Parameters:
+  /// * [idempotencyKey] - Client generated UUID. Reuse it when retrying the same request.
   /// * [id] 
   /// * [topupResolve] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
@@ -901,6 +902,7 @@ _responseData = rawData == null ? null : deserialize<AdjustmentRequest, Adjustme
   /// Returns a [Future] containing a [Response] with a [Topup] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<Topup>> resolveTopup({ 
+    required String idempotencyKey,
     required String id,
     required TopupResolve topupResolve,
     CancelToken? cancelToken,
@@ -914,6 +916,7 @@ _responseData = rawData == null ? null : deserialize<AdjustmentRequest, Adjustme
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
+        r'Idempotency-Key': idempotencyKey,
         ...?headers,
       },
       extra: <String, dynamic>{
@@ -985,9 +988,10 @@ _responseData = rawData == null ? null : deserialize<Topup, Topup>(rawData, 'Top
   }
 
   /// Compare our top-ups with the provider statement
-  /// **Access:** admin:finance.  Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world.
+  /// **Access:** admin:finance.  Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;.
   ///
   /// Parameters:
+  /// * [idempotencyKey] - Client generated UUID. Reuse it when retrying the same request.
   /// * [reconciliationRun] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -999,6 +1003,7 @@ _responseData = rawData == null ? null : deserialize<Topup, Topup>(rawData, 'Top
   /// Returns a [Future] containing a [Response] with a [ReconciliationReport] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<ReconciliationReport>> runReconciliation({ 
+    required String idempotencyKey,
     required ReconciliationRun reconciliationRun,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -1011,6 +1016,7 @@ _responseData = rawData == null ? null : deserialize<Topup, Topup>(rawData, 'Top
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
+        r'Idempotency-Key': idempotencyKey,
         ...?headers,
       },
       extra: <String, dynamic>{

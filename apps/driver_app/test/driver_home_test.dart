@@ -45,6 +45,7 @@ void main() {
       await tester.tap(find.text('Send code'));
       await settle(tester);
       expect((bodyOf(server.calls('POST /auth/otp/request').single) as Map)['role'], 'driver');
+      expect(server.calls('POST /auth/otp/request').single.headers['Idempotency-Key'], isNotEmpty);
       await tester.enterText(find.byType(TextField).first, '123456');
       await settle(tester);
       final verify = bodyOf(server.calls('POST /auth/otp/verify').single) as Map;

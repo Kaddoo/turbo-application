@@ -26,7 +26,8 @@ export function TopupsPage() {
   const [resolving, setResolving] = useState<Topup | null>(null);
   const [resolution, setResolution] = useState<Schemas['TopupResolve']['resolution']>('accept_received_amount');
   const [note, setNote] = useState('');
-  const resolve = useAction(() => call(api.POST('/admin/topups/{id}/resolve', { params: { path: { id: resolving!.id } }, body: { resolution, note } })), [['topups'], ['ov']]);
+  const [resolveKey, setResolveKey] = useState(newIdempotencyKey);
+  const resolve = useAction(() => call(api.POST('/admin/topups/{id}/resolve', { params: { path: { id: resolving!.id }, header: { 'Idempotency-Key': resolveKey } }, body: { resolution, note } })), [['topups'], ['ov']]);
 
   return (
     <>
@@ -39,7 +40,7 @@ export function TopupsPage() {
       </div>
       <DataTable label="Top-ups" rows={list.rows} rowKey={(r) => r.id} loading={list.loading} error={list.error} onRetry={list.refetch}
         hasMore={list.hasMore} onLoadMore={list.loadMore} loadingMore={list.loadingMore}
-        onRowClick={(r) => (r.flagged && !r.resolvedAt ? (setResolving(r), setNote('')) : undefined)}
+        onRowClick={(r) => (r.flagged && !r.resolvedAt ? (setResolving(r), setNote(''), setResolveKey(newIdempotencyKey())) : undefined)}
         empty={{ title: flaggedOnly ? 'No flagged top-ups' : 'No top-ups yet', body: flaggedOnly ? 'Every top-up matched what the provider received.' : undefined }}
         columns={[
           { header: 'When', cell: (r) => <When iso={r.createdAt} exact /> },
@@ -223,15 +224,16 @@ export function ReconciliationPage() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{ file: File | null; from: string; to: string }>({ file: null, from: '', to: '' });
   const [selected, setSelected] = useState<Schemas['ReconciliationReport'] | null>(null);
+  const [runKey, setRunKey] = useState(newIdempotencyKey);
   const run = useAction(async () => {
     const statementUploadId = await uploadFile('provider_statement', form.file!);
-    return call(api.POST('/admin/reconciliation/reports', { body: { statementUploadId, periodFrom: form.from, periodTo: form.to } }));
+    return call(api.POST('/admin/reconciliation/reports', { params: { header: { 'Idempotency-Key': runKey } }, body: { statementUploadId, periodFrom: form.from, periodTo: form.to } }));
   }, [['recon']]);
   const report = selected ?? list.rows?.[0] ?? null;
   return (
     <>
       <PageHeader title="Reconciliation" description="Compare our top-ups with the Payaza collections statement. Every difference becomes an exception to work."
-        actions={<Button variant="primary" onClick={() => setOpen(true)}>Run reconciliation</Button>} />
+        actions={<Button variant="primary" onClick={() => { setRunKey(newIdempotencyKey()); setOpen(true); }}>Run reconciliation</Button>} />
       {list.loading ? <Card><Skeleton /></Card> : report ? (
         <Card title={`Report for ${formatDate(report.periodFrom)} to ${formatDate(report.periodTo)}`}>
           <div className={ui.grid4}>

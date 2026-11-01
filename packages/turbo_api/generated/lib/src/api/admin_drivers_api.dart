@@ -128,9 +128,10 @@ _responseData = rawData == null ? null : deserialize<DriverDocument, DriverDocum
   }
 
   /// Create a driver and invite them by SMS
-  /// **Access:** admin:hr.
+  /// **Access:** admin:hr. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;.
   ///
   /// Parameters:
+  /// * [idempotencyKey] - Client generated UUID. Reuse it when retrying the same request.
   /// * [driverCreate] 
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
@@ -142,6 +143,7 @@ _responseData = rawData == null ? null : deserialize<DriverDocument, DriverDocum
   /// Returns a [Future] containing a [Response] with a [DriverDetail] as data
   /// Throws [DioException] if API call or serialization fails
   Future<Response<DriverDetail>> createDriver({ 
+    required String idempotencyKey,
     required DriverCreate driverCreate,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
@@ -154,6 +156,7 @@ _responseData = rawData == null ? null : deserialize<DriverDocument, DriverDocum
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
+        r'Idempotency-Key': idempotencyKey,
         ...?headers,
       },
       extra: <String, dynamic>{

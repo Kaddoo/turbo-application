@@ -66,21 +66,22 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **createDriver**
-> DriverDetail createDriver(driverCreate)
+> DriverDetail createDriver(idempotencyKey, driverCreate)
 
 Create a driver and invite them by SMS
 
-**Access:** admin:hr.
+**Access:** admin:hr. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
 
 ### Example
 ```dart
 import 'package:turbo_api_generated/api.dart';
 
 final api = TurboApiGenerated().getAdminDriversApi();
+final String idempotencyKey = idempotencyKey_example; // String | Client generated UUID. Reuse it when retrying the same request.
 final DriverCreate driverCreate = ; // DriverCreate | 
 
 try {
-    final response = api.createDriver(driverCreate);
+    final response = api.createDriver(idempotencyKey, driverCreate);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling AdminDriversApi->createDriver: $e\n');
@@ -91,6 +92,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **idempotencyKey** | **String**| Client generated UUID. Reuse it when retrying the same request. | 
  **driverCreate** | [**DriverCreate**](DriverCreate.md)|  | 
 
 ### Return type

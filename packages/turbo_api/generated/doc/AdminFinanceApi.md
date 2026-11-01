@@ -450,22 +450,23 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **resolveTopup**
-> Topup resolveTopup(id, topupResolve)
+> Topup resolveTopup(idempotencyKey, id, topupResolve)
 
 Close a flagged top-up
 
-**Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here.
+**Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
 
 ### Example
 ```dart
 import 'package:turbo_api_generated/api.dart';
 
 final api = TurboApiGenerated().getAdminFinanceApi();
+final String idempotencyKey = idempotencyKey_example; // String | Client generated UUID. Reuse it when retrying the same request.
 final String id = 38400000-8cf0-11bd-b23e-10b96e4ef00d; // String | 
 final TopupResolve topupResolve = ; // TopupResolve | 
 
 try {
-    final response = api.resolveTopup(id, topupResolve);
+    final response = api.resolveTopup(idempotencyKey, id, topupResolve);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling AdminFinanceApi->resolveTopup: $e\n');
@@ -476,6 +477,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **idempotencyKey** | **String**| Client generated UUID. Reuse it when retrying the same request. | 
  **id** | **String**|  | 
  **topupResolve** | [**TopupResolve**](TopupResolve.md)|  | 
 
@@ -495,21 +497,22 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **runReconciliation**
-> ReconciliationReport runReconciliation(reconciliationRun)
+> ReconciliationReport runReconciliation(idempotencyKey, reconciliationRun)
 
 Compare our top-ups with the provider statement
 
-**Access:** admin:finance.  Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world.
+**Access:** admin:finance.  Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
 
 ### Example
 ```dart
 import 'package:turbo_api_generated/api.dart';
 
 final api = TurboApiGenerated().getAdminFinanceApi();
+final String idempotencyKey = idempotencyKey_example; // String | Client generated UUID. Reuse it when retrying the same request.
 final ReconciliationRun reconciliationRun = ; // ReconciliationRun | 
 
 try {
-    final response = api.runReconciliation(reconciliationRun);
+    final response = api.runReconciliation(idempotencyKey, reconciliationRun);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling AdminFinanceApi->runReconciliation: $e\n');
@@ -520,6 +523,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **idempotencyKey** | **String**| Client generated UUID. Reuse it when retrying the same request. | 
  **reconciliationRun** | [**ReconciliationRun**](ReconciliationRun.md)|  | 
 
 ### Return type

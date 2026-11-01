@@ -86,6 +86,8 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
     try {
       final deviceId = await ref.read(deviceIdProvider.future);
       final response = await ref.read(clientProvider).api.getAuthApi().requestOtp(
+            // A new key for every tap, so a retry of one tap cannot send a second code but a deliberate resend still works.
+            idempotencyKey: IdempotencyKey().value,
             otpRequest: OtpRequest(phone: phone, role: OtpRequestRoleEnum.driver, deviceId: deviceId),
           );
       if (mounted) setState(() => _wait = response.data?.resendInSeconds ?? 30);

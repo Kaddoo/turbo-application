@@ -317,11 +317,11 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **requestOtp**
-> OtpChallenge requestOtp(otpRequest)
+> OtpChallenge requestOtp(otpRequest, idempotencyKey)
 
 Send a one-time code by SMS
 
-**Access:** Public.  Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (`smsDailyLimit`) is hit, returns 503 `sms_budget_exceeded` and staff are alerted.
+**Access:** Public.  Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (`smsDailyLimit`) is hit, returns 503 `sms_budget_exceeded` and staff are alerted. Send an `Idempotency-Key` (optional, so older apps keep working), a new one for each tap on \"send code\". A retry of the same tap with the same key within 10 minutes returns the first answer and sends **no** second SMS; the key is scoped to the phone number. The same key with a different body is 409 `idempotency_key_reused`. A new key is a deliberate resend: the 30 second cooldown and the hourly limits still apply to it.
 
 ### Example
 ```dart
@@ -329,9 +329,10 @@ import 'package:turbo_api_generated/api.dart';
 
 final api = TurboApiGenerated().getAuthApi();
 final OtpRequest otpRequest = ; // OtpRequest | 
+final String idempotencyKey = idempotencyKey_example; // String | Client generated UUID, a new one for each deliberate request. Reuse it only when retrying the same request.
 
 try {
-    final response = api.requestOtp(otpRequest);
+    final response = api.requestOtp(otpRequest, idempotencyKey);
     print(response);
 } on DioException catch (e) {
     print('Exception when calling AuthApi->requestOtp: $e\n');
@@ -343,6 +344,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **otpRequest** | [**OtpRequest**](OtpRequest.md)|  | 
+ **idempotencyKey** | **String**| Client generated UUID, a new one for each deliberate request. Reuse it only when retrying the same request. | [optional] 
 
 ### Return type
 
