@@ -41,6 +41,8 @@ const router = createBrowserRouter([
   ] },
   { path: '/reset-password', element: <ResetPasswordPage /> },
   { path: '/invite', element: <AcceptInvitePage /> },
+  // The API's invite email links here (src/routes/staff.js sendInvite).
+  { path: '/accept-invite', element: <AcceptInvitePage /> },
   { element: <SignedIn />, children: [
     { path: '/', element: <OverviewPage /> },
     { path: '/verification', element: guard('verification', <VerificationQueuePage />) },
