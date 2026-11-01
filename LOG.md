@@ -2,6 +2,18 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: design foundation (branch `design-foundation`)
+
+**Task:** First step of the new design (`design/Turbo-components.pdf`, `Turbo-type-scale.csv`, `Turbo-component-kit/`, 14 boards = 94 screens). Foundation only, in `packages/turbo_ui`.
+
+**What changed:** dark palette now the kit's (bg `#0B0B0A`, surface `#1A1B18`, raised `#252622`, fill, text `#F3F1EA`, lime `#D4FF3A`, success/warning/danger, a separate SOS red `#E5483A`, status tints); light palette kept and given the same new roles. Geist and Geist Mono (SIL OFL, copied from the dashboard's `geist` package, TTF) bundled in `packages/turbo_ui/fonts`. Full type scale: every role in the CSV is a text theme slot or `context.turbo.styles.*` (mono roles: timer, PIN, keypad, code, plate, money, phone, link). Radii from the sheet: card 30, field 20, sheet 36, panel 34, tile 28, list card 26, inner 22, code box 18, pill 999. Wallet and quote money use the 50 px hero style.
+
+**Deviations:** control edges stay `#8A8C84` (the sheet's 24% white is 2.1:1, inputs must reach 3:1). SOS text on `#E5483A` is below 4.5:1 for small text; the sheet has the same pairing, so keep it large. The kit is dark only; the apps still follow the phone's light or dark setting (decision pending).
+
+**Checks:** analyze clean; turbo_ui 49, student 130, driver 61 tests pass (including dark mode at 200% text); goldens regenerated.
+
+**Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
+
 ## 2026-11-01, Kevin with Claude, code: issue 1 contract work, staging hardening, build 4
 
 **Done and merged to `main` (pushed, last merge `fc288f5`):** both redesigned apps; monitoring and alerts (inlet) and log shipping (LogPulse); one contract (`api/contract/openapi.yaml`, now 0.3.2) with a guard and CI; 426/503/403 docs (0.2.3); Idempotency-Key on OTP request, top-up resolve, reconciliation, add driver (0.2.4); specific problem codes, `service_busy`, `link_expired`/`link_invalid` (0.3.0); reduced student and ride views for support and finance, approval threshold on `/admin/me` (0.3.1); self-approval 403, plates compared ignoring case, spaces and hyphens (0.3.2, migration 015); hardened `turbo_rt` cookie (Secure from `COOKIE_SECURE`, Path `/v1/auth`); the `dashboard-ui-match` pull request, merged with item 17, idempotency keys and contract paths ported onto its new structure.
