@@ -1,12 +1,17 @@
 import createClient, { type Middleware } from 'openapi-fetch';
-import type { components, paths } from './schema';
-import { ApiError } from '../lib/problems';
+import type { AuthTokens, paths } from '@/types';
+import { ApiError, isProblem } from '@/utils/problems';
 
-export type Schemas = components['schemas'];
-export type Problem = Schemas['Problem'];
-export type ProblemCode = Schemas['ProblemCode'];
+/**
+ * The one place that talks HTTP. Services build on `api` and `call`; nothing
+ * else imports openapi-fetch.
+ */
 
 const APP_VERSION = `web/${import.meta.env.VITE_APP_VERSION ?? '0.1.0'}`;
+
+/** Ordinary calls give up after 15 s; file uploads to storage after 2 minutes. */
+export const TIMEOUT_MS = 15_000;
+export const UPLOAD_TIMEOUT_MS = 120_000;
 
 /**
  * Access token lives in memory only (prompts/02). The refresh token is the
@@ -22,7 +27,7 @@ export function hasAccessToken(): boolean {
   return accessToken !== null;
 }
 
-/** Same-origin '/api' in development (Vite proxies it to the mock), a full URL in real builds. */
+/** Same-origin '/api' in development (Vite proxies it), a full URL from VITE_API_BASE_URL in real builds. */
 const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 /**
@@ -30,10 +35,46 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
  * It is only reachable when VITE_APP_ENV=demo; real builds never load it.
  */
 export const isDemo = import.meta.env.VITE_APP_ENV === 'demo';
-let transport: typeof fetch = (input, init) => globalThis.fetch(input, init);
+const networkTransport: typeof fetch = (input, init) => globalThis.fetch(input, init);
+let transport: typeof fetch = networkTransport;
 
 export function setDemoTransport(demoFetch: typeof fetch): void {
   transport = demoFetch;
+}
+
+/**
+ * Sends one request with a time limit and turns transport failures into an
+ * ApiError (`timeout` or `network`), so screens only ever see ApiError.
+ * A caller's own cancellation (React Query leaving a page) is passed through.
+ */
+export async function send(input: Request | string, init?: RequestInit, timeoutMs = TIMEOUT_MS): Promise<Response> {
+  const callerSignal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
+  const controller = new AbortController();
+  let timedOut = false;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const expired = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+      reject(new ApiError(0, null, undefined, 'timeout'));
+    }, timeoutMs);
+  });
+  const cancel = () => controller.abort();
+  callerSignal?.addEventListener('abort', cancel, { once: true });
+  try {
+    // Only the real network gets the abort signal; test and demo transports run in memory.
+    const pending =
+      transport === networkTransport ? transport(input, { ...init, signal: controller.signal }) : transport(input, init);
+    return await Promise.race([pending, expired]);
+  } catch (e) {
+    if (e instanceof ApiError) throw e;
+    if (timedOut) throw new ApiError(0, null, undefined, 'timeout');
+    if (callerSignal?.aborted) throw e;
+    throw new ApiError(0, null, undefined, 'network');
+  } finally {
+    clearTimeout(timer);
+    callerSignal?.removeEventListener('abort', cancel);
+  }
 }
 
 /** Calls that must not carry a bearer token or trigger a refresh. */
@@ -45,7 +86,7 @@ let refreshing: Promise<boolean> | null = null;
 async function refreshAccessToken(): Promise<boolean> {
   refreshing ??= (async () => {
     try {
-      const res = await transport(`${baseUrl}/auth/refresh`, {
+      const res = await send(`${baseUrl}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'X-App-Version': APP_VERSION },
@@ -54,7 +95,7 @@ async function refreshAccessToken(): Promise<boolean> {
         accessToken = null;
         return false;
       }
-      const tokens = (await res.json()) as Schemas['AuthTokens'];
+      const tokens = (await res.json()) as AuthTokens;
       accessToken = tokens.accessToken;
       return true;
     } catch {
@@ -88,21 +129,16 @@ const authMiddleware: Middleware = {
     if (request.bodyUsed || !(await refreshAccessToken())) return undefined;
     const retry = new Request(request);
     retry.headers.set('Authorization', `Bearer ${accessToken}`);
-    return transport(retry);
+    return send(retry);
   },
 };
 
 export const api = createClient<paths>({
   baseUrl,
   credentials: 'include',
-  fetch: (request: Request) => transport(request),
+  fetch: (request: Request) => send(request),
 });
 api.use(authMiddleware);
-
-/** Narrow an unknown error body to an RFC 9457 problem with a stable code. */
-export function isProblem(value: unknown): value is Problem {
-  return typeof value === 'object' && value !== null && 'code' in value && 'status' in value;
-}
 
 /** Try to restore a session from the refresh cookie (page load). */
 export function restoreSession(): Promise<boolean> {
@@ -111,47 +147,18 @@ export function restoreSession(): Promise<boolean> {
 
 /**
  * Unwraps an openapi-fetch result: returns the data or throws an ApiError
- * carrying the RFC 9457 problem, so screens can switch on its `code`.
+ * carrying the RFC 9457 problem, so screens can switch on its `code`. An error
+ * without a problem body (a proxy page, an empty 503) is `unexpected`.
  */
-export async function call<T>(
-  pending: Promise<{ data?: T; error?: unknown; response: Response }>,
-): Promise<T> {
+export async function call<T>(pending: Promise<{ data?: T; error?: unknown; response: Response }>): Promise<T> {
   const { data, error, response } = await pending;
   if (!response.ok || error !== undefined) {
     const header = Number(response.headers.get('Retry-After'));
-    throw new ApiError(response.status, isProblem(error) ? error : null, Number.isFinite(header) && header > 0 ? header : undefined);
+    const retryAfter = Number.isFinite(header) && header > 0 ? header : undefined;
+    if (isProblem(error)) throw new ApiError(response.status, error, retryAfter);
+    throw new ApiError(response.status, null, retryAfter, 'unexpected');
   }
   return data as T;
-}
-
-type UploadPurpose = Schemas['UploadRequest']['purpose'];
-type UploadContentType = Schemas['UploadRequest']['contentType'];
-
-/**
- * The type to declare for a file. Browsers often report CSV as '' or
- * 'application/vnd.ms-excel'; the API wants 'text/csv' (contract 0.2.2, for
- * `provider_statement` only).
- */
-export function uploadContentType(file: File): UploadContentType {
-  if (/\.csv$/i.test(file.name)) return 'text/csv' as UploadContentType;
-  return file.type as UploadContentType;
-}
-
-/**
- * Signed upload (docs/api-integration.md §5): ask for a slot, PUT the raw
- * bytes with exactly the declared Content-Type and no auth header, and only
- * hand back the uploadId once storage has accepted the file.
- */
-export async function uploadFile(purpose: UploadPurpose, file: File): Promise<string> {
-  const contentType = uploadContentType(file);
-  const slot = await call(api.POST('/uploads', { body: { purpose, contentType, sizeBytes: file.size } }));
-  const res = await transport(slot.uploadUrl, {
-    method: slot.method,
-    body: file,
-    headers: { ...slot.headers, 'Content-Type': contentType },
-  });
-  if (!res.ok) throw new ApiError(res.status, null);
-  return slot.uploadId;
 }
 
 /** One UUID per user intention; keep it while the same intention is retried. */

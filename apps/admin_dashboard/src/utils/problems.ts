@@ -1,10 +1,13 @@
-import type { Problem, ProblemCode } from '../api/client';
+import type { Problem, ProblemCode } from '@/types';
+
+/** Failures that never reached a problem body: no connection, too slow, or a non-problem error page. */
+export type LocalCode = 'network' | 'timeout' | 'unexpected';
 
 /**
  * Plain-language sentence per problem code. Screens switch on `code`, never on
  * the message (prompts/00 rule 3).
  */
-const messages: Partial<Record<ProblemCode, string>> = {
+const messages: Partial<Record<ProblemCode | LocalCode, string>> = {
   validation_failed: 'Some details are missing or not valid. Check the highlighted fields.',
   unauthenticated: 'Your session has ended. Sign in again.',
   forbidden: 'You do not have access to this.',
@@ -31,23 +34,33 @@ const messages: Partial<Record<ProblemCode, string>> = {
   sms_budget_exceeded: 'The daily SMS limit has been reached.',
   payment_provider_error: 'The payment provider did not respond. Try again shortly.',
   upgrade_required: 'This dashboard is out of date. Reload the page.',
+  network: 'Cannot reach the server. Check your connection and try again.',
+  timeout: 'The server is taking too long to answer. Try again in a moment.',
 };
 
+/** Narrow an unknown error body to an RFC 9457 problem with a stable code. */
+export function isProblem(value: unknown): value is Problem {
+  return typeof value === 'object' && value !== null && 'code' in value && 'status' in value;
+}
+
+/** Every failed call becomes one of these. `status` is 0 when no response arrived. */
 export class ApiError extends Error {
   readonly status: number;
   readonly problem: Problem | null;
   /** Seconds to wait before retrying (429, 503): the body's `retryAfterSeconds`, else the Retry-After header. */
   readonly retryAfterSeconds: number | undefined;
+  private readonly localCode: LocalCode | null;
 
-  constructor(status: number, problem: Problem | null, retryAfterHeader?: number) {
-    super(problem?.detail ?? problem?.title ?? `Request failed (${status})`);
+  constructor(status: number, problem: Problem | null, retryAfterHeader?: number, localCode?: LocalCode) {
+    super(problem?.detail ?? problem?.title ?? (status ? `Request failed (${status})` : `Request failed (${localCode ?? 'network'})`));
     this.status = status;
     this.problem = problem;
     this.retryAfterSeconds = problem?.retryAfterSeconds ?? retryAfterHeader;
+    this.localCode = localCode ?? null;
   }
 
-  get code(): ProblemCode | null {
-    return this.problem?.code ?? null;
+  get code(): ProblemCode | LocalCode | null {
+    return this.problem?.code ?? this.localCode;
   }
 }
 
@@ -67,7 +80,7 @@ export function problemMessage(error: unknown): string {
     if (error.status === 429) return messages.rate_limited!;
     if (error.status >= 500) return 'Something went wrong on our side. Try again in a moment.';
   }
-  if (error instanceof TypeError) return 'Cannot reach the server. Check your connection and try again.';
+  if (error instanceof TypeError) return messages.network!;
   return 'Something went wrong. Try again.';
 }
 

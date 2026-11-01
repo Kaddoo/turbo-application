@@ -1,4 +1,4 @@
-import { turboBrand } from '../brand/brand';
+import { turboBrand } from '@/brand/brand';
 
 /**
  * User-visible text. The product name only ever comes from the brand layer.

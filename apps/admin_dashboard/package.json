@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "gen:api": "openapi-typescript ../../api/openapi.yaml -o src/api/schema.d.ts",
-    "check": "npm run gen:api && git diff --exit-code src/api/schema.d.ts && npm run typecheck && npm test",
+    "gen:api": "openapi-typescript ../../api/openapi.yaml -o src/types/schema.d.ts",
+    "check": "npm run gen:api && git diff --exit-code src/types/schema.d.ts && npm run typecheck && npm test",
     "test:live": "vitest run --config vitest.live.config.ts"
   },
   "dependencies": {

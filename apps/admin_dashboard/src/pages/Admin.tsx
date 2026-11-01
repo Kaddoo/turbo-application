@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { api, call, type Schemas } from '../api/client';
-import { roleLabels, type StaffRole } from '../auth/roles';
-import { useSession } from '../auth/session';
-import { MapView, type MapMarker } from '../components/MapView';
+import { api, call } from '@/services/http';
+import type { Schemas } from '@/types';
+import { roleLabels, type StaffRole } from '@/utils/roles';
+import { useSession } from '@/state/session';
+import { MapView, type MapMarker } from '@/components/MapView';
 import {
   Banner, Button, Card, Chip, ConfirmDialog, DataTable, Details, Dialog, DialogActions, ErrorState, PageHeader, Select,
   Skeleton, Tabs, TextArea, TextField, useToast, ui, When,
-} from '../components/ui';
-import { formatKm, formatPesewas, humanize, shortId } from '../lib/format';
-import { problemMessage } from '../lib/problems';
-import { useAction, useCursorList } from '../lib/queries';
+} from '@/components';
+import { formatKm, formatPesewas, humanize, shortId } from '@/utils/format';
+import { problemMessage } from '@/utils/problems';
+import { useAction, useCursorList } from '@/hooks';
 
 type Tab = 'boundary' | 'pickups' | 'fares' | 'settings';
 

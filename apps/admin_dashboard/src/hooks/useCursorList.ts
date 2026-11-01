@@ -1,7 +1,5 @@
-import { useInfiniteQuery, useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
-import type { Schemas } from '../api/client';
-
-type PageInfo = Schemas['PageInfo'];
+import { useInfiniteQuery, type QueryKey } from '@tanstack/react-query';
+import type { PageInfo } from '@/types';
 
 /** List envelopes use `data` (0.1) or `items` (0.2). Both carry an optional cursor page. */
 type ListEnvelope<T> = { data?: T[]; items?: T[]; page?: PageInfo };
@@ -9,7 +7,11 @@ type ListEnvelope<T> = { data?: T[]; items?: T[]; page?: PageInfo };
 export const PAGE_SIZE = 25;
 
 /** Cursor-paginated list with "Load more". */
-export function useCursorList<T>(key: QueryKey, fetchPage: (cursor: string | undefined) => Promise<ListEnvelope<T>>, enabled = true) {
+export function useCursorList<T>(
+  key: QueryKey,
+  fetchPage: (cursor: string | undefined) => Promise<ListEnvelope<T>>,
+  enabled = true,
+) {
   const q = useInfiniteQuery({
     queryKey: key,
     enabled,
@@ -27,13 +29,4 @@ export function useCursorList<T>(key: QueryKey, fetchPage: (cursor: string | und
     loadMore: () => void q.fetchNextPage(),
     loadingMore: q.isFetchingNextPage,
   };
-}
-
-/** Mutation that refreshes the given query keys afterwards. */
-export function useAction<TVars, TResult>(run: (v: TVars) => Promise<TResult>, invalidate: QueryKey[] = []) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: run,
-    onSuccess: () => Promise.all(invalidate.map((k) => qc.invalidateQueries({ queryKey: k }))),
-  });
 }

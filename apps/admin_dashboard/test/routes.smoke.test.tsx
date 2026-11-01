@@ -10,14 +10,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
  */
 
 // Leaflet needs a real layout engine; the map itself is not under test here.
-vi.mock('../src/components/MapView', () => ({ MapView: () => <div aria-label="Map" /> }));
+vi.mock('@/components/MapView', () => ({ MapView: () => <div aria-label="Map" /> }));
 
 // Node's Request rejects relative URLs, so give the client an absolute base.
 vi.stubEnv('VITE_API_BASE_URL', `${window.location.origin}/api`);
 
-const { setDemoTransport } = await import('../src/api/client');
-const { demoFetch } = await import('../src/demo/server');
-const db = await import('../src/demo/data');
+const { setDemoTransport } = await import('@/services/http');
+const { demoFetch } = await import('@/demo/server');
+const db = await import('@/demo/data');
 
 const unrouted: string[] = [];
 setDemoTransport(async (input, init) => {
@@ -29,9 +29,9 @@ setDemoTransport(async (input, init) => {
   return res;
 });
 
-const { SessionProvider } = await import('../src/auth/session');
-const { ToastProvider } = await import('../src/components/ui');
-const { App } = await import('../src/app/App');
+const { SessionProvider } = await import('@/state/session');
+const { ToastProvider } = await import('@/components');
+const { App } = await import('@/app/App');
 
 const routes = [
   '/', '/verification', `/verification/${db.verifications[0]!.id}`,
@@ -83,7 +83,7 @@ describe('every screen renders against the demo server', () => {
 
   it('accepts a CSV statement upload end to end', async () => {
     unrouted.length = 0;
-    const { uploadFile } = await import('../src/api/client');
+    const { uploadFile } = await import('@/services/uploads');
     const id = await uploadFile('provider_statement', new File(['date,amount\n2026-10-01,3500'], 'statement.csv'));
     expect(id).toBeTruthy();
     expect(unrouted).toEqual([]);

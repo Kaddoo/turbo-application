@@ -14,8 +14,8 @@ const base = process.env.LIVE_API_URL;
 if (!base) throw new Error('Set LIVE_API_URL');
 vi.stubEnv('VITE_API_BASE_URL', base);
 
-const { api, call, setAccessToken } = await import('../../src/api/client');
-const { ApiError } = await import('../../src/lib/problems');
+const { api, call, setAccessToken } = await import('@/services/http');
+const { ApiError } = await import('@/utils/problems');
 const fs = await import('node:fs');
 
 const password = process.env.LIVE_PASSWORD ?? 'Turbo-demo-1';

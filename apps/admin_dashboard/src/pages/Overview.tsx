@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import { api, call } from '../api/client';
-import { canUse, type Area } from '../auth/roles';
-import { useSession } from '../auth/session';
-import { Card, EmptyState, PageHeader, Stat, ui } from '../components/ui';
-import { formatRelative } from '../lib/format';
+import { api, call } from '@/services/http';
+import { canUse, type Area } from '@/utils/roles';
+import { useSession } from '@/state/session';
+import { Card, EmptyState, PageHeader, Stat, ui } from '@/components';
+import { formatRelative } from '@/utils/format';
 
 const LIMIT = 50;
 /** The contract returns no totals (CONTRACT_REQUESTS A5), so counts are "50+" past one page. */

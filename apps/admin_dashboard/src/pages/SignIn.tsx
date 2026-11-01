@@ -1,12 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import QRCode from 'qrcode';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { api, call, isDemo, type Schemas } from '../api/client';
-import { useSession } from '../auth/session';
-import { strings } from '../app/strings';
-import { Banner, Button, TextField } from '../components/ui';
-import { ApiError, problemMessage } from '../lib/problems';
-import a from './auth.module.css';
+import { api, call, isDemo } from '@/services/http';
+import type { Schemas } from '@/types';
+import { useSession } from '@/state/session';
+import { strings } from '@/app/strings';
+import { Banner, Button, TextField } from '@/components';
+import { ApiError, problemMessage } from '@/utils/problems';
+import a from '@/pages/auth.module.css';
 
 /** Email and password, then the 6-digit authenticator code (contract: adminLogin). */
 export function SignInPage() {

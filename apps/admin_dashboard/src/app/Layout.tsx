@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { api, call, onUpgradeRequired } from '../api/client';
-import { canUse, roleLabels, type Area } from '../auth/roles';
-import { useIdleTimer, useSession } from '../auth/session';
-import { Banner, Button, Dialog, DialogActions } from '../components/ui';
-import { formatRelative } from '../lib/format';
-import { appEnv, showEnvBadge } from './env';
-import { strings } from './strings';
-import l from './layout.module.css';
+import { api, call, onUpgradeRequired } from '@/services/http';
+import { canUse, roleLabels, type Area } from '@/utils/roles';
+import { useIdleTimer } from '@/hooks';
+import { useSession } from '@/state/session';
+import { Banner, Button, Dialog, DialogActions } from '@/components';
+import { formatRelative } from '@/utils/format';
+import { appEnv, showEnvBadge } from '@/app/env';
+import { strings } from '@/app/strings';
+import l from '@/app/layout.module.css';
 
 interface NavItem { to: string; label: string; area: Area }
 const nav: { group: string; items: NavItem[] }[] = [

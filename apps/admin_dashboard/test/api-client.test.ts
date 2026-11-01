@@ -4,8 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 /** Client behaviour the API guide asks for (docs/api-integration.md §3 and §5). */
 vi.stubEnv('VITE_API_BASE_URL', 'http://api.test');
 
-const { call, onUpgradeRequired, setDemoTransport, uploadContentType, uploadFile, api } = await import('../src/api/client');
-const { ApiError, problemMessage } = await import('../src/lib/problems');
+const { call, onUpgradeRequired, setDemoTransport, api, TIMEOUT_MS } = await import('@/services/http');
+const { uploadContentType, uploadFile } = await import('@/services/uploads');
+const { ApiError, problemMessage } = await import('@/utils/problems');
 
 const problem = (status: number, code: string, extra: object = {}, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify({ type: 'about:blank', title: code, status, code, ...extra }), {
@@ -84,5 +85,36 @@ describe('problems', () => {
     serve(() => new Response('{}', { status: 200, headers: { 'Content-Type': 'application/json' } }));
     await call(api.GET('/admin/me'));
     expect(requests[0]!.headers.get('X-App-Version')).toMatch(/^web\//);
+  });
+});
+
+describe('failures without a problem body', () => {
+  it('turns a dropped connection into code network', async () => {
+    serve(() => { throw new TypeError('Failed to fetch'); });
+    const e = await call(api.GET('/admin/me')).catch((x) => x);
+    expect(e).toBeInstanceOf(ApiError);
+    expect([e.status, e.code]).toEqual([0, 'network']);
+    expect(problemMessage(e)).toBe('Cannot reach the server. Check your connection and try again.');
+  });
+
+  it('gives up after the time limit with code timeout', async () => {
+    vi.useFakeTimers();
+    try {
+      setDemoTransport(() => new Promise<Response>(() => {}));
+      const pending = call(api.GET('/admin/me')).catch((x) => x);
+      await vi.advanceTimersByTimeAsync(TIMEOUT_MS + 1);
+      const e = await pending;
+      expect([e.status, e.code]).toEqual([0, 'timeout']);
+      expect(problemMessage(e)).toMatch(/taking too long/);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('marks an error page that is not a problem (an empty proxy 503) as unexpected', async () => {
+    serve(() => new Response('', { status: 503 }));
+    const e = await call(api.GET('/admin/me')).catch((x) => x);
+    expect([e.status, e.code]).toEqual([503, 'unexpected']);
+    expect(problemMessage(e)).toBe('Something went wrong on our side. Try again in a moment.');
   });
 });

@@ -3,8 +3,8 @@
  * Handles the admin endpoints the dashboard calls, applies actions to the
  * in-memory sample data, and answers with contract-shaped JSON or problems.
  */
-import type { Schemas } from '../api/client';
-import * as db from './data';
+import type { Schemas } from '@/types';
+import * as db from '@/demo/data';
 
 type S = Schemas;
 type Json = unknown;

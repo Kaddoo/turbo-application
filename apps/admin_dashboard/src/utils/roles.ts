@@ -1,4 +1,4 @@
-import type { Schemas } from '../api/client';
+import type { Schemas } from '@/types';
 
 export type StaffRole = Schemas['StaffRole'];
 

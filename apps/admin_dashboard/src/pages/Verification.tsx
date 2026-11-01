@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { api, call, type Schemas } from '../api/client';
+import { api, call } from '@/services/http';
+import type { Schemas } from '@/types';
 import {
   Banner, Button, Card, Chip, DataTable, Details, Dialog, DialogActions, PageHeader, Select, Skeleton, TextArea,
   ErrorState, useToast, ui, When, type Tone,
-} from '../components/ui';
-import { formatRelative, formatTime, humanize, maskPhone } from '../lib/format';
-import { ApiError, problemMessage } from '../lib/problems';
-import { useAction, useCursorList } from '../lib/queries';
+} from '@/components';
+import { formatRelative, formatTime, humanize, maskPhone } from '@/utils/format';
+import { ApiError, problemMessage } from '@/utils/problems';
+import { useAction, useCursorList } from '@/hooks';
 
 type VStatus = Schemas['VerificationStatus'];
 export const verificationTone: Record<VStatus, Tone> = {

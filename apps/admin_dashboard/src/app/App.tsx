@@ -1,17 +1,17 @@
 import { Navigate, Outlet, createBrowserRouter, RouterProvider, useLocation } from 'react-router';
-import { useSession } from '../auth/session';
-import { EmptyState, Skeleton } from '../components/ui';
-import { AccountPage, AnnouncementsPage, AuditLogPage, ConfigurationPage, StaffPage } from '../pages/Admin';
-import { IncidentsPage, SupportPage, TicketPage } from '../pages/Care';
-import { AdjustmentsPage, ReconciliationPage, TopupsPage } from '../pages/Finance';
-import { OverviewPage } from '../pages/Overview';
-import { DriverDetailPage, DriversPage, StudentDetailPage, StudentsPage, VehiclesPage } from '../pages/People';
-import { LiveMapPage, RideDetailPage, RidesPage } from '../pages/Rides';
-import { AcceptInvitePage, ForgotPasswordPage, ResetPasswordPage, SignInPage } from '../pages/SignIn';
-import { VerificationQueuePage, VerificationReviewPage } from '../pages/Verification';
-import { AttendancePage, SalaryPaymentsPage, ShiftsPage } from '../pages/Workforce';
-import { Layout, RequireArea } from './Layout';
-import type { Area } from '../auth/roles';
+import { useSession } from '@/state/session';
+import { EmptyState, Skeleton } from '@/components';
+import { AccountPage, AnnouncementsPage, AuditLogPage, ConfigurationPage, StaffPage } from '@/pages/Admin';
+import { IncidentsPage, SupportPage, TicketPage } from '@/pages/Care';
+import { AdjustmentsPage, ReconciliationPage, TopupsPage } from '@/pages/Finance';
+import { OverviewPage } from '@/pages/Overview';
+import { DriverDetailPage, DriversPage, StudentDetailPage, StudentsPage, VehiclesPage } from '@/pages/People';
+import { LiveMapPage, RideDetailPage, RidesPage } from '@/pages/Rides';
+import { AcceptInvitePage, ForgotPasswordPage, ResetPasswordPage, SignInPage } from '@/pages/SignIn';
+import { VerificationQueuePage, VerificationReviewPage } from '@/pages/Verification';
+import { AttendancePage, SalaryPaymentsPage, ShiftsPage } from '@/pages/Workforce';
+import { Layout, RequireArea } from '@/app/Layout';
+import type { Area } from '@/utils/roles';
 
 function Checking() {
   return <div style={{ padding: 48, maxWidth: 480, margin: '0 auto', display: 'grid', gap: 12 }} aria-busy="true"><Skeleton /><Skeleton width="60%" /></div>;

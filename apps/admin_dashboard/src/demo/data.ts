@@ -3,7 +3,7 @@
  * against the generated contract types, so the compiler rejects any shape the
  * API would not return. Names and places are illustrative, not real people.
  */
-import type { Schemas } from '../api/client';
+import type { Schemas } from '@/types';
 
 type S = Schemas;
 const NOW = Date.now();

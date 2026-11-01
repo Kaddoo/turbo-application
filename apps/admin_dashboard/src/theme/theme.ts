@@ -1,4 +1,4 @@
-import type { Brand, BrandPalette } from '../brand/brand';
+import type { Brand, BrandPalette } from '@/brand/brand';
 
 /** Semantic role -> CSS custom property name. Components use only these. */
 const roleVars: Record<keyof BrandPalette, string> = {

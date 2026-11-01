@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { api, call, newIdempotencyKey, type Schemas } from '../api/client';
+import { api, call, newIdempotencyKey } from '@/services/http';
+import type { Schemas } from '@/types';
 import {
   Banner, Button, Chip, ConfirmDialog, DataTable, Dialog, DialogActions, Money, PageHeader, Select, TextArea, TextField,
   useToast, ui, type Tone,
-} from '../components/ui';
-import { formatDate, formatMinutes, formatTime, humanize, parseCedis } from '../lib/format';
-import { problemMessage } from '../lib/problems';
-import { useAction, useCursorList } from '../lib/queries';
+} from '@/components';
+import { formatDate, formatMinutes, formatTime, humanize, parseCedis } from '@/utils/format';
+import { problemMessage } from '@/utils/problems';
+import { useAction, useCursorList } from '@/hooks';
 
 /** Driver id -> name, for tables that only carry ids. */
 function useDriverNames() {

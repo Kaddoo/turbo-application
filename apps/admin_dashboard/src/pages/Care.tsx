@@ -1,16 +1,17 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router';
-import { api, call, type Schemas } from '../api/client';
-import { useSession } from '../auth/session';
-import { MapView } from '../components/MapView';
+import { api, call } from '@/services/http';
+import type { Schemas } from '@/types';
+import { useSession } from '@/state/session';
+import { MapView } from '@/components/MapView';
 import {
   Button, Card, Chip, DataTable, Details, Dialog, DialogActions, ErrorState, PageHeader, Select, Skeleton, TextArea,
   useToast, ui, When, type Tone,
-} from '../components/ui';
-import { formatRelative, formatTime, humanize } from '../lib/format';
-import { problemMessage } from '../lib/problems';
-import { useAction, useCursorList } from '../lib/queries';
+} from '@/components';
+import { formatRelative, formatTime, humanize } from '@/utils/format';
+import { problemMessage } from '@/utils/problems';
+import { useAction, useCursorList } from '@/hooks';
 
 type Ticket = Schemas['SupportTicket'];
 const ticketTone: Record<Ticket['status'], Tone> = { open: 'warning', in_progress: 'accent', waiting_on_user: 'neutral', resolved: 'success', closed: 'neutral' };

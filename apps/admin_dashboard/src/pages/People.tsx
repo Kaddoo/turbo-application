@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { api, call, type Schemas, uploadFile } from '../api/client';
-import { canUse } from '../auth/roles';
-import { useSession } from '../auth/session';
+import { api, call } from '@/services/http';
+import type { Schemas } from '@/types';
+import { uploadFile } from '@/services/uploads';
+import { canUse } from '@/utils/roles';
+import { useSession } from '@/state/session';
 import {
   Banner, Button, Card, Chip, ConfirmDialog, DataTable, Details, Dialog, DialogActions, ErrorState, Money,
   PageHeader, Select, Skeleton, TextArea, TextField, useToast, ui, When, type Tone,
-} from '../components/ui';
-import { formatDate, formatPhone, humanize, maskPhone } from '../lib/format';
-import { problemMessage } from '../lib/problems';
-import { useAction, useCursorList } from '../lib/queries';
-import { verificationTone } from './Verification';
+} from '@/components';
+import { formatDate, formatPhone, humanize, maskPhone } from '@/utils/format';
+import { problemMessage } from '@/utils/problems';
+import { useAction, useCursorList } from '@/hooks';
+import { verificationTone } from '@/pages/Verification';
 
 const accountTone: Record<Schemas['AccountStatus'], Tone> = { active: 'success', suspended: 'danger' };
 
