@@ -12,9 +12,21 @@ export const readCookie = (req, name = COOKIE) => {
   const m = (req.get('cookie') || '').split(/;\s*/).find((c) => c.startsWith(name + '='));
   return m ? decodeURIComponent(m.slice(name.length + 1)) : undefined;
 };
-export const setRefreshCookie = (res, token) => res.append('set-cookie',
-  `${COOKIE}=${encodeURIComponent(token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${30 * 86400}${config.env === 'production' ? '; Secure' : ''}`);
-export const clearRefreshCookie = (res) => res.append('set-cookie', `${COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0${config.env === 'production' ? '; Secure' : ''}`);
+// The cookie is HttpOnly (scripts cannot read it), SameSite=Strict (the dashboard at admin.<domain> and the API at api.<domain> are the same site, so
+// Strict is enough and Lax is not needed), Secure from config, and limited to the auth routes with Path (config.cookiePath, /v1/auth by default).
+// Older builds set it with Path=/. Whenever we set or clear the cookie we also expire that old one, so a browser never holds two.
+const attrs = (path) => `HttpOnly; SameSite=Strict; Path=${path}${config.cookieSecure ? '; Secure' : ''}`;
+const expireOld = (res) => { if (config.cookiePath !== '/') res.append('set-cookie', `${COOKIE}=; ${attrs('/')}; Max-Age=0`); };
+// The old cookie is expired FIRST and the new one set last. A proxy that rewrites every cookie to one path (the dashboard's dev server does) then still ends with
+// the new cookie in place, because the last Set-Cookie for a name and path wins.
+export const setRefreshCookie = (res, token) => {
+  expireOld(res);
+  res.append('set-cookie', `${COOKIE}=${encodeURIComponent(token)}; ${attrs(config.cookiePath)}; Max-Age=${30 * 86400}`);
+};
+export const clearRefreshCookie = (res) => {
+  res.append('set-cookie', `${COOKIE}=; ${attrs(config.cookiePath)}; Max-Age=0`);
+  expireOld(res);
+};
 
 // A cookie is sent by the browser automatically, so a request that relies on it must prove it came from our own web app.
 export function requireTrustedOrigin(req) {
