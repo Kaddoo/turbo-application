@@ -4,6 +4,9 @@ import { config } from '../src/config.js';
 import { hashPassword } from '../src/lib/auth.js';
 
 if (config.env === 'production') { console.error('Refusing to seed demo data (known passwords, demo boundary) in production'); process.exit(1); }
+// The demo staff have a published password. They are for a laptop only, never for a host that anyone can reach: staging and production
+// use invited staff and scripts/seed-test-data.js. A public PUBLIC_URL (anything but localhost) is refused.
+if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(config.publicUrl)) { console.error(`Refusing to seed demo staff on ${config.publicUrl}: they have a known password. Use scripts/seed-test-data.js on shared hosts.`); process.exit(1); }
 const c = new pg.Client({ connectionString: config.databaseUrl });
 await c.connect();
 await c.query(`INSERT INTO service_area (id,polygon,version) VALUES (1,$1,1) ON CONFLICT (id) DO UPDATE SET polygon=$1`,
