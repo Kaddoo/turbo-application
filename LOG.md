@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: trip screens (branch `design-trip`, on `design-destination`)
+
+**What changed:** the ride screen (S16-S20) uses the kit pieces: bottom sheet with the 36 radius, the start PIN as `TripPin` inside an `InnerPanel` (still read digit by digit, via the new `digitLabel` on `TripPin`), "driver arrived" as a success `TurboBanner`, quick messages as `TurboChip`s, the driver as `TurboAvatar`, the plate in the mono plate style. `large:` removed.
+
+**Checks:** analyze clean; turbo_ui 76, student 130 pass.
+
+**Not done:** the photo card for "Trip status" (S18), the arrival countdown, the cancel-reasons sheet restyle and the "no driver found" art need photos and 3D icons; the route line waits for `routePolyline` (CR-7) on the maps-wiring branch. Not checked on a device.
+
 ## 2026-11-02, Kevin with Claude, code: destination screen (branch `design-destination`, on `design-home`)
 
 **What changed:** S14 has the kit's header (round back button, centred title), place rows as bordered list cards (new `card:` option on `TurboListRow`), smaller section titles, the screen's 22 pt side padding, and a "no places found" state with an icon slot. Behaviour is unchanged: search only where available, campus points as drop-offs, saved places, pinned Continue.

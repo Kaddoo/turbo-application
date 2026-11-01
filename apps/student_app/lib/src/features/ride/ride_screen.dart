@@ -111,7 +111,7 @@ class _Panel extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               color: t.colors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(t.radiusCard)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(t.radiusSheet)),
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(TurboSpacing.lg),
@@ -315,11 +315,9 @@ class _DriverRow extends StatelessWidget {
     final v = ride.vehicle;
     return Row(
       children: [
-        CircleAvatar(
-          radius: TurboSpacing.xl,
-          backgroundColor: t.colors.surface,
-          foregroundImage: driver?.photoUrl != null ? NetworkImage(driver!.photoUrl!) : null,
-          child: Text((driver?.firstName ?? '?').characters.first, style: text.labelLarge),
+        TurboAvatar(
+          name: driver?.firstName ?? '?',
+          image: driver?.photoUrl != null ? NetworkImage(driver!.photoUrl!) : null,
         ),
         const SizedBox(width: TurboSpacing.md),
         Expanded(
@@ -348,7 +346,7 @@ class _DriverRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(t.radiusInput),
                   ),
                   // Shrinks rather than overflows when text is scaled up a lot.
-                  child: FittedBox(fit: BoxFit.scaleDown, child: Text(v.plateNumber, style: text.titleLarge)),
+                  child: FittedBox(fit: BoxFit.scaleDown, child: Text(v.plateNumber, style: t.styles.monoPlate)),
                 ),
               ],
             ),
@@ -390,25 +388,11 @@ class _Assigned extends ConsumerWidget {
       map: _RideMap(ride, tracking: tracking),
       children: [
         if (arrived)
-          Container(
-            padding: const EdgeInsets.all(TurboSpacing.md),
-            decoration: BoxDecoration(
-              color: t.colors.success.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(t.radiusInput),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.check_circle_outline, color: t.colors.success),
-                const SizedBox(width: TurboSpacing.md),
-                Expanded(
-                  child: Semantics(
-                    header: true,
-                    liveRegion: true,
-                    child: Text(l10n.rideDriverArrived, style: text.labelLarge),
-                  ),
-                ),
-              ],
-            ),
+          TurboBanner(
+            icon: Icons.check_circle_outline,
+            message: l10n.rideDriverArrived,
+            tone: StatusTone.success,
+            liveRegion: true,
           )
         else
           Semantics(header: true, liveRegion: true, child: Text(l10n.rideDriverOnWay, style: text.titleLarge)),
@@ -422,32 +406,9 @@ class _Assigned extends ConsumerWidget {
         if (pin != null) ...[
           Text(l10n.ridePinLabel, style: text.bodySmall),
           const SizedBox(height: TurboSpacing.xs),
-          // Each digit is read on its own, so a screen reader says "4, 8, 2, 7".
-          Row(
-            children: [
-              for (final (i, digit) in pin.split('').indexed)
-                Padding(
-                  padding: const EdgeInsets.only(right: TurboSpacing.sm),
-                  child: Semantics(
-                    label: l10n.ridePinDigit(i + 1, digit),
-                    excludeSemantics: true,
-                    child: Container(
-                      width: TurboSizes.primaryAction + TurboSpacing.sm,
-                      height: TurboSizes.primaryAction + TurboSpacing.xl,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: t.colors.background,
-                        border: Border.all(color: t.colors.border),
-                        borderRadius: BorderRadius.circular(t.radiusInput),
-                      ),
-                      child: Text(
-                        digit,
-                        style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 1.5),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+          // Each digit is read on its own, so a screen reader says "Digit 1: 4".
+          InnerPanel(
+            child: TripPin(digits: pin, digitLabel: (i, d) => l10n.ridePinDigit(i, d)),
           ),
           const SizedBox(height: TurboSpacing.xs),
           Text(l10n.ridePinHint, style: text.bodySmall),
@@ -476,9 +437,9 @@ class _Assigned extends ConsumerWidget {
               ])
                 Padding(
                   padding: const EdgeInsets.only(right: TurboSpacing.sm),
-                  child: ActionChip(
-                    label: Text(label(code)),
-                    onPressed: () async {
+                  child: TurboChip(
+                    label: label(code),
+                    onTap: () async {
                       try {
                         await ref.read(rideActionsProvider).sendMessage(ride.id, code);
                       } on ApiProblem {
@@ -563,7 +524,6 @@ class _InTrip extends ConsumerWidget {
         const SizedBox(height: TurboSpacing.md),
         TurboButton(
           label: l10n.rideSafety,
-          large: true,
           icon: Icons.shield_outlined,
           onPressed: () => context.push('/safety', extra: ride.id),
         ),
@@ -697,7 +657,7 @@ class _DoneState extends ConsumerState<_Done> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TurboButton(label: l10n.rideDone, large: true, onPressed: () => context.go('/home')),
+              TurboButton(label: l10n.rideDone, onPressed: () => context.go('/home')),
               TextButton(
                 onPressed: () => context.push('/support/new', extra: ride.id),
                 child: Text(l10n.rideReport, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
@@ -771,7 +731,7 @@ class _Cancelled extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (reason == CancellationReasonCodeEnum.noDriverAvailable)
-                TurboButton(label: l10n.rideTryAgain, large: true, onPressed: () => context.go('/home/destination')),
+                TurboButton(label: l10n.rideTryAgain, onPressed: () => context.go('/home/destination')),
               const SizedBox(height: TurboSpacing.sm),
               TurboButton(
                 label: l10n.rideBackHome,
