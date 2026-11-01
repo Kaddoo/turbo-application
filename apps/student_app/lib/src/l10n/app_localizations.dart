@@ -826,6 +826,30 @@ abstract class AppLocalizations {
   /// **'Where to?'**
   String get homeWhereTo;
 
+  /// No description provided for @homeYourPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pickup point'**
+  String get homeYourPickup;
+
+  /// No description provided for @homeBookRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a ride'**
+  String get homeBookRide;
+
+  /// No description provided for @homeSafetyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get homeSafetyLabel;
+
+  /// No description provided for @homeSafetyTile.
+  ///
+  /// In en, this message translates to:
+  /// **'SOS and trip sharing'**
+  String get homeSafetyTile;
+
   /// No description provided for @homeWalletChip.
   ///
   /// In en, this message translates to:

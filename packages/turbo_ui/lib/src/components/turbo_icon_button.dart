@@ -35,13 +35,20 @@ class TurboIconButton extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       onTap: onPressed,
-      child: Material(
-        color: fill,
-        shape: CircleBorder(side: BorderSide(color: edge)),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onPressed,
-          child: SizedBox.square(dimension: TurboSizes.iconButton, child: Icon(icon, size: TurboSizes.iconMd, color: fore)),
+      child: Tooltip(
+        message: label,
+        excludeFromSemantics: true,
+        child: Material(
+          color: fill,
+          shape: CircleBorder(side: BorderSide(color: edge)),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onPressed,
+            child: SizedBox.square(
+              dimension: TurboSizes.iconButton,
+              child: Icon(icon, size: TurboSizes.iconMd, color: fore),
+            ),
+          ),
         ),
       ),
     );

@@ -439,6 +439,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeWhereTo => 'Where to?';
 
   @override
+  String get homeYourPickup => 'Your pickup point';
+
+  @override
+  String get homeBookRide => 'Book a ride';
+
+  @override
+  String get homeSafetyLabel => 'Safety';
+
+  @override
+  String get homeSafetyTile => 'SOS and trip sharing';
+
+  @override
   String homeWalletChip(Object amount) {
     return 'Wallet $amount';
   }

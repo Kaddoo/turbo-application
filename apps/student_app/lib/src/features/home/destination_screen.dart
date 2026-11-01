@@ -295,7 +295,6 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
               padding: const EdgeInsets.all(TurboSpacing.lg),
               child: TurboButton(
                 label: l10n.destContinue,
-                large: true,
                 onPressed: draft.dropoff == null ? null : _continue,
               ),
             ),

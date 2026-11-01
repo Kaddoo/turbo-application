@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: home screen (branch `design-home`, on `design-signin`)
+
+**What changed:** S13 Home rebuilt as a scrolling page on the new components: header (nearest pickup point, safety icon button, avatar), saved places as chips, a "Book a ride" panel (pickup, wallet chip, Where to? button), the map in a rounded card, and bento tiles for Wallet (lime) and Safety. Offline and paused-booking notes are now `TurboBanner`s. `TurboIconButton` gained a tooltip. Destination (S14) and quote (S15) keep their layout and pick up the new look from the theme; `large:` removed.
+
+**Checks:** analyze clean; turbo_ui 74, student 130 pass. Not checked on a device or in a browser.
+
+**Not done:** the "Nearest point / Choose point" tabs, the swap button and the "last ride" tile need design assets and an API decision (no last-ride field used yet); the S14 results/saved/recent tabs and pickup-point sheet over the map; S15 has no board in the new kit. Light mode is kept (decided by Kevin). The welcome and system screens still force dark.
+
 ## 2026-11-02, Kevin with Claude, code: sign-in and system screens (branch `design-signin`, on `design-components`)
 
 **What changed:** new `turbo_ui` pieces `AccentTitle` (title with one lime word), `HeroIcon` (icon slot, so the 3D icons can drop in later) and `SystemMessage` (full-screen state with tag, message, action, footer). `AuthLayout` rewritten: back button, centred wordmark, hero icon, accent title, lead, pinned action and footer, optional `centered`. Student app: S06 welcome is one screen (lime card with a drawn grid and car placeholder, "Fixed fares" tag, slide to continue; the three slides and Skip are gone); S07 phone, S08 code and S09 terms use the new layout; S02-S05 (boot error, update required, maintenance, suspended) use `SystemMessage`. ARB strings added or removed to match.

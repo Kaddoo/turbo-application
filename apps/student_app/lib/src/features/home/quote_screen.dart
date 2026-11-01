@@ -187,7 +187,6 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                     null,
                     TurboButton(
                       label: l10n.quoteChangeLocation,
-                      large: true,
                       onPressed: () => context.go('/home/destination'),
                     ),
                   ),
@@ -316,13 +315,11 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                   q.wallet.sufficient
                       ? TurboButton(
                           label: l10n.quoteBook(formatPesewas(fare)),
-                          large: true,
                           loading: _booking,
                           onPressed: () => _book(q),
                         )
                       : TurboButton(
                           label: l10n.quoteTopUp(formatPesewas(q.wallet.shortfallPesewas)),
-                          large: true,
                           onPressed: () async {
                             await context.push('/wallet/topup', extra: q.wallet.shortfallPesewas);
                             // Back from topping up: the wallet has changed, so ask again.
