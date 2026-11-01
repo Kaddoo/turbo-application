@@ -165,3 +165,11 @@ export async function call<T>(pending: Promise<{ data?: T; error?: unknown; resp
 export function newIdempotencyKey(): string {
   return crypto.randomUUID();
 }
+
+/** Like `call`, but also hands back the HTTP status, for operations where 200 and 202 mean different things. */
+export async function callWithStatus<T>(
+  pending: Promise<{ data?: T; error?: unknown; response: Response }>,
+): Promise<{ data: T; status: number }> {
+  const result = await pending;
+  return { data: await call(Promise.resolve(result)), status: result.response.status };
+}
