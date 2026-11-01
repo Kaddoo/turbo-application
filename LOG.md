@@ -2,6 +2,39 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: staff onboarding, and one contract
+
+**Task:** Build the approved first-run onboarding for each staff role. Then consolidate on one contract (`api/contract/openapi.yaml`), add the staging note, and make CI catch drift.
+
+**Files touched:**
+- `dashboard-ui-match` (`0480dea`): `src/utils/onboarding.ts`, `src/features/onboarding/` (new), `pages/OverviewPage.tsx`, `demo/server.ts` (`?demo=fresh`, `demo-<role>` invite tokens), `features/auth/SignIn.tsx` (keep-this-page-open warning on invite step 2), `Configuration.tsx` (`?tab=`), empty-state text in Drivers, Vehicles and Workforce, `utils/problems.ts`, `test/onboarding.test.tsx`.
+- `admin-contract-requests` (`4361d1a`): A32 in `CONTRACT_REQUESTS.md`.
+- `contract-one-source`, cut from `main` (`ccd3fc1`): `docs/api-integration.md` (staging/production note at the top, changelog to 0.3.1), contract pointers in `CONTRACT_REQUESTS.md`, `docs/02`, `docs/05`, `docs/07`; `.github/workflows/contract.yml` (new `dart-client` and `mock` jobs).
+- GitHub issue #2 for the backend.
+
+**What changed:**
+- Onboarding:
+  - Super admin gets a six-step pilot checklist; HR gets a four-step driver checklist, with salary marked "can wait".
+  - Ticks come from live data, so progress resumes anywhere. "Hide for now" folds it into a bar.
+  - Verifier, dispatcher, finance and support get one card naming their job.
+  - Once put away it does not return in that browser (localStorage until A32).
+- One contract: `main` already had most of it from the backend: `api/openapi.yaml` was deleted, `tools/check-contract.mjs` was in place, and both generated clients were stamped from 0.3.1. On top of that:
+  - Here I regenerated the dashboard schema and built the mock spec from 0.3.1. Both were unchanged.
+  - New CI jobs rebuild the Dart client and the mock spec, and fail on any difference.
+
+**Acceptance:** `npm run check` passes (321 tests) and `node tools/check-contract.mjs` passes.
+
+**Deviations:**
+- The user said 0.2.2, but the repo contract is 0.3.1; the docs say 0.3.1.
+- The Dart client was not regenerated on this Mac (no Dart, Flutter or Java), so the new `dart-client` CI job is unproven until its first run.
+- `api/README.md` and `api/README copy.md` are stale, but they are backend files; this is raised in issue #2.
+
+**Status:** Branches `dashboard-ui-match`, `admin-contract-requests` and `contract-one-source` are ready for Kevin. Not done:
+- Dashboard work for 0.3.1: new problem codes, required Idempotency-Key on the three operations, item-17 reduced views and the threshold. The dashboard restructure branches are not on `main`, and `main`'s item-17 edits use the old file layout, so this needs the restructure rebased onto `main` first.
+- The data-changing re-run on staging, which needs a real invited account.
+
+**Next step:** Rebase the dashboard restructure onto `main`, regenerate from 0.3.1 and handle the new codes. Then re-run the write checks on staging with an invited account.
+
 ## 2026-11-01, Claude, code: browser run of sign-in on staging
 
 **Task:** Run the whole sign-in flow in a real browser against staging.
