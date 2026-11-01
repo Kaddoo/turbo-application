@@ -33,7 +33,7 @@ test('web sign-in: refresh token only in an httpOnly cookie, and only our own or
   const v = await call('POST', '/auth/otp/verify', { body: { phone, code: '123456', role: 'student', clientType: 'web', acceptedTermsVersion: '1.0', acceptedPrivacyVersion: '1.0' }, headers: { origin: ADMIN } });
   expect(v, 200);
   assert.equal(v.body.refreshToken, undefined, 'not in the body');
-  const cookie = v.headers.get('set-cookie'); assert.match(cookie, /turbo_rt=/); assert.match(cookie, /HttpOnly/i); assert.match(cookie, /SameSite=Strict/i);
+  const cookie = v.headers.getSetCookie().find((c) => /Path=\/v1\/auth/i.test(c));      // the new cookie (the old Path=/ one is expired alongside it) assert.match(cookie, /turbo_rt=/); assert.match(cookie, /HttpOnly/i); assert.match(cookie, /SameSite=Strict/i);
   const jar = cookie.split(';')[0];
   expect((await call('POST', '/auth/refresh', { headers: { cookie: jar, origin: ADMIN } })), 200, 'cookie refresh from our origin');
   assert.equal((await call('POST', '/auth/refresh', { headers: { cookie: jar, origin: 'https://evil.example' } })).status, 403, 'CSRF: foreign origin refused');

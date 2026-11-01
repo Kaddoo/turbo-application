@@ -72,9 +72,10 @@ test('a staff browser session keeps its refresh token in a cookie, not the respo
   const ADMIN = process.env.ADMIN_URL || 'http://localhost:5173';
   const r = await call('POST', '/auth/admin/login', { body: { email: 'support@turbo.test', password: 'Turbo-demo-1' }, headers: { origin: ADMIN } });
   expect(r, 200); assert.equal(r.body.refreshToken, undefined);
-  assert.match(r.headers.get('set-cookie'), /HttpOnly/i);
+  const fresh = r.headers.getSetCookie().find((c) => /Path=\/v1\/auth/i.test(c));
+  assert.match(fresh, /HttpOnly/i);
   assert.equal(r.headers.get('access-control-allow-credentials'), 'true');
-  const jar = r.headers.get('set-cookie').split(';')[0];
+  const jar = fresh.split(';')[0];
   const next = await call('POST', '/auth/refresh', { headers: { cookie: jar, origin: ADMIN } });
   expect(next, 200); assert.equal(next.body.user.staffRole, 'support');
 });

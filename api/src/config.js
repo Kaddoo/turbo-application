@@ -43,6 +43,10 @@ export const config = {
   fcmServiceAccount: e.FCM_SERVICE_ACCOUNT || '',          // path to the service-account JSON, or the JSON itself
   adminUrl: e.ADMIN_URL || 'http://localhost:5173',
   // Alerts to inlet (optional: with either of the first two missing, alerts are off and nothing else changes).
+  // The refresh cookie (turbo_rt). Secure comes from here, never from req.secure: behind Caddy the API only ever sees plain http. It is on whenever the
+  // API runs in production, and staging turns it on with COOKIE_SECURE=true. Local development (http://localhost) leaves it off so every browser accepts it.
+  cookieSecure: e.COOKIE_SECURE ? e.COOKIE_SECURE === 'true' : e.NODE_ENV === 'production',
+  cookiePath: e.COOKIE_PATH || '/v1/auth',                 // only the auth routes ever need the refresh token
   inletSecretKey: e.INLET_SECRET_KEY || '',
   inletProductId: e.INLET_PRODUCT_ID || '',
   inletBaseUrl: e.INLET_BASE_URL || '',                    // only for a self-hosted inlet; empty uses the SDK default
@@ -54,6 +58,7 @@ export const config = {
   sosOncallPhone: e.SOS_ONCALL_PHONE || '',                // E.164. Gets a direct SMS when an SOS is not acknowledged in 2 minutes
 };
 if (config.env === 'production') {
+  if (!config.cookieSecure) throw new Error('COOKIE_SECURE must not be false in production: the refresh cookie must be Secure');
   if (!config.inletSecretKey || !config.inletProductId) console.warn('INLET_SECRET_KEY / INLET_PRODUCT_ID not set: operational alerts are off');
   if (config.sosOncallPhone && !/^\+\d{8,15}$/.test(config.sosOncallPhone)) console.warn('SOS_ONCALL_PHONE is not in E.164 form (+233...): the SOS fallback SMS is off');
   if (config.jwtSecret.length < 32 || config.jwtSecret.startsWith('dev-')) throw new Error('JWT_SECRET must be set to a strong value in production');
