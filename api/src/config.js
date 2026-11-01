@@ -42,8 +42,15 @@ export const config = {
   pushProvider: e.FCM_PROVIDER || (e.NODE_ENV === 'development' ? 'console' : 'fcm'),
   fcmServiceAccount: e.FCM_SERVICE_ACCOUNT || '',          // path to the service-account JSON, or the JSON itself
   adminUrl: e.ADMIN_URL || 'http://localhost:5173',
+  // Alerts to inlet (optional: with either of the first two missing, alerts are off and nothing else changes).
+  inletSecretKey: e.INLET_SECRET_KEY || '',
+  inletProductId: e.INLET_PRODUCT_ID || '',
+  inletBaseUrl: e.INLET_BASE_URL || '',                    // only for a self-hosted inlet; empty uses the SDK default
+  sosOncallPhone: e.SOS_ONCALL_PHONE || '',                // E.164. Gets a direct SMS when an SOS is not acknowledged in 2 minutes
 };
 if (config.env === 'production') {
+  if (!config.inletSecretKey || !config.inletProductId) console.warn('INLET_SECRET_KEY / INLET_PRODUCT_ID not set: operational alerts are off');
+  if (config.sosOncallPhone && !/^\+\d{8,15}$/.test(config.sosOncallPhone)) console.warn('SOS_ONCALL_PHONE is not in E.164 form (+233...): the SOS fallback SMS is off');
   if (config.jwtSecret.length < 32 || config.jwtSecret.startsWith('dev-')) throw new Error('JWT_SECRET must be set to a strong value in production');
   if (config.otpMode === 'fixed') throw new Error('OTP_MODE=fixed is not allowed in production');
   if (config.dataKey.length < 32 || config.dataKey.startsWith('dev-')) throw new Error('DATA_ENC_KEY must be set (32+ chars) in production');
