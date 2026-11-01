@@ -93,7 +93,7 @@ void main() {
   group('support', () {
     Future<void> openSupport(WidgetTester tester, FakeServer server) async {
       await bootHome(tester, server);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Profile'));
+      await tester.tap(find.bySemanticsLabel('Profile'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Support'));
       await tester.pumpAndSettle();
@@ -161,7 +161,7 @@ void main() {
   group('profile', () {
     Future<void> openProfile(WidgetTester tester, FakeServer server) async {
       await bootHome(tester, server);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Profile'));
+      await tester.tap(find.bySemanticsLabel('Profile'));
       await tester.pumpAndSettle();
     }
 

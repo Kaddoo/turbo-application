@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../l10n/app_localizations.dart';
 
@@ -21,14 +22,14 @@ class MainShell extends StatelessWidget {
     );
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: FloatingNavBar(
         selectedIndex: index < 0 ? 0 : index,
-        onDestinationSelected: (i) => context.go(_paths[i]),
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.directions_car_outlined), selectedIcon: const Icon(Icons.directions_car), label: l10n.navRide),
-          NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), selectedIcon: const Icon(Icons.receipt_long), label: l10n.navActivity),
-          NavigationDestination(icon: const Icon(Icons.account_balance_wallet_outlined), selectedIcon: const Icon(Icons.account_balance_wallet), label: l10n.navWallet),
-          NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: l10n.navProfile),
+        onSelected: (i) => context.go(_paths[i]),
+        items: [
+          FloatingNavItem(icon: Icons.home_outlined, selectedIcon: Icons.home, label: l10n.navRide),
+          FloatingNavItem(icon: Icons.history, selectedIcon: Icons.history, label: l10n.navActivity),
+          FloatingNavItem(icon: Icons.account_balance_wallet_outlined, selectedIcon: Icons.account_balance_wallet, label: l10n.navWallet),
+          FloatingNavItem(icon: Icons.person_outline, selectedIcon: Icons.person, label: l10n.navProfile),
         ],
       ),
     );

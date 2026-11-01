@@ -3,6 +3,7 @@ library;
 export 'src/brand/brand_tokens.dart';
 export 'src/components/auth_layout.dart';
 export 'src/components/confirm_dialog.dart';
+export 'src/components/floating_nav_bar.dart';
 export 'src/components/list_row.dart';
 export 'src/components/map_container.dart';
 export 'src/components/money_text.dart';

@@ -33,7 +33,7 @@ FakeServer walletServer() => homeServer()
   ..on('GET /wallet/transactions', body: page([tx(1, 'topup', 5000), tx(2, 'ride_hold', -3500, description: 'Ride held')]));
 
 Future<void> openWallet(WidgetTester tester) async {
-  await tester.tap(find.widgetWithText(NavigationDestination, 'Wallet'));
+  await tester.tap(find.bySemanticsLabel('Wallet'));
   await tester.pumpAndSettle();
 }
 
