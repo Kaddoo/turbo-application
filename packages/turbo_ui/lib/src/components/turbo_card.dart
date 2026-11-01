@@ -11,6 +11,7 @@ class TurboCard extends StatelessWidget {
     this.onTap,
     this.padding = const EdgeInsets.all(TurboSpacing.lg),
     this.semanticLabel,
+    this.color,
   });
 
   final Widget child;
@@ -18,13 +19,16 @@ class TurboCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final String? semanticLabel;
 
+  /// Fill when the card sits on a surface of its own; defaults to the surface role.
+  final Color? color;
+
   @override
   Widget build(BuildContext context) {
     final t = context.turbo;
     final radius = BorderRadius.circular(t.radiusCard);
     final body = Ink(
       decoration: BoxDecoration(
-        color: t.colors.surface,
+        color: color ?? t.colors.surface,
         border: Border.all(color: t.colors.border),
         borderRadius: radius,
       ),

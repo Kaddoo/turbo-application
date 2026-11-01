@@ -78,87 +78,108 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
-    final text = Theme.of(context).textTheme;
     final legal = ref.watch(legalProvider);
-    final appName = t.brand.appName;
+    final appName = context.turbo.brand.appName;
+    final versions = legal.value;
 
-    Widget section(String title, String body) => Padding(
-          padding: const EdgeInsets.only(bottom: TurboSpacing.lg),
-          child: TurboCard(
-            child: Column(
+    // Built inside the dark layout so text and icons take its colours.
+    Widget body(BuildContext context) {
+      final t = context.turbo;
+      final text = Theme.of(context).textTheme;
+
+      Widget check(String line) => Padding(
+            padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Semantics(header: true, child: Text(title, style: text.labelLarge)),
-                const SizedBox(height: TurboSpacing.sm),
-                Text(body, style: text.bodyMedium),
+                Icon(Icons.check, size: TurboSizes.iconSm, color: t.colors.success),
+                const SizedBox(width: TurboSpacing.md),
+                Expanded(child: Text(line, style: text.bodyMedium)),
               ],
             ),
-          ),
-        );
+          );
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        child: legal.when(
-          loading: () => const LoadingState(),
-          error: (_, _) => ErrorState(
-            message: l10n.termsLoadFailed,
-            onRetry: () => ref.invalidate(legalProvider),
-          ),
-          data: (versions) => Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(TurboSpacing.xl),
-                  children: [
-                    Semantics(header: true, child: Text(l10n.termsTitle, style: text.headlineMedium)),
-                    const SizedBox(height: TurboSpacing.lg),
-                    Text(l10n.termsBulletRules(appName), style: text.bodyLarge),
-                    const SizedBox(height: TurboSpacing.md),
-                    Text(l10n.termsBulletData, style: text.bodyLarge),
-                    const SizedBox(height: TurboSpacing.xl),
-                    section(l10n.termsWhyLocationTitle, l10n.termsWhyLocation),
-                    section(l10n.termsWhyCameraTitle, l10n.termsWhyCamera),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () => _open(versions.termsUrl),
-                        child: Text(l10n.termsReadTerms, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
-                      ),
+      Widget why(IconData icon, String title, String line) => Padding(
+            padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+            child: TurboCard(
+              color: t.colors.surfaceRaised,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(icon, size: TurboSizes.iconMd),
+                  const SizedBox(width: TurboSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Semantics(header: true, child: Text(title, style: text.labelMedium)),
+                        const SizedBox(height: TurboSpacing.xs),
+                        Text(line, style: text.bodySmall),
+                      ],
                     ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () => _open(versions.privacyUrl),
-                        child: Text(l10n.termsReadPrivacy, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              // The one action stays in reach however long the text is.
-              Padding(
-                padding: const EdgeInsets.fromLTRB(TurboSpacing.xl, TurboSpacing.sm, TurboSpacing.xl, TurboSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_error != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                        child: Semantics(
-                          liveRegion: true,
-                          child: Text(_error!, style: text.bodyMedium?.copyWith(color: t.colors.danger)),
-                        ),
-                      ),
-                    TurboButton(label: l10n.termsAgree, large: true, loading: _busy, onPressed: () => _agree(versions)),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          );
+
+      Widget link(String label, String url) => TextButton(
+            style: TextButton.styleFrom(minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap)),
+            onPressed: () => _open(url),
+            child: Text(label, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
+          );
+
+      return legal.when(
+        loading: () => const LoadingState(rows: 2),
+        error: (_, _) => ErrorState(
+          message: l10n.termsLoadFailed,
+          onRetry: () => ref.invalidate(legalProvider),
         ),
+        data: (v) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            check(l10n.termsBulletRules(appName)),
+            check(l10n.termsBulletData),
+            const SizedBox(height: TurboSpacing.sm),
+            why(Icons.place_outlined, l10n.termsWhyLocationTitle, l10n.termsWhyLocation),
+            why(Icons.photo_camera_outlined, l10n.termsWhyCameraTitle, l10n.termsWhyCamera),
+            Wrap(
+              spacing: TurboSpacing.lg,
+              children: [link(l10n.termsReadTerms, v.termsUrl), link(l10n.termsReadPrivacy, v.privacyUrl)],
+            ),
+          ],
+        ),
+      );
+    }
+
+    return AuthLayout(
+      title: l10n.termsTitle,
+      onBack: null,
+      action: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+              child: Builder(
+                builder: (context) => Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _error!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.turbo.colors.danger),
+                  ),
+                ),
+              ),
+            ),
+          TurboButton(
+            label: l10n.termsAgree,
+            large: true,
+            loading: _busy,
+            onPressed: versions == null ? null : () => _agree(versions),
+          ),
+        ],
       ),
+      children: [Builder(builder: body)],
     );
   }
 }
