@@ -25,6 +25,8 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Design note (Kevin, to pick up next):** the new design material in `design/` (component kit, `Turbo-components.pdf`, typography) still needs working through. Any component image or photo the PDF shows that is not in `design/Turbo-component-kit/images`: source it from Pexels (check the licence, keep the credit, do not commit anything showing real people from WhatsApp images). In-app trip map with a route line needs CR-7 first.
 
+**Decisions:** (1) route line comes from the server as `routePolyline` (CR-7), no Directions key in the apps; (2) no app code changes until the design session; (3) no-key map message, dark map style and place search wait for the design; (4) campus pickup points only, no place search; (5) Android parked, iOS first; (6) missing PDF images come from Pexels.
+
 **Next step:** Rebuild iOS with the key and check the map on a phone; then the items above.
 
 ## 2026-11-01, Kevin with Claude, code: issue 1 contract work, staging hardening, build 4
