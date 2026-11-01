@@ -381,6 +381,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navMe => 'Me';
 
   @override
+  String get navHelp => 'Help';
+
+  @override
+  String get recordsTitle => 'Records';
+
+  @override
+  String get recordsTabTrips => 'Trips';
+
+  @override
+  String get recordsTabShifts => 'Shifts';
+
+  @override
+  String get recordsTabHours => 'Hours';
+
+  @override
+  String get recordsTabSalary => 'Salary';
+
+  @override
+  String get helpTitle => 'Help';
+
+  @override
+  String get helpReportTitle => 'Report an issue';
+
+  @override
+  String get helpMyRequests => 'My help requests';
+
+  @override
   String get shareStopped => 'Location sharing stopped';
 
   @override

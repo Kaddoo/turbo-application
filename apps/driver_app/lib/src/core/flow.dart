@@ -58,6 +58,7 @@ bool locationFitsStep(FlowStep step, String location) {
     FlowStep.home => within('/home') ||
         within('/trips') ||
         within('/me') ||
+        within('/help') ||
         within('/ride') ||
         within('/support') ||
         within('/sos') ||

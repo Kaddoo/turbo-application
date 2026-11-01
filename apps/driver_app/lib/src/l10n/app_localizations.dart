@@ -712,6 +712,60 @@ abstract class AppLocalizations {
   /// **'Me'**
   String get navMe;
 
+  /// No description provided for @navHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get navHelp;
+
+  /// No description provided for @recordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get recordsTitle;
+
+  /// No description provided for @recordsTabTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'Trips'**
+  String get recordsTabTrips;
+
+  /// No description provided for @recordsTabShifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Shifts'**
+  String get recordsTabShifts;
+
+  /// No description provided for @recordsTabHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get recordsTabHours;
+
+  /// No description provided for @recordsTabSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get recordsTabSalary;
+
+  /// No description provided for @helpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get helpTitle;
+
+  /// No description provided for @helpReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an issue'**
+  String get helpReportTitle;
+
+  /// No description provided for @helpMyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'My help requests'**
+  String get helpMyRequests;
+
   /// No description provided for @shareStopped.
   ///
   /// In en, this message translates to:

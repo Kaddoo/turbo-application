@@ -41,9 +41,12 @@ final sosServiceProvider = Provider<SosService>(SosService.new);
 
 /// Hold for three seconds to send an SOS. Letting go sooner sends nothing.
 class HoldToSos extends ConsumerStatefulWidget {
-  const HoldToSos({super.key, this.rideId, this.holdFor = const Duration(seconds: 3)});
+  const HoldToSos({super.key, this.rideId, this.holdFor = const Duration(seconds: 3), this.tall = false});
 
   final String? rideId;
+
+  /// The big block used on the Help screen; the compact one sits beside other buttons.
+  final bool tall;
   final Duration holdFor;
 
   @override
@@ -110,21 +113,43 @@ class _HoldToSosState extends ConsumerState<HoldToSos> with SingleTickerProvider
             final left = (widget.holdFor.inSeconds * (1 - _hold.value)).ceil();
             final holding = _hold.isAnimating;
             return ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: TurboSizes.primaryAction),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(t.radiusFull),
-                  border: Border.all(color: t.colors.danger, width: TurboSizes.accentBorderWidth),
-                  color: Color.lerp(t.colors.background, t.colors.danger, _hold.value * 0.6),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
-                    child: Text(
-                      _sending ? l10n.sosAlerted : (holding ? l10n.sosSecondsLeft(left) : l10n.sosHold),
-                      style: text.labelLarge?.copyWith(color: holding ? t.colors.textPrimary : t.colors.danger),
+              constraints: BoxConstraints(minHeight: widget.tall ? TurboSizes.primaryAction * 2 : TurboSizes.primaryAction),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(widget.tall ? t.radiusCard : t.radiusFull),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned.fill(child: ColoredBox(color: t.colors.danger)),
+                    // The hold fills across from the left, so progress is seen and not only counted.
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: _hold.value,
+                          child: ColoredBox(color: t.colors.onDanger.withValues(alpha: 0.28)),
+                        ),
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.all(TurboSpacing.lg),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _sending ? l10n.sosAlerted : (holding ? l10n.sosSecondsLeft(left) : l10n.sosHold),
+                            style: (widget.tall ? text.titleLarge : text.labelLarge)?.copyWith(color: t.colors.onDanger),
+                            textAlign: TextAlign.center,
+                          ),
+                          if (widget.tall && !holding && !_sending)
+                            Text(
+                              l10n.sosHoldSeconds,
+                              style: text.bodySmall?.copyWith(color: t.colors.onDanger),
+                              textAlign: TextAlign.center,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

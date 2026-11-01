@@ -7,6 +7,7 @@ import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import 'records_tabs.dart';
 
 final shiftsProvider = FutureProvider.autoDispose<List<Shift>>((ref) async {
   try {
@@ -37,8 +38,9 @@ String _time(DateTime d) => DateFormat('HH:mm').format(d.toUtc());
 
 /// A read-only list screen with the four states.
 class _RecordList<T> extends ConsumerWidget {
-  const _RecordList({required this.title, required this.provider, required this.empty, required this.builder, this.footer});
+  const _RecordList({required this.index, required this.title, required this.provider, required this.empty, required this.builder, this.footer});
 
+  final int index;
   final String title;
   final FutureProvider<List<T>> provider;
   final String empty;
@@ -50,9 +52,13 @@ class _RecordList<T> extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final items = ref.watch(provider);
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(l10n.recordsTitle)),
       body: SafeArea(
-        child: items.when(
+        child: Column(
+          children: [
+            RecordsTabs(index: index),
+            Expanded(
+              child: items.when(
           loading: () => const LoadingState(),
           error: (_, _) => ErrorState(message: l10n.meLoadFailed, onRetry: () => ref.invalidate(provider)),
           data: (list) => list.isEmpty
@@ -67,6 +73,9 @@ class _RecordList<T> extends ConsumerWidget {
                     ],
                   ),
                 ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -81,6 +90,7 @@ class ShiftsScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
     return _RecordList<Shift>(
+      index: 1,
       title: l10n.shiftsTitle,
       provider: shiftsProvider,
       empty: l10n.shiftsEmpty,
@@ -121,6 +131,7 @@ class AttendanceScreen extends StatelessWidget {
     final t = context.turbo;
     final text = Theme.of(context).textTheme;
     return _RecordList<AttendanceRecord>(
+      index: 2,
       title: l10n.attendanceTitle,
       provider: attendanceProvider,
       empty: l10n.attendanceEmpty,
@@ -166,6 +177,7 @@ class SalaryScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
     return _RecordList<SalaryPayment>(
+      index: 3,
       title: l10n.salaryTitle,
       provider: salaryProvider,
       empty: l10n.salaryEmpty,

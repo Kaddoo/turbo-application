@@ -6,6 +6,7 @@ import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import 'records_tabs.dart';
 
 final tripsProvider = FutureProvider.autoDispose<List<DriverRide>>((ref) async {
   try {
@@ -33,9 +34,13 @@ class TripsScreen extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final trips = ref.watch(tripsProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tripsTitle)),
+      appBar: AppBar(title: Text(l10n.recordsTitle)),
       body: SafeArea(
-        child: trips.when(
+        child: Column(
+          children: [
+            const RecordsTabs(index: 0),
+            Expanded(
+              child: trips.when(
           loading: () => const LoadingState(),
           error: (_, _) => ErrorState(message: l10n.tripsLoadFailed, onRetry: () => ref.invalidate(tripsProvider)),
           data: (list) => list.isEmpty
@@ -67,6 +72,9 @@ class TripsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+              ),
+            ),
+          ],
         ),
       ),
     );

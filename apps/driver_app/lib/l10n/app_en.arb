@@ -117,6 +117,15 @@
   "navHome": "Home",
   "navTrips": "Trips",
   "navMe": "Me",
+  "navHelp": "Help",
+  "recordsTitle": "Records",
+  "recordsTabTrips": "Trips",
+  "recordsTabShifts": "Shifts",
+  "recordsTabHours": "Hours",
+  "recordsTabSalary": "Salary",
+  "helpTitle": "Help",
+  "helpReportTitle": "Report an issue",
+  "helpMyRequests": "My help requests",
   "shareStopped": "Location sharing stopped",
   "@homeGreeting": {
     "placeholders": {

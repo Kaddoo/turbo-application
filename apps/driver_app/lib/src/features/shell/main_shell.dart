@@ -16,7 +16,7 @@ class MainShell extends ConsumerStatefulWidget {
 
   final Widget child;
 
-  static const _paths = ['/home', '/trips', '/me'];
+  static const _paths = ['/home', '/trips', '/help', '/me'];
 
   @override
   ConsumerState<MainShell> createState() => _MainShellState();
@@ -55,13 +55,14 @@ class _MainShellState extends ConsumerState<MainShell> {
     final index = MainShell._paths.indexWhere((p) => location == p || location.startsWith('$p/'));
     return Scaffold(
       body: widget.child,
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: FloatingNavBar(
         selectedIndex: index < 0 ? 0 : index,
-        onDestinationSelected: (i) => context.go(MainShell._paths[i]),
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: l10n.navHome),
-          NavigationDestination(icon: const Icon(Icons.route_outlined), selectedIcon: const Icon(Icons.route), label: l10n.navTrips),
-          NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: l10n.navMe),
+        onSelected: (i) => context.go(MainShell._paths[i]),
+        items: [
+          FloatingNavItem(icon: Icons.home_outlined, selectedIcon: Icons.home, label: l10n.navHome),
+          FloatingNavItem(icon: Icons.receipt_long_outlined, selectedIcon: Icons.receipt_long, label: l10n.navTrips),
+          FloatingNavItem(icon: Icons.shield_outlined, selectedIcon: Icons.shield, label: l10n.navHelp),
+          FloatingNavItem(icon: Icons.person_outline, selectedIcon: Icons.person, label: l10n.navMe),
         ],
       ),
     );

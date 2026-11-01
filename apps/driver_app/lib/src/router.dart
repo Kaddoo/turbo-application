@@ -13,6 +13,7 @@ import 'features/home/home_screen.dart';
 import 'features/me/me_screen.dart';
 import 'features/me/record_screens.dart';
 import 'features/me/trips_screen.dart';
+import 'features/support/help_screen.dart';
 import 'features/support/support_screens.dart';
 import 'features/ride/ride_screen.dart';
 import 'features/shell/main_shell.dart';
@@ -49,12 +50,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
           GoRoute(path: '/trips', builder: (_, _) => const TripsScreen()),
+          GoRoute(path: '/trips/shifts', builder: (_, _) => const ShiftsScreen()),
+          GoRoute(path: '/trips/hours', builder: (_, _) => const AttendanceScreen()),
+          GoRoute(path: '/trips/salary', builder: (_, _) => const SalaryScreen()),
+          GoRoute(path: '/help', builder: (_, _) => const HelpScreen()),
           GoRoute(path: '/me', builder: (_, _) => const MeScreen()),
         ],
       ),
-      GoRoute(path: '/me/shifts', parentNavigatorKey: _rootKey, builder: (_, _) => const ShiftsScreen()),
-      GoRoute(path: '/me/attendance', parentNavigatorKey: _rootKey, builder: (_, _) => const AttendanceScreen()),
-      GoRoute(path: '/me/salary', parentNavigatorKey: _rootKey, builder: (_, _) => const SalaryScreen()),
       GoRoute(path: '/support', parentNavigatorKey: _rootKey, builder: (_, _) => const SupportListScreen()),
       GoRoute(path: '/support/new', parentNavigatorKey: _rootKey, builder: (_, state) => NewTicketScreen(rideId: state.extra as String?)),
       GoRoute(

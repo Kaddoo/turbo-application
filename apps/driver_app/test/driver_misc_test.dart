@@ -20,7 +20,7 @@ FakeServer base() => driverServer()
 Future<void> openMe(WidgetTester tester, FakeServer server) async {
   await bootDriver(tester, server);
   await settle(tester);
-  await tester.tap(find.widgetWithText(NavigationDestination, 'Me'));
+  await tester.tap(find.bySemanticsLabel('Me'));
   await settle(tester);
 }
 
@@ -31,6 +31,38 @@ void main() {
     expect(pushRoute({'type': 'support_reply', 'ticketId': 't1'}), '/support/t1');
     expect(pushRoute({'type': 'document_expiring'}), '/me');
     expect(pushRoute({'type': 'unknown'}), isNull);
+  });
+
+  group('Help and records', () {
+    testWidgets('help tab: SOS first, then topics to report', (tester) async {
+      await bootDriver(tester, base());
+      await settle(tester);
+      await tester.tap(find.bySemanticsLabel('Help'));
+      await settle(tester);
+      expect(find.text('Hold for SOS'), findsOneWidget);
+      expect(find.text('Report an issue'), findsOneWidget);
+      for (final topic in ['Vehicle', 'Student behaviour', 'App problem', 'Safety']) {
+        expect(find.text(topic), findsOneWidget);
+      }
+    });
+
+    testWidgets('records: the four views are one control, in dark mode and at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()
+        ..on('GET /driver/shifts', body: page([]))
+        ..on('GET /driver/attendance', body: page([]));
+      await bootDriver(tester, server);
+      await settle(tester);
+      await tester.tap(find.bySemanticsLabel('Trips'));
+      await settle(tester);
+      expect(find.text('Records'), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel('Shifts'));
+      await settle(tester);
+      expect(find.text('No shifts scheduled. Your supervisor sets these.'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('Me', () {
@@ -49,7 +81,7 @@ void main() {
       final server = base();
       await bootDriver(tester, server);
       await settle(tester);
-      await tester.tap(find.widgetWithText(NavigationDestination, 'Trips'));
+      await tester.tap(find.bySemanticsLabel('Trips'));
       await settle(tester);
       expect(find.text('No trips yet.'), findsOneWidget);
     });
