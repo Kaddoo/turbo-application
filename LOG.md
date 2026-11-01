@@ -2,6 +2,87 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Claude, code: admin dashboard follows the API integration guide
+
+**Task:** Store the backend's integration guide (contract 0.2.2) and bring the dashboard in line with it before trying the real API.
+
+**Files touched:**
+- docs/api-integration.md (new: the guide, verbatim, with a note on the contract version)
+- apps/admin_dashboard: src/api/client.ts, src/lib/problems.ts, src/main.tsx, src/app/Layout.tsx, src/pages/Finance.tsx, src/pages/People.tsx, src/pages/SignIn.tsx, src/demo/server.ts, vite.config.ts, .env.example, README.md, test/api-client.test.ts (new), test/routes.smoke.test.tsx
+
+**What changed:**
+- Uploads go through one `uploadFile` helper: declares the type (`.csv` always as `text/csv`), PUTs with exactly that `Content-Type` and no auth header, and fails unless storage answers 2xx. Before, a failed PUT was ignored and the screen carried on with a useless `uploadId`.
+- Reconciliation takes the Payaza CSV statement (0.2.2); the "upload a PDF instead" banner is gone.
+- 429/503: the wait comes from `retryAfterSeconds` or `Retry-After`; queries retry after that delay and messages say how long to wait.
+- 426 `upgrade_required` shows a reload banner.
+- Dev proxy target is configurable (`API_PROXY_TARGET`, Prism :4010 by default, real API :3000); refresh-cookie path and domain are rewritten in dev so the cookie comes back.
+- Demo logins match the API's dev accounts (`dispatch@`, `finance2@`); the demo storage accepts uploads; the demo no longer JSON-parses file bodies.
+
+**Acceptance criteria:**
+- [x] `npm run check` (75 tests) and `npm run build` pass
+- [x] Proxy checked against Prism: `/api/health` and `/api/service-area` return 200 through the dev server
+- [ ] Signed in against the real API on :3000 (not running on this machine)
+
+**Deviations from plan or contract:**
+- `api/openapi.yaml` is still 0.2.0. The 0.2.2 file was pasted incomplete (stops at `addDriverDocument`), so it was not stored and types were not regenerated. Until it lands, `text/csv` is sent through the existing content-type cast. 0.2.1 only touches `DriverRide` (driver app).
+- `GET /admin/stats` exists in the API but not in the contract, so Overview does not use it (contract wins). Needs a contract entry to be used.
+- CONTRACT_REQUESTS A1 (CSV for reconciliation) is resolved by 0.2.2; that file lives on branch admin-contract-requests and was not edited here.
+
+**Status:** done, awaiting review. Branch: admin-api-integration (cut from admin-dashboard-screens).
+
+**Next step:** Drop the full 0.2.2 `openapi.yaml` into `api/` and run `npm run gen:api`; then `API_PROXY_TARGET=http://localhost:3000 npm run dev`, sign in as each dev staff account, and click through.
+
+## 2026-10-31, Claude, code: admin dashboard screens
+
+**Task:** Build the dashboard screens on the scaffold: sign-in through to every `x-roles` area.
+
+**Files touched:**
+- apps/admin_dashboard/src: app (App routes, Layout, env, strings), auth (roles, session), components (ui, MapView), lib (format, problems, queries), pages (SignIn, Overview, Verification, People, Rides, Finance, Care, Workforce, Admin), demo (data, server), api/client.ts, main.tsx
+- apps/admin_dashboard: package.json (react-query, react-router, leaflet, qrcode), vite.config.ts (dev proxy `/api` → :4010), test/hardcoded-style.test.ts (allow `demo/`), test/routes.smoke.test.tsx (new), README.md
+
+**What changed:** Staff sign-in with MFA step, forgot and reset password, invite acceptance with authenticator QR, idle sign-out at 15 min. Role-guarded areas exactly per `x-roles`: overview; verification queue and review (claim, decision); students, drivers (documents, salary profile), vehicles; live map, rides (cancel, complete, reassign, refund), announcements; top-ups, wallet adjustments (request and second-person approval), reconciliation; support tickets, incidents; shifts, attendance corrections, salary payments; configuration (settings, fare bands, service area, pickup points), staff, audit log; own account. All 71 admin operations in the contract are used. Errors switch on problem `code`; money stays in pesewas. Demo mode (`VITE_APP_ENV=demo`) serves contract-shaped sample data in the browser for presentations; it is now kept out of real builds.
+
+**Acceptance criteria:**
+- [x] `npm run check` (schema regenerates with no diff, typecheck, 67 tests) and `npm run build` pass
+- [x] Every screen renders signed in through the demo server with no error state (smoke test; shown to fail when a demo route is missing)
+- [ ] Seen in a real browser, against Prism or the demo (no browser in this session)
+- [ ] Map seen with tiles (Leaflet is mocked in the smoke test)
+
+**Deviations from plan or contract:**
+- Interim map is Leaflet on OpenStreetMap tiles until Turbo's Google Maps key exists; `MapView` props stay the same when it is swapped.
+- `demo/` is exempt from the hard-coded style test (it holds SVG document placeholders, not UI styling).
+- The main bundle is 664 kB (200 kB gzip); Vite warns above 500 kB. Route-level code splitting not done.
+- Screens that need contract gaps (A1 to A28 in `CONTRACT_REQUESTS.md` on branch admin-contract-requests) use what the contract has today, e.g. finance looks students up by id.
+
+**Status:** done, awaiting review. Branch: admin-dashboard-screens (cut from admin-dashboard-scaffold, so merge that first).
+
+**Next step:** Click through in a browser (`VITE_APP_ENV=demo npm run dev`, then against Prism) and fix what shows up; rebuild affected screens when the updated contract lands; move `turbo_ui` tokens to the landing-page brand on a machine with Flutter.
+
+## 2026-10-31, Claude, code: admin dashboard discovery and scaffold
+
+**Task:** Review the docs and contract for the admin dashboard, record contract gaps, scaffold `apps/admin_dashboard`.
+
+**Files touched:**
+- CONTRACT_REQUESTS.md (new; branch admin-contract-requests)
+- apps/admin_dashboard: package.json, vite and ts config, src/brand/brand.ts, src/theme (theme.ts, base.css), src/api (client.ts, generated schema.d.ts), src/app shell, test/contrast.test.ts, test/hardcoded-style.test.ts, README.md (branch admin-dashboard-scaffold)
+
+**What changed:** Discovery review agreed with the dashboard builder: the dashboard lives in `apps/admin_dashboard` in this repo, screens follow `x-roles` exactly, staff login follows the contract as written, one vehicle has at most one driver, the environment badge is set at build time. Contract gaps written as A1 to A28 in `CONTRACT_REQUESTS.md` (blockers: CSV upload for reconciliation, staff names, SOS visible to all staff, finance student lookup). Scaffold: React 19 + Vite 8 + TS 5.9, `openapi-typescript` types and `openapi-fetch` client (memory access token, cookie refresh, one retry for body-less requests, `X-App-Version`). Brand taken from the landing page (https://turbo-lake.vercel.app/): ink `#0B0C0A`, paper `#F3F1EA`, neon `#D4FF3A`, Geist Sans and Mono, radius 16/12/full.
+
+**Acceptance criteria:**
+- [x] `npm run typecheck`, `npm test` (23 tests: contrast both schemes, hard-coded style guard and its self-checks), `npm run build` pass
+- [x] Regenerating `schema.d.ts` from the contract gives no diff
+- [ ] Seen in a browser against the Prism mock (not run this session)
+
+**Deviations from plan or contract:**
+- `docs/07` puts the dashboard in a separate `turbo-admin` repo and `README.md` names Bethel as owner; decided otherwise (see above). `CLAUDE.md` layout does not list `apps/admin_dashboard` yet: planning to update.
+- Landing-page brand replaces the interim `#C6FF00` / system-font theme for the dashboard. Light-mode status colours darkened for the paper background (success `#0F6E50`, warning `#A3400A`, danger `#B42318`).
+- The Flutter apps were also meant to move to the landing-page brand, but this machine has no Flutter SDK, so `flutter analyze`/`flutter test` and the goldens could not run. Not started.
+- `npm audit` reports 3 moderate issues in `openapi-typescript`'s dev-only dependency chain (minimatch via @redocly/openapi-core). Build-time only; the suggested fix downgrades the generator, so left as is.
+
+**Status:** done, awaiting review. Branches: admin-contract-requests, admin-dashboard-scaffold (both cut from main).
+
+**Next step:** Dashboard sign-in, MFA and invite screens against the mock; separately, move `turbo_ui` brand tokens to the landing-page values on a machine with Flutter.
+
 ## 2026-10-31, Kevin with Claude, code: group 2 (turbo_ui)
 
 **Task:** `turbo_ui` brand layer, theme, safeguards, base components, shared states, gallery.

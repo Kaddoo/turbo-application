@@ -1,0 +1,30 @@
+.shell { display: grid; grid-template-columns: 15rem 1fr; grid-template-rows: auto 1fr; min-height: 100%; }
+.topBar {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 10px 20px;
+  border-bottom: 1px solid var(--color-border); background: var(--color-background); position: sticky; top: 0; z-index: 10;
+}
+.wordmark { font-weight: 600; font-size: var(--text-title); letter-spacing: -0.02em; color: var(--color-text-primary); text-decoration: none; }
+.badge {
+  padding: 4px 12px; border-radius: var(--radius-full); background: var(--color-warning); color: var(--color-background);
+  font-size: var(--text-caption); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.spacer { flex: 1; }
+.who { display: grid; text-align: right; line-height: 1.2; }
+.whoName { font-weight: 500; }
+.whoRole { font-size: var(--text-caption); color: var(--color-text-secondary); }
+.rail { border-right: 1px solid var(--color-border); padding: 16px 12px; display: grid; align-content: start; gap: 2px; overflow-y: auto; }
+.group { margin: 16px 12px 6px; font-size: var(--text-caption); color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.link {
+  display: flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: var(--radius-input);
+  color: var(--color-text-secondary); text-decoration: none;
+}
+.link:hover { color: var(--color-text-primary); background: var(--color-surface); }
+.active { color: var(--color-text-primary); background: var(--color-surface); font-weight: 500; box-shadow: inset 2px 0 0 var(--color-accent-text); }
+.main { padding: 24px 32px 48px; min-width: 0; display: grid; align-content: start; gap: 16px; }
+.banners { display: grid; gap: 8px; }
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { border-right: none; border-bottom: 1px solid var(--color-border); display: flex; flex-wrap: wrap; }
+  .group { display: none; }
+  .main { padding: 16px; }
+}
