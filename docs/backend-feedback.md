@@ -2,11 +2,14 @@
 
 From the admin dashboard team, 2026-10-31. Found while building `docs/api-tracker.md` against `api/openapi.yaml` and `docs/api-integration.md` (0.2.2). Numbers match the tracker's "Backend inconsistencies" table. Each item says what we found, why it matters to the apps, and what we suggest.
 
-## 0. `api.turbogh.app` is down
+## 0. `api.turbogh.app`: is it staging or production?
 
-Every path, including `/health` and `/v1/health`, returns an empty `503` from Caddy (checked repeatedly on 2026-10-31 from 19:51 to after 20:00 UTC). The proxy is up, so the API process behind it is not. Is this host staging or production, and when will it be up? We need it to test the dashboard.
+It was down on 2026-10-31 (empty 503 from Caddy, 19:51 to after 20:00 UTC) and is up again on 2026-11-01; our read-only checks all pass. Two questions:
 
-Please also send the **full 0.2.2 `openapi.yaml`**: the copy we got stops at `addDriverDocument`, so we are still generating from 0.2.0.
+- **Staging or production?** We will only run data-changing checks (claim and decide a verification, create a driver, acknowledge an incident, save the boundary) against a non-production host.
+- **MFA is not enforced.** All six dev seed accounts (`admin@`, `finance@`, `verifier@`, `dispatch@`, `hr@`, `support@turbo.test`) sign in with password only and `mfaEnrolled: false`, with the shared dev password. Fine for a dev seed; if this host is (or becomes) production, those accounts must go and MFA must be required.
+
+Thanks for the full 0.2.2 `openapi.yaml`; we have it now.
 
 ## 5. 426 `upgrade_required` is listed on 5 operations only
 
