@@ -50,6 +50,8 @@ function go(path: string) {
 }
 
 describe('every screen renders against the demo server', () => {
+  // Pages load lazily; a heading that changes from one route to the next proves the new page really rendered.
+  let previousHeading: string | null | undefined;
   beforeAll(async () => {
     window.matchMedia ??= ((q: string) => ({ matches: false, media: q, addEventListener() {}, removeEventListener() {}, onchange: null, addListener() {}, removeListener() {}, dispatchEvent: () => false })) as typeof window.matchMedia;
     window.scrollTo = () => {};
@@ -74,7 +76,10 @@ describe('every screen renders against the demo server', () => {
       expect(document.querySelector('main [class*="skeleton"]')).toBeNull();
     }, { timeout: 5000 });
     expect(screen.queryByText('Page not found')).toBeNull();
-    expect(document.querySelector('main h1')?.textContent).toBeTruthy();
+    const heading = document.querySelector('main h1')?.textContent;
+    expect(heading).toBeTruthy();
+    expect(heading).not.toBe(previousHeading);
+    previousHeading = heading;
     // ErrorState blocks only; the urgent SOS banner is also an alert, on purpose.
     const errors = [...document.querySelectorAll('main [role="alert"][class*="state"]')].map((a) => a.textContent);
     expect(errors).toEqual([]);

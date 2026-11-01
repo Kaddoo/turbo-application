@@ -1,38 +1,21 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import { api, call } from '@/services/http';
 import { canUse, type Area } from '@/utils/roles';
 import { useSession } from '@/state/session';
 import { Card, EmptyState, PageHeader, Stat, ui } from '@/components';
 import { formatRelative } from '@/utils/format';
+import { useOverviewCounts } from './queries';
 
-const LIMIT = 50;
 /** The contract returns no totals (CONTRACT_REQUESTS A5), so counts are "50+" past one page. */
 const count = (rows: unknown[] | undefined, hasMore: boolean | undefined) =>
   rows === undefined ? '—' : hasMore ? `${rows.length}+` : String(rows.length);
 
-export function OverviewPage() {
+export function Overview() {
   const { me } = useSession();
   const navigate = useNavigate();
   const role = me?.staffRole;
   const can = (a: Area) => canUse(role, a);
 
-  const sos = useQuery({ queryKey: ['ov', 'sos'], enabled: can('incidents'), refetchInterval: 15_000,
-    queryFn: () => call(api.GET('/admin/incidents', { params: { query: { status: 'open', limit: LIMIT } } })) });
-  const verif = useQuery({ queryKey: ['ov', 'verif'], enabled: can('verification'),
-    queryFn: () => call(api.GET('/admin/verifications', { params: { query: { status: 'pending', limit: LIMIT } } })) });
-  const unreachable = useQuery({ queryKey: ['ov', 'unreachable'], enabled: can('rides'),
-    queryFn: () => call(api.GET('/admin/rides', { params: { query: { flag: 'driver_unreachable', limit: LIMIT } } })) });
-  const overdue = useQuery({ queryKey: ['ov', 'overdue'], enabled: can('rides'),
-    queryFn: () => call(api.GET('/admin/rides', { params: { query: { flag: 'overdue', limit: LIMIT } } })) });
-  const live = useQuery({ queryKey: ['ov', 'live'], enabled: can('liveMap'), refetchInterval: 15_000,
-    queryFn: () => call(api.GET('/admin/rides/live')) });
-  const topups = useQuery({ queryKey: ['ov', 'topups'], enabled: can('finance'),
-    queryFn: () => call(api.GET('/admin/topups', { params: { query: { flagged: true, limit: LIMIT } } })) });
-  const approvals = useQuery({ queryKey: ['ov', 'approvals'], enabled: can('finance'),
-    queryFn: () => call(api.GET('/admin/wallet-adjustments', { params: { query: { status: 'pending', limit: LIMIT } } })) });
-  const docs = useQuery({ queryKey: ['ov', 'docs'], enabled: can('drivers'),
-    queryFn: () => call(api.GET('/admin/driver-documents/expiring', { params: { query: { withinDays: 30 } } })) });
+  const { sos, verif, unreachable, overdue, live, topups, approvals, docs } = useOverviewCounts(can);
 
   const oldestPending = verif.data?.data.reduce<string | null>((o, v) => (!o || v.submittedAt < o ? v.submittedAt : o), null);
   const expired = docs.data?.items.filter((d) => d.daysLeft < 0).length ?? 0;

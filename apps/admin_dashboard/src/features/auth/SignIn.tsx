@@ -1,16 +1,17 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import QRCode from 'qrcode';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { api, call, isDemo } from '@/services/http';
+import { isDemo } from '@/services/http';
 import type { Schemas } from '@/types';
 import { useSession } from '@/state/session';
 import { strings } from '@/app/strings';
 import { Banner, Button, TextField } from '@/components';
 import { ApiError, problemMessage } from '@/utils/problems';
-import a from '@/pages/auth.module.css';
+import a from './auth.module.css';
+import { auth } from '@/services/auth';
 
 /** Email and password, then the 6-digit authenticator code (contract: adminLogin). */
-export function SignInPage() {
+export function SignIn() {
   const { signIn, signedOutReason } = useSession();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -81,7 +82,7 @@ export function SignInPage() {
   );
 }
 
-export function ForgotPasswordPage() {
+export function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -89,7 +90,7 @@ export function ForgotPasswordPage() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true); setError(null);
-    try { await call(api.POST('/auth/admin/password/forgot', { body: { email } })); setSent(true); }
+    try { await auth.forgotPassword({ email }); setSent(true); }
     catch (err) { setError(err); } finally { setBusy(false); }
   }
   return (
@@ -113,7 +114,7 @@ export function ForgotPasswordPage() {
   );
 }
 
-export function ResetPasswordPage() {
+export function ResetPassword() {
   const [params] = useSearchParams();
   const token = params.get('token') ?? '';
   const [password, setPassword] = useState('');
@@ -123,7 +124,7 @@ export function ResetPasswordPage() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true); setError(null);
-    try { await call(api.POST('/auth/admin/password/reset', { body: { token, password } })); setDone(true); }
+    try { await auth.resetPassword({ token, password }); setDone(true); }
     catch (err) { setError(err); } finally { setBusy(false); }
   }
   return (
@@ -147,7 +148,7 @@ export function ResetPasswordPage() {
 }
 
 /** Invite link: set a password, add the authenticator, confirm with a code. */
-export function AcceptInvitePage() {
+export function AcceptInvite() {
   const [params] = useSearchParams();
   const token = params.get('token') ?? '';
   const { completeSignIn } = useSession();
@@ -161,7 +162,7 @@ export function AcceptInvitePage() {
   async function setPw(e: FormEvent) {
     e.preventDefault();
     setBusy(true); setError(null);
-    try { setEnrolment(await call(api.POST('/auth/admin/invite/accept', { body: { token, password } }))); }
+    try { setEnrolment(await auth.acceptInvite({ token, password })); }
     catch (err) { setError(err); } finally { setBusy(false); }
   }
   async function confirm(e: FormEvent) {
@@ -169,7 +170,7 @@ export function AcceptInvitePage() {
     if (!enrolment) return;
     setBusy(true); setError(null);
     try {
-      const tokens = await call(api.POST('/auth/admin/mfa/confirm', { body: { enrollmentToken: enrolment.enrollmentToken, totpCode: code } }));
+      const tokens = await auth.confirmMfa({ enrollmentToken: enrolment.enrollmentToken, totpCode: code });
       await completeSignIn(tokens);
       navigate('/', { replace: true });
     } catch (err) { setError(err); setCode(''); } finally { setBusy(false); }

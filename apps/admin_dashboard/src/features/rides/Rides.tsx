@@ -1,18 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
-import { api, call, newIdempotencyKey } from '@/services/http';
+import { newIdempotencyKey } from '@/services/http';
 import type { Schemas } from '@/types';
 import { canUse } from '@/utils/roles';
 import { useSession } from '@/state/session';
 import { MapView, type MapMarker } from '@/components/MapView';
-import {
-  Banner, Button, Card, Chip, DataTable, Details, Dialog, DialogActions, ErrorState, Money, PageHeader, Select, Skeleton,
-  TextArea, TextField, useToast, ui, When, type Tone,
-} from '@/components';
+import { Banner, Button, Card, Chip, DataTable, Details, Dialog, DialogActions, ErrorState, Money, PageHeader, Select, Skeleton, TextArea, TextField, useToast, ui, When, type Tone } from '@/components';
 import { formatKm, formatPesewas, formatRelative, formatTime, humanize, parseCedis } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
-import { useAction, useCursorList } from '@/hooks';
+import { useLiveRides } from '@/hooks';
+import { useCancelRide, useCompleteRide, useReassignRide, useRefundRide, useRide, useRides } from './queries';
 
 type RideStatus = Schemas['RideStatus'];
 type RideFlag = Schemas['RideFlag'];
@@ -42,13 +39,10 @@ function useTabVisible() {
   return visible;
 }
 
-export function LiveMapPage() {
+export function LiveMap() {
   const navigate = useNavigate();
   const visible = useTabVisible();
-  const q = useQuery({
-    queryKey: ['live'], queryFn: () => call(api.GET('/admin/rides/live')),
-    refetchInterval: visible ? 5_000 : false,
-  });
+  const q = useLiveRides({ refetchInterval: visible ? 5_000 : false });
   const [, tick] = useState(0);
   useEffect(() => { const t = setInterval(() => tick((x) => x + 1), 1000); return () => clearInterval(t); }, []);
 
@@ -99,7 +93,7 @@ export function LiveMapPage() {
   );
 }
 
-export function RidesPage() {
+export function Rides() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const status = params.get('status') ?? '';
@@ -107,11 +101,7 @@ export function RidesPage() {
   const from = params.get('from') ?? '';
   const to = params.get('to') ?? '';
   const set = (k: string, v: string) => { const p = new URLSearchParams(params); if (v) p.set(k, v); else p.delete(k); setParams(p, { replace: true }); };
-  const list = useCursorList(['rides', status, flag, from, to], (cursor) => call(api.GET('/admin/rides', { params: { query: {
-    status: (status || undefined) as RideStatus | undefined, flag: (flag || undefined) as RideFlag | undefined,
-    from: from ? new Date(`${from}T00:00:00Z`).toISOString() : undefined, to: to ? new Date(`${to}T23:59:59Z`).toISOString() : undefined,
-    cursor, limit: 25,
-  } } })));
+  const list = useRides(status, flag, from, to);
   return (
     <>
       <PageHeader title="Rides" description="Every ride, newest first. Open one for its timeline and the actions your role allows." />
@@ -138,12 +128,12 @@ export function RidesPage() {
   );
 }
 
-export function RideDetailPage() {
+export function RideDetail() {
   const { id = '' } = useParams();
   const { me } = useSession();
   const toast = useToast();
-  const q = useQuery({ queryKey: ['ride', id], queryFn: () => call(api.GET('/admin/rides/{id}', { params: { path: { id } } })), refetchInterval: 10_000 });
-  const live = useQuery({ queryKey: ['live'], queryFn: () => call(api.GET('/admin/rides/live')), enabled: canUse(me?.staffRole, 'liveMap') });
+  const q = useRide(id);
+  const live = useLiveRides({ enabled: canUse(me?.staffRole, 'liveMap') });
   const [dialog, setDialog] = useState<'reassign' | 'cancel' | 'complete' | 'refund' | null>(null);
   const [reason, setReason] = useState('');
   const [driverId, setDriverId] = useState('');
@@ -151,18 +141,11 @@ export function RideDetailPage() {
   const [refund, setRefund] = useState({ amount: '', reasonCode: 'service_issue' as Schemas['RefundRequest']['reasonCode'] });
   const [refundKey, setRefundKey] = useState(newIdempotencyKey);
   const close = () => { setDialog(null); setReason(''); };
-  const inval = [['ride', id], ['rides'], ['live']];
 
-  const reassign = useAction(() => call(api.POST('/admin/rides/{id}/reassign', { params: { path: { id } }, body: { driverId, reason } })), inval);
-  const cancel = useAction(() => call(api.POST('/admin/rides/{id}/cancel', { params: { path: { id } }, body: { reason } })), inval);
-  const complete = useAction(() => call(api.POST('/admin/rides/{id}/complete', { params: { path: { id } }, body: { reasonCode: completeCode, note: reason } })), inval);
-  const doRefund = useAction(() => {
-    const amount = refund.amount ? parseCedis(refund.amount) : null;
-    return call(api.POST('/admin/rides/{id}/refund', {
-      params: { path: { id }, header: { 'Idempotency-Key': refundKey } },
-      body: { reasonCode: refund.reasonCode, note: reason, ...(amount ? { amountPesewas: amount } : {}) },
-    }));
-  }, inval);
+  const reassign = useReassignRide(id);
+  const cancel = useCancelRide(id);
+  const complete = useCompleteRide(id);
+  const doRefund = useRefundRide(id);
 
   if (q.isPending) return <Card><Skeleton /><br /><Skeleton width="50%" /></Card>;
   if (q.error) return <ErrorState error={q.error} onRetry={() => void q.refetch()} />;
@@ -239,7 +222,7 @@ export function RideDetailPage() {
         <DialogActions>
           <Button variant="ghost" onClick={close}>Cancel</Button>
           <Button variant="primary" busy={reassign.isPending} disabled={!driverId || reason.trim().length < 3}
-            onClick={() => reassign.mutate(undefined, { onSuccess: () => { close(); toast('Ride reassigned. Both people have been told.'); } })}>Reassign</Button>
+            onClick={() => reassign.mutate({ driverId, reason }, { onSuccess: () => { close(); toast('Ride reassigned. Both people have been told.'); } })}>Reassign</Button>
         </DialogActions>
       </Dialog>
 
@@ -254,7 +237,7 @@ export function RideDetailPage() {
         <DialogActions>
           <Button variant="ghost" onClick={close}>Keep the ride</Button>
           <Button variant="danger" busy={cancel.isPending} disabled={reason.trim().length < 3}
-            onClick={() => cancel.mutate(undefined, { onSuccess: () => { close(); toast('Ride cancelled. The hold is released.'); } })}>Cancel ride</Button>
+            onClick={() => cancel.mutate({ reason }, { onSuccess: () => { close(); toast('Ride cancelled. The hold is released.'); } })}>Cancel ride</Button>
         </DialogActions>
       </Dialog>
 
@@ -267,7 +250,7 @@ export function RideDetailPage() {
         <DialogActions>
           <Button variant="ghost" onClick={close}>Cancel</Button>
           <Button variant="primary" busy={complete.isPending} disabled={reason.trim().length < 5}
-            onClick={() => complete.mutate(undefined, { onSuccess: () => { close(); toast('Ride completed and charged.'); } })}>Complete and charge</Button>
+            onClick={() => complete.mutate({ reasonCode: completeCode, note: reason }, { onSuccess: () => { close(); toast('Ride completed and charged.'); } })}>Complete and charge</Button>
         </DialogActions>
       </Dialog>
 
@@ -284,7 +267,13 @@ export function RideDetailPage() {
           <Button variant="ghost" onClick={close}>Cancel</Button>
           <Button variant="primary" busy={doRefund.isPending}
             disabled={reason.trim().length < 3 || refundAmount === null || refundAmount <= 0 || refundAmount > refundable}
-            onClick={() => doRefund.mutate(undefined, { onSuccess: () => { close(); toast(`Refunded ${formatPesewas(refundAmount ?? refundable)} to the student’s wallet.`); } })}>
+            onClick={() => {
+              const amount = refund.amount ? parseCedis(refund.amount) : null;
+              doRefund.mutate({
+                key: refundKey,
+                body: { reasonCode: refund.reasonCode, note: reason, ...(amount ? { amountPesewas: amount } : {}) },
+              }, { onSuccess: () => { close(); toast(`Refunded ${formatPesewas(refundAmount ?? refundable)} to the student’s wallet.`); } });
+            }}>
             Refund {formatPesewas(refundAmount ?? refundable)}
           </Button>
         </DialogActions>

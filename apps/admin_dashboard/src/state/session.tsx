@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { api, call, restoreSession, setAccessToken } from '@/services/http';
+import { auth } from '@/services/auth';
+import { restoreSession, setAccessToken } from '@/services/http';
+import { me as meService } from '@/services/me';
 import type { AdminLogin, AuthTokens, StaffUser } from '@/types';
 
 type Status = 'checking' | 'signedOut' | 'signedIn';
@@ -46,7 +48,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const started = useRef(false);
 
   const loadMe = useCallback(async () => {
-    const user = await call(api.GET('/admin/me'));
+    const user = await meService.get();
     setMe(user);
     setStatus('signedIn');
     marker.set(true);
@@ -79,7 +81,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(
     async (body: AdminLogin) => {
-      const tokens = await call(api.POST('/auth/admin/login', { body }));
+      const tokens = await auth.login(body);
       await completeSignIn(tokens);
     },
     [completeSignIn],
@@ -87,7 +89,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async (reason?: 'idle') => {
     try {
-      await api.POST('/auth/logout');
+      await auth.logout();
     } catch {
       /* signing out locally regardless */
     }

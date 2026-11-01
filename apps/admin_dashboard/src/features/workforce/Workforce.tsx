@@ -1,18 +1,15 @@
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { api, call, newIdempotencyKey } from '@/services/http';
+import { newIdempotencyKey } from '@/services/http';
 import type { Schemas } from '@/types';
-import {
-  Banner, Button, Chip, ConfirmDialog, DataTable, Dialog, DialogActions, Money, PageHeader, Select, TextArea, TextField,
-  useToast, ui, type Tone,
-} from '@/components';
+import { Banner, Button, Chip, ConfirmDialog, DataTable, Dialog, DialogActions, Money, PageHeader, Select, TextArea, TextField, useToast, ui, type Tone } from '@/components';
 import { formatDate, formatMinutes, formatTime, humanize, parseCedis } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
-import { useAction, useCursorList } from '@/hooks';
+import { useAllDrivers } from '@/hooks';
+import { useAttendance, useCancelShift, useCorrectAttendance, useCreateShift, useRecordSalaryPayment, useSalaryPayments, useShifts } from './queries';
 
 /** Driver id -> name, for tables that only carry ids. */
 function useDriverNames() {
-  const q = useQuery({ queryKey: ['drivers-all'], queryFn: () => call(api.GET('/admin/drivers', { params: { query: { limit: 100 } } })) });
+  const q = useAllDrivers();
   const names = useMemo(() => new Map((q.data?.data ?? []).map((d) => [d.id, d.fullName])), [q.data]);
   return { drivers: q.data?.data ?? [], name: (id: string) => names.get(id) ?? 'Driver' };
 }
@@ -21,16 +18,16 @@ const accraLocal = (date: string, time: string) => new Date(`${date}T${time}:00Z
 
 const shiftTone: Record<Schemas['Shift']['status'], Tone> = { scheduled: 'neutral', in_progress: 'success', completed: 'neutral', missed: 'danger' };
 
-export function ShiftsPage() {
+export function Shifts() {
   const toast = useToast();
   const { drivers, name } = useDriverNames();
   const [driverId, setDriverId] = useState('');
-  const list = useCursorList(['shifts', driverId], (cursor) => call(api.GET('/admin/shifts', { params: { query: { driverId: driverId || undefined, cursor, limit: 50 } } })));
+  const list = useShifts(driverId);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ driverId: '', date: '', start: '07:00', end: '15:00' });
   const [deleting, setDeleting] = useState<Schemas['Shift'] | null>(null);
-  const create = useAction(() => call(api.POST('/admin/shifts', { body: { driverId: form.driverId, startsAt: accraLocal(form.date, form.start), endsAt: accraLocal(form.date, form.end) } })), [['shifts']]);
-  const remove = useAction(() => call(api.DELETE('/admin/shifts/{id}', { params: { path: { id: deleting!.id } } })), [['shifts']]);
+  const create = useCreateShift();
+  const remove = useCancelShift();
   const byDay = useMemo(() => {
     const m = new Map<string, Schemas['Shift'][]>();
     for (const s of [...(list.rows ?? [])].sort((a, b) => a.startsAt.localeCompare(b.startsAt))) {
@@ -76,30 +73,27 @@ export function ShiftsPage() {
         <DialogActions>
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
           <Button variant="primary" busy={create.isPending} disabled={!form.driverId || !form.date || form.end <= form.start}
-            onClick={() => create.mutate(undefined, { onSuccess: () => { setOpen(false); toast('Shift scheduled.'); } })}>Schedule</Button>
+            onClick={() => create.mutate({ driverId: form.driverId, startsAt: accraLocal(form.date, form.start), endsAt: accraLocal(form.date, form.end) }, { onSuccess: () => { setOpen(false); toast('Shift scheduled.'); } })}>Schedule</Button>
         </DialogActions>
       </Dialog>
       <ConfirmDialog open={!!deleting} onClose={() => setDeleting(null)} title="Cancel this shift"
         body={deleting ? `${name(deleting.driverId)}, ${formatDate(deleting.startsAt)} ${formatTime(deleting.startsAt)} – ${formatTime(deleting.endsAt)}.` : ''}
         confirmLabel="Cancel shift" danger busy={remove.isPending} error={remove.error}
-        onConfirm={() => remove.mutate(undefined, { onSuccess: () => { setDeleting(null); toast('Shift cancelled.'); } })} />
+        onConfirm={() => remove.mutate(deleting!.id, { onSuccess: () => { setDeleting(null); toast('Shift cancelled.'); } })} />
     </>
   );
 }
 
 const attTone: Record<Schemas['AttendanceRecord']['status'], Tone> = { present: 'success', late: 'warning', absent: 'danger', corrected: 'accent' };
 
-export function AttendancePage() {
+export function Attendance() {
   const toast = useToast();
   const { drivers, name } = useDriverNames();
   const [driverId, setDriverId] = useState('');
-  const list = useCursorList(['attendance', driverId], (cursor) => call(api.GET('/admin/attendance', { params: { query: { driverId: driverId || undefined, cursor, limit: 25 } } })));
+  const list = useAttendance(driverId);
   const [editing, setEditing] = useState<Schemas['AttendanceRecord'] | null>(null);
   const [form, setForm] = useState({ in: '', out: '', reasonCode: 'forgot_to_clock' as Schemas['AttendanceCorrection']['reasonCode'], note: '' });
-  const correct = useAction(() => call(api.PATCH('/admin/attendance/{id}', { params: { path: { id: editing!.id } }, body: {
-    ...(form.in ? { clockInAt: accraLocal(editing!.date, form.in) } : {}), ...(form.out ? { clockOutAt: accraLocal(editing!.date, form.out) } : {}),
-    reasonCode: form.reasonCode, note: form.note,
-  } })), [['attendance']]);
+  const correct = useCorrectAttendance();
   const totals = useMemo(() => (list.rows ?? []).reduce((t, r) => t + r.minutesWorked, 0), [list.rows]);
   return (
     <>
@@ -132,26 +126,26 @@ export function AttendancePage() {
         <DialogActions>
           <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
           <Button variant="primary" busy={correct.isPending} disabled={form.note.trim().length < 3}
-            onClick={() => correct.mutate(undefined, { onSuccess: () => { setEditing(null); toast('Attendance corrected.'); } })}>Save correction</Button>
+            onClick={() => correct.mutate({ id: editing!.id, body: {
+              ...(form.in ? { clockInAt: accraLocal(editing!.date, form.in) } : {}), ...(form.out ? { clockOutAt: accraLocal(editing!.date, form.out) } : {}),
+              reasonCode: form.reasonCode, note: form.note,
+            } }, { onSuccess: () => { setEditing(null); toast('Attendance corrected.'); } })}>Save correction</Button>
         </DialogActions>
       </Dialog>
     </>
   );
 }
 
-export function SalaryPaymentsPage() {
+export function SalaryPayments() {
   const toast = useToast();
   const { drivers, name } = useDriverNames();
   const [driverId, setDriverId] = useState('');
-  const list = useCursorList(['salary-payments', driverId], (cursor) => call(api.GET('/admin/salary-payments', { params: { query: { driverId: driverId || undefined, cursor, limit: 25 } } })));
+  const list = useSalaryPayments(driverId);
   const [open, setOpen] = useState(false);
   const [key, setKey] = useState(newIdempotencyKey);
   const [form, setForm] = useState({ driverId: '', periodStart: '', periodEnd: '', amount: '', method: 'mobile_money' as Schemas['SalaryPaymentCreate']['method'], reference: '', paidAt: '' });
   const amount = parseCedis(form.amount);
-  const record = useAction(() => call(api.POST('/admin/salary-payments', { params: { header: { 'Idempotency-Key': key } }, body: {
-    driverId: form.driverId, periodStart: form.periodStart, periodEnd: form.periodEnd, amountPesewas: amount!, method: form.method,
-    ...(form.reference ? { reference: form.reference } : {}), paidAt: new Date(`${form.paidAt}T12:00:00Z`).toISOString(),
-  } })), [['salary-payments']]);
+  const record = useRecordSalaryPayment();
   return (
     <>
       <PageHeader title="Salary payments" description="A record of salaries paid outside the system. Recording one here does not send money."
@@ -186,7 +180,10 @@ export function SalaryPaymentsPage() {
           <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
           <Button variant="primary" busy={record.isPending}
             disabled={!form.driverId || !form.periodStart || !form.periodEnd || form.periodEnd < form.periodStart || !amount || amount <= 0 || !form.paidAt}
-            onClick={() => record.mutate(undefined, { onSuccess: () => { setOpen(false); toast('Payment recorded.'); } })}>Record payment</Button>
+            onClick={() => record.mutate({ key, body: {
+              driverId: form.driverId, periodStart: form.periodStart, periodEnd: form.periodEnd, amountPesewas: amount!, method: form.method,
+              ...(form.reference ? { reference: form.reference } : {}), paidAt: new Date(`${form.paidAt}T12:00:00Z`).toISOString(),
+            } }, { onSuccess: () => { setOpen(false); toast('Payment recorded.'); } })}>Record payment</Button>
         </DialogActions>
       </Dialog>
     </>

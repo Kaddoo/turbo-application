@@ -1,54 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
-import { api, call, onUpgradeRequired } from '@/services/http';
+import { NavLink, Outlet, useNavigate, useNavigation } from 'react-router';
+import { onUpgradeRequired } from '@/services/http';
 import { canUse, roleLabels, type Area } from '@/utils/roles';
-import { useIdleTimer } from '@/hooks';
+import { useIdleTimer, useServiceArea, useSettings, useSosBanner } from '@/hooks';
 import { useSession } from '@/state/session';
 import { Banner, Button, Dialog, DialogActions } from '@/components';
 import { formatRelative } from '@/utils/format';
-import { appEnv, showEnvBadge } from '@/app/env';
-import { strings } from '@/app/strings';
-import l from '@/app/layout.module.css';
-
-interface NavItem { to: string; label: string; area: Area }
-const nav: { group: string; items: NavItem[] }[] = [
-  { group: '', items: [{ to: '/', label: 'Overview', area: 'overview' }] },
-  { group: 'People', items: [
-    { to: '/verification', label: 'Verification', area: 'verification' },
-    { to: '/students', label: 'Students', area: 'students' },
-    { to: '/drivers', label: 'Drivers', area: 'drivers' },
-    { to: '/vehicles', label: 'Vehicles', area: 'vehicles' },
-  ] },
-  { group: 'Operations', items: [
-    { to: '/live', label: 'Live map', area: 'liveMap' },
-    { to: '/rides', label: 'Rides', area: 'rides' },
-    { to: '/announcements', label: 'Announcements', area: 'announcements' },
-  ] },
-  { group: 'Finance', items: [
-    { to: '/finance/topups', label: 'Top-ups', area: 'finance' },
-    { to: '/finance/adjustments', label: 'Adjustments', area: 'finance' },
-    { to: '/finance/reconciliation', label: 'Reconciliation', area: 'finance' },
-  ] },
-  { group: 'Care', items: [
-    { to: '/support', label: 'Support', area: 'support' },
-    { to: '/incidents', label: 'Incidents', area: 'incidents' },
-  ] },
-  { group: 'Workforce', items: [
-    { to: '/salary/shifts', label: 'Shifts', area: 'salary' },
-    { to: '/salary/attendance', label: 'Attendance', area: 'salary' },
-    { to: '/salary/payments', label: 'Salary payments', area: 'salary' },
-  ] },
-  { group: 'Admin', items: [
-    { to: '/configuration', label: 'Configuration', area: 'configuration' },
-    { to: '/staff', label: 'Staff', area: 'staff' },
-    { to: '/audit-log', label: 'Audit log', area: 'auditLog' },
-  ] },
-];
+import { appEnv, showEnvBadge } from './env';
+import { navGroups } from './routes';
+import { strings } from './strings';
+import l from './layout.module.css';
 
 export function Layout() {
   const { me, signOut } = useSession();
   const navigate = useNavigate();
+  // A page chunk is loading: the main area reports busy until it arrives.
+  const loadingPage = useNavigation().state === 'loading';
   const role = me?.staffRole;
   const onIdle = useCallback(() => void signOut('idle'), [signOut]);
   const idle = useIdleTimer(onIdle);
@@ -56,21 +23,14 @@ export function Layout() {
   useEffect(() => onUpgradeRequired(() => setOutdated(true)), []);
 
   // SOS banner: polls open incidents for roles the contract lets read them (x-roles: support).
-  const sos = useQuery({
-    queryKey: ['incidents', 'open-banner'],
-    queryFn: () => call(api.GET('/admin/incidents', { params: { query: { status: 'open', limit: 10 } } })),
-    enabled: canUse(role, 'incidents'),
-    refetchInterval: 10_000,
-  });
+  const sos = useSosBanner(canUse(role, 'incidents'));
   const open = sos.data?.data ?? [];
   const oldest = open.reduce<string | null>((o, i) => (!o || i.createdAt < o ? i.createdAt : o), null);
   const overdue = oldest ? Date.now() - new Date(oldest).getTime() > 120_000 : false;
 
   // Pilot gate: no approved boundary yet (D1). Pause state from settings.
-  const area = useQuery({ queryKey: ['service-area'], queryFn: () => call(api.GET('/service-area')), enabled: !!role });
-  const settings = useQuery({
-    queryKey: ['settings'], queryFn: () => call(api.GET('/admin/settings')), enabled: canUse(role, 'configuration'),
-  });
+  const area = useServiceArea(!!role);
+  const settings = useSettings(canUse(role, 'configuration'));
 
   return (
     <div className={l.shell}>
@@ -88,7 +48,7 @@ export function Layout() {
         <Button small onClick={() => void signOut()}>Sign out</Button>
       </header>
       <nav className={l.rail} aria-label={strings.navLabel}>
-        {nav.map((g) => {
+        {navGroups.map((g) => {
           const items = g.items.filter((i) => canUse(role, i.area));
           if (!items.length) return null;
           return (
@@ -103,7 +63,7 @@ export function Layout() {
           );
         })}
       </nav>
-      <main className={l.main} id="main">
+      <main className={l.main} id="main" aria-busy={loadingPage || undefined}>
         <div className={l.banners}>
           {outdated && (
             <Banner tone="warning" action={<Button small variant="primary" onClick={() => window.location.reload()}>Reload</Button>}>
