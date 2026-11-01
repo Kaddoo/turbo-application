@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { api, call, type Schemas, uploadFile } from '../api/client';
+import { api, call, newIdempotencyKey, type Schemas, uploadFile } from '../api/client';
 import { canUse } from '../auth/roles';
 import { useSession } from '../auth/session';
 import {
@@ -163,14 +163,15 @@ export function DriversPage() {
   const vehicles = useQuery({ queryKey: ['vehicles-all'], queryFn: () => call(api.GET('/admin/vehicles', { params: { query: { limit: 100 } } })) });
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm] = useState({ fullName: '', phone: '+233', email: '', vehicleId: '' });
-  const create = useAction(() => call(api.POST('/admin/drivers', { body: {
+  const [createKey, setCreateKey] = useState(newIdempotencyKey);
+  const create = useAction(() => call(api.POST('/admin/drivers', { params: { header: { 'Idempotency-Key': createKey } }, body: {
     fullName: form.fullName, phone: form.phone, ...(form.email ? { email: form.email } : {}), vehicleId: form.vehicleId || null,
   } })), [['drivers']]);
 
   return (
     <>
       <PageHeader title="Drivers" description="Salaried drivers. Creating one sends them an SMS invitation to the driver app."
-        actions={<Button variant="primary" onClick={() => setCreateOpen(true)}>Add driver</Button>} />
+        actions={<Button variant="primary" onClick={() => { setCreateKey(newIdempotencyKey()); setCreateOpen(true); }}>Add driver</Button>} />
       <Card title="Documents expiring in the next 30 days">
         {expiring.isPending ? <Skeleton /> : expiring.error ? <ErrorState error={expiring.error} onRetry={() => void expiring.refetch()} />
           : expiring.data.items.length === 0 ? <p className={ui.muted} style={{ margin: 0 }}>No documents expire in the next 30 days.</p> : (
@@ -198,7 +199,7 @@ export function DriversPage() {
       </div>
       <DataTable label="Drivers" rows={list.rows} rowKey={(r) => r.id} loading={list.loading} error={list.error} onRetry={list.refetch}
         hasMore={list.hasMore} onLoadMore={list.loadMore} loadingMore={list.loadingMore} onRowClick={(r) => navigate(`/drivers/${r.id}`)}
-        empty={{ title: 'No drivers yet', body: 'Add the first driver to send their invitation.', action: <Button variant="primary" onClick={() => setCreateOpen(true)}>Add driver</Button> }}
+        empty={{ title: 'No drivers yet', body: 'Add the first driver to send their invitation.', action: <Button variant="primary" onClick={() => { setCreateKey(newIdempotencyKey()); setCreateOpen(true); }}>Add driver</Button> }}
         columns={[
           { header: 'Name', cell: (r) => r.fullName },
           { header: 'Phone', cell: (r) => maskPhone(r.phone) },
