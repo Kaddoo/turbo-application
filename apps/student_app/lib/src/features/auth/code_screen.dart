@@ -52,7 +52,11 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
       _error = null;
     });
     try {
-      final response = await ref.read(clientProvider).api.getAuthApi().verifyOtp(
+      final response = await ref
+          .read(clientProvider)
+          .api
+          .getAuthApi()
+          .verifyOtp(
             otpVerify: OtpVerify(
               phone: phone,
               code: value,
@@ -66,7 +70,9 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
       final problem = problemOf(e);
       if (problem.code == ProblemCode.termsNotAccepted.value && mounted) {
         final draft = ref.read(authDraftProvider);
-        ref.read(authDraftProvider.notifier).set(draft.copyWith(pendingCode: value));
+        ref
+            .read(authDraftProvider.notifier)
+            .set(draft.copyWith(pendingCode: value));
         context.go('/terms');
       } else if (mounted) {
         // Clear first: clearing reports a change, which would wipe the error.
@@ -85,10 +91,18 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
     setState(() => _error = null);
     try {
       final deviceId = await ref.read(deviceIdProvider.future);
-      final response = await ref.read(clientProvider).api.getAuthApi().requestOtp(
+      final response = await ref
+          .read(clientProvider)
+          .api
+          .getAuthApi()
+          .requestOtp(
             // A new key for every tap, so a retry of one tap cannot send a second code but a deliberate resend still works.
             idempotencyKey: IdempotencyKey().value,
-            otpRequest: OtpRequest(phone: phone, role: OtpRequestRoleEnum.student, deviceId: deviceId),
+            otpRequest: OtpRequest(
+              phone: phone,
+              role: OtpRequestRoleEnum.student,
+              deviceId: deviceId,
+            ),
           );
       if (mounted) setState(() => _wait = response.data?.resendInSeconds ?? 30);
       _otp.currentState?.clear();
@@ -118,22 +132,6 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
         loading: _busy,
         onPressed: _code.length == 6 ? _verify : null,
       ),
-      footer: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          TextButton(
-            style: TextButton.styleFrom(minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap)),
-            onPressed: _busy ? null : () => context.go('/phone'),
-            child: Text(l10n.codeWrongNumber),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap)),
-            onPressed: _wait > 0 || _busy ? null : _resend,
-            child: Text(_wait > 0 ? l10n.codeResendIn(_wait) : l10n.codeResend),
-          ),
-        ],
-      ),
       children: [
         OtpField(
           key: _otp,
@@ -144,6 +142,28 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
             _error = null;
           }),
           onCompleted: _verify,
+        ),
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            TextButton(
+              style: TextButton.styleFrom(
+                minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
+              ),
+              onPressed: _busy ? null : () => context.go('/phone'),
+              child: Text(l10n.codeWrongNumber),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
+              ),
+              onPressed: _wait > 0 || _busy ? null : _resend,
+              child: Text(
+                _wait > 0 ? l10n.codeResendIn(_wait) : l10n.codeResend,
+              ),
+            ),
+          ],
         ),
       ],
     );

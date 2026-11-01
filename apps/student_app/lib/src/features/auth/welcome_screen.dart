@@ -62,9 +62,7 @@ class WelcomeScreen extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
-                                  t.brand.wordmark.characters
-                                      .take(2)
-                                      .toString(),
+                                  _initials(t.brand.wordmark),
                                   style: text.labelLarge?.copyWith(
                                     color: t.colors.textPrimary,
                                   ),
@@ -146,4 +144,10 @@ class _GridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_GridPainter old) => old.color != color;
+}
+
+/// First and last letter of the wordmark, the short mark in the corner of the card.
+String _initials(String name) {
+  final letters = name.characters;
+  return letters.length < 2 ? name : '${letters.first}${letters.last}';
 }
