@@ -54,7 +54,7 @@ void main() {
 
     // Change status or assignee
     //
-    // **Access:** admin:support.
+    // **Access:** admin:support. 409 `ticket_state_invalid`: the ticket is in a state that does not allow this change.
     //
     //Future<SupportTicket> updateSupportTicket(String id, TicketUpdate ticketUpdate) async
     test('test updateSupportTicket', () async {

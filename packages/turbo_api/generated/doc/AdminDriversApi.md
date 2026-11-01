@@ -115,7 +115,7 @@ Name | Type | Description  | Notes
 
 Add a vehicle
 
-**Access:** admin:hr. 409 `duplicate_plate`: a vehicle with that plate number already exists.
+**Access:** admin:hr. Plates are compared after uppercasing and removing every character that is not a letter or digit, so `GR-4821-24`, `gr 4821 24` and `GR482124` are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 `duplicate_plate`; its `detail` says whether the match is active, in maintenance or retired.
 
 ### Example
 ```dart
@@ -383,7 +383,7 @@ Name | Type | Description  | Notes
 
 Edit a vehicle
 
-**Access:** admin:hr.
+**Access:** admin:hr. Plates are compared after uppercasing and removing every character that is not a letter or digit, so `GR-4821-24`, `gr 4821 24` and `GR482124` are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 `duplicate_plate`; its `detail` says whether the match is active, in maintenance or retired.
 
 ### Example
 ```dart

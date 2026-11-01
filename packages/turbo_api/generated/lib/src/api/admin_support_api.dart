@@ -483,7 +483,7 @@ _responseData = rawData == null ? null : deserialize<Incident, Incident>(rawData
   }
 
   /// Change status or assignee
-  /// **Access:** admin:support.
+  /// **Access:** admin:support. 409 &#x60;ticket_state_invalid&#x60;: the ticket is in a state that does not allow this change.
   ///
   /// Parameters:
   /// * [id] 

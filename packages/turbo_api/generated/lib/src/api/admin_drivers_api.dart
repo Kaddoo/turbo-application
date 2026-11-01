@@ -228,7 +228,7 @@ _responseData = rawData == null ? null : deserialize<DriverDetail, DriverDetail>
   }
 
   /// Add a vehicle
-  /// **Access:** admin:hr. 409 &#x60;duplicate_plate&#x60;: a vehicle with that plate number already exists.
+  /// **Access:** admin:hr. Plates are compared after uppercasing and removing every character that is not a letter or digit, so &#x60;GR-4821-24&#x60;, &#x60;gr 4821 24&#x60; and &#x60;GR482124&#x60; are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 &#x60;duplicate_plate&#x60;; its &#x60;detail&#x60; says whether the match is active, in maintenance or retired.
   ///
   /// Parameters:
   /// * [vehicleWrite] 
@@ -763,7 +763,7 @@ _responseData = rawData == null ? null : deserialize<DriverDetail, DriverDetail>
   }
 
   /// Edit a vehicle
-  /// **Access:** admin:hr.
+  /// **Access:** admin:hr. Plates are compared after uppercasing and removing every character that is not a letter or digit, so &#x60;GR-4821-24&#x60;, &#x60;gr 4821 24&#x60; and &#x60;GR482124&#x60; are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 &#x60;duplicate_plate&#x60;; its &#x60;detail&#x60; says whether the match is active, in maintenance or retired.
   ///
   /// Parameters:
   /// * [id] 
