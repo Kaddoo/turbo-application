@@ -532,6 +532,12 @@ abstract class AppLocalizations {
   /// **'Go on duty'**
   String get homeGoOnDuty;
 
+  /// No description provided for @homeYourVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vehicle'**
+  String get homeYourVehicle;
+
   /// No description provided for @homeGoOffDuty.
   ///
   /// In en, this message translates to:

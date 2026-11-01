@@ -278,6 +278,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeGoOnDuty => 'Go on duty';
 
   @override
+  String get homeYourVehicle => 'Your vehicle';
+
+  @override
   String get homeGoOffDuty => 'Go off duty';
 
   @override

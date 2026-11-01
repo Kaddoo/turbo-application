@@ -74,8 +74,6 @@ void main() {
     testWidgets('shows who you are, the vehicle and the readiness checklist', (tester) async {
       await bootDriver(tester, driverServer());
       await settle(tester);
-      // ignore: avoid_print
-      print(tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).toList());
       expect(find.text('Hello, Kofi'), findsOneWidget);
       expect(find.text('Silver Toyota Corolla · GR-4821-24'), findsOneWidget);
       expect(find.text('Before you go on duty'), findsOneWidget);
@@ -140,6 +138,19 @@ void main() {
       // No route: the fake answers 404, which reads as a failure, not a code.
       expect(find.text('Go on duty'), findsOneWidget);
     });
+  });
+
+  group('dark and large text', () {
+    for (final onDuty in [false, true]) {
+      testWidgets('home ${onDuty ? 'on' : 'off'} duty lays out in dark mode at 200% text', (tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+        tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+        addTearDown(tester.platformDispatcher.clearAllTestValues);
+        await bootDriver(tester, driverServer(onDuty: onDuty));
+        await settle(tester);
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 
   group('on duty', () {

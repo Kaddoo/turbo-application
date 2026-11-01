@@ -87,6 +87,8 @@
   "homeNoVehicle": "No vehicle assigned yet. Contact your supervisor.",
   "homeOffDuty": "Off duty",
   "homeGoOnDuty": "Go on duty",
+  "homeOffDuty": "Off duty",
+  "homeYourVehicle": "Your vehicle",
   "homeGoOffDuty": "Go off duty",
   "homeOnDutyWaiting": "On duty. Waiting for a ride.",
   "homeOnDutyFor": "On duty for {time}",
