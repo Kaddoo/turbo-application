@@ -11,6 +11,7 @@ import { applyOutcome, receivedPesewas } from '../domain/topups.js';
 import { pageArgs, pageOf } from '../lib/page.js';
 import { walletView, txView, topupView } from '../views.js';
 import { tx } from '../db.js';
+import { alert } from '../lib/alerts.js';
 
 export const walletRoutes = Router();
 const S = [authenticate, requireRole('student'), terms];
@@ -64,11 +65,21 @@ walletRoutes.get('/wallet/topups/:id', ...S, async (req, res) => {
 export const webhook = Router();
 webhook.post('/webhooks/:provider', raw({ type: '*/*', limit: '64kb' }), async (req, res) => {
   if (req.params.provider !== 'payaza') throw notFound('Webhook');                 // only providers we actually integrate; the name is part of the dedupe key
-  if (!verifyWebhook(req.body, req.get('x-payaza-signature'))) throw new ApiError(401, 'unauthenticated', 'Bad signature');
+  if (!verifyWebhook(req.body, req.get('x-payaza-signature'))) {
+    alert({ severity: 'critical', dedupeKey: 'payaza-webhook', title: 'Payaza webhook rejected: bad signature',
+      detail: 'A request to /webhooks/payaza failed signature verification. Check PAYAZA_WEBHOOK_SECRET or look for forged calls.' });
+    throw new ApiError(401, 'unauthenticated', 'Bad signature');
+  }
   let p; try { p = JSON.parse(req.body.toString('utf8')); } catch { throw new ApiError(400, 'validation_failed', 'Invalid JSON'); }
   const ref = p.transaction_reference, ok = p.transaction_status === 'Funds Received';
   if (typeof ref !== 'string' || ref.length > 64 || !['Funds Received', 'Transaction Failed'].includes(p.transaction_status)) throw new ApiError(400, 'validation_failed', 'Unrecognised event');
-  await tx((c) => applyOutcome(c, req.params.provider, ref, ok ? 'success' : 'failed', p,
-    ok ? { received: receivedPesewas(p.amount_received), validation: p.amount_validation } : {}));
+  try {
+    await tx((c) => applyOutcome(c, req.params.provider, ref, ok ? 'success' : 'failed', p,
+      ok ? { received: receivedPesewas(p.amount_received), validation: p.amount_validation } : {}));
+  } catch (e) {
+    alert({ severity: 'critical', dedupeKey: 'payaza-webhook', title: 'Payaza webhook could not be processed',
+      detail: `A signed webhook failed while applying the top-up (${e?.name || 'Error'}). Money may be waiting: check topups and the log.` });
+    throw e;
+  }
   res.json({ received: true });          // the result (credited, duplicate, held...) is for our logs, not for the provider
 });
