@@ -33,7 +33,15 @@ const vehicleWrite = async (req, res, id) => {
     if (!v) throw notFound('Vehicle');
     await q(`INSERT INTO audit_log (actor_type,actor_id,action,target) VALUES ('staff',$1,$2,$3)`, [req.user.id, id ? 'vehicle.update' : 'vehicle.create', v.id]);
     res.status(id ? 200 : 201).json(vehicleView(v));
-  } catch (e) { if (e.code === '23505') throw conflict('duplicate_plate', 'A vehicle with that plate number already exists'); throw e; }
+  } catch (e) {
+    if (e.code !== '23505') throw e;
+    // Say which vehicle holds the plate, so staff know whether to reactivate it or fix a typo.
+    const { rows: [other] } = await q(`SELECT status FROM vehicles WHERE deleted_at IS NULL AND id IS DISTINCT FROM $2::uuid AND plate_normalised = regexp_replace(upper($1), '[^A-Z0-9]', '', 'g')`, [plateNumber, id]);
+    const word = { active: 'an active', maintenance: 'a maintenance', retired: 'a retired' }[other?.status] ?? 'another';
+    throw conflict('duplicate_plate', 'A vehicle with that plate number already exists', {
+      detail: `The same plate is already registered to ${word} vehicle.${other?.status === 'retired' ? ' Reactivate that vehicle instead of adding it again.' : ''}`,
+    });
+  }
 };
 hr.post('/admin/vehicles', ...H, (req, res) => vehicleWrite(req, res, null));
 hr.patch('/admin/vehicles/:id', ...H, (req, res) => { need(req.params.id, 'Vehicle'); return vehicleWrite(req, res, req.params.id); });
