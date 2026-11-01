@@ -110,4 +110,12 @@ describe('protected routes', () => {
     expect(localStorage.getItem('admin.session')).toBeNull();
     sessionOver = false;
   });
+
+  it('starts fresh after a deliberate sign-out instead of keeping the last page', async () => {
+    await signIn('admin@turbo.example');
+    await waitFor(() => expect(here()).toBe('/verification'), { timeout: 5000 });
+    fireEvent.click((await screen.findAllByRole('button', { name: /, Super admin$/ }))[0]!);
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'Sign out' }));
+    await waitFor(() => expect(here()).toBe('/sign-in'), { timeout: 5000 });
+  });
 });

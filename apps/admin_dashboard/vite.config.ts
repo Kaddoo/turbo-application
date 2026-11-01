@@ -11,7 +11,11 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
+      // Staging sets the refresh cookie only for allowlisted origins, and http://localhost:5173
+      // is the dev one. On any other port sign-in works but a reload signs you out, so fail
+      // loudly when 5173 is taken instead of moving to 5174.
       port: 5173,
+      strictPort: true,
       // Same-origin API in development: no CORS, and the SameSite=Strict refresh
       // cookie lands on this origin. Its path and domain are rewritten so the
       // browser sends it back to /api/auth/refresh.

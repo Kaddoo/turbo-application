@@ -27,12 +27,19 @@ function Checking() {
 }
 
 function SignedIn() {
-  const { status } = useSession();
+  const { status, signedOutReason } = useSession();
   const location = useLocation();
   if (status === 'checking') return <Checking />;
-  // Keep the page they asked for (path, query and hash) so sign-in brings them back.
   if (status === 'signedOut') {
-    return <Navigate to={signInPath(`${location.pathname}${location.search}${location.hash}`)} replace />;
+    // A deliberate sign-out (here or in another tab) starts fresh, so the next person at this
+    // computer does not land on the last one's page. Otherwise keep the page they asked for.
+    const fresh = signedOutReason === 'signedOut' || signedOutReason === 'elsewhere';
+    return (
+      <Navigate
+        to={fresh ? '/sign-in' : signInPath(`${location.pathname}${location.search}${location.hash}`)}
+        replace
+      />
+    );
   }
   return <Layout />;
 }
