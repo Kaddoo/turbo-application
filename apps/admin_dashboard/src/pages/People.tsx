@@ -105,8 +105,8 @@ export function StudentDetailPage() {
       </div>
       <Card title="Account actions">
         <div className={ui.actions}>
-          <Button variant={suspended ? 'primary' : 'danger'} onClick={() => setSuspendOpen(true)}>{suspended ? 'Reactivate' : 'Suspend'}</Button>
-          <Button onClick={() => setPhoneOpen(true)}>Change phone number</Button>
+          {canUse(me?.staffRole, 'students') && <Button variant={suspended ? 'primary' : 'danger'} onClick={() => setSuspendOpen(true)}>{suspended ? 'Reactivate' : 'Suspend'}</Button>}
+          {canUse(me?.staffRole, 'students') && <Button onClick={() => setPhoneOpen(true)}>Change phone number</Button>}
           {canUse(me?.staffRole, 'support') && <Button onClick={() => setSignOutOpen(true)}>Sign out everywhere</Button>}
         </div>
       </Card>
