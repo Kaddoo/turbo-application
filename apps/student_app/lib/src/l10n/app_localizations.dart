@@ -172,6 +172,54 @@ abstract class AppLocalizations {
   /// **'For Central University students at Miotso'**
   String get welcomeAudience;
 
+  /// No description provided for @welcomeSlide2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A vetted driver, assigned for you'**
+  String get welcomeSlide2Title;
+
+  /// No description provided for @welcomeSlide2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Salaried drivers. Your 4-digit PIN starts every trip.'**
+  String get welcomeSlide2Body;
+
+  /// No description provided for @welcomeSlide3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed fares. No cash.'**
+  String get welcomeSlide3Title;
+
+  /// No description provided for @welcomeSlide3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'See the price before you book. Top up with mobile money.'**
+  String get welcomeSlide3Body;
+
+  /// No description provided for @welcomeNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get welcomeNext;
+
+  /// No description provided for @welcomeSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get welcomeSkip;
+
+  /// No description provided for @welcomePrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get welcomePrevious;
+
+  /// No description provided for @welcomeSlideOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Slide {number} of {total}'**
+  String welcomeSlideOf(int number, int total);
+
   /// No description provided for @phoneTitle.
   ///
   /// In en, this message translates to:

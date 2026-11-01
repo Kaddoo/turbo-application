@@ -58,34 +58,24 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final text = Theme.of(context).textTheme;
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: () => context.go('/welcome')),
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(TurboSpacing.xl),
-          children: [
-            Semantics(header: true, child: Text(l10n.phoneTitle, style: text.headlineMedium)),
-            const SizedBox(height: TurboSpacing.xl),
-            TurboTextField(
-              label: l10n.phoneFieldLabel,
-              controller: _controller,
-              prefixText: '+233 ',
-              helper: l10n.phoneHelper,
-              errorText: _error,
-              keyboardType: TextInputType.phone,
-              textInputAction: TextInputAction.done,
-              autofillHints: const [AutofillHints.telephoneNumberNational],
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]')), LengthLimitingTextInputFormatter(13)],
-              onChanged: (_) => setState(() => _error = null),
-            ),
-            const SizedBox(height: TurboSpacing.xl),
-            TurboButton(label: l10n.phoneSendCode, loading: _busy, onPressed: _send),
-          ],
+    return AuthLayout(
+      title: l10n.phoneTitle,
+      onBack: () => context.go('/welcome'),
+      action: TurboButton(label: l10n.phoneSendCode, large: true, loading: _busy, onPressed: _send),
+      children: [
+        TurboTextField(
+          label: l10n.phoneFieldLabel,
+          controller: _controller,
+          prefixText: '+233 ',
+          helper: l10n.phoneHelper,
+          errorText: _error,
+          keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.done,
+          autofillHints: const [AutofillHints.telephoneNumberNational],
+          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]')), LengthLimitingTextInputFormatter(13)],
+          onChanged: (_) => setState(() => _error = null),
         ),
-      ),
+      ],
     );
   }
 }

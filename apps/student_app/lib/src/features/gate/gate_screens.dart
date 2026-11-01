@@ -48,9 +48,7 @@ class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        body: SafeArea(child: Center(child: SizedBox(width: 240, child: LoadingState(rows: 1)))),
-      );
+  Widget build(BuildContext context) => const SplashView();
 }
 
 /// Shown when the app could not read the session or profile and has no cached

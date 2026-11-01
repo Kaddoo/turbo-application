@@ -53,7 +53,7 @@ void main() {
   testWidgets('an offline app-config check does not block sign-in', (tester) async {
     final server = FakeServer(); // no routes: every call 404s like an unreachable server
     await boot(tester, server);
-    expect(find.text('Continue'), findsOneWidget);
+    expect(find.text('Skip'), findsOneWidget);
   });
 
   testWidgets('signed out: welcome, phone, then the code screen', (tester) async {
@@ -62,7 +62,7 @@ void main() {
     await boot(tester, server);
     expect(find.text('For Central University students at Miotso'), findsOneWidget);
 
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     expect(find.text('Your phone number'), findsOneWidget);
 
@@ -81,7 +81,7 @@ void main() {
   testWidgets('a short number is explained, not sent', (tester) async {
     final server = baseServer();
     await boot(tester, server);
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '12345');
     await tester.tap(find.text('Send code'));
@@ -94,7 +94,7 @@ void main() {
     final server = baseServer()
       ..on('POST /auth/otp/request', status: 429, body: problem('rate_limited', 429), headers: {'retry-after': '45'});
     await boot(tester, server);
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '241234567');
     await tester.tap(find.text('Send code'));
@@ -105,7 +105,7 @@ void main() {
   Future<void> toCodeScreen(WidgetTester tester, FakeServer server) async {
     server.on('POST /auth/otp/request', status: 202, body: {'expiresInSeconds': 300, 'resendInSeconds': 30});
     await boot(tester, server);
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '241234567');
     await tester.tap(find.text('Send code'));
@@ -162,7 +162,7 @@ void main() {
     final store = MemoryTokenStore();
     server.on('POST /auth/otp/request', status: 202, body: {'expiresInSeconds': 300, 'resendInSeconds': 30});
     await boot(tester, server, store: store);
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Skip'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '241234567');
     await tester.tap(find.text('Send code'));

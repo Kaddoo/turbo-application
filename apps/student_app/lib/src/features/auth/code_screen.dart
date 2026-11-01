@@ -104,52 +104,51 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final text = Theme.of(context).textTheme;
     final phone = ref.watch(authDraftProvider).phone;
-    return Scaffold(
-      appBar: AppBar(leading: BackButton(onPressed: () => context.go('/phone'))),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(TurboSpacing.xl),
-          children: [
-            Semantics(header: true, child: Text(l10n.codeTitle, style: text.headlineMedium)),
-            const SizedBox(height: TurboSpacing.md),
-            if (phone != null) Text(l10n.codeSentTo(displayPhone(phone)), style: text.bodyLarge),
-            const SizedBox(height: TurboSpacing.xl),
-            OtpField(
-              key: _otp,
-              errorText: _error,
-              enabled: !_busy,
-              onChanged: (c) => setState(() {
-                _code = c;
-                _error = null;
-              }),
-              onCompleted: _verify,
-            ),
-            const SizedBox(height: TurboSpacing.xl),
-            TurboButton(
-              label: l10n.codeVerify,
-              loading: _busy,
-              onPressed: _code.length == 6 ? _verify : null,
-            ),
-            const SizedBox(height: TurboSpacing.md),
-            TurboButton(
-              label: _wait > 0 ? l10n.codeResendIn(_wait) : l10n.codeResend,
-              variant: TurboButtonVariant.secondary,
-              onPressed: _wait > 0 || _busy ? null : _resend,
-            ),
-            const SizedBox(height: TurboSpacing.sm),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                style: TextButton.styleFrom(minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap)),
-                onPressed: () => context.go('/phone'),
-                child: Text(l10n.codeWrongNumber, style: text.bodyMedium?.copyWith(color: context.turbo.colors.accentText)),
-              ),
-            ),
-          ],
-        ),
+    return AuthLayout(
+      title: l10n.codeTitle,
+      onBack: () => context.go('/phone'),
+      action: TurboButton(
+        label: l10n.codeVerify,
+        large: true,
+        loading: _busy,
+        onPressed: _code.length == 6 ? _verify : null,
       ),
+      footer: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap)),
+            onPressed: _busy ? null : () => context.go('/phone'),
+            child: Text(l10n.codeWrongNumber),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap)),
+            onPressed: _wait > 0 || _busy ? null : _resend,
+            child: Text(_wait > 0 ? l10n.codeResendIn(_wait) : l10n.codeResend),
+          ),
+        ],
+      ),
+      children: [
+        if (phone != null)
+          Builder(builder: (context) => Text(
+                l10n.codeSentTo(displayPhone(phone)),
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              )),
+        const SizedBox(height: TurboSpacing.xl),
+        OtpField(
+          key: _otp,
+          errorText: _error,
+          enabled: !_busy,
+          onChanged: (c) => setState(() {
+            _code = c;
+            _error = null;
+          }),
+          onCompleted: _verify,
+        ),
+      ],
     );
   }
 }

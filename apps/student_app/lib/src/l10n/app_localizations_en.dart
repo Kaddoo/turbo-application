@@ -54,6 +54,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeAudience => 'For Central University students at Miotso';
 
   @override
+  String get welcomeSlide2Title => 'A vetted driver, assigned for you';
+
+  @override
+  String get welcomeSlide2Body =>
+      'Salaried drivers. Your 4-digit PIN starts every trip.';
+
+  @override
+  String get welcomeSlide3Title => 'Fixed fares. No cash.';
+
+  @override
+  String get welcomeSlide3Body =>
+      'See the price before you book. Top up with mobile money.';
+
+  @override
+  String get welcomeNext => 'Next';
+
+  @override
+  String get welcomeSkip => 'Skip';
+
+  @override
+  String get welcomePrevious => 'Previous';
+
+  @override
+  String welcomeSlideOf(int number, int total) {
+    return 'Slide $number of $total';
+  }
+
+  @override
   String get phoneTitle => 'Your phone number';
 
   @override
