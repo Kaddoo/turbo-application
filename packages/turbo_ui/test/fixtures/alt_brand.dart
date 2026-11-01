@@ -31,6 +31,11 @@ const altBrand = BrandTokens(
     success: Color(0xFF5BD9A0),
     warning: Color(0xFFFFB84D),
     danger: Color(0xFFFF7A70),
+    fill: Color(0xFF244563),
+    sos: Color(0xFFFF5A4A),
+    successTint: Color(0x245BD9A0),
+    warningTint: Color(0x24FFB84D),
+    dangerTint: Color(0x29FF7A70),
   ),
   light: BrandPalette(
     background: Color(0xFFFFFFFF),
@@ -48,5 +53,10 @@ const altBrand = BrandTokens(
     success: Color(0xFF117A59),
     warning: Color(0xFFB54708),
     danger: Color(0xFFCF2A1E),
+    fill: Color(0xFFDCE6F0),
+    sos: Color(0xFFC62828),
+    successTint: Color(0x1F117A59),
+    warningTint: Color(0x1FB54708),
+    dangerTint: Color(0x1FCF2A1E),
   ),
 );

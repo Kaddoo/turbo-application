@@ -31,7 +31,7 @@ class BigWordmark extends StatelessWidget {
       child: Text(
         t.brand.wordmark,
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: t.brand.typeScale.display * 1.5,
+              fontSize: t.brand.typeScale.splash,
               color: onAccent ? t.colors.onAccent : t.colors.textPrimary,
             ),
       ),
