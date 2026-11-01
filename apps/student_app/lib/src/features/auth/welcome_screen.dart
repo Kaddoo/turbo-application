@@ -4,135 +4,96 @@ import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../l10n/app_localizations.dart';
 
-/// Three short slides, then on to the phone number. Photos from the design go
-/// behind the text once the image files arrive.
-class WelcomeScreen extends StatefulWidget {
+/// The first screen after the splash: what the service is, in one picture and one line, and a slide to carry on.
+/// The picture is drawn here (a grid and a car) until the photo from the design is approved and bundled.
+class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
-
-  @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
-}
-
-class _WelcomeScreenState extends State<WelcomeScreen> {
-  final _pages = PageController();
-  int _page = 0;
-
-  @override
-  void dispose() {
-    _pages.dispose();
-    super.dispose();
-  }
-
-  void _go(int to) => _pages.animateToPage(
-        to,
-        duration: TurboMotion.duration(context, TurboMotion.medium),
-        curve: TurboMotion.standard,
-      );
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final slides = [
-      (l10n.welcomeTagline, l10n.welcomeAudience),
-      (l10n.welcomeSlide2Title, l10n.welcomeSlide2Body),
-      (l10n.welcomeSlide3Title, l10n.welcomeSlide3Body),
-    ];
-    final last = _page == slides.length - 1;
     return DarkScope(
       child: Builder(builder: (context) {
         final t = context.turbo;
         final text = Theme.of(context).textTheme;
         return Scaffold(
           body: SafeArea(
-            child: Column(
-              children: [
-                const SizedBox(height: TurboSpacing.xxl),
-                const BigWordmark(),
-                Expanded(
-                  child: PageView(
-                    controller: _pages,
-                    onPageChanged: (i) => setState(() => _page = i),
-                    children: [
-                      for (final (title, body) in slides)
-                        Padding(
-                          padding: const EdgeInsets.all(TurboSpacing.xl),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Semantics(
-                                header: true,
-                                child: Text(title, style: text.headlineMedium),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.sm, TurboSpacing.screen, TurboSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(t.radiusSheet),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ColoredBox(color: t.colors.accent),
+                          CustomPaint(painter: _GridPainter(t.colors.onAccent.withValues(alpha: 0.08))),
+                          Center(child: ExcludeSemantics(child: Icon(Icons.directions_car_filled_outlined, size: TurboSizes.iconLg * 3, color: t.colors.onAccent))),
+                          Positioned(
+                            left: TurboSpacing.lg,
+                            top: TurboSpacing.lg,
+                            child: ExcludeSemantics(
+                              child: Container(
+                                width: TurboSizes.iconButton,
+                                height: TurboSizes.iconButton,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(color: t.colors.background, shape: BoxShape.circle),
+                                child: Text(t.brand.wordmark.characters.take(2).toString(), style: text.labelLarge?.copyWith(color: t.colors.textPrimary)),
                               ),
-                              const SizedBox(height: TurboSpacing.md),
-                              Text(body, style: text.bodyLarge?.copyWith(color: t.colors.textSecondary)),
-                            ],
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(TurboSpacing.xl),
-                  child: Column(
-                    children: [
-                      Semantics(
-                        label: l10n.welcomeSlideOf(_page + 1, slides.length),
-                        child: ExcludeSemantics(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (var i = 0; i < slides.length; i++)
-                                Container(
-                                  width: i == _page ? TurboSpacing.xl : TurboSpacing.sm,
-                                  height: TurboSpacing.sm,
-                                  margin: const EdgeInsets.symmetric(horizontal: TurboSpacing.xs),
-                                  decoration: BoxDecoration(
-                                    color: i == _page ? t.colors.accent : t.colors.border,
-                                    borderRadius: BorderRadius.circular(t.radiusFull),
-                                  ),
-                                ),
-                            ],
+                          Positioned(
+                            right: TurboSpacing.lg,
+                            bottom: TurboSpacing.lg,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg, vertical: TurboSpacing.md),
+                              decoration: BoxDecoration(color: t.colors.background, borderRadius: BorderRadius.circular(t.radiusFull)),
+                              child: Text(l10n.welcomeFixedFares, style: text.labelMedium),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(height: TurboSpacing.lg),
-                      if (last)
-                        TurboButton(
-                          label: l10n.continueAction,
-                          large: true,
-                          onPressed: () => context.go('/phone'),
-                        )
-                      else
-                        Row(
-                          children: [
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
-                              ),
-                              onPressed: () => context.go('/phone'),
-                              child: Text(l10n.welcomeSkip),
-                            ),
-                            const Spacer(),
-                            IconButton.filled(
-                              tooltip: l10n.welcomeNext,
-                              constraints: const BoxConstraints(
-                                minWidth: TurboSizes.primaryAction,
-                                minHeight: TurboSizes.primaryAction,
-                              ),
-                              onPressed: () => _go(_page + 1),
-                              icon: const Icon(Icons.chevron_right),
-                            ),
-                          ],
-                        ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: TurboSpacing.xl),
+                  AccentTitle(text: l10n.welcomeTagline, accent: l10n.welcomeTaglineAccent, style: text.displaySmall),
+                  const SizedBox(height: TurboSpacing.sm),
+                  Text(l10n.welcomeAudience, style: text.bodyMedium?.copyWith(color: t.colors.textSecondary)),
+                  const SizedBox(height: TurboSpacing.xl),
+                  SlideToContinue(label: l10n.welcomeContinue, onContinue: () => context.go('/phone')),
+                ],
+              ),
             ),
           ),
         );
       }),
     );
   }
+}
+
+/// Faint map-like grid behind the car.
+class _GridPainter extends CustomPainter {
+  _GridPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+    const step = TurboSizes.iconButton;
+    for (double x = 0; x < size.width; x += step) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y < size.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GridPainter old) => old.color != color;
 }

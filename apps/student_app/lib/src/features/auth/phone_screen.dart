@@ -62,8 +62,18 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
     final l10n = AppLocalizations.of(context);
     return AuthLayout(
       title: l10n.phoneTitle,
+      accent: l10n.phoneTitleAccent,
+      lead: l10n.phoneLead,
+      icon: Icons.smartphone,
       onBack: () => context.go('/welcome'),
-      action: TurboButton(label: l10n.phoneSendCode, large: true, loading: _busy, onPressed: _send),
+      action: TurboButton(label: l10n.phoneSendCode, loading: _busy, onPressed: _send),
+      footer: Builder(
+        builder: (context) => Text(
+          l10n.phoneLegal,
+          style: Theme.of(context).textTheme.bodySmall,
+          textAlign: TextAlign.center,
+        ),
+      ),
       children: [
         TurboTextField(
           label: l10n.phoneFieldLabel,

@@ -154,6 +154,8 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
 
     return AuthLayout(
       title: l10n.termsTitle,
+      centered: true,
+      icon: Icons.lock_outline,
       onBack: null,
       action: Column(
         mainAxisSize: MainAxisSize.min,
@@ -173,7 +175,6 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
             ),
           TurboButton(
             label: l10n.termsAgree,
-            large: true,
             loading: _busy,
             onPressed: versions == null ? null : () => _agree(versions),
           ),

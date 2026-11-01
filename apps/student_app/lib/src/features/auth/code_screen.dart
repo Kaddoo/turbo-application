@@ -109,10 +109,12 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
     final phone = ref.watch(authDraftProvider).phone;
     return AuthLayout(
       title: l10n.codeTitle,
+      accent: l10n.codeTitleAccent,
+      lead: phone == null ? null : l10n.codeSentTo(displayPhone(phone)),
+      icon: Icons.vpn_key_outlined,
       onBack: () => context.go('/phone'),
       action: TurboButton(
         label: l10n.codeVerify,
-        large: true,
         loading: _busy,
         onPressed: _code.length == 6 ? _verify : null,
       ),
@@ -133,13 +135,6 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
         ],
       ),
       children: [
-        if (phone != null)
-          Builder(builder: (context) => Text(
-                l10n.codeSentTo(displayPhone(phone)),
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              )),
-        const SizedBox(height: TurboSpacing.xl),
         OtpField(
           key: _otp,
           errorText: _error,

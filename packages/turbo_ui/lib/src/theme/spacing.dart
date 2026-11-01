@@ -45,4 +45,7 @@ abstract final class TurboSizes {
   static const double pinBoxHeight = 80;
   static const double sheetHandleWidth = 46;
   static const double sheetHandleHeight = 4;
+
+  /// The big picture on sign-in and system screens.
+  static const double heroIcon = 88;
 }

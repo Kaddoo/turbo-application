@@ -1,11 +1,13 @@
 library;
 
 export 'src/brand/brand_tokens.dart';
+export 'src/components/accent_title.dart';
 export 'src/components/auth_layout.dart';
 export 'src/components/badge_icon.dart';
 export 'src/components/bento_tile.dart';
 export 'src/components/confirm_dialog.dart';
 export 'src/components/floating_nav_bar.dart';
+export 'src/components/hero_icon.dart';
 export 'src/components/list_row.dart';
 export 'src/components/map_container.dart';
 export 'src/components/message_composer.dart';
@@ -13,6 +15,7 @@ export 'src/components/money_text.dart';
 export 'src/components/otp_field.dart';
 export 'src/components/slide_to_continue.dart';
 export 'src/components/status_chip.dart';
+export 'src/components/system_message.dart';
 export 'src/components/timeline.dart';
 export 'src/components/trip_pin.dart';
 export 'src/components/turbo_avatar.dart';

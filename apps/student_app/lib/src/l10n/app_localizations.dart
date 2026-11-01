@@ -136,6 +136,24 @@ abstract class AppLocalizations {
   /// **'Please update the app'**
   String get updateRequiredTitle;
 
+  /// No description provided for @suspendedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is suspended'**
+  String get suspendedTitle;
+
+  /// No description provided for @suspendedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get suspendedTag;
+
+  /// No description provided for @suspendedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t book rides for now. Contact support to find out why and what happens next.'**
+  String get suspendedBody;
+
   /// No description provided for @updateRequiredBody.
   ///
   /// In en, this message translates to:
@@ -166,65 +184,53 @@ abstract class AppLocalizations {
   /// **'Campus rides, paid from your wallet'**
   String get welcomeTagline;
 
+  /// No description provided for @welcomeTaglineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'wallet'**
+  String get welcomeTaglineAccent;
+
+  /// No description provided for @welcomeFixedFares.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed fares'**
+  String get welcomeFixedFares;
+
+  /// No description provided for @welcomeContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get welcomeContinue;
+
   /// No description provided for @welcomeAudience.
   ///
   /// In en, this message translates to:
   /// **'For Central University students at Miotso'**
   String get welcomeAudience;
 
-  /// No description provided for @welcomeSlide2Title.
-  ///
-  /// In en, this message translates to:
-  /// **'A vetted driver, assigned for you'**
-  String get welcomeSlide2Title;
-
-  /// No description provided for @welcomeSlide2Body.
-  ///
-  /// In en, this message translates to:
-  /// **'Salaried drivers. Your 4-digit PIN starts every trip.'**
-  String get welcomeSlide2Body;
-
-  /// No description provided for @welcomeSlide3Title.
-  ///
-  /// In en, this message translates to:
-  /// **'Fixed fares. No cash.'**
-  String get welcomeSlide3Title;
-
-  /// No description provided for @welcomeSlide3Body.
-  ///
-  /// In en, this message translates to:
-  /// **'See the price before you book. Top up with mobile money.'**
-  String get welcomeSlide3Body;
-
-  /// No description provided for @welcomeNext.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get welcomeNext;
-
-  /// No description provided for @welcomeSkip.
-  ///
-  /// In en, this message translates to:
-  /// **'Skip'**
-  String get welcomeSkip;
-
-  /// No description provided for @welcomePrevious.
-  ///
-  /// In en, this message translates to:
-  /// **'Previous'**
-  String get welcomePrevious;
-
-  /// No description provided for @welcomeSlideOf.
-  ///
-  /// In en, this message translates to:
-  /// **'Slide {number} of {total}'**
-  String welcomeSlideOf(int number, int total);
-
   /// No description provided for @phoneTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your phone number'**
+  /// **'Sign in with your phone'**
   String get phoneTitle;
+
+  /// No description provided for @phoneTitleAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'phone'**
+  String get phoneTitleAccent;
+
+  /// No description provided for @phoneLead.
+  ///
+  /// In en, this message translates to:
+  /// **'New or returning, it\'s the same step.'**
+  String get phoneLead;
+
+  /// No description provided for @phoneLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing you agree to the terms and privacy notice.'**
+  String get phoneLegal;
 
   /// No description provided for @phoneFieldLabel.
   ///
@@ -253,13 +259,19 @@ abstract class AppLocalizations {
   /// No description provided for @codeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your code'**
+  /// **'Enter the code'**
   String get codeTitle;
+
+  /// No description provided for @codeTitleAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'code'**
+  String get codeTitleAccent;
 
   /// No description provided for @codeSentTo.
   ///
   /// In en, this message translates to:
-  /// **'We sent a 6-digit code to {phone}.'**
+  /// **'We sent a 6-digit code to {phone}'**
   String codeSentTo(Object phone);
 
   /// No description provided for @codeVerify.
