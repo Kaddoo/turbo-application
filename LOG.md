@@ -23,6 +23,8 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 - Dark map style (needs the style JSON).
 - Place search not built (campus pickup points only).
 
+**Design note (Kevin, to pick up next):** the new design material in `design/` (component kit, `Turbo-components.pdf`, typography) still needs working through. Any component image or photo the PDF shows that is not in `design/Turbo-component-kit/images`: source it from Pexels (check the licence, keep the credit, do not commit anything showing real people from WhatsApp images). In-app trip map with a route line needs CR-7 first.
+
 **Next step:** Rebuild iOS with the key and check the map on a phone; then the items above.
 
 ## 2026-11-01, Kevin with Claude, code: issue 1 contract work, staging hardening, build 4
