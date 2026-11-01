@@ -2615,8 +2615,11 @@ export interface components {
         UploadRequest: {
             /** @enum {string} */
             purpose: "ghana_card_front" | "ghana_card_back" | "student_id" | "driver_document" | "vehicle_document" | "support_attachment" | "selfie_with_card" | "provider_statement";
-            /** @enum {string} */
-            contentType: "image/jpeg" | "image/png" | "application/pdf";
+            /**
+             * @description text/csv is only accepted for purpose provider_statement (reconciliation).
+             * @enum {string}
+             */
+            contentType: "image/jpeg" | "image/png" | "application/pdf" | "text/csv";
             sizeBytes: number;
         };
         UploadSlot: {
@@ -3150,6 +3153,14 @@ export interface components {
             pickup: components["schemas"]["Location"];
             dropoff: components["schemas"]["Location"];
             routeDistanceMeters: number;
+            /** @description What the student pays for this trip. Shown so the driver can see the price before acknowledging. */
+            farePesewas?: components["schemas"]["Pesewas"];
+            /** @description Estimated road distance from the driver's last known position to the pickup. Null once the trip has started or if the driver has no recent position. */
+            pickupDistanceMeters?: number | null;
+            /** @description Estimated time to reach the pickup. 0 once arrived, null once the trip has started. */
+            pickupEtaSeconds?: number | null;
+            /** @description Estimated duration of the trip itself. */
+            routeDurationSeconds?: number;
             student: {
                 firstName: string;
             };
