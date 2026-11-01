@@ -38,6 +38,8 @@ class StaffUser {
      this.lockedUntil,
 
      this.invitePending,
+
+     this.adjustmentApprovalThresholdPesewas,
   });
 
       /// UUID (v7 recommended so ids sort by creation time).
@@ -149,6 +151,20 @@ class StaffUser {
 
 
 
+      /// Only for finance and super admin. A wallet adjustment above this amount needs a second approver.
+          // minimum: 0
+  @JsonKey(
+    
+    name: r'adjustmentApprovalThresholdPesewas',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final int? adjustmentApprovalThresholdPesewas;
+
+
+
 
 
     @override
@@ -161,7 +177,8 @@ class StaffUser {
       other.mfaEnrolled == mfaEnrolled &&
       other.lastLoginAt == lastLoginAt &&
       other.lockedUntil == lockedUntil &&
-      other.invitePending == invitePending;
+      other.invitePending == invitePending &&
+      other.adjustmentApprovalThresholdPesewas == adjustmentApprovalThresholdPesewas;
 
     @override
     int get hashCode =>
@@ -173,7 +190,8 @@ class StaffUser {
         mfaEnrolled.hashCode +
         (lastLoginAt == null ? 0 : lastLoginAt.hashCode) +
         (lockedUntil == null ? 0 : lockedUntil.hashCode) +
-        invitePending.hashCode;
+        invitePending.hashCode +
+        adjustmentApprovalThresholdPesewas.hashCode;
 
   factory StaffUser.fromJson(Map<String, dynamic> json) => _$StaffUserFromJson(json);
 

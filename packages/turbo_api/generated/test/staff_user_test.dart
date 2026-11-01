@@ -53,5 +53,11 @@ void main() {
       // TODO
     });
 
+    // Only for finance and super admin. A wallet adjustment above this amount needs a second approver.
+    // int adjustmentApprovalThresholdPesewas
+    test('to test the property `adjustmentApprovalThresholdPesewas`', () async {
+      // TODO
+    });
+
   });
 }

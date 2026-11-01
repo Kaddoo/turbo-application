@@ -1090,6 +1090,7 @@ export interface paths {
         /**
          * My staff profile
          * @description **Access:** admin:any.
+         *     Finance and super admin also receive `adjustmentApprovalThresholdPesewas`: the amount above which a wallet adjustment needs a second approver. Other roles do not.
          */
         get: operations["getStaffMe"];
         put?: never;
@@ -1195,6 +1196,7 @@ export interface paths {
         /**
          * Student detail
          * @description **Access:** admin:verifier.
+         *     Verifiers (and super admins) get the full record. Support gets a reduced view: the same record without the student ID number, so they can find and help a student without seeing more than that. Every reduced view is written to the audit log (`student.view_reduced`).
          */
         get: operations["getStudent"];
         put?: never;
@@ -1375,6 +1377,7 @@ export interface paths {
         /**
          * Ride with full event timeline
          * @description **Access:** admin:dispatcher.
+         *     Dispatchers (and super admins) get the full record. Support and finance get a reduced view: fare, status, ids, times and the public driver and vehicle, but no PIN, no driver detail or last position, no event details, and a masked student phone. Every reduced view is written to the audit log (`ride.view_reduced`).
          */
         get: operations["getAdminRide"];
         put?: never;
@@ -3549,6 +3552,8 @@ export interface components {
             /** Format: date-time */
             lockedUntil?: string | null;
             invitePending?: boolean;
+            /** @description Only for finance and super admin. A wallet adjustment above this amount needs a second approver. */
+            adjustmentApprovalThresholdPesewas?: components["schemas"]["Pesewas"];
         };
         StaffCreate: {
             /** Format: email */

@@ -92,7 +92,7 @@ class AdminApi {
   }
 
   /// My staff profile
-  /// **Access:** admin:any.
+  /// **Access:** admin:any. Finance and super admin also receive &#x60;adjustmentApprovalThresholdPesewas&#x60;: the amount above which a wallet adjustment needs a second approver. Other roles do not.
   ///
   /// Parameters:
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation

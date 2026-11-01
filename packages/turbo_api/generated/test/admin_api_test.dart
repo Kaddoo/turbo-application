@@ -18,7 +18,7 @@ void main() {
 
     // My staff profile
     //
-    // **Access:** admin:any.
+    // **Access:** admin:any. Finance and super admin also receive `adjustmentApprovalThresholdPesewas`: the amount above which a wallet adjustment needs a second approver. Other roles do not.
     //
     //Future<StaffUser> getStaffMe() async
     test('test getStaffMe', () async {
