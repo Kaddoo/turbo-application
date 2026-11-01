@@ -1114,6 +1114,24 @@ abstract class AppLocalizations {
   /// **'See all'**
   String get walletSeeAll;
 
+  /// No description provided for @txToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get txToday;
+
+  /// No description provided for @txYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get txYesterday;
+
+  /// No description provided for @topupWaitLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'left to approve'**
+  String get topupWaitLeft;
+
   /// No description provided for @walletNoTransactions.
   ///
   /// In en, this message translates to:

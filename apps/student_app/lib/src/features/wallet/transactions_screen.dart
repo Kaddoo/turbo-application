@@ -1,5 +1,7 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
@@ -81,7 +83,7 @@ class TransactionsScreen extends ConsumerWidget {
                           horizontal: TurboSpacing.lg,
                         ),
                         children: [
-                          for (final tx in s.items) TransactionRow(tx),
+                          ..._byDay(context, l10n, s.items),
                           if (s.hasMore)
                             Padding(
                               padding: const EdgeInsets.all(TurboSpacing.lg),
@@ -101,4 +103,33 @@ class TransactionsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Entries under a heading for their day: Today, Yesterday, then the date.
+List<Widget> _byDay(BuildContext context, AppLocalizations l10n, List<WalletTransaction> items) {
+  final text = Theme.of(context).textTheme;
+  final today = DateUtils.dateOnly(clock.now().toUtc());
+  String heading(DateTime d) {
+    final days = today.difference(DateUtils.dateOnly(d.toUtc())).inDays;
+    if (days == 0) return l10n.txToday;
+    if (days == 1) return l10n.txYesterday;
+    return DateFormat('d MMM').format(d.toUtc());
+  }
+
+  final out = <Widget>[];
+  String? last;
+  for (final tx in items) {
+    final h = heading(tx.createdAt);
+    if (h != last) {
+      last = h;
+      out.add(
+        Padding(
+          padding: const EdgeInsets.only(top: TurboSpacing.md, bottom: TurboSpacing.xs),
+          child: Semantics(header: true, child: Text(h, style: text.bodySmall)),
+        ),
+      );
+    }
+    out.add(TransactionRow(tx));
+  }
+  return out;
 }

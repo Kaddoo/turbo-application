@@ -108,7 +108,12 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: TurboSpacing.xl),
-            Semantics(header: true, child: Text(l10n.profileSavedPlaces, style: text.titleLarge)),
+            Row(
+              children: [
+                Expanded(child: Semantics(header: true, child: Text(l10n.profileSavedPlaces, style: text.titleLarge))),
+                if (places.hasValue) Text('${places.value!.length}', style: text.bodyMedium),
+              ],
+            ),
             const SizedBox(height: TurboSpacing.sm),
             places.when(
               loading: () => const LoadingState(rows: 1),
@@ -136,7 +141,12 @@ class ProfileScreen extends ConsumerWidget {
                     ),
             ),
             const SizedBox(height: TurboSpacing.xl),
-            Semantics(header: true, child: Text(l10n.profileDevices, style: text.titleLarge)),
+            Row(
+              children: [
+                Expanded(child: Semantics(header: true, child: Text(l10n.profileDevices, style: text.titleLarge))),
+                if (sessions.hasValue) Text('${sessions.value!.length}', style: text.bodyMedium),
+              ],
+            ),
             const SizedBox(height: TurboSpacing.sm),
             sessions.when(
               loading: () => const LoadingState(rows: 1),

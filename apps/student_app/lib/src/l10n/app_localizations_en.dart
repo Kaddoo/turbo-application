@@ -610,6 +610,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get walletSeeAll => 'See all';
 
   @override
+  String get txToday => 'Today';
+
+  @override
+  String get txYesterday => 'Yesterday';
+
+  @override
+  String get topupWaitLeft => 'left to approve';
+
+  @override
   String get walletNoTransactions => 'No transactions yet.';
 
   @override

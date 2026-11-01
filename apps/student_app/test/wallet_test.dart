@@ -217,6 +217,26 @@ void main() {
       expect(find.text('Available'), findsOneWidget);
     });
 
+    testWidgets('waiting and failed screens lay out in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = walletServer()..on('POST /wallet/topups', status: 201, body: topup('pending'));
+      await toTopup(tester, server);
+      await tester.tap(find.text('GH₵20.00'));
+      await tester.pump();
+      await tester.tap(find.text('Pay GH₵20.00'));
+      await tester.pumpAndSettle();
+      expect(find.text('Approve the payment on your phone'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      server.on('GET /wallet/topups/0190a1b2-0000-7e4f-8a5b-0000000f0001', body: topup('failed'));
+      await tester.scrollUntilVisible(find.text('Check status'), 200, scrollable: find.byType(Scrollable).first);
+      await tester.tap(find.text('Check status'));
+      await tester.pumpAndSettle();
+      expect(find.text("The payment didn't go through"), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('failed says nothing was charged and offers another go', (tester) async {
       final server = walletServer()..on('POST /wallet/topups', status: 201, body: topup('pending'));
       await toTopup(tester, server);

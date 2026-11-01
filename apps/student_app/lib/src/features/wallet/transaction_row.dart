@@ -46,11 +46,17 @@ class TransactionRow extends StatelessWidget {
         decoration: BoxDecoration(color: t.colors.surface, borderRadius: BorderRadius.circular(t.radiusInput)),
         child: Icon(icon, color: t.colors.textPrimary),
       ),
-      trailing: Text(
-        amount,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: tx.affectsBalance && tx.amountPesewas > 0 ? t.colors.success : null,
-            ),
+      trailing: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.35),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            amount,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: tx.affectsBalance && tx.amountPesewas > 0 ? t.colors.success : null,
+                ),
+          ),
+        ),
       ),
     );
   }

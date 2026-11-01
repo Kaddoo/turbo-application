@@ -75,7 +75,6 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
 
     Widget result({
       required IconData icon,
-      required Color color,
       required String title,
       required String body,
       required List<Widget> actions,
@@ -83,7 +82,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
       padding: const EdgeInsets.all(TurboSpacing.xl),
       children: [
         const SizedBox(height: TurboSpacing.xxl),
-        Icon(icon, size: TurboSizes.iconLg + TurboSpacing.xl, color: color),
+        Center(child: BadgeIcon(icon: icon)),
         const SizedBox(height: TurboSpacing.xl),
         Semantics(
           header: true,
@@ -105,8 +104,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
     switch (flow.topup.status) {
       case TopupStatusEnum.succeeded:
         body = result(
-          icon: Icons.check_circle_outline,
-          color: t.colors.success,
+          icon: Icons.check,
           title: l10n.topupSuccessTitle,
           body: wallet == null
               ? ''
@@ -117,8 +115,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
         );
       case TopupStatusEnum.failed:
         body = result(
-          icon: Icons.error_outline,
-          color: t.colors.danger,
+          icon: Icons.close,
           title: l10n.topupFailedTitle,
           body: l10n.topupFailedBody,
           actions: [
@@ -142,7 +139,6 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
         if (flow.timedOut) {
           body = result(
             icon: Icons.schedule,
-            color: t.colors.warning,
             title: l10n.topupSlowTitle,
             body: l10n.topupSlowBody,
             actions: [
@@ -170,31 +166,53 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
                 liveRegion: true,
                 child: Text(l10n.topupWaitTitle, style: text.headlineMedium),
               ),
+              const SizedBox(height: TurboSpacing.md),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.end,
+                spacing: TurboSpacing.sm,
+                children: [
+                  Text(
+                    '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
+                    style: text.headlineMedium?.copyWith(
+                      fontSize: text.headlineMedium!.fontSize! * 1.5,
+                    ),
+                  ),
+                  Text(l10n.topupWaitLeft, style: text.bodyMedium),
+                ],
+              ),
               if (flow.topup.checkout?.message != null) ...[
                 const SizedBox(height: TurboSpacing.md),
                 Text(flow.topup.checkout!.message!, style: text.bodyLarge),
               ],
               const SizedBox(height: TurboSpacing.xl),
-              for (final (i, step) in [
-                l10n.topupStep1,
-                l10n.topupStep2,
-                l10n.topupStep3,
-              ].indexed)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: TurboSpacing.md,
-                        backgroundColor: t.colors.surface,
-                        child: Text('${i + 1}', style: text.labelMedium),
+              TurboCard(
+                child: Column(
+                  children: [
+                    for (final (i, step) in [
+                      l10n.topupStep1,
+                      l10n.topupStep2,
+                      l10n.topupStep3,
+                    ].indexed)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: i == 2 ? 0 : TurboSpacing.md,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: TurboSpacing.md,
+                              backgroundColor: t.colors.background,
+                              child: Text('${i + 1}', style: text.labelMedium),
+                            ),
+                            const SizedBox(width: TurboSpacing.md),
+                            Expanded(child: Text(step, style: text.bodyLarge)),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: TurboSpacing.md),
-                      Expanded(child: Text(step, style: text.bodyLarge)),
-                    ],
-                  ),
+                  ],
                 ),
+              ),
               const SizedBox(height: TurboSpacing.lg),
               LinearProgressIndicator(
                 value: left / TopupController.watchFor.inSeconds,
@@ -206,7 +224,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
               const SizedBox(height: TurboSpacing.xl),
               TurboButton(
                 label: l10n.topupCheckStatus,
-                variant: TurboButtonVariant.secondary,
+                large: true,
                 loading: flow.checking,
                 onPressed: () => ref.read(topupProvider.notifier).check(),
               ),
