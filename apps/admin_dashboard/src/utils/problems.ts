@@ -17,7 +17,8 @@ const messages: Partial<Record<ProblemCode | LocalCode, string>> = {
   invalid_credentials: 'That email and password do not match.',
   mfa_required: 'Enter the 6-digit code from your authenticator app.',
   account_locked: 'Too many failed attempts. This account is locked for 15 minutes.',
-  mfa_enrollment_required: 'Finish setting up your authenticator app before signing in.',
+  mfa_enrollment_required:
+    'This account has not set up its authenticator app yet. Open the invite link from your email to finish, or ask a super admin to send a new invite.',
   invalid_token: 'This link has expired or was already used. Ask for a new one.',
   account_suspended: 'This account is suspended.',
   verification_claimed: 'Another reviewer is working on this submission.',

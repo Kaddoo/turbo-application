@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
 import type { Schemas } from '@/types';
 import { MapView, type MapMarker } from '@/components/MapView';
@@ -33,7 +34,12 @@ import {
 type Tab = 'boundary' | 'pickups' | 'fares' | 'settings';
 
 export function Configuration() {
-  const [tab, setTab] = useState<Tab>('boundary');
+  // `?tab=` lets links (the setup checklist) open the right tab.
+  const [params] = useSearchParams();
+  const asked = params.get('tab');
+  const [tab, setTab] = useState<Tab>(() =>
+    asked === 'pickups' || asked === 'fares' || asked === 'settings' ? asked : 'boundary',
+  );
   const area = useServiceArea();
   return (
     <>
@@ -216,7 +222,12 @@ function PickupsTab({ area }: { area: Schemas['ServiceArea'] }) {
             isActive: r.isActive,
           })
         }
-        empty={{ title: 'No pickup points yet', body: 'Add the gates and halls students wait at.' }}
+        empty={{
+          title: 'No pickup points yet',
+          body: area.boundary
+            ? 'Add the gates and halls students wait at.'
+            : 'Draw the service boundary first, then add the gates and halls inside it.',
+        }}
         columns={[
           { header: 'Name', cell: (r) => r.name },
           {

@@ -127,6 +127,7 @@ export function Shifts() {
           onRetry={list.refetch}
           empty={{
             title: 'No shifts scheduled',
+            body: 'Drivers can only go on duty during a shift. Schedule the week ahead.',
             action: (
               <Button variant="primary" onClick={() => setOpen(true)}>
                 Schedule shift

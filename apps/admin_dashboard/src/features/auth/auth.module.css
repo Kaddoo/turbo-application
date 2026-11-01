@@ -58,3 +58,6 @@
   border-left: 2px solid var(--color-accent-text);
   padding-left: 10px;
 }
+.notice a {
+  color: var(--color-accent-text);
+}

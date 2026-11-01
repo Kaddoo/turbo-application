@@ -337,7 +337,7 @@ export function AcceptInvite() {
           />
           {error ? (
             <p role="alert" className={a.text}>
-              {problemMessage(error)}
+              {inviteMessage(error)}
             </p>
           ) : null}
           <Button variant="primary" type="submit" busy={busy} disabled={!token || password.length < 10}>
@@ -357,9 +357,13 @@ export function AcceptInvite() {
           </div>
           <QrCode value={enrolment.otpauthUri} />
           <p className={a.notice}>
-            Scan the code, or type the setup key below. On a phone you can{' '}
+            Scan the code, or type the setup key above. On a phone you can{' '}
             <a href={enrolment.otpauthUri}>open it in your authenticator</a>.
           </p>
+          <Banner tone="warning">
+            Keep this page open until you have entered the code. The invite link works once, so if you close it now a
+            super admin has to send you a new one.
+          </Banner>
           <TextField
             label="Authenticator code"
             inputMode="numeric"
@@ -371,7 +375,7 @@ export function AcceptInvite() {
           />
           {error ? (
             <p role="alert" className={a.text}>
-              {problemMessage(error)}
+              {inviteMessage(error)}
             </p>
           ) : null}
           <Button variant="primary" type="submit" busy={busy} disabled={code.length !== 6}>
@@ -381,6 +385,17 @@ export function AcceptInvite() {
       )}
     </div>
   );
+}
+
+/** Invite-specific wording for the two codes people actually hit here; everything else as usual. */
+function inviteMessage(error: unknown): string {
+  if (error instanceof ApiError && error.code === 'invalid_token') {
+    return 'This invite link has expired (they last 72 hours) or was already used. Ask a super admin to send a new invite from Staff.';
+  }
+  if (error instanceof ApiError && error.status === 401 && error.code === 'mfa_required') {
+    return 'That code did not match. Check the time on your phone is set automatically, then enter the newest code.';
+  }
+  return problemMessage(error);
 }
 
 /** QR rendered locally from the otpauth URI; the secret never leaves the browser. */

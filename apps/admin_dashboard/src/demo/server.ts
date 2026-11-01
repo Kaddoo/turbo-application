@@ -48,6 +48,46 @@ const store = {
     }
   },
 };
+// --- fresh start (try onboarding as a brand-new user) --------------------------
+/**
+ * `?demo=fresh` on any demo URL wipes this tab's demo back to day one: no
+ * boundary, pickup points, hours, drivers, vehicles, shifts or rides, only
+ * the signed-in person on the staff list, and every onboarding card unseen.
+ * `?demo=full` goes back to the full sample data. Invite links
+ * `/invite?token=demo-<role>` (demo-hr, demo-verifier, …) sign in as that role.
+ */
+const freshStaff = new Set<string>();
+function applyFreshStart() {
+  if (typeof window === 'undefined') return;
+  const url = new URL(window.location.href);
+  const mode = url.searchParams.get('demo');
+  if (mode === 'fresh' || mode === 'full') {
+    store.set('demo.fresh', mode === 'fresh' ? '1' : null);
+    store.set('demo.role', null);
+    try {
+      localStorage.removeItem('admin.session');
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith('admin.onboarding.'))
+        .forEach((k) => localStorage.removeItem(k));
+    } catch {
+      /* blocked */
+    }
+    url.searchParams.delete('demo');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  }
+  if (!store.get('demo.fresh')) return;
+  db.serviceArea.boundary = null;
+  db.serviceArea.pickupPoints = [];
+  db.settings.operatingHours = null;
+  db.serviceArea.operatingHours = null;
+  for (const rows of [db.drivers, db.vehicles, db.shifts, db.attendance, db.salaryPayments, db.rides, db.incidents]) {
+    rows.length = 0;
+  }
+  db.salaryProfiles.clear();
+}
+applyFreshStart();
+const isFresh = () => store.get('demo.fresh') === '1';
+
 function me(): S['StaffUser'] {
   const role = (store.get('demo.role') ?? 'super_admin') as S['StaffRole'];
   return db.staff.find((s) => s.staffRole === role) ?? db.staff[0]!;
@@ -160,18 +200,24 @@ const routes: [string, RegExp, Handler][] = [
   [
     'POST',
     /^\/auth\/admin\/invite\/accept$/,
-    () =>
-      json(200, {
+    (_m, _q, b) => {
+      const token = (b as S['InviteAccept']).token;
+      if (!token.startsWith('demo')) return problem(401, 'invalid_token', 'Invite link expired or used');
+      const role = token.replace(/^demo-?/, '') as S['StaffRole'];
+      store.set('demo.inviteRole', db.staff.some((x) => x.staffRole === role) ? role : 'super_admin');
+      return json(200, {
         enrollmentToken: 'demo-enrol',
         secret: 'JBSWY3DPEHPK3PXP',
         otpauthUri: 'otpauth://totp/Turbo:new.staff@turbo.example?secret=JBSWY3DPEHPK3PXP&issuer=Turbo',
-      }),
+      });
+    },
   ],
   [
     'POST',
     /^\/auth\/admin\/mfa\/confirm$/,
     () => {
-      store.set('demo.role', 'super_admin');
+      store.set('demo.role', store.get('demo.inviteRole') ?? 'super_admin');
+      store.set('demo.inviteRole', null);
       return json(200, tokens());
     },
   ],
@@ -955,7 +1001,12 @@ const routes: [string, RegExp, Handler][] = [
     },
   ],
 
-  ['GET', /^\/admin\/staff$/, (_m, q) => json(200, page(db.staff, q))],
+  [
+    'GET',
+    /^\/admin\/staff$/,
+    (_m, q) =>
+      json(200, page(isFresh() ? db.staff.filter((x) => x.id === me().id || freshStaff.has(x.id)) : db.staff, q)),
+  ],
   [
     'POST',
     /^\/admin\/staff$/,
@@ -970,6 +1021,7 @@ const routes: [string, RegExp, Handler][] = [
         invitePending: true,
       };
       db.staff.push(u);
+      freshStaff.add(u.id);
       audit('staff.invited', 'staff', u.id);
       return json(201, u);
     },

@@ -75,6 +75,7 @@ export function Vehicles() {
         }
         empty={{
           title: 'No vehicles yet',
+          body: 'Add the cars drivers use, then assign each one to a driver.',
           action: (
             <Button variant="primary" onClick={() => setEditing({ id: null, form: emptyVehicle })}>
               Add vehicle

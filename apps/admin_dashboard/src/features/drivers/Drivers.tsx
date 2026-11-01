@@ -137,7 +137,7 @@ export function Drivers() {
         onRowClick={(r) => navigate(`/drivers/${r.id}`)}
         empty={{
           title: 'No drivers yet',
-          body: 'Add the first driver to send their invitation.',
+          body: 'Add the first driver. They get a text message to set up the driver app.',
           action: (
             <Button variant="primary" onClick={() => setCreateOpen(true)}>
               Add driver
