@@ -33,6 +33,30 @@ void main() {
       // TODO
     });
 
+    // What the student pays for this trip. Shown so the driver can see the price before acknowledging.
+    // int farePesewas
+    test('to test the property `farePesewas`', () async {
+      // TODO
+    });
+
+    // Estimated road distance from the driver's last known position to the pickup. Null once the trip has started or if the driver has no recent position.
+    // int pickupDistanceMeters
+    test('to test the property `pickupDistanceMeters`', () async {
+      // TODO
+    });
+
+    // Estimated time to reach the pickup. 0 once arrived, null once the trip has started.
+    // int pickupEtaSeconds
+    test('to test the property `pickupEtaSeconds`', () async {
+      // TODO
+    });
+
+    // Estimated duration of the trip itself.
+    // int routeDurationSeconds
+    test('to test the property `routeDurationSeconds`', () async {
+      // TODO
+    });
+
     // DriverRideStudent student
     test('to test the property `student`', () async {
       // TODO

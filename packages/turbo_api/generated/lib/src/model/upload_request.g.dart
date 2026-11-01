@@ -125,4 +125,5 @@ const _$UploadRequestContentTypeEnumEnumMap = {
   UploadRequestContentTypeEnum.imageSlashJpeg: 'image/jpeg',
   UploadRequestContentTypeEnum.imageSlashPng: 'image/png',
   UploadRequestContentTypeEnum.applicationSlashPdf: 'application/pdf',
+  UploadRequestContentTypeEnum.textSlashCsv: 'text/csv',
 };

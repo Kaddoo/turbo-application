@@ -82,8 +82,8 @@ class BrandTokens {
     this.iconAsset,
     this.fontFamily,
     this.typeScale = const BrandTypeScale(),
-    this.radiusCard = 12,
-    this.radiusInput = 8,
+    this.radiusCard = 20,
+    this.radiusInput = 14,
     this.radiusFull = 999,
     this.supportEmail,
     this.supportPhone,
@@ -112,11 +112,10 @@ class BrandTokens {
   final String? supportPhone;
 }
 
-const _black = Color(0xFF0A0A0A);
-const _neon = Color(0xFFC6FF00);
+const _black = Color(0xFF0B0B09);
+const _neon = Color(0xFFD5FF3B);
 
-/// Interim black-and-neon brand. The neon hex is an assumption until Turbo
-/// confirms it.
+/// Black-and-neon brand, with values read from the design boards.
 const turboBrand = BrandTokens(
   appName: 'Turbo',
   wordmark: 'Turbo',
@@ -124,10 +123,10 @@ const turboBrand = BrandTokens(
   brandNeon: _neon,
   dark: BrandPalette(
     background: _black,
-    surface: Color(0xFF141414),
-    surfaceRaised: Color(0xFF1E1E1E),
-    border: Color(0xFF2E2E2E),
-    controlBorder: Color(0xFF8A8A8A),
+    surface: Color(0xFF141611),
+    surfaceRaised: Color(0xFF1D1F19),
+    border: Color(0xFF2A2D25),
+    controlBorder: Color(0xFF8A8C84),
     textPrimary: Color(0xFFF5F5F5),
     textSecondary: Color(0xFFA8A8A8),
     accent: _neon,
@@ -137,14 +136,14 @@ const turboBrand = BrandTokens(
     focusRing: _neon,
     success: Color(0xFF4CC38A),
     warning: Color(0xFFF5A524),
-    danger: Color(0xFFFF6B5E),
+    danger: Color(0xFFFF7A6B),
   ),
   light: BrandPalette(
-    background: Color(0xFFFFFFFF),
-    surface: Color(0xFFF4F4F2),
+    background: Color(0xFFEFEDE6),
+    surface: Color(0xFFFFFFFF),
     surfaceRaised: Color(0xFFFFFFFF),
-    border: Color(0xFFD6D6D2),
-    controlBorder: Color(0xFF767676),
+    border: Color(0xFFDAD7CE),
+    controlBorder: Color(0xFF6E6C65),
     textPrimary: _black,
     textSecondary: Color(0xFF5A5A5A),
     accent: _neon,
@@ -154,6 +153,6 @@ const turboBrand = BrandTokens(
     focusRing: _black,
     success: Color(0xFF117A59),
     warning: Color(0xFFB54708),
-    danger: Color(0xFFCF2A1E),
+    danger: Color(0xFFB3301C),
   ),
 );

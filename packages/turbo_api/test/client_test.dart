@@ -28,12 +28,13 @@ ResponseBody _json(Object body, int status, {Map<String, List<String>>? headers}
       ...?headers,
     });
 
-TurboClient _client(_FakeAdapter adapter, {String? token}) {
+TurboClient _client(_FakeAdapter adapter, {String? token, RefreshSession? refresh}) {
   final dio = Dio(BaseOptions(baseUrl: 'http://test'))..httpClientAdapter = adapter;
   return TurboClient(
     baseUrl: 'http://test',
     appVersion: 'ios/1.2.3',
     accessToken: () => token,
+    refreshSession: refresh,
     dio: dio,
   );
 }
@@ -87,6 +88,45 @@ void main() {
     } catch (e) {
       expect(problemOf(e).code, ApiProblem.network);
     }
+  });
+
+  test('a 401 refreshes once and replays with the new token', () async {
+    var token = 'old';
+    var refreshes = 0;
+    final adapter = _FakeAdapter((o, _) => o.headers['Authorization'] == 'Bearer new'
+        ? _json(_config, 200)
+        : _json({'title': 'x', 'code': 'unauthenticated'}, 401));
+    final client = TurboClient(
+      baseUrl: 'http://test',
+      appVersion: 'ios/1.0.0',
+      accessToken: () => token,
+      refreshSession: () async {
+        refreshes++;
+        token = 'new';
+        return true;
+      },
+      dio: Dio(BaseOptions(baseUrl: 'http://test'))..httpClientAdapter = adapter,
+    );
+    final response = await client.api.getMetaApi().getAppConfig();
+    expect(response.statusCode, 200);
+    expect(refreshes, 1);
+    expect(adapter.requests, hasLength(2));
+  });
+
+  test('a failed refresh surfaces the 401 and does not loop', () async {
+    var refreshes = 0;
+    final adapter = _FakeAdapter((_, _) => _json({'title': 'x', 'code': 'unauthenticated'}, 401));
+    try {
+      await _client(adapter, token: 'old', refresh: () async {
+        refreshes++;
+        return false;
+      }).api.getMetaApi().getAppConfig();
+      fail('expected a failure');
+    } catch (e) {
+      expect(problemOf(e).code, 'unauthenticated');
+    }
+    expect(refreshes, 1);
+    expect(adapter.requests, hasLength(1));
   });
 
   test('an idempotency key is stable for one intention and new for the next', () {

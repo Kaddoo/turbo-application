@@ -39,6 +39,7 @@ class UploadRequest {
 
 
 
+      /// text/csv is only accepted for purpose provider_statement (reconciliation).
   @JsonKey(
     
     name: r'contentType',
@@ -117,13 +118,16 @@ String toString() => value;
 }
 
 
+/// text/csv is only accepted for purpose provider_statement (reconciliation).
 enum UploadRequestContentTypeEnum {
 @JsonValue(r'image/jpeg')
 imageSlashJpeg(r'image/jpeg'),
 @JsonValue(r'image/png')
 imageSlashPng(r'image/png'),
 @JsonValue(r'application/pdf')
-applicationSlashPdf(r'application/pdf');
+applicationSlashPdf(r'application/pdf'),
+@JsonValue(r'text/csv')
+textSlashCsv(r'text/csv');
 
 const UploadRequestContentTypeEnum(this.value);
 

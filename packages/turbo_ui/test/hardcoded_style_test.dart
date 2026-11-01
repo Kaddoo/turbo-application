@@ -32,9 +32,10 @@ void main() {
     ...dartFiles('packages/turbo_ui/lib/src/states'),
     ...dartFiles('packages/turbo_ui/lib/src/gallery'),
   ].where((f) {
-    final p = f.path;
-    // Platform folders, build output and tests are not app styling.
-    return p.contains('/lib/') && !p.contains('/build/') && !p.contains('/.dart_tool/');
+    // Only our own Dart under lib/. Platform folders (ios/.symlinks holds plugin
+    // example apps), build output and tests are not app styling.
+    final rel = f.path.substring(repoRoot.path.length);
+    return RegExp(r'^/(apps/[^/]+|packages/turbo_ui)/lib/').hasMatch(rel);
   }).toList();
 
   List<String> violations(String source) {

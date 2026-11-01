@@ -1,0 +1,495 @@
+{
+  "@@locale": "en",
+  "problemGeneric": "Something went wrong. Please try again.",
+  "problemNetwork": "No connection. Check your internet and try again.",
+  "problemRateLimited": "Too many tries. Please wait a moment and try again.",
+  "problemRateLimitedWait": "Too many tries. Please wait {seconds} s and try again.",
+  "problemOtpInvalid": "That code isn't right. Check it and try again.",
+  "problemOtpExpired": "That code has expired. Ask for a new one.",
+  "problemOtpRateLimited": "Too many codes asked for. Please wait before asking again.",
+  "problemSmsBudget": "We can't send codes right now. Try again soon.",
+  "problemAccountSuspended": "This account is suspended. Contact support for help.",
+  "problemUpgradeRequired": "Please update the app to carry on.",
+  "problemDuplicateIdentity": "This Ghana Card is already linked to another account. Contact support.",
+  "problemVerificationRequired": "Your student check isn't finished yet.",
+  "problemVerificationNotResubmittable": "Your documents can't be sent again right now.",
+  "problemUploadExpired": "That upload took too long. Please try the photo again.",
+  "problemValidation": "Some details aren't right. Check them and try again.",
+  "problemNoDrivers": "No drivers are available right now. Try again soon.",
+  "problemOutsideArea": "That place is outside the area we cover.",
+  "problemRouteTooLong": "This trip is over {km} km, which is the longest we do.",
+  "problemRouteUnavailable": "We couldn't find a route between those places.",
+  "problemBookingsPaused": "Booking is paused for now. Please try again later.",
+  "problemAccountOwes": "You owe money on your wallet. Top up to book again.",
+  "problemActiveRide": "You already have a ride in progress.",
+  "problemQuoteExpired": "That price has expired. We'll get you a new one.",
+  "problemTopupRange": "That amount isn't allowed. Choose a different amount.",
+  "problemPaymentProvider": "The payment service isn't answering. Try again in a moment.",
+  "problemInsufficient": "Your wallet doesn't have enough for this ride. Top up and try again.",
+  "continueAction": "Continue",
+  "tryAgain": "Try again",
+  "back": "Back",
+  "offlineBanner": "You're offline. Some things may be out of date.",
+  "bootErrorTitle": "We couldn't start up",
+  "bootErrorBody": "Check your connection and try again.",
+  "updateRequiredTitle": "Please update the app",
+  "updateRequiredBody": "This version of {appName} is too old to keep working. Update it from the store to carry on.",
+  "maintenanceTitle": "We're doing some maintenance",
+  "maintenanceBody": "{appName} is paused for a short while. Please try again soon.",
+  "maintenanceCheckAgain": "Check again",
+  "phoneTitle": "Your phone number",
+  "phoneFieldLabel": "Phone number",
+  "phoneHelper": "We'll text you a 6-digit code",
+  "phoneSendCode": "Send code",
+  "phoneInvalid": "Enter your 9-digit number, for example 24 123 4567.",
+  "codeTitle": "Enter your code",
+  "codeSentTo": "We sent a 6-digit code to {phone}.",
+  "codeVerify": "Verify",
+  "codeResend": "Send a new code",
+  "codeResendIn": "Send a new code in {seconds} s",
+  "codeWrongNumber": "Wrong number?",
+  "termsTitle": "Before you start",
+  "termsAgree": "I agree",
+  "termsReadTerms": "Read the full terms",
+  "termsReadPrivacy": "Read the privacy notice",
+  "termsLoadFailed": "We couldn't load the terms. Check your connection and try again.",
+  "navProfile": "Profile",
+  "welcomeTagline": "Drive for the campus, one ride at a time",
+  "welcomeAudience": "For {appName} drivers",
+  "@welcomeAudience": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "termsBulletRules": "{appName} assigns rides to you automatically. You accept or decline each one.",
+  "@termsBulletRules": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "termsBulletData": "Your position is shared only while you are on duty. Your trips, shifts and attendance are recorded for payroll.",
+  "termsWhyLocationTitle": "Why we need your location all the time",
+  "termsWhyLocation": "So rides can be assigned to the nearest driver and students can see you arrive, even when the screen is locked. Sharing stops when you go off duty.",
+  "problemNotADriver": "This number isn't registered as a driver. Contact your supervisor.",
+  "problemDocumentExpired": "A document has expired. Contact your supervisor.",
+  "problemHasActiveRide": "You can't go off duty during a ride.",
+  "problemPinLocked": "Too many tries. Call your supervisor.",
+  "problemInvalidPin": "That PIN isn't right. Ask the student again.",
+  "problemNoShowEarly": "It's too early to mark the student as not here.",
+  "suspendedTitle": "Your account is suspended",
+  "suspendedBody": "Contact your supervisor to find out why.",
+  "homeGreeting": "Hello, {name}",
+  "homeVehicle": "{colour} {make} {model} · {plate}",
+  "homeNoVehicle": "No vehicle assigned yet. Contact your supervisor.",
+  "homeOffDuty": "Off duty",
+  "homeGoOnDuty": "Go on duty",
+  "homeOffDuty": "Off duty",
+  "homeYourVehicle": "Your vehicle",
+  "homeGoOffDuty": "Go off duty",
+  "homeOnDutyWaiting": "On duty. Waiting for a ride.",
+  "homeOnDutyFor": "On duty for {time}",
+  "homeOffDutyConfirmTitle": "Go off duty?",
+  "homeOffDutyConfirmBody": "You won't get new rides until you go on duty again.",
+  "homeOffDutyConfirm": "Go off duty",
+  "homeStayOn": "Stay on duty",
+  "readinessTitle": "Before you go on duty",
+  "readinessLocation": "Location set to Always",
+  "readinessBattery": "Battery above 20% or charging",
+  "readinessInternet": "Internet connected",
+  "readinessNotifications": "Notifications on",
+  "readinessDocuments": "Documents checked when you go on duty",
+  "readinessFix": "Fix",
+  "readinessOk": "Ready",
+  "readinessProblem": "Needs attention",
+  "readinessLocationFix": "Allow location always",
+  "readinessOpenSettings": "Open Settings",
+  "dutyFailed": "We couldn't change your duty. Check your connection and try again.",
+  "bannerNotSharing": "Your location isn't being shared. Open the app.",
+  "bannerOffline": "You're offline. You won't get rides until you're back online.",
+  "bannerServer": "We can't reach the server. Your position is kept and will be sent.",
+  "indicatorGps": "GPS",
+  "indicatorConnection": "Connection",
+  "indicatorBattery": "Battery {percent}%",
+  "notificationTitle": "{appName}",
+  "notificationText": "{appName} is sharing your location while you are on duty.",
+  "navHome": "Home",
+  "navTrips": "Trips",
+  "navMe": "Me",
+  "navHelp": "Help",
+  "recordsTitle": "Records",
+  "recordsTabTrips": "Trips",
+  "recordsTabShifts": "Shifts",
+  "recordsTabHours": "Hours",
+  "recordsTabSalary": "Salary",
+  "helpTitle": "Help",
+  "helpReportTitle": "Report an issue",
+  "helpMyRequests": "My help requests",
+  "shareStopped": "Location sharing stopped",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@homeVehicle": {
+    "placeholders": {
+      "colour": {
+        "type": "String"
+      },
+      "make": {
+        "type": "String"
+      },
+      "model": {
+        "type": "String"
+      },
+      "plate": {
+        "type": "String"
+      }
+    }
+  },
+  "@homeOnDutyFor": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@indicatorBattery": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "@notificationTitle": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationText": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "tripsTitle": "Trips",
+  "tripsEmpty": "No trips yet.",
+  "tripsLoadFailed": "We couldn't load your trips. Check your connection and try again.",
+  "rideStatusSearching": "Finding a driver",
+  "rideStatusAssigned": "Assigned",
+  "rideStatusArrived": "Arrived",
+  "rideStatusInProgress": "On the way",
+  "rideStatusCompleted": "Completed",
+  "rideStatusCancelled": "Cancelled",
+  "meTitle": "Me",
+  "meVehicle": "Vehicle",
+  "meSignOut": "Sign out",
+  "meVersion": "App version",
+  "meTerms": "Terms",
+  "mePrivacy": "Privacy notice",
+  "meDevices": "Signed-in devices",
+  "meThisDevice": "This phone",
+  "meSignOutDevice": "Sign out",
+  "meSignOutOthers": "Sign out everywhere else",
+  "meLastUsed": "Last used {when}",
+  "meLoadFailed": "We couldn't load this. Check your connection and try again.",
+  "meShifts": "Shifts",
+  "meAttendance": "Attendance",
+  "meSalary": "Salary history",
+  "meHelp": "Help and support",
+  "@meLastUsed": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "assignTitle": "New ride",
+  "assignAccept": "Accept",
+  "assignDecline": "Decline",
+  "assignSeconds": "{seconds}",
+  "assignPickup": "Pickup",
+  "assignDistance": "{km} km away · about {minutes} min",
+  "assignStudent": "Student: {name}",
+  "assignTrip": "Trip: {km} km",
+  "assignFare": "Fare: {amount}",
+  "assignPassed": "Ride passed to another driver",
+  "assignPassedBody": "You're back in the queue. No action needed.",
+  "declineTitle": "Why are you declining?",
+  "declineVehicle": "Car problem",
+  "declineFar": "Too far",
+  "declineUnwell": "Unwell",
+  "declineOther": "Other",
+  "pickupTitle": "Go to the pickup",
+  "pickupNavigate": "Navigate",
+  "pickupArrived": "I've arrived",
+  "pickupFarTitle": "You look far from the pickup",
+  "pickupFarBody": "Mark as arrived anyway?",
+  "pickupFarConfirm": "Yes, I've arrived",
+  "pickupMessages": "Quick messages",
+  "navigateGoogle": "Google Maps",
+  "navigateWaze": "Waze",
+  "navigateFailed": "We couldn't open a maps app.",
+  "waitingTitle": "Waiting for the student",
+  "waitingTimer": "Waiting {time}",
+  "waitingStart": "Start trip",
+  "waitingNotHere": "Student not here",
+  "waitingNotHereConfirmTitle": "Mark the student as not here?",
+  "waitingNotHereConfirmBody": "The ride will be cancelled. The student isn't charged and no fee applies.",
+  "waitingNotHereConfirm": "Yes, not here",
+  "waitingNotHereAt": "You can mark the student as not here at {time}.",
+  "pinTitle": "Enter the student's PIN",
+  "pinHint": "Ask the student for their PIN. Never accept it by message.",
+  "pinStart": "Start",
+  "pinDelete": "Delete",
+  "pinLockedTitle": "Too many tries",
+  "pinLockedBody": "Call your supervisor.",
+  "tripTitle": "Trip in progress",
+  "tripNavigate": "Navigate to drop-off",
+  "tripDropoff": "Drop-off: {name}",
+  "tripElapsed": "On the trip for {time}",
+  "tripComplete": "Complete trip",
+  "tripCompleteConfirmTitle": "Complete the trip?",
+  "tripCompleteConfirmBody": "Only do this at the drop-off.",
+  "tripCompleteConfirm": "Yes, complete",
+  "tripWaitingSignal": "Waiting for signal to finish your trip",
+  "tripWaitingSignalBody": "We'll keep trying. You don't need to do anything.",
+  "tripReport": "Report a problem",
+  "doneTitle": "Trip complete",
+  "doneDetails": "{km} km · {minutes} min",
+  "doneBack": "Back to waiting",
+  "cancelledTitle": "Ride cancelled",
+  "cancelledByStudent": "The student cancelled the ride.",
+  "cancelledByStaff": "The office cancelled the ride.",
+  "cancelledBySystem": "The ride was cancelled.",
+  "cancelledBody": "Return to your waiting position.",
+  "cancelledNoShow": "The student wasn't there. No fee applies.",
+  "rideMessageFailed": "That message didn't send. Try again.",
+  "rideLoadFailed": "We couldn't load your ride. Check your connection and try again.",
+  "rideActionFailed": "That didn't go through. Try again.",
+  "qmRunningLate": "Running late",
+  "qmImHere": "I'm here",
+  "qmAtTheGate": "At the gate",
+  "qmCannotFindYou": "I can't find you",
+  "qmOnMyWay": "On my way",
+  "qmPleaseComeOut": "Please come out",
+  "sosHold": "Hold for SOS",
+  "sosHoldSeconds": "Hold for 3 seconds",
+  "sosSecondsLeft": "{seconds} seconds",
+  "sosAlerted": "Help has been alerted",
+  "sosAlertedBody": "Staff at {appName} can see your location and will call you. Stay where it is safe.",
+  "sosFailed": "We couldn't send the alert",
+  "sosFailedBody": "Call the emergency number now.",
+  "sosCall": "Call {number}",
+  "sosNoLocation": "We couldn't find your location. Call the emergency number now.",
+  "sosDismiss": "Close",
+  "@assignSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@assignDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@assignStudent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@assignTrip": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "@assignFare": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@waitingTimer": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@waitingNotHereAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@tripDropoff": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@tripElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@doneDetails": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@sosSecondsLeft": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@sosAlertedBody": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "@sosCall": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "shiftsTitle": "Shifts",
+  "shiftsEmpty": "No shifts scheduled. Your supervisor sets these.",
+  "shiftUpcoming": "Upcoming",
+  "shiftPast": "Past",
+  "shiftScheduled": "Scheduled",
+  "shiftInProgress": "In progress",
+  "shiftCompleted": "Completed",
+  "shiftMissed": "Missed",
+  "attendanceTitle": "Attendance",
+  "attendanceEmpty": "No attendance records yet.",
+  "attendanceIn": "In {time}",
+  "attendanceOut": "Out {time}",
+  "attendanceMinutes": "{minutes} min worked",
+  "attendanceCorrected": "Corrected by staff: {note}",
+  "attendanceWrong": "Think something is wrong?",
+  "attendanceOnTime": "On time",
+  "attendanceLate": "Late",
+  "attendanceAbsent": "Absent",
+  "attendanceCorrectedChip": "Corrected",
+  "salaryTitle": "Salary history",
+  "salaryEmpty": "No payments recorded yet.",
+  "salaryNote": "This is a record. Payment is made by your employer outside the app.",
+  "salaryPeriod": "{from} to {to}",
+  "salaryPaid": "Paid {date}",
+  "salaryReference": "Reference {ref}",
+  "supportTitle": "Help and support",
+  "supportNew": "Report an issue",
+  "supportMine": "My tickets",
+  "supportEmpty": "No tickets yet. If something goes wrong, tell us here.",
+  "supportLoadFailed": "We couldn't load your tickets. Check your connection and try again.",
+  "supportAbout": "What is it about?",
+  "catVehicle": "Vehicle",
+  "catStudent": "Student behaviour",
+  "catApp": "App problem",
+  "catSafety": "Safety",
+  "catOther": "Other",
+  "supportSubject": "Subject",
+  "supportMessage": "Message",
+  "supportSend": "Send",
+  "supportSent": "Sent. We'll reply here.",
+  "supportNeedFields": "Choose a topic and write a short message.",
+  "supportReplyHint": "Write a reply",
+  "supportReply": "Send reply",
+  "supportFromStaff": "Support",
+  "supportFromYou": "You",
+  "supportReplyFailed": "We couldn't send that. Try again.",
+  "supportStatusOpen": "Open",
+  "supportStatusProgress": "Being looked at",
+  "supportStatusWaiting": "Waiting for you",
+  "supportStatusResolved": "Resolved",
+  "supportStatusClosed": "Closed",
+  "supportCallSupervisor": "Supervisor",
+  "@attendanceIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@attendanceOut": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@attendanceMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@attendanceCorrected": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "@salaryPeriod": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "@salaryPaid": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@salaryReference": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  }
+}

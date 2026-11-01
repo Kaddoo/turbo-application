@@ -17,6 +17,14 @@ abstract class _$DriverRideCWProxy {
 
   DriverRide routeDistanceMeters(int routeDistanceMeters);
 
+  DriverRide farePesewas(int? farePesewas);
+
+  DriverRide pickupDistanceMeters(int? pickupDistanceMeters);
+
+  DriverRide pickupEtaSeconds(int? pickupEtaSeconds);
+
+  DriverRide routeDurationSeconds(int? routeDurationSeconds);
+
   DriverRide student(DriverRideStudent student);
 
   DriverRide assignedAt(DateTime assignedAt);
@@ -37,6 +45,10 @@ abstract class _$DriverRideCWProxy {
     Location pickup,
     Location dropoff,
     int routeDistanceMeters,
+    int? farePesewas,
+    int? pickupDistanceMeters,
+    int? pickupEtaSeconds,
+    int? routeDurationSeconds,
     DriverRideStudent student,
     DateTime assignedAt,
     DateTime? acknowledgedAt,
@@ -67,6 +79,21 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
       this(routeDistanceMeters: routeDistanceMeters);
 
   @override
+  DriverRide farePesewas(int? farePesewas) => this(farePesewas: farePesewas);
+
+  @override
+  DriverRide pickupDistanceMeters(int? pickupDistanceMeters) =>
+      this(pickupDistanceMeters: pickupDistanceMeters);
+
+  @override
+  DriverRide pickupEtaSeconds(int? pickupEtaSeconds) =>
+      this(pickupEtaSeconds: pickupEtaSeconds);
+
+  @override
+  DriverRide routeDurationSeconds(int? routeDurationSeconds) =>
+      this(routeDurationSeconds: routeDurationSeconds);
+
+  @override
   DriverRide student(DriverRideStudent student) => this(student: student);
 
   @override
@@ -93,6 +120,10 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
     Object? pickup = const $CopyWithPlaceholder(),
     Object? dropoff = const $CopyWithPlaceholder(),
     Object? routeDistanceMeters = const $CopyWithPlaceholder(),
+    Object? farePesewas = const $CopyWithPlaceholder(),
+    Object? pickupDistanceMeters = const $CopyWithPlaceholder(),
+    Object? pickupEtaSeconds = const $CopyWithPlaceholder(),
+    Object? routeDurationSeconds = const $CopyWithPlaceholder(),
     Object? student = const $CopyWithPlaceholder(),
     Object? assignedAt = const $CopyWithPlaceholder(),
     Object? acknowledgedAt = const $CopyWithPlaceholder(),
@@ -119,6 +150,22 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
           ? _value.routeDistanceMeters
           // ignore: cast_nullable_to_non_nullable
           : routeDistanceMeters as int,
+      farePesewas: farePesewas == const $CopyWithPlaceholder()
+          ? _value.farePesewas
+          // ignore: cast_nullable_to_non_nullable
+          : farePesewas as int?,
+      pickupDistanceMeters: pickupDistanceMeters == const $CopyWithPlaceholder()
+          ? _value.pickupDistanceMeters
+          // ignore: cast_nullable_to_non_nullable
+          : pickupDistanceMeters as int?,
+      pickupEtaSeconds: pickupEtaSeconds == const $CopyWithPlaceholder()
+          ? _value.pickupEtaSeconds
+          // ignore: cast_nullable_to_non_nullable
+          : pickupEtaSeconds as int?,
+      routeDurationSeconds: routeDurationSeconds == const $CopyWithPlaceholder()
+          ? _value.routeDurationSeconds
+          // ignore: cast_nullable_to_non_nullable
+          : routeDurationSeconds as int?,
       student: student == const $CopyWithPlaceholder()
           ? _value.student
           // ignore: cast_nullable_to_non_nullable
@@ -149,57 +196,73 @@ extension $DriverRideCopyWith on DriverRide {
 // JsonSerializableGenerator
 // **************************************************************************
 
-DriverRide _$DriverRideFromJson(Map<String, dynamic> json) =>
-    $checkedCreate('DriverRide', json, ($checkedConvert) {
-      $checkKeys(
-        json,
-        requiredKeys: const [
-          'id',
-          'status',
-          'pickup',
-          'dropoff',
-          'routeDistanceMeters',
-          'student',
-          'assignedAt',
-        ],
-      );
-      final val = DriverRide(
-        id: $checkedConvert('id', (v) => v as String),
-        status: $checkedConvert(
-          'status',
-          (v) => $enumDecode(_$RideStatusEnumMap, v),
-        ),
-        pickup: $checkedConvert(
-          'pickup',
-          (v) => Location.fromJson(v as Map<String, dynamic>),
-        ),
-        dropoff: $checkedConvert(
-          'dropoff',
-          (v) => Location.fromJson(v as Map<String, dynamic>),
-        ),
-        routeDistanceMeters: $checkedConvert(
-          'routeDistanceMeters',
-          (v) => (v as num).toInt(),
-        ),
-        student: $checkedConvert(
-          'student',
-          (v) => DriverRideStudent.fromJson(v as Map<String, dynamic>),
-        ),
-        assignedAt: $checkedConvert(
-          'assignedAt',
-          (v) => DateTime.parse(v as String),
-        ),
-        acknowledgedAt: $checkedConvert(
-          'acknowledgedAt',
-          (v) => v == null ? null : DateTime.parse(v as String),
-        ),
-        noShowAvailableAt: $checkedConvert(
-          'noShowAvailableAt',
-          (v) => v == null ? null : DateTime.parse(v as String),
-        ),
-      );
-      return val;
-    });
+DriverRide _$DriverRideFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'DriverRide',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
+      json,
+      requiredKeys: const [
+        'id',
+        'status',
+        'pickup',
+        'dropoff',
+        'routeDistanceMeters',
+        'student',
+        'assignedAt',
+      ],
+    );
+    final val = DriverRide(
+      id: $checkedConvert('id', (v) => v as String),
+      status: $checkedConvert(
+        'status',
+        (v) => $enumDecode(_$RideStatusEnumMap, v),
+      ),
+      pickup: $checkedConvert(
+        'pickup',
+        (v) => Location.fromJson(v as Map<String, dynamic>),
+      ),
+      dropoff: $checkedConvert(
+        'dropoff',
+        (v) => Location.fromJson(v as Map<String, dynamic>),
+      ),
+      routeDistanceMeters: $checkedConvert(
+        'routeDistanceMeters',
+        (v) => (v as num).toInt(),
+      ),
+      farePesewas: $checkedConvert('farePesewas', (v) => (v as num?)?.toInt()),
+      pickupDistanceMeters: $checkedConvert(
+        'pickupDistanceMeters',
+        (v) => (v as num?)?.toInt(),
+      ),
+      pickupEtaSeconds: $checkedConvert(
+        'pickupEtaSeconds',
+        (v) => (v as num?)?.toInt(),
+      ),
+      routeDurationSeconds: $checkedConvert(
+        'routeDurationSeconds',
+        (v) => (v as num?)?.toInt(),
+      ),
+      student: $checkedConvert(
+        'student',
+        (v) => DriverRideStudent.fromJson(v as Map<String, dynamic>),
+      ),
+      assignedAt: $checkedConvert(
+        'assignedAt',
+        (v) => DateTime.parse(v as String),
+      ),
+      acknowledgedAt: $checkedConvert(
+        'acknowledgedAt',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      noShowAvailableAt: $checkedConvert(
+        'noShowAvailableAt',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+    );
+    return val;
+  },
+);
 
 Map<String, dynamic> _$DriverRideToJson(DriverRide instance) =>
     <String, dynamic>{
@@ -208,6 +271,10 @@ Map<String, dynamic> _$DriverRideToJson(DriverRide instance) =>
       'pickup': instance.pickup.toJson(),
       'dropoff': instance.dropoff.toJson(),
       'routeDistanceMeters': instance.routeDistanceMeters,
+      'farePesewas': ?instance.farePesewas,
+      'pickupDistanceMeters': ?instance.pickupDistanceMeters,
+      'pickupEtaSeconds': ?instance.pickupEtaSeconds,
+      'routeDurationSeconds': ?instance.routeDurationSeconds,
       'student': instance.student.toJson(),
       'assignedAt': instance.assignedAt.toIso8601String(),
       'acknowledgedAt': ?instance.acknowledgedAt?.toIso8601String(),

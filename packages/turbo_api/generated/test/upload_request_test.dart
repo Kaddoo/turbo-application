@@ -12,6 +12,7 @@ void main() {
       // TODO
     });
 
+    // text/csv is only accepted for purpose provider_statement (reconciliation).
     // String contentType
     test('to test the property `contentType`', () async {
       // TODO
