@@ -2,6 +2,27 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: data-changing checks on staging for 0.3.1
+
+**Task:** Re-run the data-changing checks against staging and say what still mismatches (backend request; Kevin approved data changes, with the dev-seed accounts).
+
+**Files touched:** `docs/api-tracker.md` (verification log). Probe script kept out of the repo (scratchpad `writes-probe.mjs`).
+
+**What changed:** 48 checks, 39 passed. Of the 9 failures:
+- 3 are API mismatches: approving your own adjustment gives 403 where the contract says 409; `ticket_state_invalid` is missing from the contract's ticket update; a plate without its hyphen is accepted as a new vehicle.
+- The other 6 could not run: staging has no rides, top-ups, incidents or tickets; the minimum web version is 0.0.0; and the probe used a wrong path for the boundary (`GET /service-area`).
+- Also, the dev-seed staff accounts do sign in on staging, though the backend said they could not.
+
+**Dashboard mismatches (branch `dashboard-ui-match`, still built on 0.2.0):**
+- Add driver, Resolve top-up and Run reconciliation send no Idempotency-Key, so staging answers 422 to all three.
+- None of the new 409 codes, `service_busy`, `link_invalid` or `link_expired` are handled; invite and reset still look for `invalid_token`.
+- The approval threshold is read from settings (super admin only), not `/admin/me`.
+- Support cannot open a student and finance cannot open a ride in the dashboard yet.
+
+**Status:** Report done. No dashboard code changed.
+
+**Next step:** Rebase the dashboard restructure onto `main`, regenerate from 0.3.1, then fix the four dashboard mismatches above.
+
 ## 2026-11-01, Claude, code: staff onboarding, and one contract
 
 **Task:** Build the approved first-run onboarding for each staff role. Then consolidate on one contract (`api/contract/openapi.yaml`), add the staging note, and make CI catch drift.
