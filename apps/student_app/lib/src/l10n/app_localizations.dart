@@ -370,6 +370,18 @@ abstract class AppLocalizations {
   /// **'Too many tries. Please wait a moment and try again.'**
   String get problemRateLimited;
 
+  /// No description provided for @problemServiceBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re busy right now. Try again in a moment.'**
+  String get problemServiceBusy;
+
+  /// No description provided for @problemServiceBusyWait.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re busy right now. Try again in {seconds} seconds.'**
+  String problemServiceBusyWait(int seconds);
+
   /// No description provided for @problemRateLimitedWait.
   ///
   /// In en, this message translates to:

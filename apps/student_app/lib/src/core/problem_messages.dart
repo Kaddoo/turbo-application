@@ -22,6 +22,9 @@ String problemMessage(
     ProblemCode.otpExpired => l10n.problemOtpExpired,
     ProblemCode.otpRateLimited => l10n.problemOtpRateLimited,
     ProblemCode.smsBudgetExceeded => l10n.problemSmsBudget,
+    ProblemCode.serviceBusy => retry == null
+        ? l10n.problemServiceBusy
+        : l10n.problemServiceBusyWait(retry),
     ProblemCode.accountSuspended => l10n.problemAccountSuspended,
     ProblemCode.upgradeRequired => l10n.problemUpgradeRequired,
     ProblemCode.duplicateIdentity => l10n.problemDuplicateIdentity,
