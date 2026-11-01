@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.2.2
+  version: 0.2.3
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -23,6 +23,9 @@ info:
 
     - **Auth**: `Authorization: Bearer <JWT>` (15 min). Web clients hold the refresh token in an httpOnly cookie; mobile clients
     hold it in secure storage and send it in the body. Rate limits return 429 with `Retry-After`.
+
+    - **Responses any operation can give**: 426 `upgrade_required` (app too old; not on `/app-config` or `/health`), 429 (rate limited)
+    and 503 (busy, with `Retry-After`). Operations list the other statuses they can return.
 
     - **Releases**: operations tagged `x-release: v1.1` are specified but must not be built for v1.
 
@@ -173,6 +176,8 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
       security: []
       x-roles:
       - public
@@ -209,6 +214,8 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '426':
           $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -243,6 +250,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -275,6 +286,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -293,6 +308,10 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - any
       x-release: v1
@@ -318,6 +337,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - any
       x-release: v1
@@ -344,6 +367,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - any
       x-release: v1
@@ -377,6 +404,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - any
       x-release: v1
@@ -401,6 +432,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -425,6 +460,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -455,6 +494,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -478,6 +521,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -501,6 +548,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -536,6 +587,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -559,6 +614,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -589,6 +648,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -616,6 +679,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -639,6 +706,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -669,6 +740,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -696,6 +771,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -733,6 +812,8 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '426':
           $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -774,6 +855,8 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '426':
           $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -804,6 +887,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -835,6 +922,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -866,6 +957,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -911,6 +1006,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -942,6 +1041,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -951,7 +1054,9 @@ paths:
       - Rides
       operationId: rateRide
       summary: Rate a completed ride
-      description: '**Access:** student.'
+      description: '**Access:** student.
+
+        409 `invalid_ride_state`: the ride is not completed, or was already rated.'
       parameters:
       - name: id
         in: path
@@ -979,6 +1084,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -1018,6 +1127,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -1046,6 +1159,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -1082,6 +1199,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -1125,6 +1246,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1.1
@@ -1164,6 +1289,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1.1
@@ -1195,6 +1324,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -1221,6 +1354,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -1253,6 +1390,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -1293,6 +1434,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -1317,6 +1462,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -1348,6 +1497,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -1389,6 +1542,8 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '426':
           $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -1420,6 +1575,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       x-release: v1
@@ -1453,6 +1612,10 @@ paths:
                 $ref: '#/components/schemas/WebhookAck'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -1478,6 +1641,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1520,6 +1687,8 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '426':
           $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1550,6 +1719,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1578,6 +1751,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1604,6 +1781,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1617,7 +1798,9 @@ paths:
 
 
         If this is not called within driverAckTimeoutSeconds the engine reassigns the ride. Design addition to confirm with
-        Turbo (decision D8).'
+        Turbo (decision D8).
+
+        409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).'
       parameters:
       - name: id
         in: path
@@ -1641,6 +1824,10 @@ paths:
           $ref: '#/components/responses/Conflict'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1653,7 +1840,9 @@ paths:
       description: '**Access:** driver.
 
 
-        The engine reassigns, excluding this driver for this ride. Allowed until the trip has started.'
+        The engine reassigns, excluding this driver for this ride. Allowed until the trip has started.
+
+        409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).'
       parameters:
       - name: id
         in: path
@@ -1681,6 +1870,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1690,7 +1883,9 @@ paths:
       - Driver
       operationId: markArrived
       summary: Mark arrival at pickup
-      description: '**Access:** driver.'
+      description: '**Access:** driver.
+
+        409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).'
       parameters:
       - name: id
         in: path
@@ -1722,6 +1917,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1735,7 +1934,9 @@ paths:
 
 
         Wrong PIN: 400 `invalid_pin`. Five wrong attempts lock the start for this driver: 409 `pin_locked` until an admin
-        intervenes.'
+        intervenes.
+
+        409 `invalid_ride_state`: the driver has not marked arrival at the pickup yet.'
       parameters:
       - name: id
         in: path
@@ -1769,6 +1970,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1781,7 +1986,9 @@ paths:
       description: '**Access:** driver.
 
 
-        Converts the held fare into a charge in the same database transaction.'
+        Converts the held fare into a charge in the same database transaction.
+
+        409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).'
       parameters:
       - name: id
         in: path
@@ -1813,6 +2020,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1851,6 +2062,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1889,6 +2104,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1915,6 +2134,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -1938,6 +2161,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:any
       x-release: v1
@@ -1969,6 +2196,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -2003,6 +2234,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -2015,7 +2250,9 @@ paths:
       description: '**Access:** admin:verifier.
 
 
-        Notifies the student by push and SMS. Immutable decision record.'
+        Notifies the student by push and SMS. Immutable decision record.
+
+        409 `verification_claimed`: another reviewer holds this submission. Other 409s use the generic `conflict`.'
       parameters:
       - name: id
         in: path
@@ -2047,6 +2284,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -2089,6 +2330,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -2120,6 +2365,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -2158,6 +2407,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -2197,6 +2450,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2229,6 +2486,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2260,6 +2521,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2300,6 +2565,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2339,6 +2608,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2365,6 +2638,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2397,6 +2674,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2436,6 +2717,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -2495,6 +2780,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -2518,6 +2807,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -2549,6 +2842,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -2558,7 +2855,9 @@ paths:
       - 'Admin: Rides'
       operationId: reassignRide
       summary: Manually reassign to a driver
-      description: '**Access:** admin:dispatcher.'
+      description: '**Access:** admin:dispatcher.
+
+        409 `invalid_ride_state`: the ride is already in progress or finished. 409 `no_drivers_on_duty`: the chosen driver is not on duty. 409 `driver_has_active_ride`: the chosen driver already has an active ride.'
       parameters:
       - name: id
         in: path
@@ -2590,6 +2889,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -2599,7 +2902,9 @@ paths:
       - 'Admin: Rides'
       operationId: adminCancelRide
       summary: Cancel a ride on the student's behalf
-      description: '**Access:** admin:dispatcher.'
+      description: '**Access:** admin:dispatcher.
+
+        409 `invalid_ride_state`: the ride is not in a state that allows this.'
       parameters:
       - name: id
         in: path
@@ -2631,6 +2936,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -2662,6 +2971,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2693,6 +3006,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2732,6 +3049,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2758,6 +3079,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2792,6 +3117,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2815,6 +3144,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2845,6 +3178,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -2876,6 +3213,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -2914,6 +3255,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -2968,6 +3313,10 @@ paths:
                 $ref: '#/components/schemas/AdjustmentRequest'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -3013,6 +3362,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -3072,6 +3425,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -3114,6 +3471,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -3145,6 +3506,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -3183,6 +3548,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -3222,6 +3591,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -3257,6 +3630,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -3296,6 +3673,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -3327,6 +3708,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3365,6 +3750,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3408,6 +3797,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3416,7 +3809,9 @@ paths:
       - 'Admin: Salary'
       operationId: createShift
       summary: Schedule a shift
-      description: '**Access:** admin:hr.'
+      description: '**Access:** admin:hr.
+
+        409 `shift_overlap`: the driver already has a shift at that time.'
       requestBody:
         required: true
         content:
@@ -3440,6 +3835,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3467,6 +3866,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3510,6 +3913,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3552,6 +3959,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3583,6 +3994,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3615,6 +4030,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3641,6 +4060,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -3673,6 +4096,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -3712,6 +4139,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -3753,6 +4184,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -3767,7 +4202,9 @@ paths:
 
         Only for a ride in `in_progress`. Charges the locked fare, writes a ride event with the staff member and reason, and
         adds the audit entry. Use when the driver cannot complete (dead phone, app crash). A cancellation with refund is still
-        available through the cancel endpoint.'
+        available through the cancel endpoint.
+
+        409 `invalid_ride_state`: the ride is not in a state that allows this.'
       parameters:
       - &id001
         name: id
@@ -3800,6 +4237,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -3833,6 +4274,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -3866,6 +4311,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -3893,6 +4342,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -3922,6 +4375,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -3953,6 +4410,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:any
       x-release: v1
@@ -3978,6 +4439,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -4006,6 +4471,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:super_admin
       x-release: v1
@@ -4047,6 +4516,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -4084,6 +4557,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -4109,6 +4586,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -4144,6 +4625,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -4183,6 +4668,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -4222,6 +4711,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:finance
       x-release: v1
@@ -4236,7 +4729,9 @@ paths:
 
         Only after the driver has arrived and `noShowWaitSeconds` have passed (409 `no_show_too_early` otherwise). Cancels
         the ride with reason `rider_no_show`; the hold is released and no fee applies. The count shows on the student''s record
-        for staff.'
+        for staff.
+
+        409 `invalid_ride_state`: the driver has not marked arrival. 409 `no_show_too_early`: the wait time has not passed yet.'
       parameters:
       - *id001
       responses:
@@ -4256,6 +4751,10 @@ paths:
           $ref: '#/components/responses/Conflict'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - driver
       x-release: v1
@@ -4268,7 +4767,9 @@ paths:
       description: '**Access:** student or driver on this ride.
 
 
-        Preset messages only. No phone numbers are shared (D17). Delivered by push.'
+        Preset messages only. No phone numbers are shared (D17). Delivered by push.
+
+        409 `invalid_ride_state`: messages can only be sent while a driver is assigned.'
       parameters:
       - *id001
       requestBody:
@@ -4292,6 +4793,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -4319,6 +4824,10 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - student
       - driver
@@ -4339,6 +4848,10 @@ paths:
                 $ref: '#/components/schemas/LegalVersions'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       security: []
       x-roles:
       - public
@@ -4350,7 +4863,9 @@ paths:
       operationId: acceptTerms
       summary: Accept a newer terms or privacy version
       description: '**Access:** student or driver. When versions change, protected endpoints return 403 `terms_not_accepted`
-        until this is called.'
+        until this is called.
+
+        403 `forbidden` for a token that is not a student. This call is exempt from the terms check, otherwise a user on old terms could never accept the new ones.'
       requestBody:
         required: true
         content:
@@ -4366,6 +4881,12 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        '403':
+          $ref: '#/components/responses/Forbidden'
       x-roles:
       - student
       - driver
@@ -4426,6 +4947,10 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:hr
       x-release: v1
@@ -4467,6 +4992,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -4500,6 +5029,10 @@ paths:
           $ref: '#/components/responses/Conflict'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
       x-release: v1
@@ -4534,6 +5067,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
       x-release: v1
@@ -4543,7 +5080,9 @@ paths:
       - Student
       operationId: listSessions
       summary: My signed-in devices
-      description: '**Access:** student or driver.'
+      description: '**Access:** student or driver.
+
+        403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.'
       responses:
         '200':
           description: OK
@@ -4555,6 +5094,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        '403':
+          $ref: '#/components/responses/Forbidden'
       x-roles:
       - student
       - driver
@@ -4564,7 +5109,9 @@ paths:
       - Student
       operationId: revokeOtherSessions
       summary: Sign out everywhere else
-      description: '**Access:** student or driver. Keeps the current session.'
+      description: '**Access:** student or driver. Keeps the current session.
+
+        403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.'
       responses:
         '204':
           description: No content
@@ -4572,6 +5119,12 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        '403':
+          $ref: '#/components/responses/Forbidden'
       x-roles:
       - student
       - driver
@@ -4582,7 +5135,9 @@ paths:
       - Student
       operationId: revokeSession
       summary: Sign out one device
-      description: '**Access:** student or driver.'
+      description: '**Access:** student or driver.
+
+        403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.'
       parameters:
       - *id001
       responses:
@@ -4594,6 +5149,12 @@ paths:
           $ref: '#/components/responses/NotFound'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+        '403':
+          $ref: '#/components/responses/Forbidden'
       x-roles:
       - student
       - driver
@@ -4620,6 +5181,10 @@ paths:
           $ref: '#/components/responses/Unprocessable'
         '429':
           $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:support
       x-release: v1
@@ -4670,7 +5235,7 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
     Forbidden:
-      description: Authenticated but not allowed (role, suspended account, or verification required).
+      description: Authenticated but not allowed. Codes include `forbidden` (role), `terms_not_accepted` (new terms to accept), `account_suspended` and `verification_required`. `account_suspended` is checked at sign-in and token refresh, and on driver calls.
       content:
         application/problem+json:
           schema:
@@ -4700,13 +5265,18 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
     ServiceUnavailable:
-      description: Temporarily unavailable (for example the daily SMS ceiling was reached). Retry later.
+      description: Temporarily unavailable (the daily SMS ceiling was reached, or the database is busy). Any operation can answer this. Wait `Retry-After` seconds (also in the body as `retryAfterSeconds`), then retry.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
       content:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
     UpgradeRequired:
-      description: The app is older than the minimum supported version. Code `upgrade_required`. Show the update screen.
+      description: The app is older than the minimum supported version. Code `upgrade_required`. Show the update screen. Any operation can answer this except `/app-config` and `/health`; it is checked from the `X-App-Version` header before the request is handled.
       content:
         application/problem+json:
           schema:
