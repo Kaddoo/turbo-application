@@ -2,6 +2,24 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: dashboard matched to the inspiration, live map on phones
+
+**Task:** Kevin: "the ui is not what i asked for look at the inspo i gave, i want the same design but turbo colors and data so fix it", then "this live map on mobile view is not ok fix the design".
+
+**Files touched:** apps/admin_dashboard: `brand/brand.ts` (type scale, radii, layout sizes); `components/ui.module.css` (lighter weights, gradient cards, soft badges, thin ticked slider); `components/Field.tsx` (Slider `labelHidden`, tick marks); `components/charts/` (smooth glowing Sparkline with average line, peak and latest markers; new RangeLines); `components/dashboard/` (rewritten: IconTile, SectionHeader, ChangePill, MetricCard, HeroCard, Panel, DetailCard, BigNumber, ControlCard, StatTile, SortHeaderRow); `components/MapView.tsx` (optional `className`, redraws on resize); `app/shell/` and `app/Layout.tsx`, `app/routes.tsx` (sidebar, top bar and search laid out as in the inspiration; primary action has an icon); `features/overview/` (rebuilt to the inspiration's layout); `features/rides/Rides.tsx` and new `rides.module.css` (live map layout); `utils/series.ts` (`smoothForDisplay`, `expiryCurve`).
+
+**What changed:** Overview follows the reference section by section: header with caption, count chip and filter chips; three queue cards (icon tile, caption and title, big number, change pill, glowing line chart running to the card edge; the Documents card draws expiries as a line, red when any have expired); promo-style hero card with the most urgent item; "Live operations" panel with a dotted inner card, big active-rides number, a refresh-rate slider card, sortable header row and four stat tiles. Chart curves are smoothed for display only; totals and screen-reader summaries use the raw counts. Live map: the map and ride list were forced into two columns by an inline style, so on phones the map was a narrow strip. Now side by side at equal height on desktop, stacked (map first, full width) on tablets and phones; rides are a divided list with status, flags, names, distance, fare and time.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: 224 tests, including hardcoded-style and contrast
+- [x] No horizontal scroll at 390, 900 and 1440 px, dark and light (Overview and Live map, checked in Chrome against the demo server)
+
+**Deviations from plan or contract:** none new. Overview series still come from one page of each list (A30).
+
+**Status:** done, awaiting review. Branch: dashboard-ui-match (cut from dashboard-ui-shell).
+
+**Next step:** Kevin reviews Overview and Live map at phone and desktop sizes. Other screens still use the older page layout; bring them to this style next.
+
 ## 2026-11-01, Claude, code: dashboard shell and component library
 
 **Task:** Rebuild the dashboard shell and shared components to match the dark dashboard inspiration Kevin attached, using Turbo's colours (neon lime) and Turbo data, and fix the phone layout. Approved list: shell (sidebar, top bar, bottom nav), overview blocks, component library with every variant and state; a search contract request; phone tab bar.
