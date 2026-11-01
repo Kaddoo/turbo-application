@@ -14,8 +14,8 @@ class FloatingNavItem {
   final String label;
 }
 
-/// Rounded bar that floats above the content with icons only. The selected
-/// item is a solid square; every item keeps a spoken label and a 44 pt target.
+/// A pill that floats above the content with icons only. The open tab is a 56 pt lime circle; the others are quiet icons.
+/// Every item keeps a spoken label and a target of at least 44 pt.
 class FloatingNavBar extends StatelessWidget {
   const FloatingNavBar({
     super.key,
@@ -34,13 +34,13 @@ class FloatingNavBar extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(TurboSpacing.lg, TurboSpacing.sm, TurboSpacing.lg, TurboSpacing.sm),
+        padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.sm, TurboSpacing.screen, TurboSpacing.md),
         child: Container(
           padding: const EdgeInsets.all(TurboSpacing.xs),
           decoration: BoxDecoration(
             color: t.colors.surface,
             border: Border.all(color: t.colors.border),
-            borderRadius: BorderRadius.circular(t.radiusCard),
+            borderRadius: BorderRadius.circular(t.radiusFull),
           ),
           child: Row(
             children: [
@@ -52,25 +52,22 @@ class FloatingNavBar extends StatelessWidget {
                     label: items[i].label,
                     child: ExcludeSemantics(
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(t.radiusInput),
+                        customBorder: const StadiumBorder(),
                         onTap: () => onSelected(i),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: TurboSizes.minTap + TurboSpacing.xs),
-                          child: Center(
-                            heightFactor: 1,
-                            child: AnimatedContainer(
-                              duration: TurboMotion.duration(context, TurboMotion.fast),
-                              width: TurboSizes.primaryAction,
-                              height: TurboSizes.minTap,
-                              decoration: BoxDecoration(
-                                color: i == selectedIndex ? t.colors.textPrimary : t.colors.surface,
-                                borderRadius: BorderRadius.circular(t.radiusInput),
-                              ),
-                              child: Icon(
-                                i == selectedIndex ? items[i].selectedIcon : items[i].icon,
-                                size: TurboSizes.iconMd,
-                                color: i == selectedIndex ? t.colors.background : t.colors.textSecondary,
-                              ),
+                        child: Center(
+                          heightFactor: 1,
+                          child: AnimatedContainer(
+                            duration: TurboMotion.duration(context, TurboMotion.fast),
+                            width: TurboSizes.navItem,
+                            height: TurboSizes.navItem,
+                            decoration: BoxDecoration(
+                              color: i == selectedIndex ? t.colors.accent : t.colors.surface.withValues(alpha: 0),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              i == selectedIndex ? items[i].selectedIcon : items[i].icon,
+                              size: TurboSizes.iconMd,
+                              color: i == selectedIndex ? t.colors.onAccent : t.colors.textSecondary,
                             ),
                           ),
                         ),

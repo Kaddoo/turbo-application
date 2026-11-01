@@ -13,7 +13,7 @@ class Wordmark extends StatelessWidget {
       header: true,
       child: Text(
         t.brand.wordmark,
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: t.colors.textPrimary),
+        style: t.styles.wordmark,
       ),
     );
   }

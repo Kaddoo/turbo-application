@@ -122,7 +122,7 @@ class OtpFieldState extends State<OtpField> {
                         textInputAction: TextInputAction.next,
                         autofillHints: i == 0 ? const [AutofillHints.oneTimeCode] : null,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: t.styles.monoCode,
                         cursorColor: c.focusRing,
                         onChanged: (v) => _onChanged(i, v),
                         decoration: InputDecoration(
@@ -131,18 +131,18 @@ class OtpFieldState extends State<OtpField> {
                           fillColor: c.surface,
                           contentPadding: const EdgeInsets.symmetric(vertical: TurboSpacing.md),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(t.radiusInput),
+                            borderRadius: BorderRadius.circular(t.radiusCode),
                             borderSide: BorderSide(color: edge, width: TurboSizes.accentBorderWidth),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(t.radiusInput),
+                            borderRadius: BorderRadius.circular(t.radiusCode),
                             borderSide: BorderSide(
                               color: hasError ? c.danger : c.focusRing,
                               width: TurboSizes.focusRingWidth,
                             ),
                           ),
                           disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(t.radiusInput),
+                            borderRadius: BorderRadius.circular(t.radiusCode),
                             borderSide: BorderSide(color: c.border),
                           ),
                         ),

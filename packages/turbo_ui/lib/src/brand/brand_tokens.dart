@@ -25,6 +25,7 @@ class BrandPalette {
     required this.danger,
     required this.fill,
     required this.sos,
+    required this.onSos,
     required this.successTint,
     required this.warningTint,
     required this.dangerTint,
@@ -62,6 +63,9 @@ class BrandPalette {
 
   /// Emergency fill (SOS buttons and badges). Never the accent, never `danger`.
   final Color sos;
+
+  /// Text and icons on an SOS fill.
+  final Color onSos;
 
   /// Soft fills behind status banners and tags.
   final Color successTint;
@@ -255,6 +259,7 @@ const turboBrand = BrandTokens(
     warning: Color(0xFFFFBF5C),
     danger: Color(0xFFFF7A6B),
     sos: Color(0xFFE5483A),
+    onSos: Color(0xFFFFFFFF),
     successTint: Color(0x2486E3A8),
     warningTint: Color(0x24FFBF5C),
     dangerTint: Color(0x29FF7A6B),
@@ -277,6 +282,7 @@ const turboBrand = BrandTokens(
     warning: Color(0xFFB54708),
     danger: Color(0xFFB3301C),
     sos: Color(0xFFC63A2D),
+    onSos: Color(0xFFFFFFFF),
     successTint: Color(0x1F117A59),
     warningTint: Color(0x1FB54708),
     dangerTint: Color(0x1FB3301C),

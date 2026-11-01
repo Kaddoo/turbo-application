@@ -26,6 +26,7 @@ class TurboColors {
   Color get danger => palette.danger;
   Color get fill => palette.fill;
   Color get sos => palette.sos;
+  Color get onSos => palette.onSos;
   Color get successTint => palette.successTint;
   Color get warningTint => palette.warningTint;
   Color get dangerTint => palette.dangerTint;
@@ -199,6 +200,14 @@ ThemeData buildTurboTheme(BrandTokens brand, Brightness brightness) {
       titleTextStyle: textTheme.titleLarge,
     ),
     dividerTheme: DividerThemeData(color: colors.border, space: 1, thickness: 1),
+    switchTheme: SwitchThemeData(
+      trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? colors.accent : colors.fill),
+      thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? colors.onAccent : colors.textSecondary),
+      trackOutlineColor: WidgetStatePropertyAll(colors.border),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? colors.accentText : colors.controlBorder),
+    ),
     extensions: [TurboTheme(brand: brand, colors: colors, styles: styles)],
   );
 }

@@ -39,7 +39,7 @@ class TurboTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.turbo;
     final c = t.colors;
-    OutlineInputBorder border(Color color, [double width = TurboSizes.accentBorderWidth]) =>
+    OutlineInputBorder border(Color color, [double width = 1]) =>
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(t.radiusInput),
           borderSide: BorderSide(color: color, width: width),
@@ -54,7 +54,7 @@ class TurboTextField extends StatelessWidget {
       onChanged: onChanged,
       textInputAction: textInputAction,
       autofillHints: autofillHints,
-      style: Theme.of(context).textTheme.bodyLarge,
+      style: t.styles.input,
       cursorColor: c.focusRing,
       decoration: InputDecoration(
         labelText: label,
@@ -65,19 +65,20 @@ class TurboTextField extends StatelessWidget {
         prefixText: prefixText,
         filled: true,
         fillColor: c.surface,
-        labelStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: c.textSecondary),
-        floatingLabelStyle: Theme.of(context).textTheme.bodySmall,
+        prefixStyle: t.styles.monoPhone.copyWith(color: c.textSecondary),
+        labelStyle: t.styles.fieldLabel,
+        floatingLabelStyle: t.styles.fieldLabel,
         helperStyle: Theme.of(context).textTheme.bodySmall,
-        errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.danger),
+        errorStyle: t.styles.fieldLabel.copyWith(color: c.danger),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: TurboSpacing.lg,
-          vertical: TurboSpacing.md,
+          horizontal: TurboSpacing.lg + TurboSpacing.xs,
+          vertical: TurboSpacing.lg,
         ),
         enabledBorder: border(c.controlBorder),
         disabledBorder: border(c.border),
-        focusedBorder: border(c.focusRing, TurboSizes.focusRingWidth),
-        errorBorder: border(c.danger),
-        focusedErrorBorder: border(c.danger, TurboSizes.focusRingWidth),
+        focusedBorder: border(c.focusRing, TurboSizes.accentBorderWidth),
+        errorBorder: border(c.danger, TurboSizes.accentBorderWidth),
+        focusedErrorBorder: border(c.danger, TurboSizes.accentBorderWidth),
       ),
     );
   }

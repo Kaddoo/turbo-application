@@ -5,7 +5,7 @@ import '../theme/turbo_theme.dart';
 
 enum StatusTone { neutral, success, warning, danger }
 
-/// Status is always an icon plus a word, never colour alone.
+/// A 26 pt status tag: soft tinted fill, an icon and a word. Status is never colour alone.
 class StatusChip extends StatelessWidget {
   const StatusChip({
     super.key,
@@ -22,30 +22,22 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.turbo;
     final c = t.colors;
-    final color = switch (tone) {
-      StatusTone.neutral => c.textSecondary,
-      StatusTone.success => c.success,
-      StatusTone.warning => c.warning,
-      StatusTone.danger => c.danger,
+    final (Color fore, Color fill) = switch (tone) {
+      StatusTone.neutral => (c.textSecondary, c.surfaceRaised),
+      StatusTone.success => (c.success, c.successTint),
+      StatusTone.warning => (c.warning, c.warningTint),
+      StatusTone.danger => (c.danger, c.dangerTint),
     };
     return Container(
+      constraints: const BoxConstraints(minHeight: TurboSizes.tagHeight),
       padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.md, vertical: TurboSpacing.xs),
-      decoration: BoxDecoration(
-        color: c.surface,
-        border: Border.all(color: color),
-        borderRadius: BorderRadius.circular(t.radiusFull),
-      ),
+      decoration: BoxDecoration(color: fill, borderRadius: BorderRadius.circular(t.radiusFull)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: TurboSizes.iconSm, color: color),
+          Icon(icon, size: TurboSizes.iconSm - TurboSpacing.xs, color: fore),
           const SizedBox(width: TurboSpacing.xs),
-          Flexible(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: color),
-            ),
-          ),
+          Flexible(child: Text(label, style: t.styles.tag.copyWith(color: fore))),
         ],
       ),
     );

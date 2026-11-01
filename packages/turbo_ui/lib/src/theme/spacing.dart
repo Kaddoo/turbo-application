@@ -6,6 +6,12 @@ abstract final class TurboSpacing {
   static const double lg = 16;
   static const double xl = 24;
   static const double xxl = 32;
+
+  /// Side padding of every screen in the design (390 pt wide phones).
+  static const double screen = 22;
+
+  /// The gap between stacked controls and cards on a screen: 10 to 16 in the design.
+  static const double gap = 10;
 }
 
 /// Sizes that come from accessibility rules rather than the brand.
@@ -20,4 +26,23 @@ abstract final class TurboSizes {
   static const double iconSm = 20;
   static const double iconMd = 24;
   static const double iconLg = 40;
+
+  /// Every button in the design is 60 tall; the driver's main actions are 80.
+  static const double buttonHeight = 60;
+  static const double driverButtonHeight = 80;
+  static const double textButtonHeight = 46;
+  static const double iconButton = 54;
+  static const double chipHeight = 50;
+  static const double smallChipHeight = 34;
+  static const double tagHeight = 26;
+  static const double fieldHeight = 62;
+
+  /// One tab in the bottom bar: a 56 pt circle.
+  static const double navItem = 56;
+  static const double avatar = 54;
+  static const double avatarSmall = 44;
+  static const double pinBoxWidth = 68;
+  static const double pinBoxHeight = 80;
+  static const double sheetHandleWidth = 46;
+  static const double sheetHandleHeight = 4;
 }
