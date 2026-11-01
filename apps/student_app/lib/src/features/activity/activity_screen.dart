@@ -18,14 +18,30 @@ final myRidesProvider = FutureProvider.autoDispose<List<Ride>>((ref) async {
   return response.data!.data.toList();
 });
 
-class ActivityScreen extends ConsumerWidget {
+class ActivityScreen extends ConsumerStatefulWidget {
   const ActivityScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ActivityScreen> createState() => _ActivityScreenState();
+}
+
+enum _Filter { all, completed, cancelled }
+
+class _ActivityScreenState extends ConsumerState<ActivityScreen> {
+  _Filter _filter = _Filter.all;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rides = ref.watch(myRidesProvider);
     final text = Theme.of(context).textTheme;
+    final t = context.turbo;
+
+    bool shown(Ride r) => switch (_filter) {
+          _Filter.all => true,
+          _Filter.completed => r.status == RideStatus.completed,
+          _Filter.cancelled => r.status == RideStatus.cancelled,
+        };
 
     // Rides from the last seven days first, then the rest, newest first.
     List<(String, List<Ride>)> groups(List<Ride> all) {
@@ -72,9 +88,35 @@ class ActivityScreen extends ConsumerWidget {
     };
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.activityTitle)),
       body: SafeArea(
-        child: rides.when(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.lg, TurboSpacing.screen, TurboSpacing.md),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Semantics(header: true, child: Text(l10n.activityTitle, style: text.headlineMedium)),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.screen),
+              child: Row(
+                children: [
+                  for (final (f, label) in [
+                    (_Filter.all, l10n.activityFilterAll),
+                    (_Filter.completed, l10n.rideStatusCompleted),
+                    (_Filter.cancelled, l10n.rideStatusCancelled),
+                  ])
+                    Padding(
+                      padding: const EdgeInsets.only(right: TurboSpacing.sm),
+                      child: TurboChip(label: label, selected: _filter == f, onTap: () => setState(() => _filter = f)),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: TurboSpacing.md),
+            Expanded(child: rides.when(
           loading: () => const LoadingState(),
           error: (_, _) => ErrorState(
             message: l10n.activityLoadFailed,
@@ -88,9 +130,9 @@ class ActivityScreen extends ConsumerWidget {
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(myRidesProvider),
                   child: ListView(
-                    padding: const EdgeInsets.all(TurboSpacing.lg),
+                    padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.screen),
                     children: [
-                      for (final group in groups(items))
+                      for (final group in groups(items.where(shown).toList()))
                         ...[
                           Padding(
                             padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
@@ -137,7 +179,7 @@ class ActivityScreen extends ConsumerWidget {
                                             ],
                                           ),
                                         ),
-                                        MoneyText(r.farePesewas, style: text.labelLarge),
+                                        MoneyText(r.farePesewas, style: t.styles.monoMoneyRow),
                                       ],
                                     ),
                                   ],
@@ -148,6 +190,8 @@ class ActivityScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
+        )),
+          ],
         ),
       ),
     );

@@ -1420,6 +1420,12 @@ abstract class AppLocalizations {
   /// **'Your wallet doesn\'t have enough for this ride. Top up and try again.'**
   String get problemInsufficient;
 
+  /// No description provided for @activityFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All rides'**
+  String get activityFilterAll;
+
   /// No description provided for @activityTitle.
   ///
   /// In en, this message translates to:

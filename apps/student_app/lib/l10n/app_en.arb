@@ -263,6 +263,7 @@
       }
     }
   },
+  "activityFilterAll": "All rides",
   "activityTitle": "Activity",
   "activityThisWeek": "This week",
   "activityEarlier": "Earlier",

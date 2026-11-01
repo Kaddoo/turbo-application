@@ -63,16 +63,12 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.profileTitle)),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(TurboSpacing.lg),
+          padding: const EdgeInsets.all(TurboSpacing.screen),
           children: [
             TurboCard(
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: TurboSpacing.xxl,
-                    backgroundColor: t.colors.background,
-                    child: Text((student.fullName ?? '?').characters.first, style: text.titleLarge),
-                  ),
+                  TurboAvatar(name: student.fullName ?? '?'),
                   const SizedBox(width: TurboSpacing.lg),
                   Expanded(
                     child: Column(
@@ -110,7 +106,7 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: TurboSpacing.xl),
             Row(
               children: [
-                Expanded(child: Semantics(header: true, child: Text(l10n.profileSavedPlaces, style: text.titleLarge))),
+                Expanded(child: Semantics(header: true, child: Text(l10n.profileSavedPlaces, style: text.titleSmall))),
                 if (places.hasValue) Text('${places.value!.length}', style: text.bodyMedium),
               ],
             ),
@@ -143,7 +139,7 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: TurboSpacing.xl),
             Row(
               children: [
-                Expanded(child: Semantics(header: true, child: Text(l10n.profileDevices, style: text.titleLarge))),
+                Expanded(child: Semantics(header: true, child: Text(l10n.profileDevices, style: text.titleSmall))),
                 if (sessions.hasValue) Text('${sessions.value!.length}', style: text.bodyMedium),
               ],
             ),

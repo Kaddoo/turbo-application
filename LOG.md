@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: activity, safety, support, profile (branch `design-activity`, on `design-wallet`)
+
+**What changed:** S25 Activity has the large title and All rides / Completed / Cancelled chips (filtering the list on the device, no new endpoint) with mono fares. S26 Safety has the round back button and a bento share tile; contacts are list cards with avatars; section titles are smaller. SOS uses the separate red (`sos`, `onSos`), never the accent or the error red. Share trip, support and profile use `TurboAvatar`, the 22 pt padding, smaller section titles and a banner for the contact error; `large:` removed.
+
+**Checks:** analyze clean; student 131 (new activity filter test), turbo_ui 76 pass.
+
+**Not done:** ride detail with photo card (S25 detail), the SOS countdown ring and "Help has been alerted" art (S27), the share-trip preview card (S28), trusted-contacts tile, support new-ticket form restyle; none viewed in a browser.
+
 ## 2026-11-02, Kevin with Claude, code: wallet and fare (branch `design-wallet`, on `design-trip`)
 
 **What changed:** S21 wallet has the kit header (title, avatar), a lime balance card (dark while money is owed, with a danger banner), the balance in the 50 px hero style, held amount, the name in mono capitals, Top up under the card. S22 top-up has the round back button, amounts as mono tiles (selected = light fill) and a danger banner for errors. S15 quote has the round back button, the 22 pt padding, an icon slot for "can't book this trip" and a warning banner for the shortfall. Review fixes: welcome corner mark reads "Tb" (first and last letter), and "Wrong number?" and resend sit under the code boxes.

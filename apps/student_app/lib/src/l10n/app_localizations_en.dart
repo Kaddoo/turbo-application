@@ -782,6 +782,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your wallet doesn\'t have enough for this ride. Top up and try again.';
 
   @override
+  String get activityFilterAll => 'All rides';
+
+  @override
   String get activityTitle => 'Activity';
 
   @override
