@@ -2,6 +2,24 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: browser run of sign-in on staging
+
+**Task:** Run the whole sign-in flow in a real browser against staging.
+
+**Files touched:** `apps/admin_dashboard/src/app/App.tsx` (deliberate sign-out starts fresh), `vite.config.ts` (`strictPort` on 5173), `test/auth-routes.test.tsx`, `docs/api-tracker.md`. The browser script stays outside the repo (it needs playwright-core, which the dashboard does not depend on).
+
+**What changed:** 24 checks in Chrome against staging, passed on two full runs (details in the tracker's verification log). Fixed: after a deliberate sign-out the sign-in link kept the last page, so the next person landed there. Found: staging only sets the refresh cookie for `localhost:5173` and `admin.turbogh.app`; the dev server on 5174 lost the session on every reload, so the port is now strict.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes
+- [x] Browser run 24/24 on staging (twice)
+
+**Deviations from plan or contract:** One run passed 23/24 without naming the failing step; the next two were clean. The last run stopped on staging's sign-in rate limit (3 minutes), shown correctly on the sign-in page.
+
+**Status:** done. Branch: dashboard-ui-match.
+
+**Next step:** Kevin stops the old dev server holding port 5173 (started 31 Oct, its proxy returns 404 on sign-in) so `npm run dev` can start. Backend: `Secure` on the cookie; add every dashboard address to the cookie allowlist.
+
 ## 2026-11-01, Claude, code: live auth and role checks on staging
 
 **Task:** Staging MFA removed; run the checks that were waiting for accounts.
