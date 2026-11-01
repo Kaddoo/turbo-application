@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/spacing.dart';
+import '../theme/turbo_theme.dart';
 
 /// One row in a list. At least 44 pt tall so it is always a safe target.
 class TurboListRow extends StatelessWidget {
@@ -11,6 +12,7 @@ class TurboListRow extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onTap,
+    this.card = false,
   });
 
   final String title;
@@ -18,6 +20,9 @@ class TurboListRow extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final VoidCallback? onTap;
+
+  /// Draws the row as a bordered list card (place lists), not a plain line.
+  final bool card;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +49,26 @@ class TurboListRow extends StatelessWidget {
         ),
       ),
     );
+    if (card) {
+      final t = context.turbo;
+      final radius = BorderRadius.circular(t.radiusListCard);
+      return Semantics(
+        button: onTap != null,
+        container: true,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
+          child: Material(
+            color: t.colors.surface,
+            shape: RoundedRectangleBorder(borderRadius: radius, side: BorderSide(color: t.colors.border)),
+            child: InkWell(
+              borderRadius: radius,
+              onTap: onTap,
+              child: Padding(padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg), child: row),
+            ),
+          ),
+        ),
+      );
+    }
     return Semantics(
       button: onTap != null,
       container: true,

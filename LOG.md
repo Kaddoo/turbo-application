@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: destination screen (branch `design-destination`, on `design-home`)
+
+**What changed:** S14 has the kit's header (round back button, centred title), place rows as bordered list cards (new `card:` option on `TurboListRow`), smaller section titles, the screen's 22 pt side padding, and a "no places found" state with an icon slot. Behaviour is unchanged: search only where available, campus points as drop-offs, saved places, pinned Continue.
+
+**Checks:** analyze clean; turbo_ui 76, student 130 pass.
+
+**Not done:** Results / Saved / Recent tabs and the pickup-point sheet over a map (S14 board); both wait on the search decision and the map style. Not checked in a browser.
+
 ## 2026-11-02, Kevin with Claude, code: home screen (branch `design-home`, on `design-signin`)
 
 **What changed:** S13 Home rebuilt as a scrolling page on the new components: header (nearest pickup point, safety icon button, avatar), saved places as chips, a "Book a ride" panel (pickup, wallet chip, Where to? button), the map in a rounded card, and bento tiles for Wallet (lime) and Safety. Offline and paused-booking notes are now `TurboBanner`s. `TurboIconButton` gained a tooltip. Destination (S14) and quote (S15) keep their layout and pick up the new look from the theme; `large:` removed.
