@@ -1,0 +1,5 @@
+dist
+node_modules
+src/types/schema.d.ts
+test/live/results.json
+package-lock.json
