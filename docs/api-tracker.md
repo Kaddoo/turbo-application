@@ -210,6 +210,8 @@ Calls the frontends need that `api/openapi.yaml` does not have. Until each one i
 | U15 | `POST /admin/service-area/preview` | Pickup points left outside a new boundary (A28) | Not built |
 | U16 | Read endpoint for announcements | In-app announcement list for students and drivers (guide §9: push only) | Apps can only show the push |
 | U17 | Driver read of a past ride's messages, ratings, earnings per trip | Driver trip detail (prompt 05) | Check against 0.2.2 when the full file lands |
+| U18 | `GET /admin/search` | Top-bar search finding students, drivers, rides and tickets (A29) | Not built. Search finds pages only |
+| U19 | `GET /admin/overview/series` | Overview charts per queue over 24 hours or 7 days (A30) | Charts built from one page (50 rows) of each list |
 
 ## Backend inconsistencies
 

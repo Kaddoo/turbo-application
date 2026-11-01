@@ -2,6 +2,26 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: dashboard shell and component library
+
+**Task:** Rebuild the dashboard shell and shared components to match the dark dashboard inspiration Kevin attached, using Turbo's colours (neon lime) and Turbo data, and fix the phone layout. Approved list: shell (sidebar, top bar, bottom nav), overview blocks, component library with every variant and state; a search contract request; phone tab bar.
+
+**Files touched:** apps/admin_dashboard: `brand/brand.ts` and `theme/theme.ts` (new tokens: spacing, layout sizes, motion, hero/micro type, panel/small radii, hero gradient, scrim, shadow); `components/` (rewritten: Button, Chip, Field with Checkbox/Switch/Slider, Toast, Banner, Skeleton, EmptyState, ErrorState, Dialog with Drawer, DataTable, Card, PageHeader, ui.module.css; new: Icon, IconButton, Badge, Avatar, SegmentedControl, Menu/FilterChip, usePopover, SearchInput, Pagination/LoadMore, Tooltip, `charts/` and `dashboard/`); `app/Layout.tsx`, `app/routes.tsx`, new `app/shell/` (Sidebar, GlobalSearch, Notifications, UserMenu, BottomNav, shell.module.css), removed `app/layout.module.css`; `features/overview/` (rebuilt); `features/uikit/` and `pages/UiKitPage.tsx` (dev and demo only); `hooks/` (useSort, useFilters, useMediaQuery, nav-count queries); `utils/series.ts`; tests (`test/components.test.tsx`, smoke test names the main navigation). docs/api-tracker.md (U18, U19). On branch `admin-contract-requests`: CONTRACT_REQUESTS.md A29 (search) and A30 (overview series).
+
+**What changed:** Sidebar with brand, Operations/Back office toggle, icons, count badges (verification, support, incidents), open SOS or active rides list, environment card; collapses to icons on desktop and always on tablets. Top bar with user menu and role badge, the role's main action, notification bell, page search ("/" focuses it), Settings. Phones: menu drawer, search sheet, bottom tab bar (4 tabs by role plus More), tables become cards, dialogs become bottom sheets. Overview: header with period, area and order filters; metric cards with sparkline or bars and change pill; hero card picking the most pressing item; live operations panel with a refresh slider, sortable stat tiles and an active rides table. No colour, size or radius literal outside brand and theme.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: 223 tests, including hardcoded-style and contrast
+- [x] No horizontal scroll at 390, 900 and 1440 px (checked in Chrome against the demo server), light and dark
+- [x] Production build excludes the gallery and the demo server
+- [x] Every shared component shown in each state at `/ui-kit` (dev/demo)
+
+**Deviations from plan or contract:** Overview charts use timestamps from one page of each list, so busy queues are undercounted (A30). Search finds pages only (A29). Metric cards for roles with no queues: the page shows an empty state; the live panel shows only for roles with the live map.
+
+**Status:** done, awaiting review. Branch: dashboard-ui-shell (cut from dashboard-foundation); A29/A30 committed on admin-contract-requests.
+
+**Next step:** Kevin reviews `/ui-kit` and the Overview (run with `VITE_APP_ENV=demo`), then merges dashboard-foundation and dashboard-ui-shell. Other screens still use the older page layout inside the new shell; give them the section header and filter chips next.
+
 ## 2026-11-01, Claude, code: admin dashboard foundation restructure
 
 **Task:** Phase 2 of the approved foundation plan: folders, service layer, routing from one table, HTTP timeouts and error codes, ESLint and Prettier, README. No new product features; nothing in `api/` touched.
