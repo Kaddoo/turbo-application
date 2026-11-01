@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { canUse } from '@/utils/roles';
+import { canDo } from '@/utils/permissions';
 import { useSession } from '@/state/session';
 import {
   Banner,
@@ -167,18 +167,22 @@ export function StudentDetail() {
                 : []),
             ]}
           />
-          {canUse(me?.staffRole, 'finance') && (
+          {canDo(me?.staffRole, 'student.adjustWallet') && (
             <p className={ui.muted}>Adjust this wallet from Finance, Adjustments.</p>
           )}
         </Card>
       </div>
       <Card title="Account actions">
         <div className={ui.actions}>
-          <Button variant={suspended ? 'primary' : 'danger'} onClick={() => setSuspendOpen(true)}>
-            {suspended ? 'Reactivate' : 'Suspend'}
-          </Button>
-          <Button onClick={() => setPhoneOpen(true)}>Change phone number</Button>
-          {canUse(me?.staffRole, 'support') && (
+          {canDo(me?.staffRole, 'student.edit') && (
+            <Button variant={suspended ? 'primary' : 'danger'} onClick={() => setSuspendOpen(true)}>
+              {suspended ? 'Reactivate' : 'Suspend'}
+            </Button>
+          )}
+          {canDo(me?.staffRole, 'student.changePhone') && (
+            <Button onClick={() => setPhoneOpen(true)}>Change phone number</Button>
+          )}
+          {canDo(me?.staffRole, 'student.signOutEverywhere') && (
             <Button onClick={() => setSignOutOpen(true)}>Sign out everywhere</Button>
           )}
         </div>

@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { newIdempotencyKey } from '@/services/http';
 import type { Schemas } from '@/types';
 import { canUse } from '@/utils/roles';
+import { canDo } from '@/utils/permissions';
 import { useSession } from '@/state/session';
 import { MapView, type MapMarker } from '@/components/MapView';
 import {
@@ -298,7 +299,7 @@ export function RideDetail() {
   const { ride, student, driver, events, flags } = q.data;
   const role = me?.staffRole;
   const active = ['searching', 'assigned', 'driver_arrived', 'in_progress'].includes(ride.status);
-  const canDispatch = canUse(role, 'rides');
+  const canDispatch = canDo(role, 'ride.cancel');
   const refundable = ride.payment.chargedPesewas - ride.payment.refundedPesewas;
   const idleDrivers = live.data?.onDutyDrivers.filter((d) => d.idle && d.driverId !== driver?.id) ?? [];
   const refundAmount = refund.amount ? parseCedis(refund.amount) : refundable;
@@ -363,7 +364,7 @@ export function RideDetail() {
             Force-complete
           </Button>
         )}
-        {canUse(role, 'finance') && refundable > 0 && (
+        {canDo(role, 'ride.refund') && refundable > 0 && (
           <Button
             onClick={() => {
               setRefundKey(newIdempotencyKey());

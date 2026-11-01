@@ -33,6 +33,8 @@ export default defineConfig(
       'react-hooks/exhaustive-deps': 'warn',
       // `const { secret: _drop, ...rest } = x` is how a field is left out on purpose.
       '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+      // Nothing is printed to the console: it is how tokens, codes and phone numbers end up in logs.
+      'no-console': 'error',
       ...restrict([]),
     },
   },

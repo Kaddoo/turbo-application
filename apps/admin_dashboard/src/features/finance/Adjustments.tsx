@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router';
 import { newIdempotencyKey } from '@/services/http';
 import type { Schemas } from '@/types';
 import { useSession } from '@/state/session';
-import { canUse } from '@/utils/roles';
+import { canDo } from '@/utils/permissions';
 import {
   Button,
   Card,
@@ -76,7 +76,7 @@ function WalletTab() {
   const [studentId, setStudentId] = useState('');
   const { me } = useSession();
   // Settings are super_admin only (x-roles); finance users never see the limit, so the hint omits it.
-  const settings = useSettings(canUse(me?.staffRole, 'configuration'));
+  const settings = useSettings(canDo(me?.staffRole, 'config.viewSettings'));
   const threshold = settings.data?.adjustmentApprovalThresholdPesewas;
   const wallet = useStudentWallet(studentId);
   const tx = useWalletTransactions(studentId);

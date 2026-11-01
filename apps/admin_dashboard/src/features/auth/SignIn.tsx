@@ -9,11 +9,14 @@ import { Banner, Button, TextField } from '@/components';
 import { ApiError, problemMessage } from '@/utils/problems';
 import a from './auth.module.css';
 import { auth } from '@/services/auth';
+import { safeReturnPath } from '@/utils/returnPath';
+import type { SignedOutReason } from '@/state/session';
 
 /** Email and password, then the 6-digit authenticator code (contract: adminLogin). */
 export function SignIn() {
   const { signIn, signedOutReason } = useSession();
-  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const returning = safeReturnPath(params.get('next')) !== '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
@@ -26,8 +29,8 @@ export function SignIn() {
     setBusy(true);
     setError(null);
     try {
+      // The signed-out guard then sends them on to `next` (or the overview).
       await signIn({ email, password, ...(step === 'mfa' ? { totpCode: code } : {}) });
-      navigate('/', { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.code === 'mfa_required' && step === 'password') {
         setStep('mfa');
@@ -52,9 +55,7 @@ export function SignIn() {
               : 'Open your authenticator app and enter the 6-digit code.'}
           </p>
         </div>
-        {signedOutReason === 'idle' && (
-          <Banner tone="warning">You were signed out after 15 minutes without activity.</Banner>
-        )}
+        <SignedOutNotice reason={signedOutReason} returning={returning} />
         {step === 'password' ? (
           <>
             <TextField
@@ -129,6 +130,38 @@ export function SignIn() {
   );
 }
 
+/** Why they are here, in plain words. Nothing for a fresh visit or a deliberate sign-out. */
+function SignedOutNotice({ reason, returning }: { reason: SignedOutReason | null; returning: boolean }) {
+  const back = returning ? ' You will go back to the page you were on.' : '';
+  if (reason === 'idle') {
+    return <Banner tone="warning">{`You were signed out after 15 minutes without activity.${back}`}</Banner>;
+  }
+  if (reason === 'expired') {
+    return <Banner tone="warning">{`Your session ended. Sign in again to carry on.${back}`}</Banner>;
+  }
+  if (reason === 'elsewhere') {
+    return <Banner tone="neutral">You signed out in another tab.</Banner>;
+  }
+  if (returning && reason !== 'signedOut') {
+    return <Banner tone="neutral">Sign in to open that page.</Banner>;
+  }
+  return null;
+}
+
+/**
+ * Single-use links carry their token in the query string. Read it once, then
+ * take it out of the address bar so it does not stay in history, get copied
+ * with the URL, or leak to another site in a Referer header.
+ */
+function useLinkToken(): string {
+  const [params, setParams] = useSearchParams();
+  const [token] = useState(() => params.get('token') ?? '');
+  useEffect(() => {
+    if (params.has('token')) setParams({}, { replace: true });
+  }, [params, setParams]);
+  return token;
+}
+
 export function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
@@ -179,8 +212,7 @@ export function ForgotPassword() {
 }
 
 export function ResetPassword() {
-  const [params] = useSearchParams();
-  const token = params.get('token') ?? '';
+  const token = useLinkToken();
   const [password, setPassword] = useState('');
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -204,7 +236,10 @@ export function ResetPassword() {
         <span className={a.brand}>{strings.appName}</span>
         <h1 className={a.title}>Choose a new password</h1>
         {done ? (
-          <p className={a.text}>Your password is changed. Sign in with it now.</p>
+          <p className={a.text}>
+            Your password is changed and every device that was signed in has been signed out. Sign in with the new
+            password and your authenticator code.
+          </p>
         ) : (
           <>
             {!token && (
@@ -240,8 +275,7 @@ export function ResetPassword() {
 
 /** Invite link: set a password, add the authenticator, confirm with a code. */
 export function AcceptInvite() {
-  const [params] = useSearchParams();
-  const token = params.get('token') ?? '';
+  const token = useLinkToken();
   const { completeSignIn } = useSession();
   const navigate = useNavigate();
   const [password, setPassword] = useState('');

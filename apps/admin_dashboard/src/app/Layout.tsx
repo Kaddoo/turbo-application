@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate, useNavigation } from 'react-router';
 import { onUpgradeRequired } from '@/services/http';
-import { canUse, roleLabels, type Area } from '@/utils/roles';
+import { areaLabels, canUse, roleLabels, type Area } from '@/utils/roles';
 import {
   useIdleTimer,
   useLiveRides,
@@ -13,7 +13,7 @@ import {
   useSosBanner,
 } from '@/hooks';
 import { useSession } from '@/state/session';
-import { Banner, Button, Dialog, DialogActions, Drawer, IconButton, type Tone } from '@/components';
+import { Banner, Button, Dialog, DialogActions, Drawer, EmptyState, IconButton, type Tone } from '@/components';
 import { formatRelative } from '@/utils/format';
 import { appEnv, showEnvBadge } from './env';
 import { mobileTabOrder, navGroups, navSides, primaryAction, type NavSide } from './routes';
@@ -393,11 +393,27 @@ export function Layout() {
   );
 }
 
-/** Route guard: hides what a role cannot use. The API still refuses with 403. */
+/**
+ * Route guard for typed or bookmarked URLs. The page component (and so every
+ * request it would make) never mounts for a role that cannot use the area.
+ * This is for clarity only: the API refuses the same calls with 403.
+ */
 export function RequireArea({ area, children }: { area: Area; children: React.ReactNode }) {
   const { me } = useSession();
+  const navigate = useNavigate();
   if (!canUse(me?.staffRole, area)) {
-    return <Banner tone="warning">You do not have access to this.</Banner>;
+    return (
+      <EmptyState
+        icon="lock"
+        title={`You don't have access to ${areaLabels[area]}`}
+        body={`Your role is ${me ? roleLabels[me.staffRole] : 'not set'}. If you need this page for your work, ask a super admin to change your role.`}
+        action={
+          <Button variant="primary" onClick={() => navigate('/', { replace: true })}>
+            Go to the overview
+          </Button>
+        }
+      />
+    );
   }
   return <>{children}</>;
 }

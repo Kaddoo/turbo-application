@@ -1,10 +1,19 @@
-import { Navigate, Outlet, createBrowserRouter, RouterProvider, useLocation, type RouteObject } from 'react-router';
+import {
+  Navigate,
+  Outlet,
+  createBrowserRouter,
+  RouterProvider,
+  useLocation,
+  useSearchParams,
+  type RouteObject,
+} from 'react-router';
 import { Skeleton } from '@/components';
 import AcceptInvitePage from '@/pages/AcceptInvitePage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
 import SignInPage from '@/pages/SignInPage';
 import { useSession } from '@/state/session';
+import { safeReturnPath, signInPath } from '@/utils/returnPath';
 import { Layout, RequireArea } from './Layout';
 import { signedInRoutes, type PageRoute } from './routes';
 
@@ -21,14 +30,18 @@ function SignedIn() {
   const { status } = useSession();
   const location = useLocation();
   if (status === 'checking') return <Checking />;
-  if (status === 'signedOut') return <Navigate to="/sign-in" replace state={{ from: location.pathname }} />;
+  // Keep the page they asked for (path, query and hash) so sign-in brings them back.
+  if (status === 'signedOut') {
+    return <Navigate to={signInPath(`${location.pathname}${location.search}${location.hash}`)} replace />;
+  }
   return <Layout />;
 }
 
 function SignedOut() {
   const { status } = useSession();
+  const [params] = useSearchParams();
   if (status === 'checking') return <Checking />;
-  if (status === 'signedIn') return <Navigate to="/" replace />;
+  if (status === 'signedIn') return <Navigate to={safeReturnPath(params.get('next'))} replace />;
   return <Outlet />;
 }
 

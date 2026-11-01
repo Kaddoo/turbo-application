@@ -1,6 +1,7 @@
 export { useAction } from './useAction';
 export { PAGE_SIZE, useCursorList } from './useCursorList';
 export { useIdleTimer } from './useIdleTimer';
+export { usePermissions } from './usePermissions';
 export {
   sharedKeys,
   useAllDrivers,

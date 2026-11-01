@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { roleLabels } from '@/utils/roles';
 import { useSession } from '@/state/session';
 import { Button, Card, Details, PageHeader, TextField, useToast, ui } from '@/components';
+import { formatRelative } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
 import { useChangePassword } from './queries';
 
@@ -12,22 +13,32 @@ export function Account() {
   const change = useChangePassword();
   return (
     <>
-      <PageHeader title="Your account" />
+      <PageHeader title="Your account" description="Your staff profile and sign-in security." />
       <div className={ui.grid2}>
         <Card title="Profile">
           {me && (
-            <Details
-              items={[
-                ['Name', me.fullName],
-                ['Email', me.email],
-                ['Role', roleLabels[me.staffRole]],
-                ['Authenticator', me.mfaEnrolled ? 'Set up' : 'Not set up'],
-              ]}
-            />
+            <div className={ui.stack}>
+              <Details
+                items={[
+                  ['Name', me.fullName],
+                  ['Email', me.email],
+                  ['Role', roleLabels[me.staffRole]],
+                  ['Authenticator', me.mfaEnrolled ? 'Set up' : 'Not set up'],
+                  ['Last sign-in', me.lastLoginAt ? formatRelative(me.lastLoginAt) : 'This is your first'],
+                ]}
+              />
+              {/* No self-service profile edit in the contract yet: CONTRACT_REQUESTS A31. */}
+              <p className={ui.muted} style={{ margin: 0 }}>
+                To change your name, email or role, ask a super admin.
+              </p>
+            </div>
           )}
         </Card>
         <Card title="Change password">
           <div className={ui.stack}>
+            <p className={ui.muted} style={{ margin: 0 }}>
+              You need your current password and a code from your authenticator app. Other devices are signed out.
+            </p>
             <TextField
               label="Current password"
               type="password"
@@ -64,7 +75,7 @@ export function Account() {
                   change.mutate(form, {
                     onSuccess: () => {
                       setForm({ currentPassword: '', newPassword: '', totpCode: '' });
-                      toast('Password changed.');
+                      toast('Password changed. Any other device signed in to your account has been signed out.');
                     },
                   })
                 }

@@ -84,7 +84,7 @@ describe('every screen renders against the demo server', () => {
       dispatchEvent: () => false,
     })) as typeof window.matchMedia;
     window.scrollTo = () => {};
-    sessionStorage.setItem('admin.session', '1');
+    localStorage.setItem('admin.session', '1');
     sessionStorage.setItem('demo.role', 'super_admin');
     window.history.replaceState({}, '', '/');
     const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });

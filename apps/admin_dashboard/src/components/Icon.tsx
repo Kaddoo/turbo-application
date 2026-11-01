@@ -29,6 +29,7 @@ const paths = {
   staff: 'M9 11a4 4 0 100-8 4 4 0 000 8zM2 21v-1a6 6 0 0112 0v1M16 3.5a4 4 0 010 7.5M18 14a6 6 0 014 6v1',
   auditLog: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7',
   account: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0',
+  lock: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4',
   bell: 'M6 16V11a6 6 0 0112 0v5l2 2H4zM10 21h4',
   search: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4',
   menu: 'M4 7h16M4 12h16M4 17h16',

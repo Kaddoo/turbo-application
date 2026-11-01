@@ -26,6 +26,43 @@ export const areaRoles = {
 
 export type Area = keyof typeof areaRoles;
 
+/** The read each area opens with; a test checks its `x-roles` matches `areaRoles`. */
+export const areaReads: Record<Exclude<Area, 'overview'>, string> = {
+  verification: 'GET /admin/verifications',
+  students: 'GET /admin/students',
+  drivers: 'GET /admin/drivers',
+  vehicles: 'GET /admin/vehicles',
+  liveMap: 'GET /admin/rides/live',
+  rides: 'GET /admin/rides',
+  announcements: 'POST /admin/announcements',
+  finance: 'GET /admin/topups',
+  support: 'GET /admin/support/tickets',
+  incidents: 'GET /admin/incidents',
+  salary: 'GET /admin/salary-payments',
+  configuration: 'GET /admin/settings',
+  staff: 'GET /admin/staff',
+  auditLog: 'GET /admin/audit-log',
+};
+
+/** Plain names for the access-denied screen. */
+export const areaLabels: Record<Area, string> = {
+  overview: 'the overview',
+  verification: 'verification',
+  students: 'students',
+  drivers: 'drivers',
+  vehicles: 'vehicles',
+  liveMap: 'the live map',
+  rides: 'rides',
+  announcements: 'announcements',
+  finance: 'finance',
+  support: 'support',
+  incidents: 'incidents',
+  salary: 'shifts, attendance and salary',
+  configuration: 'configuration',
+  staff: 'staff',
+  auditLog: 'the audit log',
+};
+
 export function canUse(role: StaffRole | null | undefined, area: Area): boolean {
   if (!role) return false;
   const needed = areaRoles[area];
