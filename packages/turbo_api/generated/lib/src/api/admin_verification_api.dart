@@ -101,7 +101,7 @@ _responseData = rawData == null ? null : deserialize<VerificationSummary, Verifi
   }
 
   /// Approve, reject or request resubmission
-  /// **Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record.
+  /// **Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record. 409 &#x60;verification_claimed&#x60;: another reviewer holds this submission. Other 409s use the generic &#x60;conflict&#x60;.
   ///
   /// Parameters:
   /// * [id] 

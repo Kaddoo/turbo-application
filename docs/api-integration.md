@@ -1,8 +1,10 @@
 # Integrating with the Turbo API
 
-> Received from the backend on 2026-10-31, for contract **0.2.2**. `api/openapi.yaml` in this repo is still **0.2.0**:
-> the 0.2.2 file was not supplied in full (the copy pasted into the code session stopped at `addDriverDocument`), so it
-> was not stored. Planning drops the full 0.2.2 file into `api/`; then every client regenerates. Section 10 lists what
+> **Which API is this?** `https://api.turbogh.app` is **staging** today: fixed sign-in code (123456), fake payments, seed data, staff MFA required. The same hostname becomes production only after the production switch, with a fresh database. Do not point data-changing checks at it once that happens.
+>
+> **One contract.** The source of truth is `api/contract/openapi.yaml` in this repo, the file the API enforces. The API, the Dart client, the dashboard schema, the mock and the API tracker all build from it, and `tools/check-contract.mjs` (run in CI) fails if a second copy exists or a generated client was built from another version. Contract changes go through the repo and planning reviews them.
+
+> Received from the backend on 2026-10-31, for contract **0.2.2**, which is now the file at `api/contract/openapi.yaml`. Section 10 lists what
 > 0.2.1 and 0.2.2 change.
 
 For the frontend engineers (student app, driver app, admin dashboard, landing page). The contract is `openapi.yaml` (v0.2.2). The API enforces it:

@@ -29,7 +29,7 @@ class StudentApi {
   const StudentApi(this._dio);
 
   /// Accept a newer terms or privacy version
-  /// **Access:** student or driver. When versions change, protected endpoints return 403 &#x60;terms_not_accepted&#x60; until this is called.
+  /// **Access:** student or driver. When versions change, protected endpoints return 403 &#x60;terms_not_accepted&#x60; until this is called. 403 &#x60;forbidden&#x60; for a token that is not a student. This call is exempt from the terms check, otherwise a user on old terms could never accept the new ones.
   ///
   /// Parameters:
   /// * [termsAcceptance] 
@@ -553,7 +553,7 @@ _responseData = rawData == null ? null : deserialize<SavedPlaceCollection, Saved
   }
 
   /// My signed-in devices
-  /// **Access:** student or driver.
+  /// **Access:** student or driver. 403 &#x60;terms_not_accepted&#x60; until the current terms and privacy policy are accepted; 403 &#x60;forbidden&#x60; for a staff token.
   ///
   /// Parameters:
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
@@ -781,7 +781,7 @@ _responseData = rawData == null ? null : deserialize<DeletionRequest, DeletionRe
   }
 
   /// Sign out everywhere else
-  /// **Access:** student or driver. Keeps the current session.
+  /// **Access:** student or driver. Keeps the current session. 403 &#x60;terms_not_accepted&#x60; until the current terms and privacy policy are accepted; 403 &#x60;forbidden&#x60; for a staff token.
   ///
   /// Parameters:
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
@@ -832,7 +832,7 @@ _responseData = rawData == null ? null : deserialize<DeletionRequest, DeletionRe
   }
 
   /// Sign out one device
-  /// **Access:** student or driver.
+  /// **Access:** student or driver. 403 &#x60;terms_not_accepted&#x60; until the current terms and privacy policy are accepted; 403 &#x60;forbidden&#x60; for a staff token.
   ///
   /// Parameters:
   /// * [id] 

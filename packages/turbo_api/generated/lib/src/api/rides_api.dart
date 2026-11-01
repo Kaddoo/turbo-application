@@ -927,7 +927,7 @@ _responseData = rawData == null ? null : deserialize<Quote, Quote>(rawData, 'Quo
   }
 
   /// Rate a completed ride
-  /// **Access:** student.
+  /// **Access:** student. 409 &#x60;invalid_ride_state&#x60;: the ride is not completed, or was already rated.
   ///
   /// Parameters:
   /// * [id] 
@@ -1001,7 +1001,7 @@ _responseData = rawData == null ? null : deserialize<Quote, Quote>(rawData, 'Quo
   }
 
   /// Send a quick message to the other party
-  /// **Access:** student or driver on this ride.  Preset messages only. No phone numbers are shared (D17). Delivered by push.
+  /// **Access:** student or driver on this ride.  Preset messages only. No phone numbers are shared (D17). Delivered by push. 409 &#x60;invalid_ride_state&#x60;: messages can only be sent while a driver is assigned.
   ///
   /// Parameters:
   /// * [id] 

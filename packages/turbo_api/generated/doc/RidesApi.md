@@ -470,7 +470,7 @@ Name | Type | Description  | Notes
 
 Rate a completed ride
 
-**Access:** student.
+**Access:** student. 409 `invalid_ride_state`: the ride is not completed, or was already rated.
 
 ### Example
 ```dart
@@ -514,7 +514,7 @@ void (empty response body)
 
 Send a quick message to the other party
 
-**Access:** student or driver on this ride.  Preset messages only. No phone numbers are shared (D17). Delivered by push.
+**Access:** student or driver on this ride.  Preset messages only. No phone numbers are shared (D17). Delivered by push. 409 `invalid_ride_state`: messages can only be sent while a driver is assigned.
 
 ### Example
 ```dart

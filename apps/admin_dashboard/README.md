@@ -1,6 +1,6 @@
 # Admin dashboard
 
-Staff web portal for Turbo operations. React + Vite + TypeScript. Spec: `prompts/02-admin-portal.md`; contract: `api/openapi.yaml`.
+Staff web portal for Turbo operations. React + Vite + TypeScript. Spec: `prompts/02-admin-portal.md`; contract: `api/contract/openapi.yaml`.
 
 ```bash
 npm install

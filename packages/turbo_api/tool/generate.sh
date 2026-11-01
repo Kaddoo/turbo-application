@@ -14,3 +14,5 @@ rm -rf "$out"
 sed -i.bak "s/^  sdk: .*/  sdk: ^3.13.3/" "$out/pubspec.yaml"
 rm -f "$out"/*.bak
 (cd "$out" && dart pub get && dart run build_runner build --delete-conflicting-outputs)
+# Stamp which contract this was built from; tools/check-contract.mjs compares it.
+shasum -a 256 "$root/api/contract/openapi.yaml" | cut -d" " -f1 > "$out/.contract-sha256"

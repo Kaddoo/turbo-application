@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import YAML from 'yaml';
 import { buildApp } from '../src/app.js';
-const spec = YAML.parse(fs.readFileSync(new URL('../../Docs/api/openapi.yaml', import.meta.url), 'utf8'));
+const spec = YAML.parse(fs.readFileSync(new URL('../contract/openapi.yaml', import.meta.url), 'utf8'));
 const norm = (p) => p.replace(/\{[^}]+\}/g, ':p').replace(/:[A-Za-z]+/g, ':p');
 const contract = new Map();
 for (const [path, ops] of Object.entries(spec.paths))

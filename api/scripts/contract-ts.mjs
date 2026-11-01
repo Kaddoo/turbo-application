@@ -1,6 +1,6 @@
 // Prints every component schema as a compact TypeScript-like signature (for humans comparing code to contract).
 import fs from 'node:fs'; import YAML from 'yaml';
-const spec = YAML.parse(fs.readFileSync(new URL('../../Docs/api/openapi.yaml', import.meta.url), 'utf8'));
+const spec = YAML.parse(fs.readFileSync(new URL('../contract/openapi.yaml', import.meta.url), 'utf8'));
 const ts = (s, d = 0) => {
   if (!s) return 'any';
   if (s.$ref) return s.$ref.split('/').pop();

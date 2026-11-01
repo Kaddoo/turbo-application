@@ -1,5 +1,5 @@
 import fs from 'node:fs'; import YAML from 'yaml';
-const spec = YAML.parse(fs.readFileSync('/Users/bethel/Documents/Projects/turbo/Docs/api/openapi.yaml','utf8'));
+const spec = YAML.parse(fs.readFileSync(new URL('../contract/openapi.yaml', import.meta.url),'utf8'));
 const ref = (o) => o?.$ref?.split('/').pop() ?? (o?.type === 'array' ? '[' + ref(o.items) + ']' : o?.type ?? '?');
 for (const [path, ops] of Object.entries(spec.paths)) for (const [m, o] of Object.entries(ops)) {
   if (!['get','post','put','patch','delete'].includes(m)) continue;

@@ -6,13 +6,13 @@
 
 ```bash
 # Mock server, with example responses (new 0.2.0 schemas still return placeholder strings), on http://localhost:4010
-npx @stoplight/prism-cli mock openapi.yaml
+npx @stoplight/prism-cli mock contract/openapi.yaml
 
 # Lint (config in redocly.yaml)
-npx @redocly/cli lint openapi.yaml
+npx @redocly/cli lint contract/openapi.yaml
 
 # Browsable documentation
-npx @redocly/cli preview-docs openapi.yaml
+npx @redocly/cli preview-docs contract/openapi.yaml
 ```
 
 Try it: `curl localhost:4010/service-area`. Operations that need a token accept any `Authorization: Bearer x` against the mock.
