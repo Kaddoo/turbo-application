@@ -42,6 +42,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
     try {
       final deviceId = await ref.read(deviceIdProvider.future);
       final response = await ref.read(clientProvider).api.getAuthApi().requestOtp(
+            // A new key for every tap, so a retry of one tap cannot send a second code but a deliberate resend still works.
+            idempotencyKey: IdempotencyKey().value,
             otpRequest: OtpRequest(phone: phone, role: OtpRequestRoleEnum.student, deviceId: deviceId),
           );
       ref.read(authDraftProvider.notifier).set(
