@@ -26,7 +26,7 @@ class AdminRidesApi {
   const AdminRidesApi(this._dio);
 
   /// Cancel a ride on the student&#39;s behalf
-  /// **Access:** admin:dispatcher.
+  /// **Access:** admin:dispatcher. 409 &#x60;invalid_ride_state&#x60;: the ride is not in a state that allows this.
   ///
   /// Parameters:
   /// * [id] 
@@ -125,7 +125,7 @@ _responseData = rawData == null ? null : deserialize<AdminRideDetail, AdminRideD
   }
 
   /// Complete a stuck ride on the driver&#39;s behalf
-  /// **Access:** admin:dispatcher.  Only for a ride in &#x60;in_progress&#x60;. Charges the locked fare, writes a ride event with the staff member and reason, and adds the audit entry. Use when the driver cannot complete (dead phone, app crash). A cancellation with refund is still available through the cancel endpoint.
+  /// **Access:** admin:dispatcher.  Only for a ride in &#x60;in_progress&#x60;. Charges the locked fare, writes a ride event with the staff member and reason, and adds the audit entry. Use when the driver cannot complete (dead phone, app crash). A cancellation with refund is still available through the cancel endpoint. 409 &#x60;invalid_ride_state&#x60;: the ride is not in a state that allows this.
   ///
   /// Parameters:
   /// * [id] 
@@ -482,7 +482,7 @@ _responseData = rawData == null ? null : deserialize<AdminRideSummaryList, Admin
   }
 
   /// Manually reassign to a driver
-  /// **Access:** admin:dispatcher.
+  /// **Access:** admin:dispatcher. 409 &#x60;invalid_ride_state&#x60;: the ride is already in progress or finished. 409 &#x60;no_drivers_on_duty&#x60;: the chosen driver is not on duty. 409 &#x60;driver_has_active_ride&#x60;: the chosen driver already has an active ride.
   ///
   /// Parameters:
   /// * [id] 

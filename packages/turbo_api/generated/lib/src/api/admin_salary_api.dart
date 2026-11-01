@@ -128,7 +128,7 @@ _responseData = rawData == null ? null : deserialize<AttendanceRecord, Attendanc
   }
 
   /// Schedule a shift
-  /// **Access:** admin:hr.
+  /// **Access:** admin:hr. 409 &#x60;shift_overlap&#x60;: the driver already has a shift at that time.
   ///
   /// Parameters:
   /// * [shiftCreate] 

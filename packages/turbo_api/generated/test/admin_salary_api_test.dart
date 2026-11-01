@@ -18,7 +18,7 @@ void main() {
 
     // Schedule a shift
     //
-    // **Access:** admin:hr.
+    // **Access:** admin:hr. 409 `shift_overlap`: the driver already has a shift at that time.
     //
     //Future<Shift> createShift(ShiftCreate shiftCreate) async
     test('test createShift', () async {

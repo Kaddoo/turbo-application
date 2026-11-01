@@ -70,7 +70,7 @@ Name | Type | Description  | Notes
 
 Schedule a shift
 
-**Access:** admin:hr.
+**Access:** admin:hr. 409 `shift_overlap`: the driver already has a shift at that time.
 
 ### Example
 ```dart

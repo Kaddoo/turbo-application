@@ -63,7 +63,7 @@ Name | Type | Description  | Notes
 
 Approve, reject or request resubmission
 
-**Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record.
+**Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record. 409 `verification_claimed`: another reviewer holds this submission. Other 409s use the generic `conflict`.
 
 ### Example
 ```dart

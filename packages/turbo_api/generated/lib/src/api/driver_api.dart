@@ -29,7 +29,7 @@ class DriverApi {
   const DriverApi(this._dio);
 
   /// Confirm I have seen the assignment
-  /// **Access:** driver.  If this is not called within driverAckTimeoutSeconds the engine reassigns the ride. Design addition to confirm with Turbo (decision D8).
+  /// **Access:** driver.  If this is not called within driverAckTimeoutSeconds the engine reassigns the ride. Design addition to confirm with Turbo (decision D8). 409 &#x60;invalid_ride_state&#x60;: the ride is not in a state that allows this (for example it was cancelled or reassigned).
   ///
   /// Parameters:
   /// * [id] 
@@ -107,7 +107,7 @@ _responseData = rawData == null ? null : deserialize<DriverRide, DriverRide>(raw
   }
 
   /// Complete the trip
-  /// **Access:** driver.  Converts the held fare into a charge in the same database transaction.
+  /// **Access:** driver.  Converts the held fare into a charge in the same database transaction. 409 &#x60;invalid_ride_state&#x60;: the ride is not in a state that allows this (for example it was cancelled or reassigned).
   ///
   /// Parameters:
   /// * [id] 
@@ -206,7 +206,7 @@ _responseData = rawData == null ? null : deserialize<DriverRide, DriverRide>(raw
   }
 
   /// Report that I cannot take this ride
-  /// **Access:** driver.  The engine reassigns, excluding this driver for this ride. Allowed until the trip has started.
+  /// **Access:** driver.  The engine reassigns, excluding this driver for this ride. Allowed until the trip has started. 409 &#x60;invalid_ride_state&#x60;: the ride is not in a state that allows this (for example it was cancelled or reassigned).
   ///
   /// Parameters:
   /// * [id] 
@@ -788,7 +788,7 @@ _responseData = rawData == null ? null : deserialize<ShiftList, ShiftList>(rawDa
   }
 
   /// Mark arrival at pickup
-  /// **Access:** driver.
+  /// **Access:** driver. 409 &#x60;invalid_ride_state&#x60;: the ride is not in a state that allows this (for example it was cancelled or reassigned).
   ///
   /// Parameters:
   /// * [id] 
@@ -959,7 +959,7 @@ _responseData = rawData == null ? null : deserialize<DriverRide, DriverRide>(raw
   }
 
   /// Student not here
-  /// **Access:** driver.  Only after the driver has arrived and &#x60;noShowWaitSeconds&#x60; have passed (409 &#x60;no_show_too_early&#x60; otherwise). Cancels the ride with reason &#x60;rider_no_show&#x60;; the hold is released and no fee applies. The count shows on the student&#39;s record for staff.
+  /// **Access:** driver.  Only after the driver has arrived and &#x60;noShowWaitSeconds&#x60; have passed (409 &#x60;no_show_too_early&#x60; otherwise). Cancels the ride with reason &#x60;rider_no_show&#x60;; the hold is released and no fee applies. The count shows on the student&#39;s record for staff. 409 &#x60;invalid_ride_state&#x60;: the driver has not marked arrival. 409 &#x60;no_show_too_early&#x60;: the wait time has not passed yet.
   ///
   /// Parameters:
   /// * [id] 
@@ -1134,7 +1134,7 @@ _responseData = rawData == null ? null : deserialize<DriverProfile, DriverProfil
   }
 
   /// Start the trip with the student PIN
-  /// **Access:** driver.  Wrong PIN: 400 &#x60;invalid_pin&#x60;. Five wrong attempts lock the start for this driver: 409 &#x60;pin_locked&#x60; until an admin intervenes.
+  /// **Access:** driver.  Wrong PIN: 400 &#x60;invalid_pin&#x60;. Five wrong attempts lock the start for this driver: 409 &#x60;pin_locked&#x60; until an admin intervenes. 409 &#x60;invalid_ride_state&#x60;: the driver has not marked arrival at the pickup yet.
   ///
   /// Parameters:
   /// * [id] 

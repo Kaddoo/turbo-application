@@ -9,7 +9,7 @@ void main() {
   group(StudentApi, () {
     // Accept a newer terms or privacy version
     //
-    // **Access:** student or driver. When versions change, protected endpoints return 403 `terms_not_accepted` until this is called.
+    // **Access:** student or driver. When versions change, protected endpoints return 403 `terms_not_accepted` until this is called. 403 `forbidden` for a token that is not a student. This call is exempt from the terms check, otherwise a user on old terms could never accept the new ones.
     //
     //Future acceptTerms(TermsAcceptance termsAcceptance) async
     test('test acceptTerms', () async {
@@ -72,7 +72,7 @@ void main() {
 
     // My signed-in devices
     //
-    // **Access:** student or driver.
+    // **Access:** student or driver. 403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.
     //
     //Future<SessionList> listSessions() async
     test('test listSessions', () async {
@@ -99,7 +99,7 @@ void main() {
 
     // Sign out everywhere else
     //
-    // **Access:** student or driver. Keeps the current session.
+    // **Access:** student or driver. Keeps the current session. 403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.
     //
     //Future revokeOtherSessions() async
     test('test revokeOtherSessions', () async {
@@ -108,7 +108,7 @@ void main() {
 
     // Sign out one device
     //
-    // **Access:** student or driver.
+    // **Access:** student or driver. 403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.
     //
     //Future revokeSession(String id) async
     test('test revokeSession', () async {

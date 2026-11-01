@@ -9,7 +9,7 @@ void main() {
   group(DriverApi, () {
     // Confirm I have seen the assignment
     //
-    // **Access:** driver.  If this is not called within driverAckTimeoutSeconds the engine reassigns the ride. Design addition to confirm with Turbo (decision D8).
+    // **Access:** driver.  If this is not called within driverAckTimeoutSeconds the engine reassigns the ride. Design addition to confirm with Turbo (decision D8). 409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
     //
     //Future<DriverRide> acknowledgeRide(String id) async
     test('test acknowledgeRide', () async {
@@ -18,7 +18,7 @@ void main() {
 
     // Complete the trip
     //
-    // **Access:** driver.  Converts the held fare into a charge in the same database transaction.
+    // **Access:** driver.  Converts the held fare into a charge in the same database transaction. 409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
     //
     //Future<DriverRide> completeRide(String id, TripLocation tripLocation) async
     test('test completeRide', () async {
@@ -27,7 +27,7 @@ void main() {
 
     // Report that I cannot take this ride
     //
-    // **Access:** driver.  The engine reassigns, excluding this driver for this ride. Allowed until the trip has started.
+    // **Access:** driver.  The engine reassigns, excluding this driver for this ride. Allowed until the trip has started. 409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
     //
     //Future declineRide(String id, DeclineRequest declineRequest) async
     test('test declineRide', () async {
@@ -90,7 +90,7 @@ void main() {
 
     // Mark arrival at pickup
     //
-    // **Access:** driver.
+    // **Access:** driver. 409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
     //
     //Future<DriverRide> markArrived(String id, TripLocation tripLocation) async
     test('test markArrived', () async {
@@ -108,7 +108,7 @@ void main() {
 
     // Student not here
     //
-    // **Access:** driver.  Only after the driver has arrived and `noShowWaitSeconds` have passed (409 `no_show_too_early` otherwise). Cancels the ride with reason `rider_no_show`; the hold is released and no fee applies. The count shows on the student's record for staff.
+    // **Access:** driver.  Only after the driver has arrived and `noShowWaitSeconds` have passed (409 `no_show_too_early` otherwise). Cancels the ride with reason `rider_no_show`; the hold is released and no fee applies. The count shows on the student's record for staff. 409 `invalid_ride_state`: the driver has not marked arrival. 409 `no_show_too_early`: the wait time has not passed yet.
     //
     //Future<DriverRide> reportRiderNoShow(String id) async
     test('test reportRiderNoShow', () async {
@@ -126,7 +126,7 @@ void main() {
 
     // Start the trip with the student PIN
     //
-    // **Access:** driver.  Wrong PIN: 400 `invalid_pin`. Five wrong attempts lock the start for this driver: 409 `pin_locked` until an admin intervenes.
+    // **Access:** driver.  Wrong PIN: 400 `invalid_pin`. Five wrong attempts lock the start for this driver: 409 `pin_locked` until an admin intervenes. 409 `invalid_ride_state`: the driver has not marked arrival at the pickup yet.
     //
     //Future<DriverRide> startRide(String id, StartRequest startRequest) async
     test('test startRide', () async {
