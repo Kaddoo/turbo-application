@@ -105,6 +105,18 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Next step:** Dashboard sign-in, MFA and invite screens against the mock; separately, move `turbo_ui` brand tokens to the landing-page values on a machine with Flutter.
 
+## 2026-11-01, Kevin with Claude, code: monitoring and alerts
+
+**Task:** Brief "monitoring and alerts" (docs/10-monitoring-plan.md): server housekeeping, host checks, and API alerts to inlet. Branch `monitoring-alerts` (not merged, not pushed).
+
+**Server (not in git), each reversible:** `/etc/systemd/journald.conf.d/turbo.conf` (delete, restart journald); `/etc/docker/daemon.json` (delete, restart docker, recreate Caddy); `lnav` installed; `/root/LOGS.md`; `/etc/cron.d/pgbackrest` (original saved as `pgbackrest.orig.txt` beside it) now chains `/usr/local/bin/turbo-heartbeat` after a successful backup, reading `BACKUP_HEARTBEAT_URL` from `/etc/turbo/monitoring.env` (empty, postgres-owned, 600); `/usr/local/bin/turbo-alert`, `/usr/local/bin/turbo-hostcheck`, `/etc/cron.d/turbo-hostcheck` (every 5 minutes), `/var/lib/turbo-hostcheck/`, `/etc/logrotate.d/turbo-hostcheck`, log `/var/log/turbo-hostcheck.log`. API code backed up at `/opt/turbo/src.pre-alerts-20261101-1524` (plus package files) before deploy.
+
+**API:** `@bevingh/sdk-node` 0.2.1; `src/lib/alerts.js` (`alert()`, off without `INLET_SECRET_KEY` and `INLET_PRODUCT_ID`, 3 s timeout, one retry, no throw, payload scrubbed); `src/domain/alert_jobs.js` (stuck ride, SOS, ledger, worker error); wired in `src/worker.js`, `src/routes/wallet.js` (Payaza), `src/app.js` and `src/server.js` (5xx rate), `src/config.js`, `deploy/api.env.example`.
+
+**Acceptance:** [x] alerts.test.js 12 tests pass against a scratch Postgres (8 without a database). [x] Full suite on that scratch DB: 79 of 81; the 2 failures are the rate-limit test (I raised the limits to run the suite) and the document-purge test, which also fails with these changes stashed. [x] On the server: one "alerts disabled" line per process, no errors, `/health` 200. [x] Worker stopped 2 minutes: host check logged the problem; alert skipped (no key). [x] journald cap and Caddy log options confirmed. [x] `verify.sh` all pass.
+
+**Still open:** Kevin creates the inlet product and key, then adds `INLET_SECRET_KEY`, `INLET_PRODUCT_ID`, `SOS_ONCALL_PHONE` to `/etc/turbo/api.env` and `BACKUP_HEARTBEAT_URL` to `/etc/turbo/monitoring.env`, then `systemctl restart turbo-api turbo-worker`. All alerts use inlet type `custom_alert` (the payload shapes for `error_spike` and `health_check_failed` are not in the SDK). Not done: the external uptime monitor (Kevin's step).
+
 ## 2026-11-01, Kevin with Claude, code: redesign from the design boards
 
 **Task:** Redo both apps' screens from the boards in `design/` (light and dark), on branch `redesign-foundation` (stacked on `driver-app-foundation`, nothing merged).
