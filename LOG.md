@@ -2,6 +2,12 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: stock photos (branch `design-driver`)
+
+**What changed:** eight Pexels photos Kevin approved from a shortlist (trotro and intersection for the trip status card, a busy Accra street, a bus stop, a driver, a campus student, a young man in Accra, a Tema aerial) are in `packages/turbo_ui/assets/photos`, resized to 1200 px wide, declared as package assets, with `CREDITS.md` (photo page and photographer for each). Pexels licence: free, credit not required but kept; the people are stock models and must not be shown as real named drivers or students.
+
+**Not done:** no screen uses them yet (trip status card, welcome and verified heroes, driver welcome wait for those screen builds). The 3D icons and the campus map art are still open.
+
 ## 2026-11-02, Kevin with Claude, code: driver app first pass (branch `design-driver`, on `design-activity`)
 
 **What changed in `apps/driver_app`:** primary actions are the 80 pt `driver` buttons (go on duty, arrived, start trip, complete, done); the start-PIN entry is `TripPin` plus the new `TurboKeypad`; the four record views are `TurboSegmented`; the boot error, update, maintenance and suspended screens use `SystemMessage`; home uses the avatar, list-card readiness rows and a danger banner; Me uses `TurboAvatar`. Test taps the keypad inside `TurboKeypad`.
