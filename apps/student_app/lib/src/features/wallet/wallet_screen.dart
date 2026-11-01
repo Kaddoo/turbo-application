@@ -41,47 +41,53 @@ class WalletScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.all(TurboSpacing.xl),
                 children: [
-                  Text(l10n.walletAvailable, style: text.bodyMedium),
-                  Semantics(
-                    label:
-                        '${l10n.walletAvailable} ${formatPesewas(w.availablePesewas)}',
-                    excludeSemantics: true,
-                    child: Text(
-                      formatPesewas(w.availablePesewas),
-                      style: text.headlineMedium?.copyWith(
-                        fontSize: text.headlineMedium!.fontSize! * 2,
-                      ),
-                    ),
-                  ),
-                  if (w.reservedPesewas > 0) ...[
-                    const SizedBox(height: TurboSpacing.xs),
-                    Text(
-                      l10n.walletHeld(formatPesewas(w.reservedPesewas)),
-                      style: text.bodyLarge,
-                    ),
-                  ],
-                  if (owed > 0) ...[
-                    const SizedBox(height: TurboSpacing.md),
-                    Row(
+                  TurboCard(
+                    padding: const EdgeInsets.all(TurboSpacing.xl),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.error_outline, color: t.colors.danger),
-                        const SizedBox(width: TurboSpacing.sm),
-                        Expanded(
-                          child: Text(
-                            l10n.walletOwed(formatPesewas(owed)),
-                            style: text.bodyLarge?.copyWith(
-                              color: t.colors.danger,
+                        Text(l10n.walletAvailable, style: text.bodyMedium),
+                        const SizedBox(height: TurboSpacing.sm),
+                        Semantics(
+                          label: '${l10n.walletAvailable} ${formatPesewas(w.availablePesewas)}',
+                          excludeSemantics: true,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              formatPesewas(w.availablePesewas),
+                              style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 2),
                             ),
                           ),
                         ),
+                        if (w.reservedPesewas > 0) ...[
+                          const SizedBox(height: TurboSpacing.xs),
+                          Text(l10n.walletHeld(formatPesewas(w.reservedPesewas)), style: text.bodyLarge),
+                        ],
+                        if (owed > 0) ...[
+                          const SizedBox(height: TurboSpacing.md),
+                          Row(
+                            children: [
+                              Icon(Icons.error_outline, color: t.colors.danger),
+                              const SizedBox(width: TurboSpacing.sm),
+                              Expanded(
+                                child: Text(
+                                  l10n.walletOwed(formatPesewas(owed)),
+                                  style: text.bodyLarge?.copyWith(color: t.colors.danger),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: TurboSpacing.xl),
+                        TurboButton(
+                          label: l10n.walletTopUp,
+                          large: true,
+                          icon: Icons.add,
+                          onPressed: () => context.push('/wallet/topup'),
+                        ),
                       ],
                     ),
-                  ],
-                  const SizedBox(height: TurboSpacing.xl),
-                  TurboButton(
-                    label: l10n.walletTopUp,
-                    large: true,
-                    onPressed: () => context.push('/wallet/topup'),
                   ),
                   const SizedBox(height: TurboSpacing.xxl),
                   Row(

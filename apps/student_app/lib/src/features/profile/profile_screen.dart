@@ -65,24 +65,26 @@ class ProfileScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(TurboSpacing.lg),
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: TurboSpacing.xxl,
-                  backgroundColor: t.colors.surface,
-                  child: Text((student.fullName ?? '?').characters.first, style: text.titleLarge),
-                ),
-                const SizedBox(width: TurboSpacing.lg),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(student.fullName ?? '', style: text.titleLarge),
-                      Text(displayPhone(student.phone), style: text.bodyMedium),
-                    ],
+            TurboCard(
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: TurboSpacing.xxl,
+                    backgroundColor: t.colors.background,
+                    child: Text((student.fullName ?? '?').characters.first, style: text.titleLarge),
                   ),
-                ),
-              ],
+                  const SizedBox(width: TurboSpacing.lg),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(student.fullName ?? '', style: text.titleLarge),
+                        Text(displayPhone(student.phone), style: text.bodyMedium),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: TurboSpacing.sm),
             Text(l10n.profileChangePhone, style: text.bodySmall),

@@ -64,6 +64,21 @@ void main() {
       expect(find.textContaining('Top-up ·'), findsOneWidget);
     });
 
+    testWidgets('wallet and top-up lay out in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = walletServer()
+        ..on('GET /wallet', body: {'balancePesewas': 6000, 'reservedPesewas': 3500, 'availablePesewas': 2500, 'currency': 'GHS'});
+      await bootHome(tester, server);
+      await openWallet(tester);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.widgetWithText(FilledButton, 'Top up'));
+      await tester.pumpAndSettle();
+      expect(find.text('GH₵20.00'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('owed money is shown with an icon and words', (tester) async {
       final server = walletServer()
         ..on('GET /wallet', body: {'balancePesewas': -500, 'reservedPesewas': 0, 'availablePesewas': 0, 'currency': 'GHS', 'owedPesewas': 500});

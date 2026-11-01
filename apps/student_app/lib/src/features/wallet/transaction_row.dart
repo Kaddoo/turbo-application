@@ -40,8 +40,18 @@ class TransactionRow extends StatelessWidget {
     return TurboListRow(
       title: tx.description,
       subtitle: '$label · $when',
-      leading: Icon(icon, color: t.colors.textSecondary),
-      trailing: Text(amount, style: Theme.of(context).textTheme.bodyLarge),
+      leading: Container(
+        width: TurboSizes.minTap,
+        height: TurboSizes.minTap,
+        decoration: BoxDecoration(color: t.colors.surface, borderRadius: BorderRadius.circular(t.radiusInput)),
+        child: Icon(icon, color: t.colors.textPrimary),
+      ),
+      trailing: Text(
+        amount,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: tx.affectsBalance && tx.amountPesewas > 0 ? t.colors.success : null,
+            ),
+      ),
     );
   }
 }

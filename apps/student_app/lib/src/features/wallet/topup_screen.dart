@@ -120,16 +120,19 @@ class _TopupScreenState extends ConsumerState<TopupScreen> {
                     child: Text(l10n.topupAmount, style: text.titleLarge),
                   ),
                   const SizedBox(height: TurboSpacing.md),
-                  Wrap(
-                    spacing: TurboSpacing.sm,
-                    runSpacing: TurboSpacing.sm,
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: TurboSpacing.sm,
+                    crossAxisSpacing: TurboSpacing.sm,
+                    childAspectRatio: MediaQuery.textScalerOf(context).scale(1) > 1.3 ? 1.6 : 2.4,
                     children: [
                       for (final chip in topupChipsPesewas)
-                        ChoiceChip(
-                          label: Text(formatPesewas(chip)),
-                          selected:
-                              _chip == chip && _custom.text.trim().isEmpty,
-                          onSelected: (_) => setState(() {
+                        _AmountTile(
+                          label: formatPesewas(chip),
+                          selected: _chip == chip && _custom.text.trim().isEmpty,
+                          onTap: () => setState(() {
                             _chip = chip;
                             _custom.clear();
                             _error = null;
@@ -184,6 +187,39 @@ class _TopupScreenState extends ConsumerState<TopupScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AmountTile extends StatelessWidget {
+  const _AmountTile({required this.label, required this.selected, required this.onTap});
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.turbo;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      excludeSemantics: true,
+      onTap: onTap,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(t.radiusCard),
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: t.colors.surface,
+            borderRadius: BorderRadius.circular(t.radiusCard),
+            border: Border.all(color: selected ? t.colors.textPrimary : t.colors.border, width: selected ? 2 : 1),
+          ),
+          child: Text(label, style: Theme.of(context).textTheme.titleLarge),
         ),
       ),
     );
