@@ -12,14 +12,19 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return DarkScope(
-      child: Builder(builder: (context) {
+    return Builder(
+      builder: (context) {
         final t = context.turbo;
         final text = Theme.of(context).textTheme;
         return Scaffold(
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.sm, TurboSpacing.screen, TurboSpacing.lg),
+              padding: const EdgeInsets.fromLTRB(
+                TurboSpacing.screen,
+                TurboSpacing.sm,
+                TurboSpacing.screen,
+                TurboSpacing.lg,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -30,8 +35,20 @@ class WelcomeScreen extends StatelessWidget {
                         fit: StackFit.expand,
                         children: [
                           ColoredBox(color: t.colors.accent),
-                          CustomPaint(painter: _GridPainter(t.colors.onAccent.withValues(alpha: 0.08))),
-                          Center(child: ExcludeSemantics(child: Icon(Icons.directions_car_filled_outlined, size: TurboSizes.iconLg * 3, color: t.colors.onAccent))),
+                          CustomPaint(
+                            painter: _GridPainter(
+                              t.colors.onAccent.withValues(alpha: 0.08),
+                            ),
+                          ),
+                          Center(
+                            child: ExcludeSemantics(
+                              child: Icon(
+                                Icons.directions_car_filled_outlined,
+                                size: TurboSizes.iconLg * 3,
+                                color: t.colors.onAccent,
+                              ),
+                            ),
+                          ),
                           Positioned(
                             left: TurboSpacing.lg,
                             top: TurboSpacing.lg,
@@ -40,8 +57,18 @@ class WelcomeScreen extends StatelessWidget {
                                 width: TurboSizes.iconButton,
                                 height: TurboSizes.iconButton,
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(color: t.colors.background, shape: BoxShape.circle),
-                                child: Text(t.brand.wordmark.characters.take(2).toString(), style: text.labelLarge?.copyWith(color: t.colors.textPrimary)),
+                                decoration: BoxDecoration(
+                                  color: t.colors.background,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  t.brand.wordmark.characters
+                                      .take(2)
+                                      .toString(),
+                                  style: text.labelLarge?.copyWith(
+                                    color: t.colors.textPrimary,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -49,9 +76,20 @@ class WelcomeScreen extends StatelessWidget {
                             right: TurboSpacing.lg,
                             bottom: TurboSpacing.lg,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg, vertical: TurboSpacing.md),
-                              decoration: BoxDecoration(color: t.colors.background, borderRadius: BorderRadius.circular(t.radiusFull)),
-                              child: Text(l10n.welcomeFixedFares, style: text.labelMedium),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: TurboSpacing.lg,
+                                vertical: TurboSpacing.md,
+                              ),
+                              decoration: BoxDecoration(
+                                color: t.colors.background,
+                                borderRadius: BorderRadius.circular(
+                                  t.radiusFull,
+                                ),
+                              ),
+                              child: Text(
+                                l10n.welcomeFixedFares,
+                                style: text.labelMedium,
+                              ),
                             ),
                           ),
                         ],
@@ -59,17 +97,29 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: TurboSpacing.xl),
-                  AccentTitle(text: l10n.welcomeTagline, accent: l10n.welcomeTaglineAccent, style: text.displaySmall),
+                  AccentTitle(
+                    text: l10n.welcomeTagline,
+                    accent: l10n.welcomeTaglineAccent,
+                    style: text.displaySmall,
+                  ),
                   const SizedBox(height: TurboSpacing.sm),
-                  Text(l10n.welcomeAudience, style: text.bodyMedium?.copyWith(color: t.colors.textSecondary)),
+                  Text(
+                    l10n.welcomeAudience,
+                    style: text.bodyMedium?.copyWith(
+                      color: t.colors.textSecondary,
+                    ),
+                  ),
                   const SizedBox(height: TurboSpacing.xl),
-                  SlideToContinue(label: l10n.welcomeContinue, onContinue: () => context.go('/phone')),
+                  SlideToContinue(
+                    label: l10n.welcomeContinue,
+                    onContinue: () => context.go('/phone'),
+                  ),
                 ],
               ),
             ),
           ),
         );
-      }),
+      },
     );
   }
 }

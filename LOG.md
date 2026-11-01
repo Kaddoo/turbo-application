@@ -8,7 +8,7 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Checks:** analyze clean; turbo_ui 74, student 130 pass. Not checked on a device or in a browser.
 
-**Not done:** the "Nearest point / Choose point" tabs, the swap button and the "last ride" tile need design assets and an API decision (no last-ride field used yet); the S14 results/saved/recent tabs and pickup-point sheet over the map; S15 has no board in the new kit. Light mode is kept (decided by Kevin). The welcome and system screens still force dark.
+**Not done:** the "Nearest point / Choose point" tabs, the swap button and the "last ride" tile need design assets and an API decision (no last-ride field used yet); the S14 results/saved/recent tabs and pickup-point sheet over the map; S15 has no board in the new kit. Light mode is kept (decided by Kevin). The welcome and system screens now follow light or dark like the rest.
 
 ## 2026-11-02, Kevin with Claude, code: sign-in and system screens (branch `design-signin`, on `design-components`)
 

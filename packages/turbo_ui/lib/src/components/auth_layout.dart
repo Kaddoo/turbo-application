@@ -6,19 +6,6 @@ import 'accent_title.dart';
 import 'hero_icon.dart';
 import 'turbo_icon_button.dart';
 
-/// Always-dark scope for the start-up screens, whatever the system setting.
-class DarkScope extends StatelessWidget {
-  const DarkScope({super.key, required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final brand = context.turbo.brand;
-    return Theme(data: buildTurboTheme(brand, Brightness.dark), child: child);
-  }
-}
-
 /// Large wordmark for start-up screens, read from the brand layer.
 class BigWordmark extends StatelessWidget {
   const BigWordmark({super.key, this.onAccent = false});
@@ -34,9 +21,9 @@ class BigWordmark extends StatelessWidget {
       child: Text(
         t.brand.wordmark,
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: t.brand.typeScale.splash,
-              color: onAccent ? t.colors.onAccent : t.colors.textPrimary,
-            ),
+          fontSize: t.brand.typeScale.splash,
+          color: onAccent ? t.colors.onAccent : t.colors.textPrimary,
+        ),
       ),
     );
   }
@@ -89,17 +76,24 @@ class AuthLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DarkScope(
-      child: Builder(builder: (context) {
+    return Builder(
+      builder: (context) {
         final t = context.turbo;
         final text = Theme.of(context).textTheme;
-        final align = centered ? CrossAxisAlignment.center : CrossAxisAlignment.start;
+        final align = centered
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start;
         return Scaffold(
           body: SafeArea(
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.sm, TurboSpacing.screen, 0),
+                  padding: const EdgeInsets.fromLTRB(
+                    TurboSpacing.screen,
+                    TurboSpacing.sm,
+                    TurboSpacing.screen,
+                    0,
+                  ),
                   child: SizedBox(
                     height: TurboSizes.iconButton,
                     child: Stack(
@@ -108,24 +102,56 @@ class AuthLayout extends StatelessWidget {
                         if (onBack != null)
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: TurboIconButton(icon: Icons.chevron_left, label: MaterialLocalizations.of(context).backButtonTooltip, onPressed: onBack),
+                            child: TurboIconButton(
+                              icon: Icons.chevron_left,
+                              label: MaterialLocalizations.of(context)
+                                  .backButtonTooltip,
+                              onPressed: onBack,
+                            ),
                           ),
-                        Text(t.brand.wordmark, style: t.styles.wordmark.copyWith(fontSize: t.brand.typeScale.emphasis)),
+                        Text(
+                          t.brand.wordmark,
+                          style: t.styles.wordmark.copyWith(
+                            fontSize: t.brand.typeScale.emphasis,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.xl, TurboSpacing.screen, TurboSpacing.lg),
+                    padding: const EdgeInsets.fromLTRB(
+                      TurboSpacing.screen,
+                      TurboSpacing.xl,
+                      TurboSpacing.screen,
+                      TurboSpacing.lg,
+                    ),
                     child: Column(
                       crossAxisAlignment: align,
                       children: [
-                        if (icon != null) ...[HeroIcon(icon: icon), const SizedBox(height: TurboSpacing.lg)],
-                        AccentTitle(text: title, accent: accent, textAlign: centered ? TextAlign.center : TextAlign.start),
+                        if (icon != null) ...[
+                          HeroIcon(icon: icon),
+                          const SizedBox(height: TurboSpacing.lg),
+                        ],
+                        AccentTitle(
+                          text: title,
+                          accent: accent,
+                          textAlign: centered
+                              ? TextAlign.center
+                              : TextAlign.start,
+                        ),
                         if (lead != null) ...[
                           const SizedBox(height: TurboSpacing.sm),
-                          Text(lead!, style: text.bodyMedium?.copyWith(color: t.colors.textSecondary), textAlign: centered ? TextAlign.center : TextAlign.start),
+                          Text(
+                            lead!,
+                            style: text.bodyMedium?.copyWith(
+                              color: t.colors.textSecondary,
+                            ),
+                            textAlign: centered
+                                ? TextAlign.center
+                                : TextAlign.start,
+                          ),
                         ],
                         const SizedBox(height: TurboSpacing.xl),
                         ...children,
@@ -134,12 +160,20 @@ class AuthLayout extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.md, TurboSpacing.screen, TurboSpacing.lg),
+                  padding: const EdgeInsets.fromLTRB(
+                    TurboSpacing.screen,
+                    TurboSpacing.md,
+                    TurboSpacing.screen,
+                    TurboSpacing.lg,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       action,
-                      if (footer != null) ...[const SizedBox(height: TurboSpacing.md), footer!],
+                      if (footer != null) ...[
+                        const SizedBox(height: TurboSpacing.md),
+                        footer!,
+                      ],
                     ],
                   ),
                 ),
@@ -147,7 +181,7 @@ class AuthLayout extends StatelessWidget {
             ),
           ),
         );
-      }),
+      },
     );
   }
 }
