@@ -21,6 +21,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Too many tries. Please wait a moment and try again.';
 
   @override
+  String get problemServiceBusy =>
+      'We\'re busy right now. Try again in a moment.';
+
+  @override
+  String problemServiceBusyWait(int seconds) {
+    return 'We\'re busy right now. Try again in $seconds seconds.';
+  }
+
+  @override
   String problemRateLimitedWait(Object seconds) {
     return 'Too many tries. Please wait $seconds s and try again.';
   }

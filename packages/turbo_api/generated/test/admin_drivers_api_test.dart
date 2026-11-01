@@ -18,7 +18,7 @@ void main() {
 
     // Create a driver and invite them by SMS
     //
-    // **Access:** admin:hr. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
+    // **Access:** admin:hr. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`. 409 `duplicate_phone`: that number is already registered. 409 `vehicle_already_assigned`: that vehicle already belongs to another driver.
     //
     //Future<DriverDetail> createDriver(String idempotencyKey, DriverCreate driverCreate) async
     test('test createDriver', () async {
@@ -27,7 +27,7 @@ void main() {
 
     // Add a vehicle
     //
-    // **Access:** admin:hr.
+    // **Access:** admin:hr. 409 `duplicate_plate`: a vehicle with that plate number already exists.
     //
     //Future<Vehicle> createVehicle(VehicleWrite vehicleWrite) async
     test('test createVehicle', () async {
@@ -72,7 +72,7 @@ void main() {
 
     // Edit, suspend or assign vehicle
     //
-    // **Access:** admin:hr.
+    // **Access:** admin:hr. 409 `vehicle_already_assigned`: that vehicle already belongs to another driver.
     //
     //Future<DriverDetail> updateDriver(String id, DriverUpdate driverUpdate) async
     test('test updateDriver', () async {

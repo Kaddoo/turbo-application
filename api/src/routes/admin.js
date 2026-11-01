@@ -75,7 +75,7 @@ admin.post('/admin/verifications/:id/claim', ...A('verifier'), async (req, res) 
   const row = await tx(async (c) => {
     const { rows: [s] } = await c.query(`SELECT verification_status,claimed_by,claim_expires_at FROM students WHERE user_id=$1 FOR UPDATE`, [req.params.id]);
     if (!s) throw notFound('Verification');
-    if (s.verification_status !== 'pending') throw conflict('conflict', `Verification is ${s.verification_status}`);
+    if (s.verification_status !== 'pending') throw conflict('verification_not_pending', `Verification is ${s.verification_status}`);
     if (s.claimed_by && s.claimed_by !== req.user.id && s.claim_expires_at > new Date()) throw conflict('verification_claimed', 'Another reviewer is working on this submission');
     await c.query(`UPDATE students SET claimed_by=$2, claim_expires_at=now() + interval '15 minutes' WHERE user_id=$1`, [req.params.id, req.user.id]);
     return (await c.query(`${VSUM_SQL} WHERE s.user_id=$1`, [req.params.id])).rows[0];
@@ -90,7 +90,7 @@ admin.post('/admin/verifications/:id/decision', ...A('verifier'), async (req, re
   const out = await tx(async (c) => {
     const { rows: [s] } = await c.query('SELECT verification_status,claimed_by,claim_expires_at FROM students WHERE user_id=$1 FOR UPDATE', [req.params.id]);
     if (!s) throw notFound('Verification');
-    if (s.verification_status !== 'pending') throw conflict('conflict', `Verification is ${s.verification_status}`);
+    if (s.verification_status !== 'pending') throw conflict('verification_not_pending', `Verification is ${s.verification_status}`);
     if (s.claimed_by && s.claimed_by !== req.user.id && s.claim_expires_at > new Date()) throw conflict('verification_claimed', 'Another reviewer holds this submission');
     await c.query(`UPDATE students SET verification_status=$2, decided_at=now(), reason_code=$3, student_message=$4, claimed_by=NULL, claim_expires_at=NULL WHERE user_id=$1`,
       [req.params.id, decision, decision === 'approved' ? null : reasonCode, decision === 'approved' ? null : (studentMessage ?? null), ]);
@@ -149,7 +149,7 @@ admin.put('/admin/students/:id/phone', ...A('verifier'), async (req, res) => {
   if (!t) throw invalid('ticketId', 'must be this student\'s phone_change support ticket (the evidence)');
   await tx(async (c) => {
     try { await c.query('UPDATE users SET phone=$2, updated_at=now() WHERE id=$1', [req.params.id, phone]); }
-    catch (e) { if (e.code === '23505') throw conflict('conflict', 'That number already belongs to another account'); throw e; }
+    catch (e) { if (e.code === '23505') throw conflict('duplicate_phone', 'That number already belongs to another account'); throw e; }
     await revokeSessions(c, req.params.id);
     await audit(c, req, 'student.phone_change', req.params.id, { from: old.phone.slice(0, 7) + '***', ticketId, note });
   });

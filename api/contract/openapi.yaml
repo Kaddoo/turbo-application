@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.2.4
+  version: 0.3.0
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -1410,7 +1410,9 @@ paths:
       - Support
       operationId: replyToSupportTicket
       summary: Reply on a ticket
-      description: '**Access:** student, driver.'
+      description: '**Access:** student, driver.
+
+        409 `ticket_state_invalid`: the ticket is closed; open a new one.'
       parameters:
       - name: id
         in: path
@@ -1444,6 +1446,8 @@ paths:
           $ref: '#/components/responses/UpgradeRequired'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        '409':
+          $ref: '#/components/responses/Conflict'
       x-roles:
       - student
       - driver
@@ -2258,7 +2262,7 @@ paths:
 
         Notifies the student by push and SMS. Immutable decision record.
 
-        409 `verification_claimed`: another reviewer holds this submission. Other 409s use the generic `conflict`.'
+        409 `verification_not_pending`: the submission is no longer pending. 409 `verification_claimed`: another reviewer holds it.'
       parameters:
       - name: id
         in: path
@@ -2470,7 +2474,9 @@ paths:
       summary: Create a driver and invite them by SMS
       description: '**Access:** admin:hr.
 
-        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.'
+        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
+
+        409 `duplicate_phone`: that number is already registered. 409 `vehicle_already_assigned`: that vehicle already belongs to another driver.'
       parameters:
       - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
@@ -2543,7 +2549,9 @@ paths:
       - 'Admin: Drivers'
       operationId: updateDriver
       summary: Edit, suspend or assign vehicle
-      description: '**Access:** admin:hr.'
+      description: '**Access:** admin:hr.
+
+        409 `vehicle_already_assigned`: that vehicle already belongs to another driver.'
       parameters:
       - name: id
         in: path
@@ -2660,7 +2668,9 @@ paths:
       - 'Admin: Drivers'
       operationId: createVehicle
       summary: Add a vehicle
-      description: '**Access:** admin:hr.'
+      description: '**Access:** admin:hr.
+
+        409 `duplicate_plate`: a vehicle with that plate number already exists.'
       requestBody:
         required: true
         content:
@@ -3653,7 +3663,9 @@ paths:
       - 'Admin: Support'
       operationId: updateIncident
       summary: Acknowledge or resolve an incident
-      description: '**Access:** admin:support.'
+      description: '**Access:** admin:support.
+
+        409 `incident_state_invalid`: the incident is already resolved, or is not open when acknowledging.'
       parameters:
       - name: id
         in: path
@@ -3687,6 +3699,8 @@ paths:
           $ref: '#/components/responses/UpgradeRequired'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        '409':
+          $ref: '#/components/responses/Conflict'
       x-roles:
       - admin:support
       x-release: v1
@@ -4082,7 +4096,9 @@ paths:
       - 'Admin: Staff'
       operationId: createStaff
       summary: Invite a staff user
-      description: '**Access:** admin:super_admin.'
+      description: '**Access:** admin:super_admin.
+
+        409 `duplicate_email`: that email already has an account.'
       requestBody:
         required: true
         content:
@@ -4264,7 +4280,9 @@ paths:
 
 
         The invite email carries a single-use token valid for 72 hours. Returns the MFA enrolment to scan. Login stays closed
-        until MFA is confirmed.'
+        until MFA is confirmed.
+
+        401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)'
       requestBody:
         required: true
         content:
@@ -4301,7 +4319,9 @@ paths:
       description: '**Access:** Public (enrolment token).
 
 
-        First valid TOTP code finishes enrolment and returns tokens.'
+        First valid TOTP code finishes enrolment and returns tokens.
+
+        401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)'
       requestBody:
         required: true
         content:
@@ -4369,7 +4389,9 @@ paths:
       description: '**Access:** Public.
 
 
-        Single-use token valid for 1 hour. Revokes every session of that staff user. MFA is still required at next login.'
+        Single-use token valid for 1 hour. Revokes every session of that staff user. MFA is still required at next login.
+
+        401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)'
       requestBody:
         required: true
         content:
@@ -4500,7 +4522,9 @@ paths:
         Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not
         here.
 
-        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.'
+        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
+
+        409 `topup_not_resolvable`: the top-up is not flagged, or was already resolved.'
       parameters:
       - $ref: '#/components/parameters/IdempotencyKey'
       - *id001
@@ -4983,7 +5007,9 @@ paths:
 
 
         Only after re-checking the Ghana Card against the account, with a support ticket as evidence. Revokes all sessions,
-        sends an SMS to the old number, audit-logged. The wallet is unaffected.'
+        sends an SMS to the old number, audit-logged. The wallet is unaffected.
+
+        409 `duplicate_phone`: that number belongs to another account.'
       parameters:
       - *id001
       requestBody:
@@ -5028,7 +5054,9 @@ paths:
 
 
         15-minute lock so two reviewers do not decide the same submission. 409 `verification_claimed` if someone else holds
-        it. Deciding releases it.'
+        it. Deciding releases it.
+
+        409 `verification_not_pending`: the submission is no longer pending. 409 `verification_claimed`: another reviewer holds it.'
       parameters:
       - *id001
       responses:
@@ -5257,7 +5285,7 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
     Unauthorized:
-      description: Missing, expired or invalid token.
+      description: Missing, expired or invalid access or refresh token (`unauthenticated`, `invalid_token`). Single-use staff links answer `link_invalid` or `link_expired` instead.
       content:
         application/problem+json:
           schema:
@@ -5293,7 +5321,7 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
     ServiceUnavailable:
-      description: Temporarily unavailable (the daily SMS ceiling was reached, or the database is busy). Any operation can answer this. Wait `Retry-After` seconds (also in the body as `retryAfterSeconds`), then retry.
+      description: Temporarily unavailable. Code `service_busy` (the database is busy, wait and retry) or `sms_budget_exceeded` (the daily SMS ceiling was reached). Any operation can answer this. Wait `Retry-After` seconds (also in the body as `retryAfterSeconds`), then retry.
       headers:
         Retry-After:
           description: Seconds to wait before retrying.
@@ -5445,6 +5473,17 @@ components:
       - no_show_too_early
       - account_owes
       - verification_claimed
+      - duplicate_phone
+      - duplicate_email
+      - duplicate_plate
+      - vehicle_already_assigned
+      - verification_not_pending
+      - ticket_state_invalid
+      - topup_not_resolvable
+      - incident_state_invalid
+      - service_busy
+      - link_expired
+      - link_invalid
       description: Stable machine-readable code. Clients switch on this, never on `title` or `detail`.
     Problem:
       type: object

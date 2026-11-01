@@ -206,7 +206,7 @@ Name | Type | Description  | Notes
 
 Acknowledge or resolve an incident
 
-**Access:** admin:support.
+**Access:** admin:support. 409 `incident_state_invalid`: the incident is already resolved, or is not open when acknowledging.
 
 ### Example
 ```dart

@@ -37,7 +37,9 @@ async function issueToken(c, staffId, purpose, ttlMinutes) {
 async function takeToken(c, token, purpose) {
   const { rows: [t] } = await c.query(
     `SELECT * FROM staff_tokens WHERE token_hash=$1 AND purpose=$2 FOR UPDATE`, [sha256(String(token || '')), purpose]);
-  if (!t || t.used_at || t.expires_at < new Date()) throw new ApiError(401, 'invalid_token', 'This link is invalid or has expired');
+  // link_invalid: no such link, or it was already used. link_expired: it was real but its time ran out. (invalid_token is for access and refresh tokens only.)
+  if (!t || t.used_at) throw new ApiError(401, 'link_invalid', 'This link is not valid or was already used');
+  if (t.expires_at < new Date()) throw new ApiError(401, 'link_expired', 'This link has expired; ask for a new one');
   return t;
 }
 export const revokeStaffSessions = (c, staffId, exceptFamily = null) =>
@@ -105,7 +107,7 @@ staff.post('/auth/admin/invite/accept', limit('invite', 20, 600_000, ip), async 
   const out = await tx(async (c) => {
     const t = await takeToken(c, token, 'invite');
     const { rows: [s] } = await c.query('SELECT * FROM staff_users WHERE id=$1 FOR UPDATE', [t.staff_id]);
-    if (!s.is_active) throw new ApiError(401, 'invalid_token', 'This link is invalid or has expired');
+    if (!s.is_active) throw new ApiError(401, 'link_invalid', 'This link is not valid');
     await c.query('UPDATE staff_tokens SET used_at=now() WHERE id=$1', [t.id]);
     await c.query('UPDATE staff_users SET password_hash=$2, failed_logins=0, locked_until=NULL WHERE id=$1', [s.id, pwHash]);
     await revokeStaffSessions(c, s.id);
@@ -120,7 +122,7 @@ staff.post('/auth/admin/mfa/confirm', limit('mfa-confirm', 20, 600_000, ip), asy
   const s = await tx(async (c) => {
     const t = await takeToken(c, enrollmentToken, 'enroll');
     const { rows: [s] } = await c.query('SELECT * FROM staff_users WHERE id=$1 FOR UPDATE', [t.staff_id]);
-    if (!s.is_active || !s.mfa_pending_enc) throw new ApiError(401, 'invalid_token', 'Enrolment expired; ask for a new invite');
+    if (!s.is_active || !s.mfa_pending_enc) throw new ApiError(401, 'link_expired', 'Enrolment expired; ask for a new invite');
     const step = verifyTotp(open(s.mfa_pending_enc), totpCode);
     if (step == null) throw new ApiError(401, 'mfa_required', 'That code is wrong. Check your phone clock and try the next code');
     await c.query('UPDATE staff_tokens SET used_at=now() WHERE id=$1', [t.id]);
@@ -199,7 +201,7 @@ staff.post('/admin/staff', ...SA, async (req, res) => {
       // Unusable random password until the invite is accepted.
       ({ rows: [s] } = await c.query(`INSERT INTO staff_users (email,password_hash,name,role,invite_pending) VALUES ($1,$2,$3,$4,true) RETURNING *`,
         [email.toLowerCase(), unusable, fullName.trim(), staffRole]));
-    } catch (e) { if (e.code === '23505') throw conflict('conflict', 'That email already has an account'); throw e; }
+    } catch (e) { if (e.code === '23505') throw conflict('duplicate_email', 'That email already has an account'); throw e; }
     const token = await issueToken(c, s.id, 'invite', 72 * 60);
     await auditStaff(c, req.user.id, 'staff.invite', s.id, { role: staffRole });
     return { s, token };

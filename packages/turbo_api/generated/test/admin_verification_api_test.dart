@@ -9,7 +9,7 @@ void main() {
   group(AdminVerificationApi, () {
     // Claim a submission for review
     //
-    // **Access:** admin:verifier.  15-minute lock so two reviewers do not decide the same submission. 409 `verification_claimed` if someone else holds it. Deciding releases it.
+    // **Access:** admin:verifier.  15-minute lock so two reviewers do not decide the same submission. 409 `verification_claimed` if someone else holds it. Deciding releases it. 409 `verification_not_pending`: the submission is no longer pending. 409 `verification_claimed`: another reviewer holds it.
     //
     //Future<VerificationSummary> claimVerification(String id) async
     test('test claimVerification', () async {
@@ -18,7 +18,7 @@ void main() {
 
     // Approve, reject or request resubmission
     //
-    // **Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record. 409 `verification_claimed`: another reviewer holds this submission. Other 409s use the generic `conflict`.
+    // **Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record. 409 `verification_not_pending`: the submission is no longer pending. 409 `verification_claimed`: another reviewer holds it.
     //
     //Future<VerificationDetail> decideVerification(String id, VerificationDecision verificationDecision) async
     test('test decideVerification', () async {

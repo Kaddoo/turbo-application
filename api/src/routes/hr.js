@@ -33,7 +33,7 @@ const vehicleWrite = async (req, res, id) => {
     if (!v) throw notFound('Vehicle');
     await q(`INSERT INTO audit_log (actor_type,actor_id,action,target) VALUES ('staff',$1,$2,$3)`, [req.user.id, id ? 'vehicle.update' : 'vehicle.create', v.id]);
     res.status(id ? 200 : 201).json(vehicleView(v));
-  } catch (e) { if (e.code === '23505') throw conflict('conflict', 'A vehicle with that plate number already exists'); throw e; }
+  } catch (e) { if (e.code === '23505') throw conflict('duplicate_plate', 'A vehicle with that plate number already exists'); throw e; }
 };
 hr.post('/admin/vehicles', ...H, (req, res) => vehicleWrite(req, res, null));
 hr.patch('/admin/vehicles/:id', ...H, (req, res) => { need(req.params.id, 'Vehicle'); return vehicleWrite(req, res, req.params.id); });
@@ -60,7 +60,7 @@ async function assignVehicle(c, driverId, vehicleId) {
   if (!v) throw invalid('vehicleId', 'no such vehicle');
   if (v.status !== 'active') throw conflict('conflict', `That vehicle is ${v.status}`);
   const { rows: [other] } = await c.query('SELECT user_id FROM drivers WHERE vehicle_id=$1 AND user_id<>$2', [vehicleId, driverId]);
-  if (other) throw conflict('conflict', 'That vehicle is already assigned to another driver');
+  if (other) throw conflict('vehicle_already_assigned', 'That vehicle is already assigned to another driver');
 }
 
 hr.post('/admin/drivers', ...H, async (req, res) => idempotent(req, res, 'drivercreate', async () => {
@@ -71,10 +71,10 @@ hr.post('/admin/drivers', ...H, async (req, res) => idempotent(req, res, 'driver
     try {
       ({ rows: [u] } = await c.query(`INSERT INTO users (role,phone,full_name,first_name,last_name) VALUES ('driver',$1,$2,$3,$4) RETURNING id`,
         [p, fullName.trim(), fullName.trim().split(/\s+/)[0], fullName.trim().split(/\s+/).slice(1).join(' ') || null]));
-    } catch (e) { if (e.code === '23505') throw conflict('conflict', 'That phone number is already registered'); throw e; }
+    } catch (e) { if (e.code === '23505') throw conflict('duplicate_phone', 'That phone number is already registered'); throw e; }
     await assignVehicle(c, u.id, vehicleId);
     try { await c.query('INSERT INTO drivers (user_id,vehicle_id,email) VALUES ($1,$2,$3)', [u.id, vehicleId ?? null, email?.toLowerCase() ?? null]); }
-    catch (e) { if (e.code === '23505') throw conflict('conflict', 'That vehicle is already assigned to another driver'); throw e; }
+    catch (e) { if (e.code === '23505') throw conflict('vehicle_already_assigned', 'That vehicle is already assigned to another driver'); throw e; }
     await audit(c, req, 'driver.create', u.id);
     return u.id;
   });
@@ -94,7 +94,7 @@ hr.patch('/admin/drivers/:id', ...H, async (req, res) => {
     }
     if (vehicleId !== undefined) {
       try { await c.query('UPDATE drivers SET vehicle_id=$2 WHERE user_id=$1', [req.params.id, vehicleId]); }
-      catch (e) { if (e.code === '23505') throw conflict('conflict', 'That vehicle is already assigned to another driver'); throw e; }
+      catch (e) { if (e.code === '23505') throw conflict('vehicle_already_assigned', 'That vehicle is already assigned to another driver'); throw e; }
     }
     await audit(c, req, 'driver.update', req.params.id, { fullName, status, vehicleId });
   });

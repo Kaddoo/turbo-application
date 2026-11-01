@@ -22,7 +22,7 @@ Method | HTTP request | Description
 
 Invite a staff user
 
-**Access:** admin:super_admin.
+**Access:** admin:super_admin. 409 `duplicate_email`: that email already has an account.
 
 ### Example
 ```dart

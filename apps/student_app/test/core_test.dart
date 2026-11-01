@@ -147,6 +147,12 @@ void main() {
       expect(problemMessage(l10n, p('rate_limited', status: 429, retry: const Duration(seconds: 30))), contains('30 s'));
     });
 
+    test('a busy server says so, with the wait when the server gives one', () {
+      expect(problemMessage(l10n, p('service_busy', status: 503)), l10n.problemServiceBusy);
+      expect(problemMessage(l10n, p('service_busy', status: 503, retry: const Duration(seconds: 2))), contains('2 seconds'));
+      expect(problemMessage(l10n, p('service_busy', status: 503)), isNot(l10n.problemGeneric));
+    });
+
     test('unknown codes and no connection read plainly', () {
       expect(problemMessage(l10n, p('something_new')), l10n.problemGeneric);
       expect(problemMessage(l10n, p(ApiProblem.network)), l10n.problemNetwork);

@@ -84,7 +84,7 @@ support.post('/support/tickets/:id/messages', ...UA, async (req, res) => {
   const t0 = await mine(req.params.id, req.user.id);
   const m = await tx(async (c) => {
     const { rows: [t] } = await c.query('SELECT status FROM support_tickets WHERE id=$1 FOR UPDATE', [t0.id]);
-    if (t.status === 'closed') throw new ApiError(409, 'conflict', 'This ticket is closed; open a new one');
+    if (t.status === 'closed') throw new ApiError(409, 'ticket_state_invalid', 'This ticket is closed; open a new one');
     const ups = await claimUploads(c, uploadIds, req.user.id);
     const { rows: [m] } = await c.query(`INSERT INTO support_messages (ticket_id,author,author_id,body,upload_ids) VALUES ($1,'user',$2,$3,$4) RETURNING *`, [t0.id, req.user.id, body.trim(), ups]);
     // A reply from the user puts the ball back in staff's court.

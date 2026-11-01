@@ -90,7 +90,7 @@ void main() {
 
     // Close a flagged top-up
     //
-    // **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
+    // **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`. 409 `topup_not_resolvable`: the top-up is not flagged, or was already resolved.
     //
     //Future<Topup> resolveTopup(String idempotencyKey, String id, TopupResolve topupResolve) async
     test('test resolveTopup', () async {
