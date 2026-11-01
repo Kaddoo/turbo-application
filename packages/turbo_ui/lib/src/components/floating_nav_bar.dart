@@ -63,7 +63,7 @@ class FloatingNavBar extends StatelessWidget {
                               width: TurboSizes.primaryAction,
                               height: TurboSizes.minTap,
                               decoration: BoxDecoration(
-                                color: i == selectedIndex ? t.colors.textPrimary : Colors.transparent,
+                                color: i == selectedIndex ? t.colors.textPrimary : t.colors.surface,
                                 borderRadius: BorderRadius.circular(t.radiusInput),
                               ),
                               child: Icon(

@@ -99,12 +99,29 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.turbo;
     return Column(
       children: [
         Expanded(child: Padding(padding: const EdgeInsets.all(TurboSpacing.lg), child: map)),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(TurboSpacing.lg, 0, TurboSpacing.lg, TurboSpacing.lg),
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: children),
+        // The information sits in a rounded sheet under the map; it scrolls when
+        // large text makes it taller than the screen allows.
+        Flexible(
+          flex: 3,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: t.colors.surface,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(t.radiusCard)),
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(TurboSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -316,15 +333,25 @@ class _DriverRow extends StatelessWidget {
           ),
         ),
         if (v != null)
-          Semantics(
-            label: '${l10n.ridePlate} ${v.plateNumber.split('').join(' ')}',
-            excludeSemantics: true,
-            child: Column(
+          Flexible(
+            child: Semantics(
+              label: '${l10n.ridePlate} ${v.plateNumber.split('').join(' ')}',
+              excludeSemantics: true,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(l10n.ridePlate, style: text.bodySmall),
-                Text(v.plateNumber, style: text.titleLarge),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.md, vertical: TurboSpacing.xs),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: t.colors.controlBorder),
+                    borderRadius: BorderRadius.circular(t.radiusInput),
+                  ),
+                  // Shrinks rather than overflows when text is scaled up a lot.
+                  child: FittedBox(fit: BoxFit.scaleDown, child: Text(v.plateNumber, style: text.titleLarge)),
+                ),
               ],
+            ),
             ),
           ),
       ],
@@ -362,11 +389,29 @@ class _Assigned extends ConsumerWidget {
     return _Panel(
       map: _RideMap(ride, tracking: tracking),
       children: [
-        Semantics(
-          header: true,
-          liveRegion: true,
-          child: Text(arrived ? l10n.rideDriverArrived : l10n.rideDriverOnWay, style: text.titleLarge),
-        ),
+        if (arrived)
+          Container(
+            padding: const EdgeInsets.all(TurboSpacing.md),
+            decoration: BoxDecoration(
+              color: t.colors.success.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(t.radiusInput),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle_outline, color: t.colors.success),
+                const SizedBox(width: TurboSpacing.md),
+                Expanded(
+                  child: Semantics(
+                    header: true,
+                    liveRegion: true,
+                    child: Text(l10n.rideDriverArrived, style: text.labelLarge),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Semantics(header: true, liveRegion: true, child: Text(l10n.rideDriverOnWay, style: text.titleLarge)),
         if (!arrived && eta != null) Text(l10n.rideEtaMinutes((eta / 60).ceil()), style: text.bodyMedium),
         if (stale)
           Padding(
@@ -387,15 +432,18 @@ class _Assigned extends ConsumerWidget {
                     label: l10n.ridePinDigit(i + 1, digit),
                     excludeSemantics: true,
                     child: Container(
-                      width: TurboSizes.primaryAction,
-                      height: TurboSizes.primaryAction + TurboSpacing.md,
+                      width: TurboSizes.primaryAction + TurboSpacing.sm,
+                      height: TurboSizes.primaryAction + TurboSpacing.xl,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: t.colors.surface,
+                        color: t.colors.background,
                         border: Border.all(color: t.colors.border),
                         borderRadius: BorderRadius.circular(t.radiusInput),
                       ),
-                      child: Text(digit, style: text.headlineMedium?.copyWith(color: t.colors.accentText)),
+                      child: Text(
+                        digit,
+                        style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 1.5),
+                      ),
                     ),
                   ),
                 ),
@@ -581,9 +629,9 @@ class _DoneState extends ConsumerState<_Done> {
           child: ListView(
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
-              Icon(Icons.check_circle_outline, size: TurboSizes.iconLg + TurboSpacing.xl, color: t.colors.success),
+              const Center(child: BadgeIcon(icon: Icons.check)),
               const SizedBox(height: TurboSpacing.lg),
-              Semantics(header: true, child: Text(l10n.rideDoneTitle, style: text.headlineMedium)),
+              Semantics(header: true, child: Text(l10n.rideDoneTitle, style: text.headlineMedium, textAlign: TextAlign.center)),
               const SizedBox(height: TurboSpacing.lg),
               TurboCard(
                 child: Column(
@@ -699,11 +747,11 @@ class _Cancelled extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
-              Icon(Icons.cancel_outlined, size: TurboSizes.iconLg + TurboSpacing.xl, color: t.colors.textSecondary),
+              const Center(child: BadgeIcon(icon: Icons.close)),
               const SizedBox(height: TurboSpacing.lg),
-              Semantics(header: true, liveRegion: true, child: Text(title, style: text.headlineMedium)),
+              Semantics(header: true, liveRegion: true, child: Text(title, style: text.headlineMedium, textAlign: TextAlign.center)),
               const SizedBox(height: TurboSpacing.md),
-              Text(body, style: text.bodyLarge),
+              Text(body, style: text.bodyLarge, textAlign: TextAlign.center),
               const SizedBox(height: TurboSpacing.lg),
               TurboCard(
                 child: Row(

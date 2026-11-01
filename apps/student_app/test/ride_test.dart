@@ -140,6 +140,20 @@ void main() {
       expect(find.text('About 5 min away'), findsOneWidget);
     });
 
+    testWidgets('driver assigned lays out in dark mode and at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = rideServer(status: 'assigned')
+        ..on('GET /rides/$rideId', body: ride('assigned', pin: '4827', driver: true));
+      await open(tester, server);
+      server.on('GET /rides', body: rideList([ride('assigned', pin: '4827', driver: true)]));
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(find.text('Your start PIN'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('quick messages are sent, and a message from the driver is shown', (tester) async {
       final server = rideServer(status: 'assigned')
         ..on('GET /rides/$rideId', body: ride('assigned', pin: '4827', driver: true))
