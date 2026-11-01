@@ -11,6 +11,8 @@ import * as storage from './lib/storage.js';
 import { purgeDocuments } from './domain/retention.js';
 import { provider } from './lib/payments.js';
 import { applyOutcome, receivedPesewas } from './domain/topups.js';
+import { announceAlerts } from './lib/alerts.js';
+import { alertStuckSearching, alertUnackedSos, alertWalletDrift, alertWorkerError } from './domain/alert_jobs.js';
 
 async function assign(cfg) {
   const rides = (await q(`SELECT id FROM rides WHERE status='searching' ORDER BY requested_at LIMIT 50`)).rows;
@@ -133,6 +135,7 @@ async function housekeeping() {
   await q(`DELETE FROM notifications WHERE created_at < now() - interval '14 days'`);
   await q(`DELETE FROM devices WHERE failures >= 5`);
   await reconcileTopups();
+  await alertWalletDrift();
   await purgeDocuments((await getSettings()).documentRetentionDays);
   // Unused upload slots and abandoned PUTs older than a day
   for (const u of (await q(`SELECT id,storage_key FROM uploads WHERE used_at IS NULL AND status<>'purged' AND created_at < now() - interval '1 day' AND purpose NOT IN ('driver_document','vehicle_document','provider_statement') LIMIT 200`)).rows) {
@@ -144,15 +147,25 @@ async function housekeeping() {
   await q(`UPDATE topups SET status='abandoned', completed_at=now() WHERE status='pending' AND created_at < now() - interval '1 hour'`);
 }
 
-let busy = false, last = 0, beat = 0;
+// Runs one job. A failure is logged and alerted (high, once an hour per job), and the other jobs still run.
+async function guarded(name, fn) {
+  try { await fn(); } catch (e) { log.error({ err: e.message, job: name }, 'worker job failed'); alertWorkerError(name, e).catch(() => {}); }
+}
+
+let busy = false, last = 0, beat = 0, lastAlertCheck = 0;
 async function tick() {
   if (busy) return; busy = true;
   try {
     if (Date.now() - beat > 10_000) { beat = Date.now(); await q('UPDATE worker_heartbeat SET beat_at=now(), pid=$1 WHERE id=1', [process.pid]); }
     const cfg = await getSettings();
-    await assign(cfg); await ackTimeouts(); await stuckRides(cfg);
-    if (Date.now() - last > 600_000) { last = Date.now(); await housekeeping(); }
-  } catch (e) { log.error({ err: e.message }, 'worker tick failed'); }
+    await guarded('assign', () => assign(cfg)); await guarded('ackTimeouts', ackTimeouts); await guarded('stuckRides', () => stuckRides(cfg));
+    // Alert checks once a minute: a ride with no driver for 3 minutes, an SOS nobody has acknowledged for 2.
+    if (Date.now() - lastAlertCheck > 60_000) {
+      lastAlertCheck = Date.now();
+      await guarded('alertStuckSearching', () => alertStuckSearching()); await guarded('alertUnackedSos', () => alertUnackedSos());
+    }
+    if (Date.now() - last > 600_000) { last = Date.now(); await guarded('housekeeping', housekeeping); }
+  } catch (e) { log.error({ err: e.message }, 'worker tick failed'); alertWorkerError('tick', e).catch(() => {}); }
   finally { busy = false; }
 }
 
@@ -160,11 +173,12 @@ async function tick() {
 let pushBusy = false;
 async function pushTick() {
   if (pushBusy) return; pushBusy = true;
-  try { await sendPushes(); } catch (e) { log.error({ err: e.message }, 'push tick failed'); }
+  try { await sendPushes(); } catch (e) { log.error({ err: e.message }, 'push tick failed'); alertWorkerError('sendPushes', e).catch(() => {}); }
   finally { pushBusy = false; }
 }
 
 log.info({ push: config.pushProvider }, 'worker started');
+announceAlerts(log);
 const t = setInterval(tick, 2000), pt = setInterval(pushTick, 1000);
 const stop = async () => { clearInterval(t); clearInterval(pt); for (let i = 0; (busy || pushBusy) && i < 100; i++) await new Promise((r) => setTimeout(r, 100)); await pool.end(); process.exit(0); };
 process.on('SIGTERM', stop); process.on('SIGINT', stop);
