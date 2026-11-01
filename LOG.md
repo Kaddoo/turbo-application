@@ -2,6 +2,29 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: Maps keys (branch `maps-wiring`)
+
+**Task:** Get real Google Maps working: Routes quota, server key on staging, app keys.
+
+**Files touched:** `apps/{student,driver}_app/android/` (`.gitignore`, `app/build.gradle.kts`, `AndroidManifest.xml`, new `secrets.properties.example`).
+
+**What changed:**
+- Routes daily cap set to 1,500 (quota preference `turbo-routes-daily-cap`; Cloud Quotas API enabled on `turbo-dev-5f54ed`).
+- `GOOGLE_MAPS_KEY` added to `/etc/turbo/api.env` on staging (backup `api.env.bak-maps-<timestamp>`); services restarted, `/health` ok, a Routes call with the key returned 200.
+- iOS key was already read from `ios/Flutter/Secrets.xcconfig` and now carries the bundle-id restriction.
+- Android apps read `MAPS_API_KEY` from git-ignored `android/secrets.properties` or the environment into the manifest.
+
+**Acceptance:** `flutter analyze` and `flutter test` pass in both apps (student 130, driver 61). The driver Navigate hand-off (Google Maps or Waze) and pickup-point selection were already built.
+
+**Not done:**
+- Android build not run (parked; Kevin is on iOS). Key not yet in `secrets.properties`.
+- A ride quote end to end on staging was not tested, so real distance in quotes is unconfirmed.
+- No-key fallback: without a key the iOS map shows blank, with no on-screen message.
+- Dark map style (needs the style JSON).
+- Place search not built (campus pickup points only).
+
+**Next step:** Rebuild iOS with the key and check the map on a phone; then the items above.
+
 ## 2026-11-01, Kevin with Claude, code: issue 1 contract work, staging hardening, build 4
 
 **Done and merged to `main` (pushed, last merge `fc288f5`):** both redesigned apps; monitoring and alerts (inlet) and log shipping (LogPulse); one contract (`api/contract/openapi.yaml`, now 0.3.2) with a guard and CI; 426/503/403 docs (0.2.3); Idempotency-Key on OTP request, top-up resolve, reconciliation, add driver (0.2.4); specific problem codes, `service_busy`, `link_expired`/`link_invalid` (0.3.0); reduced student and ride views for support and finance, approval threshold on `/admin/me` (0.3.1); self-approval 403, plates compared ignoring case, spaces and hyphens (0.3.2, migration 015); hardened `turbo_rt` cookie (Secure from `COOKIE_SECURE`, Path `/v1/auth`); the `dashboard-ui-match` pull request, merged with item 17, idempotency keys and contract paths ported onto its new structure.
