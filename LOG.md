@@ -2,6 +2,26 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: admin dashboard foundation restructure
+
+**Task:** Phase 2 of the approved foundation plan: folders, service layer, routing from one table, HTTP timeouts and error codes, ESLint and Prettier, README. No new product features; nothing in `api/` touched.
+
+**Files touched:** apps/admin_dashboard only. Moved: `api/client.ts` to `services/http.ts`, `api/schema.d.ts` to `types/`, `lib/*` and `auth/roles.ts` to `utils/` and `hooks/`, `auth/session.tsx` to `state/`. Split: `components/ui.tsx` into one file per component; the 9 multi-screen page files into `features/<area>/` (screens plus `queries.ts`) and 30 one-line route files in `pages/`. New: 25 `services/<resource>.ts`, `hooks/sharedQueries.ts`, `app/routes.tsx`, `types/index.ts`, `eslint.config.js`, `.prettierrc.json`, `.prettierignore`. README and `.env.example` updated.
+
+**What changed:** Screens call feature hooks, hooks call services, only `services/http.ts` talks HTTP (ESLint enforces the layers). Query keys are unchanged, so refreshes after a change behave as before. New in the HTTP layer: a 15 s timeout (2 min for uploads), and `network`, `timeout` and `unexpected` codes so every failure is an `ApiError`; requests with no response are retried by React Query as before. Routes and the left rail come from one table; pages behind sign-in load on first visit (main bundle 666 KB to 363 KB).
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: schema, typecheck, lint, format, 184 tests (style test now scans each component file)
+- [x] Smoke test signs in on the demo server and renders all 25 routes, and now proves each lazy page really rendered
+- [x] Production build excludes the demo server; demo build works; running dev server serves the new modules
+- [x] New tests for network, timeout and non-problem errors
+
+**Deviations from plan or contract:** The geist font import stays a `node_modules` path: the package does not export its font files, so the planned package import fails (ESLint exempts that one file). Sign-in, forgot, reset and invite screens call the `auth` service directly instead of React Query hooks: they are one-off form submits with local busy state. Announcements got its own feature folder (not in the plan list). Live checks: staging now refuses password-only sign-in (403 `mfa_enrollment_required`, confirmed with a plain request), so the 9 signed-in live checks fail until a staff account with MFA is set up; the 5 that need no sign-in pass.
+
+**Status:** done, awaiting review. Branch: dashboard-foundation (cut from api-tracker).
+
+**Next step:** Kevin merges api-tracker, then dashboard-foundation. To run the live checks again, staging needs an MFA-enrolled test account (the suite would then need a TOTP code).
+
 ## 2026-11-01, Claude, code: live checks of critical dashboard endpoints
 
 **Task:** Test the critical dashboard endpoints against `api.turbogh.app` and mark them Tested; prepare inconsistencies 5 to 11 and 17 for the backend.
