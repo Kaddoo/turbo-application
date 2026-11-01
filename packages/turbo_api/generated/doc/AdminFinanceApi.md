@@ -74,7 +74,7 @@ Name | Type | Description  | Notes
 
 Approve an adjustment request
 
-**Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`). Approval writes the ledger entry in one transaction and is idempotent.
+**Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
 
 ### Example
 ```dart
@@ -407,7 +407,7 @@ Name | Type | Description  | Notes
 
 Reject an adjustment request
 
-**Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`). Approval writes the ledger entry in one transaction and is idempotent.
+**Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
 
 ### Example
 ```dart

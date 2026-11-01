@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.3.1
+  version: 0.3.2
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -2675,7 +2675,7 @@ paths:
       summary: Add a vehicle
       description: '**Access:** admin:hr.
 
-        409 `duplicate_plate`: a vehicle with that plate number already exists.'
+        Plates are compared after uppercasing and removing every character that is not a letter or digit, so `GR-4821-24`, `gr 4821 24` and `GR482124` are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 `duplicate_plate`; its `detail` says whether the match is active, in maintenance or retired.'
       requestBody:
         required: true
         content:
@@ -2712,7 +2712,9 @@ paths:
       - 'Admin: Drivers'
       operationId: updateVehicle
       summary: Edit a vehicle
-      description: '**Access:** admin:hr.'
+      description: '**Access:** admin:hr.
+
+        Plates are compared after uppercasing and removing every character that is not a letter or digit, so `GR-4821-24`, `gr 4821 24` and `GR482124` are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 `duplicate_plate`; its `detail` says whether the match is active, in maintenance or retired.'
       parameters:
       - name: id
         in: path
@@ -2746,6 +2748,8 @@ paths:
           $ref: '#/components/responses/UpgradeRequired'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        '409':
+          $ref: '#/components/responses/Conflict'
       x-roles:
       - admin:hr
       x-release: v1
@@ -3547,7 +3551,9 @@ paths:
       - 'Admin: Support'
       operationId: updateSupportTicket
       summary: Change status or assignee
-      description: '**Access:** admin:support.'
+      description: '**Access:** admin:support.
+
+        409 `ticket_state_invalid`: the ticket is in a state that does not allow this change.'
       parameters:
       - name: id
         in: path
@@ -3581,6 +3587,8 @@ paths:
           $ref: '#/components/responses/UpgradeRequired'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        '409':
+          $ref: '#/components/responses/Conflict'
       x-roles:
       - admin:support
       x-release: v1
@@ -4690,7 +4698,7 @@ paths:
       - 'Admin: Finance'
       operationId: approveAdjustment
       summary: Approve an adjustment request
-      description: '**Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`).
+      description: '**Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide).
         Approval writes the ledger entry in one transaction and is idempotent.'
       parameters:
       - *id001
@@ -4733,7 +4741,7 @@ paths:
       - 'Admin: Finance'
       operationId: rejectAdjustment
       summary: Reject an adjustment request
-      description: '**Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`).
+      description: '**Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide).
         Approval writes the ledger entry in one transaction and is idempotent.'
       parameters:
       - *id001

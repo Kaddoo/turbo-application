@@ -1298,7 +1298,7 @@ export interface paths {
         /**
          * Add a vehicle
          * @description **Access:** admin:hr.
-         *     409 `duplicate_plate`: a vehicle with that plate number already exists.
+         *     Plates are compared after uppercasing and removing every character that is not a letter or digit, so `GR-4821-24`, `gr 4821 24` and `GR482124` are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 `duplicate_plate`; its `detail` says whether the match is active, in maintenance or retired.
          */
         post: operations["createVehicle"];
         delete?: never;
@@ -1323,6 +1323,7 @@ export interface paths {
         /**
          * Edit a vehicle
          * @description **Access:** admin:hr.
+         *     Plates are compared after uppercasing and removing every character that is not a letter or digit, so `GR-4821-24`, `gr 4821 24` and `GR482124` are one plate. A retired vehicle still counts: the plate belongs to a physical vehicle, so reactivate that vehicle instead of adding it again. 409 `duplicate_plate`; its `detail` says whether the match is active, in maintenance or retired.
          */
         patch: operations["updateVehicle"];
         trace?: never;
@@ -1686,6 +1687,7 @@ export interface paths {
         /**
          * Change status or assignee
          * @description **Access:** admin:support.
+         *     409 `ticket_state_invalid`: the ticket is in a state that does not allow this change.
          */
         patch: operations["updateSupportTicket"];
         trace?: never;
@@ -2211,7 +2213,7 @@ export interface paths {
         put?: never;
         /**
          * Approve an adjustment request
-         * @description **Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`). Approval writes the ledger entry in one transaction and is idempotent.
+         * @description **Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
          */
         post: operations["approveAdjustment"];
         delete?: never;
@@ -2231,7 +2233,7 @@ export interface paths {
         put?: never;
         /**
          * Reject an adjustment request
-         * @description **Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`). Approval writes the ledger entry in one transaction and is idempotent.
+         * @description **Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
          */
         post: operations["rejectAdjustment"];
         delete?: never;
@@ -6031,6 +6033,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
@@ -6662,6 +6665,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];

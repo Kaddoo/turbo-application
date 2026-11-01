@@ -135,7 +135,7 @@ _responseData = rawData == null ? null : deserialize<WalletTransaction, WalletTr
   }
 
   /// Approve an adjustment request
-  /// **Access:** admin:finance. The requester cannot decide their own request (409 &#x60;approval_by_requester_forbidden&#x60;). Approval writes the ledger entry in one transaction and is idempotent.
+  /// **Access:** admin:finance. The requester cannot decide their own request: 403 &#x60;approval_by_requester_forbidden&#x60; (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
   ///
   /// Parameters:
   /// * [id] 
@@ -784,7 +784,7 @@ _responseData = rawData == null ? null : deserialize<WalletTransaction, WalletTr
   }
 
   /// Reject an adjustment request
-  /// **Access:** admin:finance. The requester cannot decide their own request (409 &#x60;approval_by_requester_forbidden&#x60;). Approval writes the ledger entry in one transaction and is idempotent.
+  /// **Access:** admin:finance. The requester cannot decide their own request: 403 &#x60;approval_by_requester_forbidden&#x60; (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
   ///
   /// Parameters:
   /// * [id] 

@@ -18,7 +18,7 @@ void main() {
 
     // Approve an adjustment request
     //
-    // **Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`). Approval writes the ledger entry in one transaction and is idempotent.
+    // **Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
     //
     //Future<AdjustmentRequest> approveAdjustment(String id, String idempotencyKey, AdjustmentDecision adjustmentDecision) async
     test('test approveAdjustment', () async {
@@ -81,7 +81,7 @@ void main() {
 
     // Reject an adjustment request
     //
-    // **Access:** admin:finance. The requester cannot decide their own request (409 `approval_by_requester_forbidden`). Approval writes the ledger entry in one transaction and is idempotent.
+    // **Access:** admin:finance. The requester cannot decide their own request: 403 `approval_by_requester_forbidden` (a different finance user must decide). Approval writes the ledger entry in one transaction and is idempotent.
     //
     //Future<AdjustmentRequest> rejectAdjustment(String id, String idempotencyKey, AdjustmentDecision adjustmentDecision) async
     test('test rejectAdjustment', () async {

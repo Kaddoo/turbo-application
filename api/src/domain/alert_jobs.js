@@ -19,7 +19,7 @@ export const _forget = () => sent.clear();
 
 /** A ride searching for longer than `minutes` (default 3) has no driver. Critical: a student is waiting. */
 export async function alertStuckSearching({ query = q, send = alert, minutes = 3 } = {}) {
-  const { rows } = await query(`SELECT id FROM rides WHERE status='searching' AND requested_at < now() - make_interval(mins => $1) ORDER BY requested_at LIMIT 50`, [minutes]);
+  const { rows } = await query(`SELECT id FROM rides WHERE status='searching' AND requested_at < now() - make_interval(mins => $1) AND coalesce(pickup_label,'') NOT LIKE 'TEST %' ORDER BY requested_at LIMIT 50`, [minutes]);
   let n = 0;
   for (const { id } of rows) {
     if (!once(`ride-stuck-${id}`)) continue;
