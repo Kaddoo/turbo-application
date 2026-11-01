@@ -2,6 +2,26 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: dashboard sign-in, sessions and role access
+
+**Task:** Kevin's auth brief: login and logout, token storage, refresh with many failing calls, session persistence, expired-session handling, protected routes, role and permission based UI, blocking direct URLs, password reset, profile. Plan approved; built on `dashboard-ui-match` as asked.
+
+**Files touched:** apps/admin_dashboard: `services/http.ts` (refresh on its own typed client, cross-tab refresh lock, replay of a request with its body after a refresh, session-expired signal); `state/session.tsx` (localStorage marker, expiry, sign-in and sign-out shared between tabs, query cache cleared on sign-out); `hooks/useIdleTimer.ts` (activity shared between tabs); new `hooks/usePermissions.ts`, `utils/permissions.ts` (action → role from x-roles), `utils/returnPath.ts`; `utils/roles.ts` (area reads and labels); `app/App.tsx` (return to the page asked for); `app/Layout.tsx` (access-denied screen); `features/auth/SignIn.tsx` (notices, link token removed from the address bar), `Account.tsx`; `features/students`, `rides`, `finance/Adjustments` (action checks); `components/Icon.tsx` (lock); `eslint.config.js` (no-console); `index.html` (referrer policy); tests `test/auth.test.ts`, `test/auth-routes.test.tsx`, `test/contract-roles.test.ts`, `test/live/roles.live.ts`. Repo: `tool/api-tracker.cjs` (follows the new services → hooks → pages layout), `docs/api-tracker.md`.
+
+**What changed:** Access token in memory, refresh token in the API's httpOnly cookie, nothing secret in browser storage. Calls that fail together share one refresh, and tabs take turns (Web Locks) because refresh tokens rotate. A POST is replayed with the same body and idempotency key. A refused refresh signs the tab out, clears cached data and sends the user to sign-in with the page kept (`?next=`, same-app paths only) and "Your session ended. Sign in again to carry on." Signing out in one tab signs out all; signing in picks up in others. Typing a URL the role cannot use shows "You don't have access to …" and the page's data is never requested. Actions are checked against a table built from the contract's x-roles; a test fails if the table drifts from `api/openapi.yaml`. Reset and invite tokens are taken out of the address bar as soon as they are read.
+
+**Acceptance criteria:**
+- [x] `npm run check` passes: 306 tests
+- [x] One refresh for three failing calls; POST replayed with body and key; refused refresh ends the session once; network failure does not
+- [x] Signed-out direct URL goes to sign-in and back after it; verifier at `/staff` sees the access screen and `GET /admin/staff` is never called
+- [x] Tokens never in errors (test), no console output (lint rule)
+
+**Deviations from plan or contract:** Profile edit is read-only: no `PATCH /admin/me` (A31). Not tested against staging: no MFA-enrolled account, so `/auth/refresh` is Integrated Y, Tested N.
+
+**Status:** done, awaiting review. Branch: dashboard-ui-match. A31 on admin-contract-requests.
+
+**Next step:** Backend: one MFA-enrolled staging account per role (and its setup key) so `test/live/roles.live.ts` can prove each role is refused; confirm cookie flags, Origin check and logout clearing the cookie (tracker inconsistencies 21 to 24).
+
 ## 2026-11-01, Claude, code: dashboard matched to the inspiration, live map on phones
 
 **Task:** Kevin: "the ui is not what i asked for look at the inspo i gave, i want the same design but turbo colors and data so fix it", then "this live map on mobile view is not ok fix the design".
