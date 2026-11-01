@@ -28,7 +28,7 @@ async function getClient() {
 }
 
 // Keys that must never leave the server inside an alert, whatever a caller passes by mistake.
-const FORBIDDEN_KEY = /token|otp|code|secret|password|authorization|phone|url|lat|lng|coord|location|email|name/i;
+export const FORBIDDEN_KEY = /token|otp|code|secret|password|authorization|phone|url|lat|lng|coord|location|email|name/i;
 function scrub(payload) {
   const out = {};
   for (const [k, v] of Object.entries(payload || {})) {
