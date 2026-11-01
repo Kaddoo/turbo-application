@@ -10,6 +10,17 @@ import 'support/home_harness.dart';
 
 void main() {
   group('home', () {
+    testWidgets('lays out in dark mode and at 200% text without overflow', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await bootHome(tester, homeServer());
+      expect(find.text('Where to?'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      final theme = Theme.of(tester.element(find.text('Where to?')));
+      expect(theme.brightness, Brightness.dark);
+    });
+
     testWidgets('shows the map with pickup points, the Where to bar, saved places and the wallet', (tester) async {
       final specs = await bootHome(tester, homeServer());
       expect(find.byKey(const Key('map')), findsOneWidget);
