@@ -86,7 +86,7 @@ class ProfileScreen extends ConsumerWidget {
             Text(l10n.profileChangePhone, style: text.bodySmall),
             const SizedBox(height: TurboSpacing.lg),
             TurboCard(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
               child: Column(
                 children: [
                   TurboListRow(
@@ -181,7 +181,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.xl),
             TurboCard(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
               child: Column(
                 children: [
                   if (legal != null) ...[

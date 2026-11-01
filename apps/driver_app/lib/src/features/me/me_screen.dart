@@ -58,7 +58,7 @@ class MeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.lg),
             TurboCard(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
               child: Column(
                 children: [
                   if (v != null) ...[
@@ -120,7 +120,7 @@ class MeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.xl),
             TurboCard(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
               child: Column(
                 children: [
                   if (legal != null) ...[

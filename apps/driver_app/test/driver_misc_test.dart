@@ -19,6 +19,9 @@ FakeServer base() => driverServer()
 
 Future<void> openMe(WidgetTester tester, FakeServer server) async {
   await bootDriver(tester, server);
+  // A tall phone, so every row of Me sits above the floating bar.
+  tester.view.physicalSize = const Size(390, 1800);
+  addTearDown(tester.view.reset);
   await settle(tester);
   await tester.tap(find.bySemanticsLabel('Me'));
   await settle(tester);
