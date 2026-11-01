@@ -71,7 +71,9 @@ class _DriverRideScreenState extends ConsumerState<DriverRideScreen> {
     // A new assignment: sound and a buzz, once.
     ref.listen(currentRideProvider, (prev, next) {
       final fresh = next.value;
-      if (fresh != null && prev?.value?.id != fresh.id && fresh.acknowledgedAt == null) {
+      if (fresh != null &&
+          prev?.value?.id != fresh.id &&
+          fresh.acknowledgedAt == null) {
         TurboHaptics.warning();
         SystemSound.play(SystemSoundType.alert);
       }
@@ -80,7 +82,10 @@ class _DriverRideScreenState extends ConsumerState<DriverRideScreen> {
     if (ride != null) {
       _last = ride;
       _outcome = null;
-    } else if (_last != null && _outcome == null && !_resolving && asyncRide.hasValue) {
+    } else if (_last != null &&
+        _outcome == null &&
+        !_resolving &&
+        asyncRide.hasValue) {
       final id = _last!.id;
       WidgetsBinding.instance.addPostFrameCallback((_) => _resolve(id));
     } else if (_last == null && asyncRide.hasValue) {
@@ -91,10 +96,20 @@ class _DriverRideScreenState extends ConsumerState<DriverRideScreen> {
 
     final Widget body;
     if (_outcome != null) {
-      body = _End(outcome: _outcome!, ride: _endRide ?? _last!, onDone: _finish);
+      body = _End(
+        outcome: _outcome!,
+        ride: _endRide ?? _last!,
+        onDone: _finish,
+      );
     } else if (ride == null) {
-      body = asyncRide.hasError ? ErrorState(message: l10n.rideLoadFailed, onRetry: () => ref.invalidate(currentRideProvider)) : const LoadingState();
-    } else if (ride.status == RideStatus.assigned && ride.acknowledgedAt == null) {
+      body = asyncRide.hasError
+          ? ErrorState(
+              message: l10n.rideLoadFailed,
+              onRetry: () => ref.invalidate(currentRideProvider),
+            )
+          : const LoadingState();
+    } else if (ride.status == RideStatus.assigned &&
+        ride.acknowledgedAt == null) {
       body = _Offer(ride: ride);
     } else if (ride.status == RideStatus.assigned) {
       body = _ToPickup(ride: ride);
@@ -104,7 +119,10 @@ class _DriverRideScreenState extends ConsumerState<DriverRideScreen> {
       body = _Trip(ride: ride);
     }
 
-    return PopScope(canPop: false, child: Scaffold(body: SafeArea(child: body)));
+    return PopScope(
+      canPop: false,
+      child: Scaffold(body: SafeArea(child: body)),
+    );
   }
 }
 
@@ -116,16 +134,27 @@ Future<void> _openNavigation(BuildContext context, GeoPoint to) async {
     builder: (sheet) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TurboButton(label: l10n.navigateGoogle, large: true, onPressed: () => Navigator.of(sheet).pop('google')),
+        TurboButton(
+          label: l10n.navigateGoogle,
+          large: true,
+          onPressed: () => Navigator.of(sheet).pop('google'),
+        ),
         const SizedBox(height: TurboSpacing.md),
-        TurboButton(label: l10n.navigateWaze, large: true, variant: TurboButtonVariant.secondary, onPressed: () => Navigator.of(sheet).pop('waze')),
+        TurboButton(
+          label: l10n.navigateWaze,
+          large: true,
+          variant: TurboButtonVariant.secondary,
+          onPressed: () => Navigator.of(sheet).pop('waze'),
+        ),
       ],
     ),
   );
   if (choice == null) return;
   final uri = choice == 'waze'
       ? Uri.parse('https://waze.com/ul?ll=${to.lat},${to.lng}&navigate=yes')
-      : Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}&travelmode=driving');
+      : Uri.parse(
+          'https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}&travelmode=driving',
+        );
   final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) showTurboToast(context, l10n.navigateFailed);
 }
@@ -172,7 +201,13 @@ class _OfferState extends ConsumerState<_Offer> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Semantics(header: true, child: Text(l10n.declineTitle, style: Theme.of(sheet).textTheme.titleLarge)),
+          Semantics(
+            header: true,
+            child: Text(
+              l10n.declineTitle,
+              style: Theme.of(sheet).textTheme.titleLarge,
+            ),
+          ),
           const SizedBox(height: TurboSpacing.md),
           for (final (code, label) in [
             (DeclineRequestReasonCodeEnum.vehicleIssue, l10n.declineVehicle),
@@ -182,7 +217,11 @@ class _OfferState extends ConsumerState<_Offer> {
           ])
             Padding(
               padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
-              child: TurboButton(label: label, variant: TurboButtonVariant.secondary, onPressed: () => Navigator.of(sheet).pop(code)),
+              child: TurboButton(
+                label: label,
+                variant: TurboButtonVariant.secondary,
+                onPressed: () => Navigator.of(sheet).pop(code),
+              ),
             ),
         ],
       ),
@@ -201,60 +240,136 @@ class _OfferState extends ConsumerState<_Offer> {
     final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final r = widget.ride;
-    final left = (ackWindow - clock.now().difference(r.assignedAt)).inSeconds.clamp(0, ackWindow.inSeconds);
+    final left = (ackWindow - clock.now().difference(r.assignedAt)).inSeconds
+        .clamp(0, ackWindow.inSeconds);
     final km = ((r.pickupDistanceMeters ?? 0) / 1000).toStringAsFixed(1);
     final minutes = ((r.pickupEtaSeconds ?? 0) / 60).ceil();
 
-    return Padding(
-      padding: const EdgeInsets.all(TurboSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Semantics(header: true, liveRegion: true, child: Text(l10n.assignTitle, style: text.headlineMedium)),
-          const SizedBox(height: TurboSpacing.lg),
-          Center(
-            child: Semantics(
-              label: l10n.assignSeconds(left),
-              child: SizedBox.square(
-                dimension: 140,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox.expand(
-                      child: CircularProgressIndicator(
-                        value: left / ackWindow.inSeconds,
-                        strokeWidth: 10,
-                        color: left <= 10 ? t.colors.danger : t.colors.accentText,
-                        backgroundColor: t.colors.border,
-                      ),
+    Widget line(String value, TextStyle? style) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: TurboSpacing.sm),
+      child: Text(value, style: style),
+    );
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(TurboSpacing.xl),
+            children: [
+              Center(
+                child: Semantics(
+                  label: l10n.assignSeconds(left),
+                  child: SizedBox.square(
+                    dimension: 140,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox.expand(
+                          child: CircularProgressIndicator(
+                            value: left / ackWindow.inSeconds,
+                            strokeWidth: 10,
+                            color: left <= 10
+                                ? t.colors.danger
+                                : t.colors.textPrimary,
+                            backgroundColor: t.colors.border,
+                          ),
+                        ),
+                        Text(
+                          l10n.assignSeconds(left),
+                          style: text.headlineMedium?.copyWith(
+                            fontSize: text.headlineMedium!.fontSize! * 1.5,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(l10n.assignSeconds(left), style: text.headlineMedium?.copyWith(fontSize: text.headlineMedium!.fontSize! * 1.5)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: TurboSpacing.xl),
+              Semantics(
+                header: true,
+                liveRegion: true,
+                child: Text(
+                  l10n.assignTitle,
+                  style: text.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text(
+                r.pickup.label ?? '',
+                style: text.headlineMedium?.copyWith(
+                  fontSize: text.headlineMedium!.fontSize! * 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (r.pickup.landmark != null)
+                Text(
+                  r.pickup.landmark!,
+                  style: text.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              const SizedBox(height: TurboSpacing.xl),
+              TurboCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    line(l10n.assignDistance(km, minutes), text.bodyLarge),
+                    const Divider(),
+                    line(
+                      l10n.assignTrip(
+                        (r.routeDistanceMeters / 1000).toStringAsFixed(1),
+                      ),
+                      text.bodyLarge,
+                    ),
+                    const Divider(),
+                    line(
+                      l10n.assignStudent(r.student.firstName),
+                      text.bodyLarge,
+                    ),
+                    if (r.farePesewas != null) ...[
+                      const Divider(),
+                      line(
+                        l10n.assignFare(formatPesewas(r.farePesewas!)),
+                        text.bodyLarge,
+                      ),
+                    ],
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(height: TurboSpacing.xl),
-          Text(l10n.assignPickup, style: text.bodySmall),
-          Text(r.pickup.label ?? '', style: text.titleLarge),
-          if (r.pickup.landmark != null) Text(r.pickup.landmark!, style: text.bodyMedium),
-          const SizedBox(height: TurboSpacing.sm),
-          Text(l10n.assignDistance(km, minutes), style: text.bodyLarge),
-          const SizedBox(height: TurboSpacing.md),
-          Text(l10n.assignStudent(r.student.firstName), style: text.bodyLarge),
-          Text(l10n.assignTrip((r.routeDistanceMeters / 1000).toStringAsFixed(1)), style: text.bodyMedium),
-          if (r.farePesewas != null) Text(l10n.assignFare(formatPesewas(r.farePesewas!)), style: text.bodyMedium),
-          const Spacer(),
-          if (_error != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-              child: Semantics(liveRegion: true, child: Text(_error!, style: text.bodyLarge?.copyWith(color: t.colors.danger))),
-            ),
-          TurboButton(label: l10n.assignAccept, large: true, loading: _busy, onPressed: _accept),
-          const SizedBox(height: TurboSpacing.md),
-          TurboButton(label: l10n.assignDecline, variant: TurboButtonVariant.secondary, onPressed: _busy ? null : _decline),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(TurboSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      _error!,
+                      style: text.bodyLarge?.copyWith(color: t.colors.danger),
+                    ),
+                  ),
+                ),
+              TurboButton(
+                label: l10n.assignAccept,
+                large: true,
+                loading: _busy,
+                onPressed: _accept,
+              ),
+              const SizedBox(height: TurboSpacing.md),
+              TurboButton(
+                label: l10n.assignDecline,
+                variant: TurboButtonVariant.secondary,
+                onPressed: _busy ? null : _decline,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -269,13 +384,13 @@ class _QuickMessages extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     String label(QuickMessageCode c) => switch (c) {
-          QuickMessageCode.runningLate => l10n.qmRunningLate,
-          QuickMessageCode.imHere => l10n.qmImHere,
-          QuickMessageCode.atTheGate => l10n.qmAtTheGate,
-          QuickMessageCode.cannotFindYou => l10n.qmCannotFindYou,
-          QuickMessageCode.onMyWay => l10n.qmOnMyWay,
-          QuickMessageCode.pleaseComeOut => l10n.qmPleaseComeOut,
-        };
+      QuickMessageCode.runningLate => l10n.qmRunningLate,
+      QuickMessageCode.imHere => l10n.qmImHere,
+      QuickMessageCode.atTheGate => l10n.qmAtTheGate,
+      QuickMessageCode.cannotFindYou => l10n.qmCannotFindYou,
+      QuickMessageCode.onMyWay => l10n.qmOnMyWay,
+      QuickMessageCode.pleaseComeOut => l10n.qmPleaseComeOut,
+    };
     return SizedBox(
       height: TurboSizes.primaryAction,
       child: ListView(
@@ -288,14 +403,53 @@ class _QuickMessages extends ConsumerWidget {
                 label: Text(label(c)),
                 onPressed: () async {
                   try {
-                    await ref.read(driverRideActionsProvider).message(ride.id, c);
+                    await ref
+                        .read(driverRideActionsProvider)
+                        .message(ride.id, c);
                   } on ApiProblem {
-                    if (context.mounted) showTurboToast(context, l10n.rideMessageFailed);
+                    if (context.mounted) {
+                      showTurboToast(context, l10n.rideMessageFailed);
+                    }
                   }
                 },
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// The rounded panel under the map. Scrolls if large text makes it taller than the screen.
+class _Sheet extends StatelessWidget {
+  const _Sheet({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.turbo;
+    return Flexible(
+      flex: 0,
+      child: Container(
+        width: double.infinity,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.7,
+        ),
+        decoration: BoxDecoration(
+          color: t.colors.surface,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(t.radiusCard),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(TurboSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
       ),
     );
   }
@@ -308,8 +462,11 @@ class _Map extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, c) => HomeMap(height: c.maxHeight, spec: MapSpec(dropoff: to, showMyLocation: true)),
-      );
+    builder: (context, c) => HomeMap(
+      height: c.maxHeight,
+      spec: MapSpec(dropoff: to, showMyLocation: true),
+    ),
+  );
 }
 
 class _ToPickup extends ConsumerStatefulWidget {
@@ -336,7 +493,14 @@ class _ToPickupState extends ConsumerState<_ToPickup> {
       final here = await actions.position();
       if (here == null) throw const ApiProblem(code: 'no_location', title: '');
       final target = widget.ride.pickup.point;
-      final far = distanceMeters(here.lat.toDouble(), here.lng.toDouble(), target.lat.toDouble(), target.lng.toDouble()) > arrivedRadiusMeters;
+      final far =
+          distanceMeters(
+            here.lat.toDouble(),
+            here.lng.toDouble(),
+            target.lat.toDouble(),
+            target.lng.toDouble(),
+          ) >
+          arrivedRadiusMeters;
       if (far && mounted) {
         // A soft check: far from the pickup asks first, but never forbids.
         final sure = await showTurboConfirm(
@@ -349,7 +513,13 @@ class _ToPickupState extends ConsumerState<_ToPickup> {
       }
       await actions.arrived(widget.ride.id, here);
     } on ApiProblem catch (p) {
-      if (mounted) setState(() => _error = p.code == 'no_location' ? l10n.rideActionFailed : problemMessage(l10n, p));
+      if (mounted) {
+        setState(
+          () => _error = p.code == 'no_location'
+              ? l10n.rideActionFailed
+              : problemMessage(l10n, p),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -363,32 +533,64 @@ class _ToPickupState extends ConsumerState<_ToPickup> {
     final r = widget.ride;
     return Column(
       children: [
-        Expanded(child: Padding(padding: const EdgeInsets.all(TurboSpacing.lg), child: _Map(to: r.pickup.point))),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(TurboSpacing.lg, 0, TurboSpacing.lg, TurboSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Semantics(header: true, child: Text(l10n.pickupTitle, style: text.titleLarge)),
-              Text(r.pickup.label ?? '', style: text.headlineMedium),
-              if (r.pickup.landmark != null) Text(r.pickup.landmark!, style: text.bodyLarge),
-              Text(l10n.assignStudent(r.student.firstName), style: text.bodyMedium),
-              const SizedBox(height: TurboSpacing.md),
-              TurboButton(label: l10n.pickupNavigate, large: true, variant: TurboButtonVariant.secondary, icon: Icons.navigation_outlined, onPressed: () => _openNavigation(context, r.pickup.point)),
-              const SizedBox(height: TurboSpacing.md),
-              _QuickMessages(ride: r, codes: const [QuickMessageCode.runningLate, QuickMessageCode.imHere, QuickMessageCode.atTheGate, QuickMessageCode.cannotFindYou]),
-              const SizedBox(height: TurboSpacing.md),
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                  child: Semantics(liveRegion: true, child: Text(_error!, style: text.bodyLarge?.copyWith(color: t.colors.danger))),
-                ),
-              TurboButton(label: l10n.pickupArrived, large: true, loading: _busy, onPressed: _arrived),
-              const SizedBox(height: TurboSpacing.md),
-              HoldToSos(rideId: r.id),
-            ],
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
+            child: _Map(to: r.pickup.point),
           ),
+        ),
+        _Sheet(
+          children: [
+            Semantics(
+              header: true,
+              child: Text(l10n.pickupTitle, style: text.titleLarge),
+            ),
+            Text(r.pickup.label ?? '', style: text.headlineMedium),
+            if (r.pickup.landmark != null)
+              Text(r.pickup.landmark!, style: text.bodyLarge),
+            Text(
+              l10n.assignStudent(r.student.firstName),
+              style: text.bodyMedium,
+            ),
+            const SizedBox(height: TurboSpacing.md),
+            TurboButton(
+              label: l10n.pickupNavigate,
+              large: true,
+              variant: TurboButtonVariant.secondary,
+              icon: Icons.navigation_outlined,
+              onPressed: () => _openNavigation(context, r.pickup.point),
+            ),
+            const SizedBox(height: TurboSpacing.md),
+            _QuickMessages(
+              ride: r,
+              codes: const [
+                QuickMessageCode.runningLate,
+                QuickMessageCode.imHere,
+                QuickMessageCode.atTheGate,
+                QuickMessageCode.cannotFindYou,
+              ],
+            ),
+            const SizedBox(height: TurboSpacing.md),
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                child: Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _error!,
+                    style: text.bodyLarge?.copyWith(color: t.colors.danger),
+                  ),
+                ),
+              ),
+            TurboButton(
+              label: l10n.pickupArrived,
+              large: true,
+              loading: _busy,
+              onPressed: _arrived,
+            ),
+            const SizedBox(height: TurboSpacing.md),
+            HoldToSos(rideId: r.id),
+          ],
         ),
       ],
     );
@@ -465,9 +667,13 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(),
-            Icon(Icons.lock_outline, size: TurboSizes.iconLg + TurboSpacing.xl, color: t.colors.danger),
+            const BadgeIcon(icon: Icons.lock_outline),
             const SizedBox(height: TurboSpacing.lg),
-            Semantics(header: true, liveRegion: true, child: Text(l10n.pinLockedTitle, style: text.headlineMedium)),
+            Semantics(
+              header: true,
+              liveRegion: true,
+              child: Text(l10n.pinLockedTitle, style: text.headlineMedium),
+            ),
             const SizedBox(height: TurboSpacing.sm),
             Text(l10n.pinLockedBody, style: text.titleLarge),
             const Spacer(),
@@ -479,78 +685,135 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
     if (_entering) {
       return Padding(
         padding: const EdgeInsets.all(TurboSpacing.xl),
-        child: Column(
-          children: [
-            Align(alignment: Alignment.centerLeft, child: Semantics(header: true, child: Text(l10n.pinTitle, style: text.headlineMedium))),
-            const SizedBox(height: TurboSpacing.sm),
-            Align(alignment: Alignment.centerLeft, child: Text(l10n.pinHint, style: text.bodyMedium)),
-            const SizedBox(height: TurboSpacing.xl),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (var i = 0; i < 4; i++)
-                  Container(
-                    width: TurboSizes.primaryAction,
-                    height: TurboSizes.primaryAction + TurboSpacing.lg,
-                    margin: const EdgeInsets.symmetric(horizontal: TurboSpacing.xs),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: t.colors.surface,
-                      border: Border.all(color: i == _pin.length ? t.colors.focusRing : t.colors.controlBorder, width: TurboSizes.accentBorderWidth),
-                      borderRadius: BorderRadius.circular(t.radiusInput),
-                    ),
-                    child: Text(i < _pin.length ? _pin[i] : '', style: text.headlineMedium),
-                  ),
-              ],
-            ),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(top: TurboSpacing.md),
-                child: Semantics(liveRegion: true, child: Text(_error!, style: text.bodyLarge?.copyWith(color: t.colors.danger))),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Semantics(
+                  header: true,
+                  child: Text(l10n.pinTitle, style: text.headlineMedium),
+                ),
               ),
-            const Spacer(),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: TurboSpacing.md,
-              runSpacing: TurboSpacing.md,
-              children: [
-                for (final k in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'])
-                  SizedBox(
-                    width: 88,
-                    height: TurboSizes.primaryAction + TurboSpacing.md,
-                    child: k.isEmpty
-                        ? const SizedBox.shrink()
-                        : Semantics(
-                            button: true,
-                            label: k == '⌫' ? l10n.pinDelete : k,
-                            excludeSemantics: true,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                backgroundColor: t.colors.surface,
-                                foregroundColor: t.colors.textPrimary,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(t.radiusInput)),
-                              ),
-                              onPressed: _busy
-                                  ? null
-                                  : () => setState(() {
+              const SizedBox(height: TurboSpacing.sm),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(l10n.pinHint, style: text.bodyMedium),
+              ),
+              const SizedBox(height: TurboSpacing.xl),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < 4; i++)
+                    Container(
+                      width: TurboSizes.primaryAction,
+                      height: TurboSizes.primaryAction + TurboSpacing.lg,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: TurboSpacing.xs,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: t.colors.surface,
+                        border: Border.all(
+                          color: i == _pin.length
+                              ? t.colors.focusRing
+                              : t.colors.controlBorder,
+                          width: TurboSizes.accentBorderWidth,
+                        ),
+                        borderRadius: BorderRadius.circular(t.radiusInput),
+                      ),
+                      child: Text(
+                        i < _pin.length ? _pin[i] : '',
+                        style: text.headlineMedium,
+                      ),
+                    ),
+                ],
+              ),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: TurboSpacing.md),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      _error!,
+                      style: text.bodyLarge?.copyWith(color: t.colors.danger),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: TurboSpacing.xl),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: TurboSpacing.md,
+                runSpacing: TurboSpacing.md,
+                children: [
+                  for (final k in [
+                    '1',
+                    '2',
+                    '3',
+                    '4',
+                    '5',
+                    '6',
+                    '7',
+                    '8',
+                    '9',
+                    '',
+                    '0',
+                    '⌫',
+                  ])
+                    SizedBox(
+                      width: 88,
+                      height: TurboSizes.primaryAction + TurboSpacing.md,
+                      child: k.isEmpty
+                          ? const SizedBox.shrink()
+                          : Semantics(
+                              button: true,
+                              label: k == '⌫' ? l10n.pinDelete : k,
+                              excludeSemantics: true,
+                              child: FilledButton(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: t.colors.surface,
+                                  foregroundColor: t.colors.textPrimary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      t.radiusInput,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: _busy
+                                    ? null
+                                    : () => setState(() {
                                         _error = null;
                                         if (k == '⌫') {
-                                          if (_pin.isNotEmpty) _pin = _pin.substring(0, _pin.length - 1);
+                                          if (_pin.isNotEmpty) {
+                                            _pin = _pin.substring(
+                                              0,
+                                              _pin.length - 1,
+                                            );
+                                          }
                                         } else if (_pin.length < 4) {
                                           _pin += k;
                                         }
                                       }),
-                              child: Text(k, style: text.headlineMedium),
+                                child: Text(k, style: text.headlineMedium),
+                              ),
                             ),
-                          ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: TurboSpacing.lg),
-            TurboButton(label: l10n.pinStart, large: true, loading: _busy, onPressed: _pin.length == 4 ? _start : null),
-            const SizedBox(height: TurboSpacing.sm),
-            TextButton(onPressed: () => setState(() => _entering = false), child: Text(l10n.back, style: text.bodyLarge)),
-          ],
+                    ),
+                ],
+              ),
+              const SizedBox(height: TurboSpacing.lg),
+              TurboButton(
+                label: l10n.pinStart,
+                large: true,
+                loading: _busy,
+                onPressed: _pin.length == 4 ? _start : null,
+              ),
+              const SizedBox(height: TurboSpacing.sm),
+              TextButton(
+                onPressed: () => setState(() => _entering = false),
+                child: Text(l10n.back, style: text.bodyLarge),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -559,42 +822,99 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
     final now = clock.now();
     final canNoShow = noShowAt != null && !now.isBefore(noShowAt);
     // The wait started five minutes before the no-show time (decision D26).
-    final waited = noShowAt == null ? Duration.zero : now.difference(noShowAt.subtract(const Duration(minutes: 5)));
+    final waited = noShowAt == null
+        ? Duration.zero
+        : now.difference(noShowAt.subtract(const Duration(minutes: 5)));
 
-    return Padding(
-      padding: const EdgeInsets.all(TurboSpacing.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Semantics(header: true, child: Text(l10n.waitingTitle, style: text.headlineMedium)),
-          const SizedBox(height: TurboSpacing.sm),
-          Text(l10n.waitingTimer(_clockText(waited)), style: text.titleLarge),
-          const SizedBox(height: TurboSpacing.lg),
-          Text(l10n.assignStudent(r.student.firstName), style: text.titleLarge),
-          Text(r.pickup.label ?? '', style: text.bodyLarge),
-          if (r.pickup.landmark != null) Text(r.pickup.landmark!, style: text.bodyMedium),
-          const SizedBox(height: TurboSpacing.lg),
-          _QuickMessages(ride: r, codes: const [QuickMessageCode.imHere, QuickMessageCode.atTheGate, QuickMessageCode.pleaseComeOut, QuickMessageCode.cannotFindYou]),
-          const Spacer(),
-          if (_error != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-              child: Semantics(liveRegion: true, child: Text(_error!, style: text.bodyLarge?.copyWith(color: t.colors.danger))),
-            ),
-          if (!canNoShow && noShowAt != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-              child: Text(l10n.waitingNotHereAt('${noShowAt.toUtc().hour.toString().padLeft(2, '0')}:${noShowAt.toUtc().minute.toString().padLeft(2, '0')}'), style: text.bodyMedium),
-            ),
-          TurboButton(label: l10n.waitingStart, large: true, onPressed: () => setState(() => _entering = true)),
-          if (canNoShow) ...[
-            const SizedBox(height: TurboSpacing.md),
-            TurboButton(label: l10n.waitingNotHere, variant: TurboButtonVariant.secondary, onPressed: _notHere),
-          ],
-          const SizedBox(height: TurboSpacing.md),
-          HoldToSos(rideId: r.id),
-        ],
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(TurboSpacing.xl),
+            children: [
+              Semantics(
+                header: true,
+                child: Text(l10n.waitingTitle, style: text.bodyLarge),
+              ),
+              Text(
+                l10n.waitingTimer(_clockText(waited)),
+                style: text.headlineMedium?.copyWith(
+                  fontSize: text.headlineMedium!.fontSize! * 2,
+                ),
+              ),
+              const SizedBox(height: TurboSpacing.lg),
+              TurboCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.assignStudent(r.student.firstName),
+                      style: text.titleLarge,
+                    ),
+                    Text(r.pickup.label ?? '', style: text.bodyLarge),
+                    if (r.pickup.landmark != null)
+                      Text(r.pickup.landmark!, style: text.bodyMedium),
+                  ],
+                ),
+              ),
+              const SizedBox(height: TurboSpacing.lg),
+              _QuickMessages(
+                ride: r,
+                codes: const [
+                  QuickMessageCode.imHere,
+                  QuickMessageCode.atTheGate,
+                  QuickMessageCode.pleaseComeOut,
+                  QuickMessageCode.cannotFindYou,
+                ],
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(TurboSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      _error!,
+                      style: text.bodyLarge?.copyWith(color: t.colors.danger),
+                    ),
+                  ),
+                ),
+              if (!canNoShow && noShowAt != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                  child: Text(
+                    l10n.waitingNotHereAt(
+                      '${noShowAt.toUtc().hour.toString().padLeft(2, '0')}:${noShowAt.toUtc().minute.toString().padLeft(2, '0')}',
+                    ),
+                    style: text.bodyMedium,
+                  ),
+                ),
+              if (canNoShow) ...[
+                TurboButton(
+                  label: l10n.waitingNotHere,
+                  variant: TurboButtonVariant.secondary,
+                  onPressed: _notHere,
+                ),
+                const SizedBox(height: TurboSpacing.md),
+              ],
+              TurboButton(
+                label: l10n.waitingStart,
+                large: true,
+                onPressed: () => setState(() => _entering = true),
+              ),
+              const SizedBox(height: TurboSpacing.md),
+              HoldToSos(rideId: r.id),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -637,7 +957,9 @@ class _TripState extends ConsumerState<_Trip> {
       _busy = true;
       _error = null;
     });
-    final here = await ref.read(driverRideActionsProvider).position() ?? widget.ride.dropoff.point;
+    final here =
+        await ref.read(driverRideActionsProvider).position() ??
+        widget.ride.dropoff.point;
     await _send(here);
   }
 
@@ -676,56 +998,93 @@ class _TripState extends ConsumerState<_Trip> {
 
     return Column(
       children: [
-        Expanded(child: Padding(padding: const EdgeInsets.all(TurboSpacing.lg), child: _Map(to: r.dropoff.point))),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(TurboSpacing.lg, 0, TurboSpacing.lg, TurboSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Semantics(header: true, child: Text(l10n.tripTitle, style: text.titleLarge)),
-              Text(l10n.tripDropoff(r.dropoff.label ?? ''), style: text.headlineMedium),
-              Text(l10n.tripElapsed(_clockText(elapsed)), style: text.bodyMedium),
-              const SizedBox(height: TurboSpacing.md),
-              TurboButton(label: l10n.tripNavigate, large: true, variant: TurboButtonVariant.secondary, icon: Icons.navigation_outlined, onPressed: () => _openNavigation(context, r.dropoff.point)),
-              const SizedBox(height: TurboSpacing.md),
-              if (_pending != null)
-                TurboCard(
-                  child: Row(
-                    children: [
-                      const SizedBox.square(dimension: TurboSizes.iconMd, child: CircularProgressIndicator(strokeWidth: 2)),
-                      const SizedBox(width: TurboSpacing.md),
-                      Expanded(
-                        child: Semantics(
-                          liveRegion: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(l10n.tripWaitingSignal, style: text.labelLarge),
-                              Text(l10n.tripWaitingSignalBody, style: text.bodySmall),
-                            ],
-                          ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
+            child: _Map(to: r.dropoff.point),
+          ),
+        ),
+        _Sheet(
+          children: [
+            Semantics(
+              header: true,
+              child: Text(l10n.tripTitle, style: text.titleLarge),
+            ),
+            Text(
+              l10n.tripDropoff(r.dropoff.label ?? ''),
+              style: text.headlineMedium?.copyWith(
+                fontSize: text.headlineMedium!.fontSize! * 1.25,
+              ),
+            ),
+            Text(l10n.tripElapsed(_clockText(elapsed)), style: text.bodyMedium),
+            const SizedBox(height: TurboSpacing.md),
+            TurboButton(
+              label: l10n.tripNavigate,
+              large: true,
+              variant: TurboButtonVariant.secondary,
+              icon: Icons.navigation_outlined,
+              onPressed: () => _openNavigation(context, r.dropoff.point),
+            ),
+            const SizedBox(height: TurboSpacing.md),
+            if (_pending != null)
+              TurboCard(
+                child: Row(
+                  children: [
+                    const SizedBox.square(
+                      dimension: TurboSizes.iconMd,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    const SizedBox(width: TurboSpacing.md),
+                    Expanded(
+                      child: Semantics(
+                        liveRegion: true,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.tripWaitingSignal,
+                              style: text.labelLarge,
+                            ),
+                            Text(
+                              l10n.tripWaitingSignalBody,
+                              style: text.bodySmall,
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              )
+            else ...[
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      _error!,
+                      style: text.bodyLarge?.copyWith(color: t.colors.danger),
+                    ),
                   ),
-                )
-              else ...[
-                if (_error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                    child: Semantics(liveRegion: true, child: Text(_error!, style: text.bodyLarge?.copyWith(color: t.colors.danger))),
-                  ),
-                TurboButton(label: l10n.tripComplete, large: true, loading: _busy, onPressed: _complete),
-              ],
-              const SizedBox(height: TurboSpacing.md),
-              HoldToSos(rideId: r.id),
-              TextButton(
-                onPressed: () => context.push('/support/new', extra: r.id),
-                child: Text(l10n.tripReport, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
+                ),
+              TurboButton(
+                label: l10n.tripComplete,
+                large: true,
+                loading: _busy,
+                onPressed: _complete,
               ),
             ],
-          ),
+            const SizedBox(height: TurboSpacing.md),
+            HoldToSos(rideId: r.id),
+            TextButton(
+              onPressed: () => context.push('/support/new', extra: r.id),
+              child: Text(
+                l10n.tripReport,
+                style: text.bodyMedium?.copyWith(color: t.colors.accentText),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -742,30 +1101,51 @@ class _End extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
     final text = Theme.of(context).textTheme;
-    final (IconData icon, Color color, String title, String body) = switch (outcome) {
+    final (IconData icon, String title, String body) = switch (outcome) {
       RideOutcome.completed => (
-          Icons.check_circle_outline,
-          t.colors.success,
-          l10n.doneTitle,
-          l10n.doneDetails((ride.routeDistanceMeters / 1000).toStringAsFixed(1), ((ride.routeDurationSeconds ?? 0) / 60).round()),
+        Icons.check,
+        l10n.doneTitle,
+        l10n.doneDetails(
+          (ride.routeDistanceMeters / 1000).toStringAsFixed(1),
+          ((ride.routeDurationSeconds ?? 0) / 60).round(),
         ),
-      RideOutcome.cancelled => (Icons.cancel_outlined, t.colors.warning, l10n.cancelledTitle, '${l10n.cancelledBySystem} ${l10n.cancelledBody}'),
-      RideOutcome.passed => (Icons.swap_horiz, t.colors.textSecondary, l10n.assignPassed, l10n.assignPassedBody),
+      ),
+      RideOutcome.cancelled => (
+        Icons.close,
+        l10n.cancelledTitle,
+        '${l10n.cancelledBySystem} ${l10n.cancelledBody}',
+      ),
+      RideOutcome.passed => (
+        Icons.swap_horiz,
+        l10n.assignPassed,
+        l10n.assignPassedBody,
+      ),
     };
     return Padding(
       padding: const EdgeInsets.all(TurboSpacing.xl),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Spacer(),
-          Icon(icon, size: TurboSizes.iconLg + TurboSpacing.xl, color: color),
-          const SizedBox(height: TurboSpacing.lg),
-          Semantics(header: true, liveRegion: true, child: Text(title, style: text.headlineMedium)),
-          const SizedBox(height: TurboSpacing.sm),
-          Text(body, style: text.titleLarge),
-          const Spacer(),
+          Expanded(
+            child: ListView(
+              children: [
+                const SizedBox(height: TurboSpacing.xxl),
+                Center(child: BadgeIcon(icon: icon)),
+                const SizedBox(height: TurboSpacing.xl),
+                Semantics(
+                  header: true,
+                  liveRegion: true,
+                  child: Text(
+                    title,
+                    style: text.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: TurboSpacing.sm),
+                Text(body, style: text.titleLarge, textAlign: TextAlign.center),
+              ],
+            ),
+          ),
           TurboButton(label: l10n.doneBack, large: true, onPressed: onDone),
         ],
       ),

@@ -48,6 +48,24 @@ FakeServer rideServer(Map<String, Object?>? ride) {
 }
 
 void main() {
+  group('dark and large text', () {
+    for (final (name, ride) in [
+      ('offer', driverRide('assigned', acknowledged: false)),
+      ('to pickup', driverRide('assigned')),
+      ('waiting at pickup', driverRide('driver_arrived', noShowAt: DateTime.now().add(const Duration(minutes: 3)))),
+      ('trip', driverRide('in_progress')),
+    ]) {
+      testWidgets('$name lays out in dark mode at 200% text', (tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+        tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+        addTearDown(tester.platformDispatcher.clearAllTestValues);
+        await bootDriver(tester, rideServer(ride));
+        await settle(tester, 12);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
   group('new assignment', () {
     testWidgets('takes over the screen with a countdown, the pickup, the student and the fare', (tester) async {
       final server = rideServer(driverRide('assigned', acknowledged: false));
