@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
 import { api, call, newIdempotencyKey, uploadFile, type Schemas } from '../api/client';
 import { useSession } from '../auth/session';
+import { canUse } from '../auth/roles';
 import {
   Button, Card, Chip, DataTable, Details, Dialog, DialogActions, Money, PageHeader, Select, Skeleton, Tabs,
   TextArea, TextField, useToast, ui, When, type Tone,
@@ -91,8 +92,10 @@ function WalletTab() {
   const toast = useToast();
   const [input, setInput] = useState('');
   const [studentId, setStudentId] = useState('');
-  const settings = useQuery({ queryKey: ['settings'], queryFn: () => call(api.GET('/admin/settings')), retry: false });
-  const threshold = settings.data?.adjustmentApprovalThresholdPesewas ?? 5000;
+  const { me } = useSession();
+  // Settings are super_admin only (x-roles); finance users never see the limit, so the hint omits it.
+  const settings = useQuery({ queryKey: ['settings'], queryFn: () => call(api.GET('/admin/settings')), enabled: canUse(me?.staffRole, 'configuration') });
+  const threshold = settings.data?.adjustmentApprovalThresholdPesewas;
   const wallet = useQuery({ queryKey: ['wallet', studentId], enabled: !!studentId, queryFn: () => call(api.GET('/admin/students/{id}/wallet', { params: { path: { id: studentId } } })) });
   const tx = useCursorList(['wallet-tx', studentId], (cursor) => call(api.GET('/admin/students/{id}/wallet/transactions', { params: { path: { id: studentId }, query: { cursor, limit: 25 } } })), !!studentId);
   const [open, setOpen] = useState(false);
@@ -142,7 +145,9 @@ function WalletTab() {
         <Select label="Direction" value={form.direction} onChange={(e) => setForm({ ...form, direction: e.target.value })}
           options={[{ value: 'credit', label: 'Credit (add money)' }, { value: 'debit', label: 'Debit (take money)' }]} />
         <TextField label="Amount (GH₵)" inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })}
-          hint={`Up to ${formatPesewas(threshold)} applies at once; above that another finance user must approve.`} />
+          hint={threshold != null
+            ? `Up to ${formatPesewas(threshold)} applies at once; above that another finance user must approve.`
+            : 'Small amounts apply at once; above the approval limit another finance user must approve.'} />
         <Select label="Reason" value={form.reasonCode} onChange={(e) => setForm({ ...form, reasonCode: e.target.value as typeof form.reasonCode })}
           options={adjustmentReasons.map((r) => ({ value: r, label: humanize(r) }))} />
         <TextArea label="Note" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} maxLength={300} />

@@ -10,7 +10,8 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "gen:api": "openapi-typescript ../../api/openapi.yaml -o src/api/schema.d.ts",
-    "check": "npm run gen:api && git diff --exit-code src/api/schema.d.ts && npm run typecheck && npm test"
+    "check": "npm run gen:api && git diff --exit-code src/api/schema.d.ts && npm run typecheck && npm test",
+    "test:live": "vitest run --config vitest.live.config.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "5.105.0",

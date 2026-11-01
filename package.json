@@ -1,12 +1,14 @@
 {
   "name": "turbo-tooling",
   "private": true,
-  "description": "Dev tooling only: Prism mock and the Dart client generator",
+  "description": "Dev tooling only: Prism mock, the Dart client generator and the API tracker",
   "scripts": {
-    "mock": "prism mock api/openapi.yaml -p 4010"
+    "mock": "prism mock api/openapi.yaml -p 4010",
+    "api-tracker": "node tool/api-tracker.cjs"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.13.0",
-    "@stoplight/prism-cli": "^5.14.0"
+    "@stoplight/prism-cli": "^5.14.0",
+    "js-yaml": "3.15.2"
   }
 }

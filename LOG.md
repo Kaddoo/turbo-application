@@ -2,6 +2,28 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-10-31, Claude, code: API endpoint tracker
+
+**Task:** One tracking sheet for every documented endpoint: page, action, params, body, responses, auth, role, Integrated, Tested, notes; plus undocumented endpoints, backend inconsistencies and critical endpoints.
+
+**Files touched:**
+- docs/api-tracker.md (new), tool/api-tracker.cjs (new), package.json and package-lock.json (`npm run api-tracker`, js-yaml 3.15.2 pinned, already in node_modules via Prism)
+- apps/admin_dashboard/src/pages/Finance.tsx (separate commit)
+
+**What changed:** The table is generated from `api/openapi.yaml` (135 operations), the endpoint mentions per screen in `prompts/01` to `05`, and the dashboard code (which page really calls what). A rebuild keeps the Integrated and Tested cells already marked (checked by setting one, rebuilding, and seeing it kept). Hand-written sections: 17 undocumented endpoints, 20 inconsistencies, critical endpoints by journey, a verification log. While checking roles per page: the finance wallet tab called `GET /admin/settings` (super_admin only) for every finance user, got 403 every time and showed a made-up GH₵50 approval limit; it now fetches only for super_admin and leaves the number out otherwise.
+
+**Acceptance criteria:**
+- [x] Every operation in the contract has a row (135), every row has a page (dashboard, planned screen, or "None")
+- [x] Integrated = Y only where dashboard code calls it (74); Flutter apps 0 (no screen calls the client)
+- [x] Tested = N everywhere: nothing has been run against the real API yet
+- [x] `npm run check` in the dashboard passes (75 tests)
+
+**Deviations from plan or contract:** Built on contract 0.2.0 (the repo copy); the API runs 0.2.2 (inconsistency 1). Rerun `npm run api-tracker` when the full file lands. The landing page lives in another repo and is not tracked.
+
+**Status:** done, awaiting review. Branch: api-tracker (cut from admin-api-integration).
+
+**Next step:** Test the critical dashboard endpoints against the real API on :3000 and mark Tested with the verification log; send inconsistencies 5 to 11 and 17 to the backend.
+
 ## 2026-10-31, Claude, code: admin dashboard follows the API integration guide
 
 **Task:** Store the backend's integration guide (contract 0.2.2) and bring the dashboard in line with it before trying the real API.
