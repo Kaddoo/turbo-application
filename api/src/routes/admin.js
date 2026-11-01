@@ -26,7 +26,9 @@ const needUuid = (v, what) => { if (!isUuid(v)) throw notFound(what); };
 admin.get('/admin/me', ...A(), async (req, res) => {
   const { rows: [s] } = await q('SELECT id,email,name,role,is_active,mfa_secret_enc,last_login_at,locked_until,invite_pending FROM staff_users WHERE id=$1', [req.user.id]);
   const { staffView } = await import('../views.js');
-  res.json(staffView(s));
+  // Finance and super admin decide wallet adjustments, so they may see the amount above which a second person must approve.
+  const approves = ['finance', 'super_admin'].includes(s.role);
+  res.json({ ...staffView(s), ...(approves && { adjustmentApprovalThresholdPesewas: (await getSettings()).adjustmentApprovalThresholdPesewas }) });
 });
 
 // ================= verification =================
@@ -118,6 +120,13 @@ admin.get('/admin/students', ...A('verifier'), async (req, res) => {
   res.json(pageOf(rows, a, (r) => [r.created_at, r.id], studentSummary));
 });
 
+// Reduced views. Support may open a student and support and finance may open a ride (they need them to do their own work), but only
+// the owner role (verifier for students, dispatcher for rides) and super admin get the full record. Every reduced view is audited.
+const OWNER = { student: 'verifier', ride: 'dispatcher' };
+const isOwner = (req, kind) => ['super_admin', OWNER[kind]].includes(req.user.staffRole);
+export const maskPhone = (p) => (typeof p === 'string' && p.length > 6 ? `${p.slice(0, 4)} ${p.slice(4, 6)} *** **${p.slice(-2)}` : '***');
+const auditReduced = (req, kind, id) => audit({ query: q }, req, `${kind}.view_reduced`, id, { role: req.user.staffRole });
+
 async function studentDetail(id) {
   if (!isUuid(id)) throw notFound('Student');
   const { rows: [r] } = await q(`${STUDENT_SQL} WHERE u.id=$1 AND u.deleted_at IS NULL`, [id]);
@@ -126,7 +135,12 @@ async function studentDetail(id) {
   return { id: r.id, phone: r.phone, fullName: fullName(r), email: r.email ?? null, studentIdNumber: r.student_id_number ?? null, accountStatus: r.status,
     verificationStatus: r.verification_status, wallet: walletView(w), completedRides: n.n, createdAt: iso(r.created_at) };
 }
-admin.get('/admin/students/:id', ...A('verifier'), async (req, res) => res.json(await studentDetail(req.params.id)));
+admin.get('/admin/students/:id', ...A('verifier', 'support'), async (req, res) => {
+  const d = await studentDetail(req.params.id);
+  if (isOwner(req, 'student')) return res.json(d);
+  await auditReduced(req, 'student', d.id);
+  res.json({ ...d, studentIdNumber: null });          // support needs who they are, not their student id number
+});
 
 const revokeSessions = (c, uid) => c.query(`UPDATE refresh_tokens SET revoked_at=now() WHERE subject_id=$1 AND subject_type='user' AND revoked_at IS NULL`, [uid]);
 
@@ -206,7 +220,17 @@ async function adminRideDetail(id) {
   return { ride: rideView(r), student: studentSummary(st.rows[0]), driver: dr[0] ? stripPrivate(dr[0]) : null,
     events: ev.map((e) => ({ at: iso(e.created_at), type: e.type, actor: e.actor_type, detail: e.data ? JSON.stringify(e.data) : null })), flags: flagsOf(r) };
 }
-admin.get('/admin/rides/:id', ...A('dispatcher'), async (req, res) => res.json(await adminRideDetail(req.params.id)));
+admin.get('/admin/rides/:id', ...A('dispatcher', 'support', 'finance'), async (req, res) => {
+  const d = await adminRideDetail(req.params.id);
+  if (isOwner(req, 'ride')) return res.json(d);
+  await auditReduced(req, 'ride', d.ride.id);
+  // Fare, status, ids, times and the public driver and vehicle: no PIN, no driver detail or last position, no event details, a masked phone.
+  res.json({
+    ...d, ride: { ...d.ride, pin: null }, driver: null,
+    student: { id: d.student.id, fullName: d.student.fullName, phone: maskPhone(d.student.phone), accountStatus: d.student.accountStatus, verificationStatus: d.student.verificationStatus, createdAt: d.student.createdAt },
+    events: d.events.map((e) => ({ at: e.at, type: e.type, actor: e.actor, detail: null })),
+  });
+});
 
 admin.post('/admin/rides/:id/cancel', ...A('dispatcher'), async (req, res) => {
   const { reason } = req.body;
