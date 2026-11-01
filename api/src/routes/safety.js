@@ -162,8 +162,8 @@ safety.patch('/admin/incidents/:id', ...A('support'), async (req, res) => {
   const out = await tx(async (c) => {
     const { rows: [i] } = await c.query('SELECT * FROM incidents WHERE id=$1 FOR UPDATE', [req.params.id]);
     if (!i) throw notFound('Incident');
-    if (i.status === 'resolved') throw conflict('conflict', 'Incident is already resolved');
-    if (status === 'acknowledged' && i.status !== 'open') throw conflict('conflict', `Incident is ${i.status}`);
+    if (i.status === 'resolved') throw conflict('incident_state_invalid', 'Incident is already resolved');
+    if (status === 'acknowledged' && i.status !== 'open') throw conflict('incident_state_invalid', `Incident is ${i.status}`);
     await c.query(
       status === 'acknowledged'
         ? `UPDATE incidents SET status='acknowledged', acknowledged_by=$2, acknowledged_at=now(), staff_note=COALESCE($3,staff_note) WHERE id=$1`

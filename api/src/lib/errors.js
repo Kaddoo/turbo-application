@@ -25,7 +25,7 @@ export function errorHandler(log) {
       else if (['57014', '55P03', '40001', '40P01', '53300', '57P03'].includes(e?.code) || e?.message?.includes('timeout exceeded when trying to connect')) {
         // statement/lock timeout, deadlock, serialization failure, too many connections: busy, not broken. Tell clients to retry.
         log.warn({ pg: e.code, reqId: req.id }, 'database busy');
-        e = new ApiError(503, 'conflict', 'Busy, please retry', { retryAfterSeconds: 2 });
+        e = new ApiError(503, 'service_busy', 'Busy, please retry', { retryAfterSeconds: 2 });
       } else {
         log.error({ err: { message: e?.message, code: e?.code, stack: e?.stack }, reqId: req.id }, 'unhandled');
         e = new ApiError(500, 'conflict', 'Internal error');       // never echo database or library messages to the client

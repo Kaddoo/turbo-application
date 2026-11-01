@@ -130,8 +130,8 @@ finance.post('/admin/topups/:id/resolve', ...F, async (req, res) => idempotent(r
   const t = await tx(async (c) => {
     const { rows: [t] } = await c.query('SELECT * FROM topups WHERE id=$1 FOR UPDATE', [req.params.id]);
     if (!t) throw notFound('Top-up');
-    if (!t.flagged) throw conflict('conflict', 'This top-up is not flagged');
-    if (t.resolved_at) throw conflict('conflict', 'This top-up was already resolved');
+    if (!t.flagged) throw conflict('topup_not_resolvable', 'This top-up is not flagged');
+    if (t.resolved_at) throw conflict('topup_not_resolvable', 'This top-up was already resolved');
     await c.query(`UPDATE topups SET resolution=$2, resolution_note=$3, resolved_by=$4, resolved_at=now() WHERE id=$1`, [t.id, resolution, note.trim(), req.user.id]);
     await audit(c, req, 'topup.resolve', t.id, { resolution, note: note.trim(), validation: t.validation, amountPesewas: t.amount_pesewas, receivedPesewas: t.amount_received_pesewas });
     return (await c.query('SELECT * FROM topups WHERE id=$1', [t.id])).rows[0];
