@@ -516,6 +516,7 @@ export interface paths {
         /**
          * Rate a completed ride
          * @description **Access:** student.
+         *     409 `invalid_ride_state`: the ride is not completed, or was already rated.
          */
         post: operations["rateRide"];
         delete?: never;
@@ -918,6 +919,7 @@ export interface paths {
          * @description **Access:** driver.
          *
          *     If this is not called within driverAckTimeoutSeconds the engine reassigns the ride. Design addition to confirm with Turbo (decision D8).
+         *     409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
          */
         post: operations["acknowledgeRide"];
         delete?: never;
@@ -940,6 +942,7 @@ export interface paths {
          * @description **Access:** driver.
          *
          *     The engine reassigns, excluding this driver for this ride. Allowed until the trip has started.
+         *     409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
          */
         post: operations["declineRide"];
         delete?: never;
@@ -960,6 +963,7 @@ export interface paths {
         /**
          * Mark arrival at pickup
          * @description **Access:** driver.
+         *     409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
          */
         post: operations["markArrived"];
         delete?: never;
@@ -982,6 +986,7 @@ export interface paths {
          * @description **Access:** driver.
          *
          *     Wrong PIN: 400 `invalid_pin`. Five wrong attempts lock the start for this driver: 409 `pin_locked` until an admin intervenes.
+         *     409 `invalid_ride_state`: the driver has not marked arrival at the pickup yet.
          */
         post: operations["startRide"];
         delete?: never;
@@ -1004,6 +1009,7 @@ export interface paths {
          * @description **Access:** driver.
          *
          *     Converts the held fare into a charge in the same database transaction.
+         *     409 `invalid_ride_state`: the ride is not in a state that allows this (for example it was cancelled or reassigned).
          */
         post: operations["completeRide"];
         delete?: never;
@@ -1148,6 +1154,7 @@ export interface paths {
          * @description **Access:** admin:verifier.
          *
          *     Notifies the student by push and SMS. Immutable decision record.
+         *     409 `verification_claimed`: another reviewer holds this submission. Other 409s use the generic `conflict`.
          */
         post: operations["decideVerification"];
         delete?: never;
@@ -1384,6 +1391,7 @@ export interface paths {
         /**
          * Manually reassign to a driver
          * @description **Access:** admin:dispatcher.
+         *     409 `invalid_ride_state`: the ride is already in progress or finished. 409 `no_drivers_on_duty`: the chosen driver is not on duty. 409 `driver_has_active_ride`: the chosen driver already has an active ride.
          */
         post: operations["reassignRide"];
         delete?: never;
@@ -1404,6 +1412,7 @@ export interface paths {
         /**
          * Cancel a ride on the student's behalf
          * @description **Access:** admin:dispatcher.
+         *     409 `invalid_ride_state`: the ride is not in a state that allows this.
          */
         post: operations["adminCancelRide"];
         delete?: never;
@@ -1772,6 +1781,7 @@ export interface paths {
         /**
          * Schedule a shift
          * @description **Access:** admin:hr.
+         *     409 `shift_overlap`: the driver already has a shift at that time.
          */
         post: operations["createShift"];
         delete?: never;
@@ -1944,6 +1954,7 @@ export interface paths {
          * @description **Access:** admin:dispatcher.
          *
          *     Only for a ride in `in_progress`. Charges the locked fare, writes a ride event with the staff member and reason, and adds the audit entry. Use when the driver cannot complete (dead phone, app crash). A cancellation with refund is still available through the cancel endpoint.
+         *     409 `invalid_ride_state`: the ride is not in a state that allows this.
          */
         post: operations["adminCompleteRide"];
         delete?: never;
@@ -2226,6 +2237,7 @@ export interface paths {
          * @description **Access:** driver.
          *
          *     Only after the driver has arrived and `noShowWaitSeconds` have passed (409 `no_show_too_early` otherwise). Cancels the ride with reason `rider_no_show`; the hold is released and no fee applies. The count shows on the student's record for staff.
+         *     409 `invalid_ride_state`: the driver has not marked arrival. 409 `no_show_too_early`: the wait time has not passed yet.
          */
         post: operations["reportRiderNoShow"];
         delete?: never;
@@ -2252,6 +2264,7 @@ export interface paths {
          * @description **Access:** student or driver on this ride.
          *
          *     Preset messages only. No phone numbers are shared (D17). Delivered by push.
+         *     409 `invalid_ride_state`: messages can only be sent while a driver is assigned.
          */
         post: operations["sendRideMessage"];
         delete?: never;
@@ -2292,6 +2305,7 @@ export interface paths {
         /**
          * Accept a newer terms or privacy version
          * @description **Access:** student or driver. When versions change, protected endpoints return 403 `terms_not_accepted` until this is called.
+         *     403 `forbidden` for a token that is not a student. This call is exempt from the terms check, otherwise a user on old terms could never accept the new ones.
          */
         post: operations["acceptTerms"];
         delete?: never;
@@ -2420,6 +2434,7 @@ export interface paths {
         /**
          * My signed-in devices
          * @description **Access:** student or driver.
+         *     403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.
          */
         get: operations["listSessions"];
         put?: never;
@@ -2427,6 +2442,7 @@ export interface paths {
         /**
          * Sign out everywhere else
          * @description **Access:** student or driver. Keeps the current session.
+         *     403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.
          */
         delete: operations["revokeOtherSessions"];
         options?: never;
@@ -2447,6 +2463,7 @@ export interface paths {
         /**
          * Sign out one device
          * @description **Access:** student or driver.
+         *     403 `terms_not_accepted` until the current terms and privacy policy are accepted; 403 `forbidden` for a staff token.
          */
         delete: operations["revokeSession"];
         options?: never;
@@ -3828,7 +3845,7 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description Authenticated but not allowed (role, suspended account, or verification required). */
+        /** @description Authenticated but not allowed. Codes include `forbidden` (role), `terms_not_accepted` (new terms to accept), `account_suspended` and `verification_required`. `account_suspended` is checked at sign-in and token refresh, and on driver calls. */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -3873,16 +3890,18 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description Temporarily unavailable (for example the daily SMS ceiling was reached). Retry later. */
+        /** @description Temporarily unavailable (the daily SMS ceiling was reached, or the database is busy). Any operation can answer this. Wait `Retry-After` seconds (also in the body as `retryAfterSeconds`), then retry. */
         ServiceUnavailable: {
             headers: {
+                /** @description Seconds to wait before retrying. */
+                "Retry-After"?: number;
                 [name: string]: unknown;
             };
             content: {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description The app is older than the minimum supported version. Code `upgrade_required`. Show the update screen. */
+        /** @description The app is older than the minimum supported version. Code `upgrade_required`. Show the update screen. Any operation can answer this except `/app-config` and `/health`; it is checked from the `X-App-Version` header before the request is handled. */
         UpgradeRequired: {
             headers: {
                 [name: string]: unknown;
@@ -3949,6 +3968,7 @@ export interface operations {
                 };
             };
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
             503: components["responses"]["ServiceUnavailable"];
         };
@@ -3979,6 +3999,7 @@ export interface operations {
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     adminLogin: {
@@ -4005,7 +4026,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     refreshTokens: {
@@ -4031,7 +4054,9 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     logout: {
@@ -4051,7 +4076,9 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["Unauthorized"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     registerDevice: {
@@ -4076,7 +4103,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     unregisterDevice: {
@@ -4099,7 +4128,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createUpload: {
@@ -4126,7 +4157,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getServiceArea: {
@@ -4148,7 +4181,9 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getMe: {
@@ -4171,7 +4206,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateMe: {
@@ -4199,7 +4236,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     requestDeletion: {
@@ -4222,7 +4261,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getMyVerification: {
@@ -4245,7 +4286,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     submitVerification: {
@@ -4274,7 +4317,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listSavedPlaces: {
@@ -4297,7 +4342,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createSavedPlace: {
@@ -4325,7 +4372,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     deleteSavedPlace: {
@@ -4349,7 +4398,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listTrustedContacts: {
@@ -4372,7 +4423,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createTrustedContact: {
@@ -4400,7 +4453,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     deleteTrustedContact: {
@@ -4424,7 +4479,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createQuote: {
@@ -4454,6 +4511,7 @@ export interface operations {
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listMyRides: {
@@ -4481,7 +4539,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createRide: {
@@ -4515,6 +4575,7 @@ export interface operations {
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getRide: {
@@ -4540,7 +4601,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getRideTracking: {
@@ -4566,7 +4629,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     cancelRide: {
@@ -4598,7 +4663,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getRideReceipt: {
@@ -4624,7 +4691,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     rateRide: {
@@ -4654,7 +4723,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     shareRide: {
@@ -4685,7 +4756,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getPublicTripShare: {
@@ -4709,7 +4782,9 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     raiseSos: {
@@ -4737,7 +4812,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     proposeDestinationChange: {
@@ -4768,7 +4845,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     confirmDestinationChange: {
@@ -4799,7 +4878,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listMySupportTickets: {
@@ -4826,7 +4907,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createSupportTicket: {
@@ -4854,7 +4937,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getMySupportTicket: {
@@ -4880,7 +4965,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     replyToSupportTicket: {
@@ -4911,7 +4998,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getWallet: {
@@ -4934,7 +5023,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listWalletTransactions: {
@@ -4962,7 +5053,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createTopup: {
@@ -4996,6 +5089,7 @@ export interface operations {
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getTopup: {
@@ -5021,7 +5115,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     receiveProviderWebhook: {
@@ -5045,6 +5141,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequest"];
+            426: components["responses"]["UpgradeRequired"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getDriverProfile: {
@@ -5067,7 +5165,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     setDuty: {
@@ -5098,6 +5198,7 @@ export interface operations {
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     pushLocation: {
@@ -5123,7 +5224,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getCurrentDriverRide: {
@@ -5153,7 +5256,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listDriverRides: {
@@ -5180,7 +5285,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     acknowledgeRide: {
@@ -5207,7 +5314,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     declineRide: {
@@ -5237,7 +5346,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     markArrived: {
@@ -5269,7 +5380,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     startRide: {
@@ -5302,7 +5415,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     completeRide: {
@@ -5334,7 +5449,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listMyShifts: {
@@ -5363,7 +5480,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listMyAttendance: {
@@ -5392,7 +5511,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listMySalaryPayments: {
@@ -5419,7 +5540,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getStaffMe: {
@@ -5442,7 +5565,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listVerifications: {
@@ -5470,7 +5595,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getVerification: {
@@ -5496,7 +5623,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     decideVerification: {
@@ -5528,7 +5657,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listStudents: {
@@ -5559,7 +5690,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getStudent: {
@@ -5585,7 +5718,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateStudentStatus: {
@@ -5616,7 +5751,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listDrivers: {
@@ -5645,7 +5782,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createDriver: {
@@ -5674,7 +5813,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getDriver: {
@@ -5700,7 +5841,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateDriver: {
@@ -5732,7 +5875,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     addDriverDocument: {
@@ -5763,7 +5908,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listVehicles: {
@@ -5790,7 +5937,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createVehicle: {
@@ -5819,7 +5968,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateVehicle: {
@@ -5850,7 +6001,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listAllRides: {
@@ -5884,7 +6037,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getLiveRides: {
@@ -5907,7 +6062,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getAdminRide: {
@@ -5933,7 +6090,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     reassignRide: {
@@ -5965,7 +6124,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     adminCancelRide: {
@@ -5997,7 +6158,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     setServiceArea: {
@@ -6025,7 +6188,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createPickupPoint: {
@@ -6053,7 +6218,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     deletePickupPoint: {
@@ -6077,7 +6244,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updatePickupPoint: {
@@ -6108,7 +6277,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     setFareBands: {
@@ -6136,7 +6307,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getSettings: {
@@ -6159,7 +6332,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     setSettings: {
@@ -6187,7 +6362,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getStudentWallet: {
@@ -6213,7 +6390,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listStudentWalletTransactions: {
@@ -6244,7 +6423,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     adjustWallet: {
@@ -6287,7 +6468,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     refundRide: {
@@ -6322,7 +6505,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listTopups: {
@@ -6355,7 +6540,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listAllSupportTickets: {
@@ -6384,7 +6571,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getAdminSupportTicket: {
@@ -6410,7 +6599,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateSupportTicket: {
@@ -6441,7 +6632,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     replyAsStaff: {
@@ -6472,7 +6665,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listIncidents: {
@@ -6500,7 +6695,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateIncident: {
@@ -6531,7 +6728,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getSalaryProfile: {
@@ -6557,7 +6756,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     setSalaryProfile: {
@@ -6588,7 +6789,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listShifts: {
@@ -6618,7 +6821,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createShift: {
@@ -6647,7 +6852,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     deleteShift: {
@@ -6671,7 +6878,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listAttendance: {
@@ -6701,7 +6910,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     correctAttendance: {
@@ -6732,7 +6943,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listSalaryPayments: {
@@ -6760,7 +6973,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     recordSalaryPayment: {
@@ -6791,7 +7006,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listStaff: {
@@ -6818,7 +7035,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createStaff: {
@@ -6847,7 +7066,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     updateStaff: {
@@ -6878,7 +7099,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listAuditLog: {
@@ -6908,7 +7131,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     adminCompleteRide: {
@@ -6940,7 +7165,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     acceptStaffInvite: {
@@ -6967,7 +7194,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     confirmStaffMfa: {
@@ -6994,7 +7223,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     forgotStaffPassword: {
@@ -7018,7 +7249,9 @@ export interface operations {
                 content?: never;
             };
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     resetStaffPassword: {
@@ -7043,7 +7276,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     changeStaffPassword: {
@@ -7069,7 +7304,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     resendStaffInvite: {
@@ -7094,7 +7331,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     revokeStaffSessions: {
@@ -7119,7 +7358,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     resolveTopup: {
@@ -7151,7 +7392,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listReconciliationReports: {
@@ -7178,7 +7421,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     runReconciliation: {
@@ -7207,7 +7452,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listAdjustmentRequests: {
@@ -7235,7 +7482,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     approveAdjustment: {
@@ -7270,7 +7519,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     rejectAdjustment: {
@@ -7305,7 +7556,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     reportRiderNoShow: {
@@ -7332,7 +7585,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listRideMessages: {
@@ -7358,7 +7613,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     sendRideMessage: {
@@ -7388,7 +7645,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getLegalVersions: {
@@ -7409,7 +7668,9 @@ export interface operations {
                     "application/json": components["schemas"]["LegalVersions"];
                 };
             };
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     acceptTerms: {
@@ -7433,8 +7694,11 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     getAppConfig: {
@@ -7480,7 +7744,9 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     changeStudentPhone: {
@@ -7512,7 +7778,9 @@ export interface operations {
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     claimVerification: {
@@ -7539,7 +7807,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             409: components["responses"]["Conflict"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     createAnnouncement: {
@@ -7567,7 +7837,9 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     listSessions: {
@@ -7589,7 +7861,10 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     revokeOtherSessions: {
@@ -7609,7 +7884,10 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     revokeSession: {
@@ -7631,8 +7909,11 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
     revokeStudentSessions: {
@@ -7657,7 +7938,9 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
         };
     };
 }
