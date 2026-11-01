@@ -433,8 +433,14 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeTagline.
   ///
   /// In en, this message translates to:
-  /// **'Drive for the campus, one ride at a time'**
+  /// **'Drive for campus'**
   String get welcomeTagline;
+
+  /// No description provided for @welcomeTaglineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'campus'**
+  String get welcomeTaglineAccent;
 
   /// No description provided for @welcomeAudience.
   ///

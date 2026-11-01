@@ -215,7 +215,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
-  String get welcomeTagline => 'Drive for the campus, one ride at a time';
+  String get welcomeTagline => 'Drive for campus';
+
+  @override
+  String get welcomeTaglineAccent => 'campus';
 
   @override
   String welcomeAudience(String appName) {

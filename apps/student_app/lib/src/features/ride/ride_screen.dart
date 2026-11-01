@@ -497,6 +497,12 @@ class _InTrip extends ConsumerWidget {
     return _Panel(
       map: _RideMap(ride, tracking: tracking),
       children: [
+        PhotoCard(
+          asset: 'trip-status-trotro.jpg',
+          height: 140,
+          child: Text('${ride.pickup.label ?? ''} → ${ride.dropoff.label ?? ''}', style: text.titleMedium),
+        ),
+        const SizedBox(height: TurboSpacing.md),
         Row(
           children: [
             Expanded(child: Semantics(header: true, child: Text(l10n.rideInTripTitle, style: text.titleLarge))),

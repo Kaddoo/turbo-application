@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: photos in the screens (branch `design-photos`, on `design-driver`)
+
+**What changed:** new `PhotoCard` in `turbo_ui` (photo, fade, text on top; picture hidden from screen readers). Used for the driver welcome (the Ghanaian taxi driver, with the lime-accent "Drive for campus" title and a slide to continue), the student "You're verified" screen (campus student) and the in-trip card (trotro street, with the route on it). Driver welcome tagline is now "Drive for campus".
+
+**Checks:** analyze clean; turbo_ui 78, student 131, driver 61 pass. Not viewed in a browser or on a device.
+
+**Not done:** the bus-stop, busy-street and Accra-sunset photos have no screen yet (ride detail, share preview, student welcome are not built to the board); the Tema aerial waits for a home hero. 3D icons and map art still open.
+
 ## 2026-11-02, Kevin with Claude, code: stock photos (branch `design-driver`)
 
 **What changed:** eight Pexels photos Kevin approved from a shortlist (trotro and intersection for the trip status card, a busy Accra street, a bus stop, a driver, a campus student, a young man in Accra, a Tema aerial) are in `packages/turbo_ui/assets/photos`, resized to 1200 px wide, declared as package assets, with `CREDITS.md` (photo page and photographer for each). Pexels licence: free, credit not required but kept; the people are stock models and must not be shown as real named drivers or students.

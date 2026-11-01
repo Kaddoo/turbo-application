@@ -58,7 +58,8 @@
   "termsReadPrivacy": "Read the privacy notice",
   "termsLoadFailed": "We couldn't load the terms. Check your connection and try again.",
   "navProfile": "Profile",
-  "welcomeTagline": "Drive for the campus, one ride at a time",
+  "welcomeTagline": "Drive for campus",
+  "welcomeTaglineAccent": "campus",
   "welcomeAudience": "For {appName} drivers",
   "@welcomeAudience": {
     "placeholders": {

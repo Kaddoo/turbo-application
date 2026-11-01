@@ -8,6 +8,7 @@ export 'src/components/bento_tile.dart';
 export 'src/components/confirm_dialog.dart';
 export 'src/components/floating_nav_bar.dart';
 export 'src/components/hero_icon.dart';
+export 'src/components/photo_card.dart';
 export 'src/components/list_row.dart';
 export 'src/components/map_container.dart';
 export 'src/components/message_composer.dart';

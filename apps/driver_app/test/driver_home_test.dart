@@ -38,7 +38,7 @@ void main() {
         ..on('POST /auth/otp/verify', body: tokens());
       await bootDriver(tester, server, signedIn: false);
       await settle(tester);
-      expect(find.text('Drive for the campus, one ride at a time'), findsOneWidget);
+      expect(find.text('Drive for campus', findRichText: true), findsOneWidget);
       await tester.tap(find.text('Continue'));
       await settle(tester);
       await tester.enterText(find.byType(TextField), '020 000 0001');
