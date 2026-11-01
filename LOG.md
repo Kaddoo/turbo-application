@@ -2,6 +2,24 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Claude, code: live auth and role checks on staging
+
+**Task:** Staging MFA removed; run the checks that were waiting for accounts.
+
+**Files touched:** `apps/admin_dashboard/test/live/roles.live.ts` (super admin is allowed everything), `apps/admin_dashboard/.gitignore` (role results file), `docs/api-tracker.md`.
+
+**What changed:** Ran the critical checks (14 passed, 10 write checks skipped) and the per-role sweep with the six dev-seed accounts: 114/114 checks as the contract says, so the API itself refuses every role outside its x-roles on all admin list reads. Probed the refresh cookie (attributes only, no values): rotation, reuse revocation, Origin check and logout clearing work. Tracker: Tested 12 → 28.
+
+**Acceptance criteria:**
+- [x] Every non-admin role gets 403 on each admin list read the contract denies it
+- [x] Refresh, reuse detection, Origin check and logout verified on staging
+
+**Deviations from plan or contract:** none. Single-record reads and writes were not swept by role.
+
+**Status:** done. Branch: dashboard-ui-match.
+
+**Next step:** Backend: add `Secure` to the `turbo_rt` cookie (tracker inconsistency 22).
+
 ## 2026-11-01, Claude, code: dashboard sign-in, sessions and role access
 
 **Task:** Kevin's auth brief: login and logout, token storage, refresh with many failing calls, session persistence, expired-session handling, protected routes, role and permission based UI, blocking direct URLs, password reset, profile. Plan approved; built on `dashboard-ui-match` as asked.
