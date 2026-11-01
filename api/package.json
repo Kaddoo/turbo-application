@@ -21,6 +21,7 @@
     "pushload": "node --env-file-if-exists=.env scripts/pushload.js"
   },
   "dependencies": {
+    "@bevingh/sdk-node": "^0.2.1",
     "compression": "^1.8.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
