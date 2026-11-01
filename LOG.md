@@ -2,6 +2,16 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-01, Kevin with Claude, code: issue 1 contract work, staging hardening, build 4
+
+**Done and merged to `main` (pushed, last merge `fc288f5`):** both redesigned apps; monitoring and alerts (inlet) and log shipping (LogPulse); one contract (`api/contract/openapi.yaml`, now 0.3.2) with a guard and CI; 426/503/403 docs (0.2.3); Idempotency-Key on OTP request, top-up resolve, reconciliation, add driver (0.2.4); specific problem codes, `service_busy`, `link_expired`/`link_invalid` (0.3.0); reduced student and ride views for support and finance, approval threshold on `/admin/me` (0.3.1); self-approval 403, plates compared ignoring case, spaces and hyphens (0.3.2, migration 015); hardened `turbo_rt` cookie (Secure from `COOKIE_SECURE`, Path `/v1/auth`); the `dashboard-ui-match` pull request, merged with item 17, idempotency keys and contract paths ported onto its new structure.
+
+**Staging now:** seed `@turbo.test` staff deactivated; `STAFF_MFA=required` restored (it had silently vanished from the settings file); invited accounts `devspaceshared+admin|finance|finance2|verifier|dispatch|hr|support@gmail.com` and `litobethel@gmail.com` (super admin), links handed out by hand because Zoho blocks mail; TEST data seeded (`scripts/seed-test-data.js`); plate migration applied after a pgBackRest diff backup, one duplicate TST vehicle soft-deleted; TestFlight build 4 of both apps uploaded.
+
+**Not done:** Emmanuel's re-run of the 48 staging checks and the dashboard "limited view" note; Google Maps server key; production switch (Texify, Payaza, Turbo SMTP sender, terms and privacy URLs, `NODE_ENV=production`); landing page (not in the repo); nothing of the redesign seen on a phone yet; student web not started; remaining redesign screens listed in `docs/10-handover-bethel.md`; student phone mask `+233 24 *** **67` awaiting planning's OK.
+
+**How to run things:** `docs/11-ops-runbook.md` (server, deploys, tests, TestFlight script `tools/testflight/ship.sh`).
+
 ## 2026-11-01, Claude, code: data-changing checks on staging for 0.3.1
 
 **Task:** Re-run the data-changing checks against staging and say what still mismatches (backend request; Kevin approved data changes, with the dev-seed accounts).
