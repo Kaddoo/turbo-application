@@ -46,6 +46,11 @@ export const config = {
   inletSecretKey: e.INLET_SECRET_KEY || '',
   inletProductId: e.INLET_PRODUCT_ID || '',
   inletBaseUrl: e.INLET_BASE_URL || '',                    // only for a self-hosted inlet; empty uses the SDK default
+  // Log shipping to LogPulse (central-logging-service) through @bevingh/telemetry. Off unless the URL and the key are both set.
+  logpulseUrl: e.TELEMETRY_COLLECTOR_URL || '',
+  logpulseKey: e.TELEMETRY_API_KEY || '',
+  logpulseAppId: e.TELEMETRY_APP_ID || 'turbo-api',
+  logpulseHealth: e.TELEMETRY_HEALTH_PING === 'true',      // opt in: the key must be issued for this app id with the metrics:write scope
   sosOncallPhone: e.SOS_ONCALL_PHONE || '',                // E.164. Gets a direct SMS when an SOS is not acknowledged in 2 minutes
 };
 if (config.env === 'production') {

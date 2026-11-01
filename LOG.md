@@ -105,6 +105,16 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Next step:** Dashboard sign-in, MFA and invite screens against the mock; separately, move `turbo_ui` brand tokens to the landing-page values on a machine with Flutter.
 
+## 2026-11-01, Kevin with Claude, code: log shipping to LogPulse
+
+**Task:** Send the API's failures and warnings to LogPulse (central-logging-service) with `@bevingh/telemetry` 0.2.2. Branch `logpulse-shipping` (stacked on `monitoring-alerts`, not merged, not pushed).
+
+**What changed:** `api/src/lib/logpulse.js` ships 5xx as error, 401/403/429 and requests slower than 3 s as warn, and every pino warn/error line, with scalar fields only; headers, bodies, query strings, IPs and positions never leave, and text is masked for numbers, emails, URLs and JWTs. Off unless `TELEMETRY_COLLECTOR_URL` and `TELEMETRY_API_KEY` are set; failures are silent and never reach the caller. Health ping is opt-in (`TELEMETRY_HEALTH_PING=true`): the key refused it with "not authorized for this appId", so the key's app id must be found first.
+
+**Server (not in git):** three `TELEMETRY_*` lines appended to `/etc/turbo/api.env` (previous copy `api.env.bak3`); code backup `/opt/turbo/src.pre-logpulse-20261101-1719`; both services restarted, "log shipping enabled" in both logs.
+
+**Checked:** 6 new tests pass. The collector stored a direct test log (201) and a client report from the server finished with no errors. Not checked: reading the logs back (the collector's read side is still the open blocker in the monitoring plan).
+
 ## 2026-11-01, Kevin with Claude, code: monitoring and alerts
 
 **Task:** Brief "monitoring and alerts" (docs/10-monitoring-plan.md): server housekeeping, host checks, and API alerts to inlet. Branch `monitoring-alerts` (not merged, not pushed).

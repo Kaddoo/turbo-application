@@ -4,6 +4,7 @@ import { config } from './config.js';
 import { buildApp, log } from './app.js';
 import { pool } from './db.js';
 import { announceAlerts, checkErrorRate } from './lib/alerts.js';
+import { announceLogpulse, startHealthPing } from './lib/logpulse.js';
 
 const workers = config.webConcurrency || os.availableParallelism();
 
@@ -14,7 +15,7 @@ if (cluster.isPrimary && workers > 1 && config.env === 'production') {
   cluster.on('exit', (w, code) => { log.error({ pid: w.process.pid, code }, 'worker died, restarting'); cluster.fork(); });
 } else {
   const server = buildApp().listen(config.port, config.host, () => log.info({ host: config.host, port: config.port, pid: process.pid }, 'api listening'));
-  announceAlerts(log);
+  announceAlerts(log); announceLogpulse(log); startHealthPing();
   setInterval(() => checkErrorRate().catch(() => {}), 30_000).unref();      // 5xx over 2% for 5 minutes
   server.keepAliveTimeout = 65_000;          // longer than nginx upstream keepalive
   server.headersTimeout = 66_000;

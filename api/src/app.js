@@ -23,8 +23,12 @@ import { sanitizeRequest } from './lib/sanitize.js';
 import { contractRequest, contractResponse } from './lib/contract.js';
 import { appVersion } from './lib/appversion.js';
 import { trackRequest } from './lib/alerts.js';
+import { shipRequest, shipLogLine } from './lib/logpulse.js';
 
-export const log = pino({ level: config.logLevel, redact: ['req.headers.authorization', 'body.code', 'body.refreshToken'] });
+export const log = pino({
+  level: config.logLevel, redact: ['req.headers.authorization', 'body.code', 'body.refreshToken'],
+  hooks: { logMethod(args, method, level) { if (level >= 40) shipLogLine(level, args); return method.apply(this, args); } },     // warn and error go to LogPulse too
+});
 
 export function buildApp() {
   const app = express();
@@ -46,8 +50,9 @@ export function buildApp() {
     res.on('finish', () => {
       if (req.path !== '/health') trackRequest(res.statusCode);          // feeds the 5xx-rate alert
       if (req.path === '/health' && res.statusCode < 400) return;
-      log.info({ reqId: req.id, method: req.method, path: req.route?.path || req.path, status: res.statusCode,
-        ms: Number(process.hrtime.bigint() - t) / 1e6 | 0 }, 'req');
+      const ms = Number(process.hrtime.bigint() - t) / 1e6 | 0;
+      log.info({ reqId: req.id, method: req.method, path: req.route?.path || req.path, status: res.statusCode, ms }, 'req');
+      shipRequest({ method: req.method, route: req.route?.path || req.path, status: res.statusCode, ms, reqId: req.id });
     });
     next();
   });
