@@ -3,7 +3,8 @@ import crypto from 'node:crypto';
 import { q, tx } from '../db.js';
 import { config } from '../config.js';
 import { ApiError } from '../lib/errors.js';
-import { normalizePhone } from '../lib/util.js';
+import { normalizePhone, sha256 } from '../lib/util.js';
+import { idempotent } from '../lib/idempotency.js';
 import { derive } from '../lib/secrets.js';
 import { authenticate, rotateRefresh, revokeRefresh, signAccess, bustTerms } from '../lib/auth.js';
 import { startSession, tokens, readCookie, fromBrowser, requireTrustedOrigin, clearRefreshCookie } from '../lib/session.js';
@@ -23,24 +24,29 @@ const invalid = (field, message) => new ApiError(422, 'validation_failed', 'Inva
 auth.post('/auth/otp/request', limit('otp-ip', Number(process.env.OTP_PER_IP_HOUR || 3000), 3600_000, ip), async (req, res) => {
   const phone = normalizePhone(req.body.phone);       // the contract already pinned the pattern to +233XXXXXXXXX
   if (!phone) throw invalid('phone', 'Only +233 numbers are accepted');
-  const { deviceId, role } = req.body;
-  if (deviceId && hit(`otp-device:${deviceId}`, 10, 3600_000)) throw new ApiError(429, 'otp_rate_limited', 'Too many codes requested from this device', { retryAfterSeconds: 600 });
-  const [{ rows: [c] }, { rows: [g] }] = await Promise.all([
-    q(`SELECT count(*)::int n, max(created_at) last FROM otp_challenges WHERE phone=$1 AND created_at > now() - interval '1 hour'`, [phone]),
-    q(`SELECT count(*)::int n FROM otp_challenges WHERE created_at > now() - interval '1 hour'`),
-  ]);
-  if (c.n >= 5) throw new ApiError(429, 'otp_rate_limited', 'Too many codes requested for this number', { retryAfterSeconds: 600 });
-  // One code per 30 seconds per number: stops someone flooding a victim's phone with five texts at once.
-  if (c.last && Date.now() - new Date(c.last).getTime() < 30_000) throw new ApiError(429, 'otp_rate_limited', 'Wait a moment before asking for another code', { retryAfterSeconds: 30 });
-  // Ceiling on total SMS per hour, so SMS-pumping fraud cannot run up the bill.
-  if (g.n >= config.otpGlobalPerHour) { console.error('OTP global hourly budget reached'); throw new ApiError(503, 'sms_budget_exceeded', 'Sign-in is busy right now, try again shortly', { retryAfterSeconds: 300 }); }
+  // A key makes a retry of the same tap safe: the first answer is replayed and no second SMS goes out. The key is scoped to the number (hashed) and
+  // remembered for 10 minutes. A new tap sends a new key, so a deliberate resend still works; the cooldown and rate limits below still apply to it.
+  // The header is optional: apps released before it existed do not send one.
+  return idempotent(req, res, 'otp-request', async () => {
+    const { deviceId, role } = req.body;
+    if (deviceId && hit(`otp-device:${deviceId}`, 10, 3600_000)) throw new ApiError(429, 'otp_rate_limited', 'Too many codes requested from this device', { retryAfterSeconds: 600 });
+    const [{ rows: [c] }, { rows: [g] }] = await Promise.all([
+      q(`SELECT count(*)::int n, max(created_at) last FROM otp_challenges WHERE phone=$1 AND created_at > now() - interval '1 hour'`, [phone]),
+      q(`SELECT count(*)::int n FROM otp_challenges WHERE created_at > now() - interval '1 hour'`),
+    ]);
+    if (c.n >= 5) throw new ApiError(429, 'otp_rate_limited', 'Too many codes requested for this number', { retryAfterSeconds: 600 });
+    // One code per 30 seconds per number: stops someone flooding a victim's phone with five texts at once.
+    if (c.last && Date.now() - new Date(c.last).getTime() < 30_000) throw new ApiError(429, 'otp_rate_limited', 'Wait a moment before asking for another code', { retryAfterSeconds: 30 });
+    // Ceiling on total SMS per hour, so SMS-pumping fraud cannot run up the bill.
+    if (g.n >= config.otpGlobalPerHour) { console.error('OTP global hourly budget reached'); throw new ApiError(503, 'sms_budget_exceeded', 'Sign-in is busy right now, try again shortly', { retryAfterSeconds: 300 }); }
 
-  const code = config.otpMode === 'fixed' ? '123456' : String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
-  await q(`INSERT INTO otp_challenges (phone, ip, code_hash, expires_at) VALUES ($1,$2,$3, now() + interval '5 minutes')`, [phone, ip(req), codeHash(code, phone)]);
-  // Drivers are created by staff. For a number that is not a driver we answer exactly the same but send nothing (saves SMS cost and does not reveal who is a driver).
-  const known = role === 'student' || (await q(`SELECT 1 FROM users WHERE phone=$1 AND role='driver' AND deleted_at IS NULL`, [phone])).rowCount;
-  if (known) await sendSms(phone, `Your Turbo code is ${code}`);
-  res.status(202).json({ expiresInSeconds: 300, resendInSeconds: 30 });
+    const code = config.otpMode === 'fixed' ? '123456' : String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+    await q(`INSERT INTO otp_challenges (phone, ip, code_hash, expires_at) VALUES ($1,$2,$3, now() + interval '5 minutes')`, [phone, ip(req), codeHash(code, phone)]);
+    // Drivers are created by staff. For a number that is not a driver we answer exactly the same but send nothing (saves SMS cost and does not reveal who is a driver).
+    const known = role === 'student' || (await q(`SELECT 1 FROM users WHERE phone=$1 AND role='driver' AND deleted_at IS NULL`, [phone])).rowCount;
+    if (known) await sendSms(phone, `Your Turbo code is ${code}`);
+    return { status: 202, body: { expiresInSeconds: 300, resendInSeconds: 30 } };
+  }, { subject: sha256(phone), windowSeconds: 600, required: false });
 });
 
 auth.post('/auth/otp/verify', limit('otp-verify', Number(process.env.OTP_PER_IP_HOUR || 3000), 3600_000, ip), async (req, res) => {

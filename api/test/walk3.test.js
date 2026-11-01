@@ -67,10 +67,10 @@ test('HR: vehicles, drivers, documents, expiry rule, salary, shifts, attendance'
   assert.ok(expect(await call('GET', '/admin/vehicles?limit=100', { token: t }), 200).data.some((x) => x.id === v.id));
 
   const phone = randPhone('+23320');
-  const dr = expect(await call('POST', '/admin/drivers', { token: t, body: { fullName: 'Kojo Test', phone, email: 'kojo@example.com', vehicleId: v.id } }), 201);
+  const dr = expect(await call('POST', '/admin/drivers', { token: t, body: { fullName: 'Kojo Test', phone, email: 'kojo@example.com', vehicleId: v.id }, idem: true }), 201);
   assert.equal(dr.dutyStatus, 'off_duty'); assert.equal(dr.vehicle.plateNumber, plate);
-  assert.equal((await call('POST', '/admin/drivers', { token: t, body: { fullName: 'Dup', phone } })).status, 409);
-  assert.equal((await call('POST', '/admin/drivers', { token: t, body: { fullName: 'Same Car', phone: randPhone('+23320'), vehicleId: v.id } })).status, 409, 'one driver per vehicle');
+  assert.equal((await call('POST', '/admin/drivers', { token: t, body: { fullName: 'Dup', phone }, idem: true })).status, 409);
+  assert.equal((await call('POST', '/admin/drivers', { token: t, body: { fullName: 'Same Car', phone: randPhone('+23320'), vehicleId: v.id }, idem: true })).status, 409, 'one driver per vehicle');
   expect(await call('GET', `/admin/drivers/${dr.id}`, { token: t }), 200);
   assert.ok(expect(await call('GET', '/admin/drivers?dutyStatus=off_duty&limit=100', { token: t }), 200).data.some((x) => x.id === dr.id));
   assert.equal(expect(await call('PATCH', `/admin/drivers/${dr.id}`, { token: t, body: { fullName: 'Kojo Updated' } }), 200).fullName, 'Kojo Updated');
@@ -151,19 +151,19 @@ test('finance: wallet views, adjustments with a second approver, refunds, top-up
   await call('POST', '/webhooks/payaza', { raw, headers: { 'x-payaza-signature': sign(Buffer.from(raw)), 'content-type': 'application/json' } });
   const flagged = expect(await call('GET', '/admin/topups?flagged=true&limit=100', { token: f1 }), 200);
   const row = flagged.data.find((x) => x.id === tu.id); assert.ok(row); assert.equal(row.validation, 'underpayment'); assert.equal(row.amountReceivedPesewas, 1550);
-  const res = expect(await call('POST', `/admin/topups/${tu.id}/resolve`, { token: f1, body: { resolution: 'accept_received_amount', note: 'Confirmed with student' } }), 200); assert.ok(res.resolvedAt);
-  assert.equal((await call('POST', `/admin/topups/${tu.id}/resolve`, { token: f1, body: { resolution: 'no_action', note: 'again please' } })).status, 409);
+  const res = expect(await call('POST', `/admin/topups/${tu.id}/resolve`, { token: f1, body: { resolution: 'accept_received_amount', note: 'Confirmed with student' }, idem: true }), 200); assert.ok(res.resolvedAt);
+  assert.equal((await call('POST', `/admin/topups/${tu.id}/resolve`, { token: f1, body: { resolution: 'no_action', note: 'again please' }, idem: true })).status, 409);
   expect(await call('GET', `/admin/topups?status=succeeded&studentId=${sid}`, { token: f1 }), 200);
 
   // reconciliation: a provider CSV with one matching row, one amount mismatch and one reference we never issued
   const csv = Buffer.from(`Transaction Reference,Amount,Status\n${tu.reference},20.00,Success\nUNKNOWN-REF-1,5.00,Success\n`);
   const up = await uploadFile(f1, 'provider_statement', csv, 'text/csv');
   const today = new Date().toISOString().slice(0, 10);
-  const rep = expect(await call('POST', '/admin/reconciliation/reports', { token: f1, body: { statementUploadId: up, periodFrom: today, periodTo: today } }), 201);
+  const rep = expect(await call('POST', '/admin/reconciliation/reports', { token: f1, body: { statementUploadId: up, periodFrom: today, periodTo: today }, idem: true }), 201);
   const issues = rep.exceptions.map((e) => e.issue).sort();
   assert.ok(issues.includes('missing_here') && issues.includes('amount_mismatch'), `exceptions: ${issues}`);
   assert.ok(expect(await call('GET', '/admin/reconciliation/reports', { token: f1 }), 200).items.some((r) => r.id === rep.id));
-  assert.equal((await call('POST', '/admin/reconciliation/reports', { token: f1, body: { statementUploadId: uuid(), periodFrom: today, periodTo: today } })).status, 404);
+  assert.equal((await call('POST', '/admin/reconciliation/reports', { token: f1, body: { statementUploadId: uuid(), periodFrom: today, periodTo: today }, idem: true })).status, 404);
 });
 
 test('support and verifier tools: tickets, incidents, student accounts, phone change, sessions', async () => {

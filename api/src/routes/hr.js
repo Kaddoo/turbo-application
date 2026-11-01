@@ -63,7 +63,7 @@ async function assignVehicle(c, driverId, vehicleId) {
   if (other) throw conflict('conflict', 'That vehicle is already assigned to another driver');
 }
 
-hr.post('/admin/drivers', ...H, async (req, res) => {
+hr.post('/admin/drivers', ...H, async (req, res) => idempotent(req, res, 'drivercreate', async () => {
   const { fullName, phone, email, vehicleId } = req.body;
   const p = normalizePhone(phone);
   const id = await tx(async (c) => {
@@ -78,8 +78,8 @@ hr.post('/admin/drivers', ...H, async (req, res) => {
     await audit(c, req, 'driver.create', u.id);
     return u.id;
   });
-  res.status(201).json(await oneDriver(id));
-});
+  return { status: 201, body: await oneDriver(id) };
+}));
 
 hr.patch('/admin/drivers/:id', ...H, async (req, res) => {
   const { fullName, status, vehicleId } = req.body;
