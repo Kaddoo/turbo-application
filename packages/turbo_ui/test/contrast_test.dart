@@ -38,6 +38,7 @@ void _check(String name, BrandPalette p) {
     test('accent is a fill with readable text on it', () {
       text('onAccent on accent', p.onAccent, p.accent);
       text('background on danger (onDanger)', p.background, p.danger);
+      expect(contrast(p.onSos, p.sos), greaterThanOrEqualTo(3.0), reason: '$name onSos on sos (large text)');
     });
 
     test('control edges and focus ring reach 3:1', () {
