@@ -69,12 +69,13 @@ class TurboButton extends StatelessWidget {
       padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: TurboSpacing.xl, vertical: TurboSpacing.md)),
       shape: WidgetStatePropertyAll(shape),
       elevation: const WidgetStatePropertyAll(0),
-      backgroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.disabled) ? disabledFill : fill),
+      // A button that is busy keeps its colour: it is waiting, not unavailable.
+      backgroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.disabled) && !loading ? disabledFill : fill),
       foregroundColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.disabled) ? (variant == TurboButtonVariant.primary ? c.onAccent.withValues(alpha: 0.6) : c.textSecondary) : fore,
+        (s) => s.contains(WidgetState.disabled) && !loading ? (variant == TurboButtonVariant.primary ? c.onAccent.withValues(alpha: 0.6) : c.textSecondary) : fore,
       ),
       side: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.disabled) && variant != TurboButtonVariant.primary ? BorderSide(color: c.border) : side,
+        (s) => s.contains(WidgetState.disabled) && !loading && variant != TurboButtonVariant.primary ? BorderSide(color: c.border) : side,
       ),
       overlayColor: WidgetStatePropertyAll(fore.withValues(alpha: 0.12)),
       textStyle: WidgetStatePropertyAll(textStyle),

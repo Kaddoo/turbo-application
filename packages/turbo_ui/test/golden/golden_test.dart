@@ -79,7 +79,7 @@ void main() {
           tester,
           RepaintBoundary(child: entry.value()),
           brightness: brightness,
-          size: const Size(390, 900),
+          size: Size(390, entry.key == 'controls' ? 1050 : 900),
           reduceMotion: true,
         );
         await expectLater(

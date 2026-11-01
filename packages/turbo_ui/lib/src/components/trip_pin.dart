@@ -36,7 +36,7 @@ class TripPin extends StatelessWidget {
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: c.surfaceRaised,
+                      color: c.fill,
                       borderRadius: BorderRadius.circular(t.radiusInner),
                       border: error
                           ? Border.all(color: c.danger, width: TurboSizes.accentBorderWidth)

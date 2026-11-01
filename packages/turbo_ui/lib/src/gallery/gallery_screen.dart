@@ -229,7 +229,7 @@ class _GalleryBody extends StatelessWidget {
                   gap,
                   const InnerPanel(child: TripPin(digits: '48', current: true)),
                   gap,
-                  TurboCard(selected: true, child: Text('Main Gate', style: Theme.of(context).textTheme.titleSmall)),
+                  SizedBox(width: double.infinity, child: TurboCard(selected: true, child: Text('Main Gate', style: Theme.of(context).textTheme.titleSmall))),
                 ],
               ),
             ),

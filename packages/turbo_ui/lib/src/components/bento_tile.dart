@@ -53,13 +53,18 @@ class BentoTile extends StatelessWidget {
               children: [
                 Text(label, style: t.styles.tag.copyWith(color: sub)),
                 const SizedBox(height: TurboSpacing.xs),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(child: Text(title, style: (money ? t.styles.monoMoneyLarge : Theme.of(context).textTheme.titleLarge)!.copyWith(color: fore))),
-                    if (trailing != null) ...[const SizedBox(width: TurboSpacing.sm), trailing!],
-                  ],
-                ),
+                if (money)
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(title, maxLines: 1, style: t.styles.monoMoneyLarge.copyWith(color: fore)),
+                  )
+                else
+                  Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: fore)),
+                if (trailing != null) ...[
+                  const SizedBox(height: TurboSpacing.sm),
+                  Align(alignment: AlignmentDirectional.centerEnd, child: trailing!),
+                ],
                 if (footer != null) ...[const SizedBox(height: TurboSpacing.sm), footer!],
               ],
             ),

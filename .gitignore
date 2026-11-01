@@ -25,3 +25,4 @@ node_modules/
 **/ios/Flutter/Secrets.xcconfig
 .mock/
 .backend/
+packages/turbo_ui/test/golden/failures/
