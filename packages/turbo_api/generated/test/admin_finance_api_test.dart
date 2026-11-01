@@ -90,18 +90,18 @@ void main() {
 
     // Close a flagged top-up
     //
-    // **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here.
+    // **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
     //
-    //Future<Topup> resolveTopup(String id, TopupResolve topupResolve) async
+    //Future<Topup> resolveTopup(String idempotencyKey, String id, TopupResolve topupResolve) async
     test('test resolveTopup', () async {
       // TODO
     });
 
     // Compare our top-ups with the provider statement
     //
-    // **Access:** admin:finance.  Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world.
+    // **Access:** admin:finance.  Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as the nightly self-check but against the outside world. Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
     //
-    //Future<ReconciliationReport> runReconciliation(ReconciliationRun reconciliationRun) async
+    //Future<ReconciliationReport> runReconciliation(String idempotencyKey, ReconciliationRun reconciliationRun) async
     test('test runReconciliation', () async {
       // TODO
     });

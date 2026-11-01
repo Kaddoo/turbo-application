@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.2.3
+  version: 0.2.4
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -156,7 +156,11 @@ paths:
 
 
         Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (`smsDailyLimit`)
-        is hit, returns 503 `sms_budget_exceeded` and staff are alerted.'
+        is hit, returns 503 `sms_budget_exceeded` and staff are alerted.
+
+        Send an `Idempotency-Key` (optional, so older apps keep working), a new one for each tap on "send code". A retry of the same tap with the same key within 10 minutes returns the first answer and sends **no** second SMS; the key is scoped to the phone number. The same key with a different body is 409 `idempotency_key_reused`. A new key is a deliberate resend: the 30 second cooldown and the hourly limits still apply to it.'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKeyOptional'
       requestBody:
         required: true
         content:
@@ -178,6 +182,8 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
         '426':
           $ref: '#/components/responses/UpgradeRequired'
+        '409':
+          $ref: '#/components/responses/Conflict'
       security: []
       x-roles:
       - public
@@ -2462,7 +2468,11 @@ paths:
       - 'Admin: Drivers'
       operationId: createDriver
       summary: Create a driver and invite them by SMS
-      description: '**Access:** admin:hr.'
+      description: '**Access:** admin:hr.
+
+        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -4488,8 +4498,11 @@ paths:
 
 
         Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not
-        here.'
+        here.
+
+        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.'
       parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
       - *id001
       requestBody:
         required: true
@@ -4533,7 +4546,11 @@ paths:
 
 
         Matches by provider reference. Every mismatch becomes an exception and flags the top-up. Runs on the same totals as
-        the nightly self-check but against the outside world.'
+        the nightly self-check but against the outside world.
+
+        Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
@@ -4561,6 +4578,8 @@ paths:
           $ref: '#/components/responses/UpgradeRequired'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
+        '409':
+          $ref: '#/components/responses/Conflict'
       x-roles:
       - admin:finance
       x-release: v1
@@ -5221,6 +5240,15 @@ components:
         minLength: 8
         maxLength: 128
       description: Client generated UUID. Reuse it when retrying the same request.
+    IdempotencyKeyOptional:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+      description: Client generated UUID, a new one for each deliberate request. Reuse it only when retrying the same request.
   responses:
     BadRequest:
       description: Malformed request or a business rule failed (see `code`).

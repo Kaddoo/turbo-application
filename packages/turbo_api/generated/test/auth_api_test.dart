@@ -72,9 +72,9 @@ void main() {
 
     // Send a one-time code by SMS
     //
-    // **Access:** Public.  Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (`smsDailyLimit`) is hit, returns 503 `sms_budget_exceeded` and staff are alerted.
+    // **Access:** Public.  Only +233 numbers are accepted. Limits apply per phone number, per IP and per device. When the daily SMS ceiling (`smsDailyLimit`) is hit, returns 503 `sms_budget_exceeded` and staff are alerted. Send an `Idempotency-Key` (optional, so older apps keep working), a new one for each tap on \"send code\". A retry of the same tap with the same key within 10 minutes returns the first answer and sends **no** second SMS; the key is scoped to the phone number. The same key with a different body is 409 `idempotency_key_reused`. A new key is a deliberate resend: the 30 second cooldown and the hourly limits still apply to it.
     //
-    //Future<OtpChallenge> requestOtp(OtpRequest otpRequest) async
+    //Future<OtpChallenge> requestOtp(OtpRequest otpRequest, { String idempotencyKey }) async
     test('test requestOtp', () async {
       // TODO
     });
