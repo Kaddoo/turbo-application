@@ -124,7 +124,7 @@ _responseData = rawData == null ? null : deserialize<Student, Student>(rawData, 
   }
 
   /// Student detail
-  /// **Access:** admin:verifier.
+  /// **Access:** admin:verifier. Verifiers (and super admins) get the full record. Support gets a reduced view: the same record without the student ID number, so they can find and help a student without seeing more than that. Every reduced view is written to the audit log (&#x60;student.view_reduced&#x60;).
   ///
   /// Parameters:
   /// * [id] 

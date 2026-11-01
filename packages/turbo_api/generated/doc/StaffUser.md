@@ -17,6 +17,7 @@ Name | Type | Description | Notes
 **lastLoginAt** | [**DateTime**](DateTime.md) |  | [optional] 
 **lockedUntil** | [**DateTime**](DateTime.md) |  | [optional] 
 **invitePending** | **bool** |  | [optional] 
+**adjustmentApprovalThresholdPesewas** | **int** | Only for finance and super admin. A wallet adjustment above this amount needs a second approver. | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

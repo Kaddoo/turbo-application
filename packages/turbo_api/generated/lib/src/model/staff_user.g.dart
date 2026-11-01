@@ -25,6 +25,10 @@ abstract class _$StaffUserCWProxy {
 
   StaffUser invitePending(bool? invitePending);
 
+  StaffUser adjustmentApprovalThresholdPesewas(
+    int? adjustmentApprovalThresholdPesewas,
+  );
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StaffUser(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -41,6 +45,7 @@ abstract class _$StaffUserCWProxy {
     DateTime? lastLoginAt,
     DateTime? lockedUntil,
     bool? invitePending,
+    int? adjustmentApprovalThresholdPesewas,
   });
 }
 
@@ -81,6 +86,13 @@ class _$StaffUserCWProxyImpl implements _$StaffUserCWProxy {
       this(invitePending: invitePending);
 
   @override
+  StaffUser adjustmentApprovalThresholdPesewas(
+    int? adjustmentApprovalThresholdPesewas,
+  ) => this(
+    adjustmentApprovalThresholdPesewas: adjustmentApprovalThresholdPesewas,
+  );
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `StaffUser(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -97,6 +109,7 @@ class _$StaffUserCWProxyImpl implements _$StaffUserCWProxy {
     Object? lastLoginAt = const $CopyWithPlaceholder(),
     Object? lockedUntil = const $CopyWithPlaceholder(),
     Object? invitePending = const $CopyWithPlaceholder(),
+    Object? adjustmentApprovalThresholdPesewas = const $CopyWithPlaceholder(),
   }) {
     return StaffUser(
       id: id == const $CopyWithPlaceholder()
@@ -135,6 +148,11 @@ class _$StaffUserCWProxyImpl implements _$StaffUserCWProxy {
           ? _value.invitePending
           // ignore: cast_nullable_to_non_nullable
           : invitePending as bool?,
+      adjustmentApprovalThresholdPesewas:
+          adjustmentApprovalThresholdPesewas == const $CopyWithPlaceholder()
+          ? _value.adjustmentApprovalThresholdPesewas
+          // ignore: cast_nullable_to_non_nullable
+          : adjustmentApprovalThresholdPesewas as int?,
     );
   }
 }
@@ -181,6 +199,10 @@ StaffUser _$StaffUserFromJson(Map<String, dynamic> json) =>
           (v) => v == null ? null : DateTime.parse(v as String),
         ),
         invitePending: $checkedConvert('invitePending', (v) => v as bool?),
+        adjustmentApprovalThresholdPesewas: $checkedConvert(
+          'adjustmentApprovalThresholdPesewas',
+          (v) => (v as num?)?.toInt(),
+        ),
       );
       return val;
     });
@@ -195,6 +217,8 @@ Map<String, dynamic> _$StaffUserToJson(StaffUser instance) => <String, dynamic>{
   'lastLoginAt': ?instance.lastLoginAt?.toIso8601String(),
   'lockedUntil': ?instance.lockedUntil?.toIso8601String(),
   'invitePending': ?instance.invitePending,
+  'adjustmentApprovalThresholdPesewas':
+      ?instance.adjustmentApprovalThresholdPesewas,
 };
 
 const _$StaffRoleEnumMap = {

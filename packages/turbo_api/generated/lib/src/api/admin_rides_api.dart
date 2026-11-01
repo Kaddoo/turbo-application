@@ -224,7 +224,7 @@ _responseData = rawData == null ? null : deserialize<AdminRideDetail, AdminRideD
   }
 
   /// Ride with full event timeline
-  /// **Access:** admin:dispatcher.
+  /// **Access:** admin:dispatcher. Dispatchers (and super admins) get the full record. Support and finance get a reduced view: fare, status, ids, times and the public driver and vehicle, but no PIN, no driver detail or last position, no event details, and a masked student phone. Every reduced view is written to the audit log (&#x60;ride.view_reduced&#x60;).
   ///
   /// Parameters:
   /// * [id] 

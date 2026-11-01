@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.3.0
+  version: 0.3.1
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -2157,7 +2157,9 @@ paths:
       - Admin
       operationId: getStaffMe
       summary: My staff profile
-      description: '**Access:** admin:any.'
+      description: '**Access:** admin:any.
+
+        Finance and super admin also receive `adjustmentApprovalThresholdPesewas`: the amount above which a wallet adjustment needs a second approver. Other roles do not.'
       responses:
         '200':
           description: OK
@@ -2353,7 +2355,9 @@ paths:
       - 'Admin: Students'
       operationId: getStudent
       summary: Student detail
-      description: '**Access:** admin:verifier.'
+      description: '**Access:** admin:verifier.
+
+        Verifiers (and super admins) get the full record. Support gets a reduced view: the same record without the student ID number, so they can find and help a student without seeing more than that. Every reduced view is written to the audit log (`student.view_reduced`).'
       parameters:
       - name: id
         in: path
@@ -2381,6 +2385,7 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:verifier
+      - admin:support
       x-release: v1
     patch:
       tags:
@@ -2840,7 +2845,9 @@ paths:
       - 'Admin: Rides'
       operationId: getAdminRide
       summary: Ride with full event timeline
-      description: '**Access:** admin:dispatcher.'
+      description: '**Access:** admin:dispatcher.
+
+        Dispatchers (and super admins) get the full record. Support and finance get a reduced view: fare, status, ids, times and the public driver and vehicle, but no PIN, no driver detail or last position, no event details, and a masked student phone. Every reduced view is written to the audit log (`ride.view_reduced`).'
       parameters:
       - name: id
         in: path
@@ -2868,6 +2875,8 @@ paths:
           $ref: '#/components/responses/ServiceUnavailable'
       x-roles:
       - admin:dispatcher
+      - admin:support
+      - admin:finance
       x-release: v1
   /admin/rides/{id}/reassign:
     post:
@@ -7994,6 +8003,10 @@ components:
           format: date-time
         invitePending:
           type: boolean
+        adjustmentApprovalThresholdPesewas:
+          allOf:
+          - $ref: '#/components/schemas/Pesewas'
+          description: Only for finance and super admin. A wallet adjustment above this amount needs a second approver.
       required:
       - id
       - email
