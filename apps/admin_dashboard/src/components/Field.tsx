@@ -167,6 +167,7 @@ export function Slider({
   onChange,
   format = String,
   disabled,
+  labelHidden,
 }: {
   label: string;
   value: number;
@@ -176,18 +177,27 @@ export function Slider({
   onChange: (v: number) => void;
   format?: (v: number) => string;
   disabled?: boolean;
+  /** The card around the slider shows the title; the label stays for screen readers. */
+  labelHidden?: boolean;
 }) {
   const id = useId();
   const pct = ((value - min) / (max - min)) * 100;
   return (
     <div className={s.slider}>
-      <div className={s.sliderHead}>
-        <label className={s.label} htmlFor={id}>
+      {labelHidden ? (
+        <label className={s.visuallyHidden} htmlFor={id}>
           {label}
         </label>
-        <span className={cx(s.chip, s['chip-plain'], s['tone-neutral'])}>{format(max)}</span>
-      </div>
+      ) : (
+        <div className={s.sliderHead}>
+          <label className={s.label} htmlFor={id}>
+            {label}
+          </label>
+          <span className={cx(s.chip, s['chip-plain'], s['tone-neutral'])}>{format(max)}</span>
+        </div>
+      )}
       <div className={s.sliderTrackWrap} style={{ ['--pct' as string]: `${pct}%` }}>
+        <span className={s.sliderTicks} aria-hidden="true" />
         <span className={s.sliderBubble} aria-hidden="true">
           {format(value)}
         </span>

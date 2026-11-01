@@ -1,37 +1,20 @@
-/* Dashboard building blocks. Theme variables only. Breakpoints: 640px phone, 1024px tablet. */
+/* Dashboard blocks, after the reference design. Theme variables only. Breakpoints: 640px, 1024px. */
 .caption {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   margin: 0;
   font-size: var(--text-caption);
   color: var(--color-text-secondary);
 }
-.sectionHeader {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+.inlineIcon {
+  display: inline-block;
+  vertical-align: middle;
 }
 .sectionText {
   display: grid;
   gap: var(--space-1);
   min-width: 0;
-}
-.titleRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-.pageTitle,
-.sectionTitle {
-  margin: 0;
-  font-size: var(--text-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-.sectionTitle {
-  font-size: var(--text-title);
 }
 .controls {
   display: flex;
@@ -39,29 +22,95 @@
   gap: var(--space-2);
   flex-wrap: wrap;
 }
+.unit {
+  margin-left: 2px;
+  font-size: var(--text-body-large);
+  color: var(--color-text-primary);
+  letter-spacing: 0;
+}
+.footnote {
+  margin: 0;
+  font-size: var(--text-micro);
+  color: var(--color-text-secondary);
+}
+.greyChip,
+.countChip {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}
 
-.iconDisc {
+/* Icon tile */
+.tile_ {
   flex: none;
   display: grid;
   place-items: center;
   width: var(--space-10);
   height: var(--space-10);
-  border-radius: var(--radius-full);
-  background: var(--color-surface-raised);
-  color: var(--color-accent-text);
+  border-radius: var(--radius-input);
 }
-.iconDiscUrgent {
-  color: var(--color-danger);
+.tileSm {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-small);
+}
+.tile-accent {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.tile-success {
+  background: var(--color-success);
+  color: var(--color-background);
+}
+.tile-warning {
+  background: var(--color-warning);
+  color: var(--color-background);
+}
+.tile-danger {
+  background: var(--color-danger);
+  color: var(--color-background);
+}
+.tile-neutral {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+/* Section header */
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.captionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+.bigTitle {
+  margin: 0;
+  font-size: var(--text-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 /* Metric card */
 .metric {
+  position: relative;
+  overflow: hidden;
   display: grid;
-  align-content: start;
+  grid-template-rows: auto auto 1fr;
   gap: var(--space-5);
-  padding: var(--space-5);
+  padding: var(--space-5) var(--space-5) 0;
   border-radius: var(--radius-card);
-  background: var(--color-surface);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
   border: 1px solid var(--color-border);
   min-width: 0;
   transition: border-color var(--motion-fast);
@@ -70,7 +119,7 @@
   border-color: var(--color-control-border);
 }
 .metricUrgent {
-  border-color: var(--color-danger);
+  border-color: color-mix(in srgb, var(--color-danger) 60%, var(--color-border));
 }
 .metricHead {
   display: flex;
@@ -84,40 +133,27 @@
 }
 .metricTitle {
   margin: 0;
-  font-size: var(--text-body-large);
-  font-weight: 600;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.3;
 }
 .metricValueBlock {
   display: grid;
-  gap: var(--space-1);
-}
-.metricValueRow,
-.tileValueRow {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  justify-items: start;
+  gap: var(--space-2);
 }
 .metricValue {
-  font-size: var(--text-hero);
-  font-weight: 600;
+  font-size: var(--text-display);
+  font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-.unit {
-  margin-left: var(--space-1);
-  font-size: var(--text-body-large);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  letter-spacing: 0;
-}
 .metricChart {
-  min-height: calc(var(--space-12) + var(--space-8));
   display: flex;
   align-items: flex-end;
+  min-height: calc(var(--space-12) * 2);
+  margin: 0 calc(var(--space-5) * -1);
 }
 .metricError {
   display: flex;
@@ -127,167 +163,240 @@
   color: var(--color-danger);
   font-size: var(--text-caption);
 }
-.footnote {
-  margin: 0;
-  font-size: var(--text-micro);
-  color: var(--color-text-secondary);
-}
 
 .change {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-full);
-  font-size: var(--text-micro);
-  font-weight: 600;
+  gap: var(--space-2);
+  font-size: var(--text-caption);
   white-space: nowrap;
+}
+.changeIcon {
+  display: grid;
+  place-items: center;
+  width: var(--space-4);
+  height: var(--space-4);
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+.changeIcon svg {
+  width: var(--space-3);
+  height: var(--space-3);
+  color: var(--color-background);
+  stroke-width: 3;
 }
 .change-success {
   color: var(--color-success);
-  background: color-mix(in srgb, var(--color-success) 14%, transparent);
 }
 .change-danger {
   color: var(--color-danger);
-  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
 }
 .change-warning {
   color: var(--color-warning);
-  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
 }
 .change-neutral,
 .change-accent {
   color: var(--color-text-secondary);
-  background: var(--color-surface-raised);
 }
 
-/* Hero card */
+/* Hero (promo) card */
 .hero {
   position: relative;
   overflow: hidden;
   display: grid;
-  align-content: start;
-  gap: var(--space-3);
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-6);
   padding: var(--space-6);
-  border-radius: var(--radius-card);
-  background: linear-gradient(140deg, var(--color-hero-from), var(--color-hero-to));
-  color: var(--color-on-accent);
+  border-radius: var(--radius-panel);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 22%, var(--color-border));
+  background:
+    radial-gradient(120% 60% at 50% 115%, color-mix(in srgb, var(--color-accent) 42%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--color-surface) 0%, var(--color-background) 55%);
   min-width: 0;
 }
-.heroGlow {
+.heroStreak {
   position: absolute;
-  right: calc(var(--space-12) * -1);
-  bottom: calc(var(--space-12) * -1);
-  width: calc(var(--space-12) * 4);
-  aspect-ratio: 1;
-  border-radius: var(--radius-full);
-  border: var(--space-6) solid var(--color-on-accent);
-  opacity: 0.08;
+  right: var(--space-6);
+  top: 38%;
+  width: calc(var(--space-12) * 1.5);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-text-primary));
+  transform: rotate(-38deg);
+  opacity: 0.35;
   pointer-events: none;
 }
+.heroTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.heroBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body-large);
+}
+.heroMark {
+  display: grid;
+  place-items: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-small);
+  background: var(--color-text-primary);
+  color: var(--color-background);
+  font-weight: 700;
+  font-size: var(--text-caption);
+}
 .heroChip {
-  justify-self: start;
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  background: var(--color-on-accent);
-  color: var(--color-accent);
-  font-size: var(--text-micro);
-  font-weight: 600;
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--color-accent) 85%, transparent);
+  color: var(--color-on-accent);
+  font-size: var(--text-caption);
+}
+.heroText {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
 }
 .heroTitle {
-  margin: var(--space-4) 0 0;
+  margin: 0;
   font-size: var(--text-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 .heroBody {
   margin: 0;
-  max-width: 28rem;
+  max-width: 22rem;
+  color: var(--color-text-secondary);
 }
 .heroSkeleton {
   display: grid;
   gap: var(--space-2);
-  margin-top: var(--space-4);
 }
 .heroActions {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+.heroSecondary {
+  background: color-mix(in srgb, var(--color-background) 40%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-control-border));
 }
 
-/* Panel */
+/* Outer panel and the dotted detail card */
 .panel {
   display: grid;
-  gap: var(--space-6);
-  padding: var(--space-6);
+  gap: var(--space-4);
+  padding: var(--space-4);
   border-radius: var(--radius-panel);
-  background: var(--color-surface);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
   border: 1px solid var(--color-border);
   min-width: 0;
 }
 .panelHead {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: 0 var(--space-2);
 }
 .panelTitle {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: 400;
+}
+.panelTools {
+  display: flex;
+  gap: var(--space-1);
+}
+.detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 30rem);
+  gap: var(--space-6);
+  align-items: start;
+  padding: var(--space-6);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+  background-size: var(--space-4) var(--space-4);
+}
+.detailMain {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.detailTitleRow {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin: 0;
-  font-size: var(--text-title);
-  font-weight: 600;
+  flex-wrap: wrap;
 }
+.detailTitle {
+  margin: 0;
+  font-size: var(--text-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.detailAside {
+  min-width: 0;
+}
+
 .bigNumber {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.bigRow {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  align-items: center;
   gap: var(--space-4);
   flex-wrap: wrap;
 }
 .bigValue {
   font-size: var(--text-hero);
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-weight: 400;
+  letter-spacing: -0.04em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  background: linear-gradient(90deg, var(--color-text-primary) 45%, var(--color-text-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* Stat tiles and the header row above them */
-.tile {
+.control {
   display: grid;
-  align-content: start;
-  gap: var(--space-3);
-  padding: var(--space-4);
+  gap: var(--space-8);
+  padding: var(--space-5);
   border-radius: var(--radius-card);
-  background: var(--color-background);
   border: 1px solid var(--color-border);
-  min-width: 0;
+  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
 }
-.tileHead {
+.controlHead {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
-.tileValue {
-  font-size: var(--text-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
+.controlTitle {
+  font-size: var(--text-title);
+  letter-spacing: -0.01em;
 }
-.tileVisual {
-  margin-top: auto;
+.controlBody {
+  padding-top: var(--space-4);
 }
+
+/* Sortable header row and stat tiles */
 .sortRow {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4);
+  padding: 0 var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
 }
 .sortHead {
   display: flex;
@@ -295,7 +404,7 @@
   justify-content: space-between;
   gap: var(--space-2);
   min-height: var(--size-target);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
   border: 0;
   border-radius: var(--radius-input);
   background: transparent;
@@ -306,26 +415,70 @@
 }
 .sortHead:hover,
 .sortHeadActive {
-  background: var(--color-surface-raised);
   color: var(--color-text-primary);
-}
-.sortText {
-  display: grid;
+  background: var(--color-surface);
 }
 .sortLabel {
-  font-weight: 600;
   color: var(--color-text-primary);
+  font-size: var(--text-body-large);
+}
+.stat {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-card);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
+  border: 1px solid var(--color-border);
+  min-width: 0;
+}
+.statHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.statValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.statValue {
+  font-size: var(--text-display);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.statVisual {
+  padding-top: var(--space-1);
 }
 
+@media (max-width: 1024px) {
+  .detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 @media (max-width: 640px) {
-  .metric,
   .hero,
-  .panel {
+  .detail {
     padding: var(--space-4);
   }
-  .metricValue,
+  .panel {
+    padding: var(--space-3);
+  }
+  .metric {
+    padding: var(--space-4) var(--space-4) 0;
+  }
+  .metricChart {
+    margin: 0 calc(var(--space-4) * -1);
+  }
   .bigValue {
     font-size: var(--text-display);
+  }
+  .detailTitle {
+    font-size: var(--text-title);
   }
   .sortRow {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -90,17 +90,17 @@ export function GlobalSearch({
   return (
     <div ref={wrapRef} className={sh.searchWrap}>
       <div className={sh.searchBox}>
-        <Icon name="search" size="sm" />
         <input
           ref={inputRef}
           type="search"
           role="combobox"
           aria-label="Search pages"
+          aria-keyshortcuts={shortcut ? '/' : undefined}
           aria-expanded={showPanel}
           aria-controls={`${id}-list`}
           aria-autocomplete="list"
           aria-activedescendant={showPanel && results[active] ? `${id}-${active}` : undefined}
-          placeholder="Search pages"
+          placeholder="Search…"
           className={sh.searchField}
           value={q}
           autoFocus={autoFocus}
@@ -112,11 +112,7 @@ export function GlobalSearch({
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
         />
-        {shortcut && !q && (
-          <kbd className={sh.kbd} aria-hidden="true">
-            /
-          </kbd>
-        )}
+        <Icon name="search" size="sm" />
       </div>
       {showPanel && (
         <div className={sh.searchPanel}>

@@ -29,17 +29,21 @@ export { ToastProvider, useToast, type ToastTone } from './Toast';
 export { Tooltip } from './Tooltip';
 export { usePopover } from './usePopover';
 export { When } from './When';
-export { BarChart, ChartSkeleton, Donut, RangeBars, Sparkline, type ChartTone } from './charts/Charts';
+export { BarChart, ChartSkeleton, Donut, RangeBars, RangeLines, Sparkline, type ChartTone } from './charts/Charts';
 export {
   BigNumber,
   ChangePill,
+  ControlCard,
+  DetailCard,
   HeroCard,
+  IconTile,
   MetricCard,
   Panel,
   SectionHeader,
   SortHeaderRow,
   StatTile,
   type Change,
+  type TileTone,
 } from './dashboard/Dashboard';
 export { cx } from './cx';
 

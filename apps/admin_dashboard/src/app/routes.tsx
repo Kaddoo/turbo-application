@@ -188,11 +188,11 @@ export const mobileTabOrder = [
 ];
 
 /** The top bar's main button, per role: where that person's work starts. */
-export const primaryAction: Record<StaffRole, { label: string; to: string }> = {
-  super_admin: { label: 'Open live map', to: '/live' },
-  verifier: { label: 'Review queue', to: '/verification' },
-  dispatcher: { label: 'Open live map', to: '/live' },
-  finance: { label: 'Approvals', to: '/finance/adjustments?tab=approvals' },
-  support: { label: 'Open tickets', to: '/support' },
-  hr: { label: 'Shifts', to: '/salary/shifts' },
+export const primaryAction: Record<StaffRole, { label: string; to: string; icon: IconName }> = {
+  super_admin: { label: 'Live map', to: '/live', icon: 'liveMap' },
+  verifier: { label: 'Review queue', to: '/verification', icon: 'verification' },
+  dispatcher: { label: 'Live map', to: '/live', icon: 'liveMap' },
+  finance: { label: 'Approvals', to: '/finance/adjustments?tab=approvals', icon: 'adjustments' },
+  support: { label: 'Open tickets', to: '/support', icon: 'support' },
+  hr: { label: 'Shifts', to: '/salary/shifts', icon: 'shifts' },
 };

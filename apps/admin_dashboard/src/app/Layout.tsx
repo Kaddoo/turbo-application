@@ -116,46 +116,55 @@ export function Layout() {
   const list = can('incidents')
     ? {
         title: 'Open SOS',
+        icon: 'incidents' as const,
         loading: sos.isPending,
         empty: 'No open SOS or safety reports.',
         onViewAll: () => navigate('/incidents'),
         items: open.map((i) => ({
           id: i.id,
-          name: i.type === 'sos' ? 'SOS alert' : 'Safety report',
-          label: i.type === 'sos' ? 'SOS alert' : 'Safety report',
-          meta: formatRelative(i.createdAt),
+          icon: 'incidents' as const,
           tone: 'danger' as const,
+          caption: i.type === 'sos' ? 'SOS alert' : 'Safety report',
+          value: `Raised ${formatRelative(i.createdAt)}`,
           onSelect: () => navigate('/incidents'),
         })),
       }
     : can('liveMap')
       ? {
           title: 'Active rides',
+          icon: 'rides' as const,
           loading: live.isPending,
           empty: 'No rides on the road.',
           onViewAll: () => navigate('/live'),
           items: (live.data?.rides ?? []).map(({ ride }) => ({
             id: ride.id,
-            name: ride.studentName ?? 'Student',
-            label: ride.studentName ?? 'Student',
-            meta: `${ride.driverName ?? 'No driver yet'} · ${formatRelative(ride.requestedAt)}`,
-            tone: 'neutral' as const,
+            icon: 'rides' as const,
+            tone: ride.status === 'searching' ? ('warning' as const) : ('accent' as const),
+            caption: `Student ${ride.studentName ?? ''}`.trim(),
+            value: ride.driverName ? `Driver ${ride.driverName}` : 'Finding a driver',
             onSelect: () => navigate(`/rides/${ride.id}`),
           })),
         }
       : undefined;
 
-  const notice: SidebarNotice | null = showEnvBadge
+  // Bottom card: the pilot gate first, else which environment this is.
+  const boundaryMissing = !!area.data && area.data.boundary === null;
+  const notice: SidebarNotice | null = boundaryMissing
     ? {
-        icon: 'info',
+        icon: 'warning',
         tone: 'warning',
-        title: strings.environment(appEnv),
-        body:
-          appEnv === 'demo'
-            ? 'Sample data in your browser. Nothing here is real.'
-            : 'For testing. Check before you send texts or move money.',
+        title: 'No service boundary',
+        body: can('configuration') ? 'Draw it to unblock the pilot' : 'The pilot is blocked until it is set',
+        onSelect: can('configuration') ? () => navigate('/configuration') : undefined,
       }
-    : null;
+    : showEnvBadge
+      ? {
+          icon: 'info',
+          tone: 'warning',
+          title: strings.environment(appEnv),
+          body: appEnv === 'demo' ? 'Sample data, nothing is real' : 'For testing only',
+        }
+      : null;
 
   // Bell: everything on the banners, as a list.
   const notices: Notice[] = [
@@ -188,8 +197,16 @@ export function Layout() {
           },
         ]
       : []),
-    ...(area.data && area.data.boundary === null
-      ? [{ id: 'boundary', tone: 'warning' as const, title: 'No service boundary approved yet' }]
+    ...(boundaryMissing
+      ? [
+          {
+            id: 'boundary',
+            tone: 'warning' as const,
+            title: 'No service boundary approved yet',
+            body: `The pilot is blocked. A super admin draws it under Configuration once ${strings.appName} approves it.`,
+            onSelect: can('configuration') ? () => navigate('/configuration') : undefined,
+          },
+        ]
       : []),
   ];
 
@@ -266,8 +283,14 @@ export function Layout() {
               />
             </span>
           )}
+          <span className={sh.divider} aria-hidden="true" />
           {action && (
-            <Button variant="primary" className={sh.desktopOnly} onClick={() => navigate(action.to)}>
+            <Button
+              variant="primary"
+              iconEnd={action.icon}
+              className={sh.desktopOnly}
+              onClick={() => navigate(action.to)}
+            >
               {action.label}
             </Button>
           )}
@@ -282,7 +305,7 @@ export function Layout() {
             className={sh.narrowOnly}
             onClick={() => setSearchOpen(true)}
           />
-          <Button icon="configuration" className={sh.wideOnly} onClick={openSettings}>
+          <Button iconEnd="configuration" className={sh.wideOnly} onClick={openSettings}>
             Settings
           </Button>
           <IconButton icon="configuration" label="Settings" className={sh.tabletOnly} onClick={openSettings} />
@@ -338,12 +361,6 @@ export function Layout() {
                 }
               >
                 New bookings are paused. Students see: “{settings.data.pauseMessage ?? 'Bookings are paused.'}”
-              </Banner>
-            )}
-            {area.data && area.data.boundary === null && (
-              <Banner tone="warning">
-                No service boundary is approved yet, so the pilot is blocked. A super admin draws it under Configuration
-                once {strings.appName} approves it.
               </Banner>
             )}
           </div>

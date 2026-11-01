@@ -23,6 +23,7 @@ export function NotificationBell({ items, loading }: { items: Notice[]; loading?
         ref={p.triggerRef}
         icon="bell"
         label="Notifications"
+        round
         count={items.length || undefined}
         aria-expanded={p.open}
         aria-controls={p.panelId}

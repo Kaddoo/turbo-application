@@ -35,7 +35,7 @@ export function UserMenu({
       ]}
       renderTrigger={(t) => (
         <button type="button" className={compact ? sh.userCompact : sh.user} aria-label={`${name}, ${role}`} {...t}>
-          <Avatar name={name} size="md" tone="accent" />
+          <Avatar name={name} size="md" />
           {!compact && (
             <>
               <span className={sh.userText}>

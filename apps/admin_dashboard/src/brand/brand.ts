@@ -113,10 +113,10 @@ export const turboBrand: Brand = {
       fallback: 'ui-monospace, SFMono-Regular, Menlo, monospace',
     },
   },
-  typeScale: { hero: 44, display: 28, title: 22, bodyLarge: 17, body: 15, caption: 13, micro: 12 },
-  radius: { panel: 24, card: 20, input: 12, small: 8, full: 9999 },
+  typeScale: { hero: 64, display: 36, title: 22, bodyLarge: 17, body: 15, caption: 13, micro: 12 },
+  radius: { panel: 22, card: 18, input: 10, small: 6, full: 9999 },
   space: { 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32, 10: 40, 12: 48 },
-  layout: { sidebar: 272, sidebarCollapsed: 80, topBar: 72, bottomNav: 64, target: 44, contentMax: 1600 },
+  layout: { sidebar: 256, sidebarCollapsed: 80, topBar: 80, bottomNav: 64, target: 44, contentMax: 1680 },
   motion: { fast: 120, base: 200 },
   dark: {
     background: ink,

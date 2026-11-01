@@ -28,3 +28,32 @@ export function bucketCounts(times: (string | null | undefined)[], period: Perio
 export function countInPeriod(times: (string | null | undefined)[], period: Period, now = Date.now()): number {
   return bucketCounts(times, period, now).reduce((a, b) => a + b, 0);
 }
+
+/**
+ * A softened copy of `values` for drawing only (centred moving average), so a
+ * sparse hourly series reads as a trend instead of isolated spikes. Totals and
+ * summaries always use the raw counts.
+ */
+export function smoothForDisplay(values: number[], radius = 2): number[] {
+  return values.map((_, i) => {
+    const from = Math.max(0, i - radius);
+    const to = Math.min(values.length - 1, i + radius);
+    let sum = 0;
+    for (let j = from; j <= to; j++) sum += values[j]!;
+    return sum / (to - from + 1);
+  });
+}
+
+/**
+ * Documents per three-day step from 30 days out down to today, then the ones
+ * already expired, so the line reads left to right as time running out.
+ */
+export function expiryCurve(daysLeft: number[], horizon = 30, step = 3): number[] {
+  const out: number[] = [];
+  for (let to = horizon; to > 0; to -= step) {
+    const from = Math.max(0, to - step + 1);
+    out.push(daysLeft.filter((d) => d >= from && d <= to).length);
+  }
+  out.push(daysLeft.filter((d) => d < 0).length);
+  return out;
+}

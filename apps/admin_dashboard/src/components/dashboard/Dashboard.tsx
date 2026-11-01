@@ -1,7 +1,6 @@
 import { type ReactNode } from 'react';
 import { problemMessage } from '@/utils/problems';
 import { Button } from '@/components/Button';
-import { Chip, type Tone } from '@/components/Chip';
 import { cx } from '@/components/cx';
 import { Icon, type IconName } from '@/components/Icon';
 import { IconButton } from '@/components/IconButton';
@@ -10,7 +9,27 @@ import { ChartSkeleton } from '@/components/charts/Charts';
 import type { SortState } from '@/hooks/useSort';
 import d from './dashboard.module.css';
 
-/** Caption, title with a count chip, and controls on the right ("Top Staking Assets" row). */
+/** Colour of an icon tile. Turbo's accent and status colours only. */
+export type TileTone = 'accent' | 'success' | 'warning' | 'danger' | 'neutral';
+
+/** Rounded square holding an icon, filled with a tone ("ETH", "BNB" tiles). */
+export function IconTile({
+  icon,
+  tone = 'accent',
+  size = 'md',
+}: {
+  icon: IconName;
+  tone?: TileTone;
+  size?: 'sm' | 'md';
+}) {
+  return (
+    <span className={cx(d.tile_, d[`tile-${tone}`], size === 'sm' && d.tileSm)} aria-hidden="true">
+      <Icon name={icon} size={size === 'sm' ? 'sm' : 'md'} />
+    </span>
+  );
+}
+
+/** Caption with a clock and a count chip, a large light title, controls on the right. */
 export function SectionHeader({
   caption,
   title,
@@ -27,15 +46,18 @@ export function SectionHeader({
   return (
     <header className={d.sectionHeader}>
       <div className={d.sectionText}>
-        {caption && <p className={d.caption}>{caption}</p>}
-        <div className={d.titleRow}>
-          <H className={H === 'h1' ? d.pageTitle : d.sectionTitle}>{title}</H>
-          {count && (
-            <Chip variant="plain" tone="neutral">
-              {count}
-            </Chip>
-          )}
-        </div>
+        {(caption || count) && (
+          <p className={d.captionRow}>
+            {caption && (
+              <span className={d.caption}>
+                {caption}
+                <Icon name="attendance" size="sm" />
+              </span>
+            )}
+            {count && <span className={d.countChip}>{count}</span>}
+          </p>
+        )}
+        <H className={d.bigTitle}>{title}</H>
       </div>
       {controls && <div className={d.controls}>{controls}</div>}
     </header>
@@ -43,29 +65,35 @@ export function SectionHeader({
 }
 
 export interface Change {
-  /** e.g. "+3 in 24H" */
+  /** e.g. "3 new in 24H" */
   label: string;
   direction: 'up' | 'down' | 'flat';
-  tone: Tone;
+  tone: 'success' | 'warning' | 'danger' | 'neutral' | 'accent';
 }
 
-/** Up or down pill under a number. The words carry the meaning, the arrow repeats it. */
+/** Small round arrow and a coloured figure under a number ("● 6.25%"). */
 export function ChangePill({ change }: { change: Change }) {
   return (
     <span className={cx(d.change, d[`change-${change.tone}`])}>
-      {change.direction !== 'flat' && <Icon name={change.direction === 'up' ? 'arrowUp' : 'arrowDown'} size="sm" />}
+      <span className={d.changeIcon} aria-hidden="true">
+        <Icon
+          name={change.direction === 'down' ? 'arrowDown' : change.direction === 'up' ? 'arrowUp' : 'check'}
+          size="sm"
+        />
+      </span>
       {change.label}
     </span>
   );
 }
 
 /**
- * Card for one queue or measure: icon, caption, name, open button, the
- * number with its change, and a chart slot. Has loading, error, empty-chart
- * and urgent states.
+ * Card for one queue or measure: icon tile, caption and name, open button,
+ * the number with its change, and a chart that runs to the card's edges.
+ * States: loading, error with retry, urgent, full.
  */
 export function MetricCard({
   icon,
+  tone = 'accent',
   caption,
   title,
   valueLabel,
@@ -82,6 +110,7 @@ export function MetricCard({
   urgent,
 }: {
   icon: IconName;
+  tone?: TileTone;
   caption: string;
   title: string;
   valueLabel: string;
@@ -100,9 +129,7 @@ export function MetricCard({
   return (
     <article className={cx(d.metric, urgent && d.metricUrgent)} aria-busy={loading || undefined}>
       <div className={d.metricHead}>
-        <span className={cx(d.iconDisc, urgent && d.iconDiscUrgent)}>
-          <Icon name={icon} />
-        </span>
+        <IconTile icon={icon} tone={tone} />
         <div className={d.metricNames}>
           <span className={d.caption}>{caption}</span>
           <h3 className={d.metricTitle}>{title}</h3>
@@ -123,23 +150,27 @@ export function MetricCard({
             )}
           </div>
         ) : (
-          <div className={d.metricValueRow}>
+          <>
             <span className={d.metricValue}>
               {value}
               {unit && <span className={d.unit}>{unit}</span>}
             </span>
             {change && <ChangePill change={change} />}
-          </div>
+            {footnote && <span className={d.footnote}>{footnote}</span>}
+          </>
         )}
       </div>
       <div className={d.metricChart}>{loading ? <ChartSkeleton /> : error ? null : chart}</div>
-      {footnote && !loading && !error && <p className={d.footnote}>{footnote}</p>}
     </article>
   );
 }
 
-/** The accent gradient card with a chip, a title, a sentence and two actions. */
+/**
+ * The promo card: brand row with a chip, a large title, a sentence, and two
+ * full-width actions. Dark at the top, glowing into the accent at the bottom.
+ */
 export function HeroCard({
+  brand,
   chip,
   title,
   body,
@@ -147,36 +178,53 @@ export function HeroCard({
   secondary,
   loading,
 }: {
+  brand?: { mark: string; name: string };
   chip?: string;
   title: string;
   body?: string;
-  primary?: { label: string; onClick: () => void };
-  secondary?: { label: string; onClick: () => void };
+  primary?: { label: string; icon?: IconName; onClick: () => void };
+  secondary?: { label: string; icon?: IconName; onClick: () => void };
   loading?: boolean;
 }) {
   return (
     <article className={d.hero} aria-busy={loading || undefined}>
-      <span className={d.heroGlow} aria-hidden="true" />
-      {chip && <span className={d.heroChip}>{chip}</span>}
+      <span className={d.heroStreak} aria-hidden="true" />
+      <div className={d.heroTop}>
+        {brand && (
+          <span className={d.heroBrand}>
+            <span className={d.heroMark} aria-hidden="true">
+              {brand.mark}
+            </span>
+            {brand.name}
+          </span>
+        )}
+        {chip && <span className={d.heroChip}>{chip}</span>}
+      </div>
       {loading ? (
         <div className={d.heroSkeleton}>
           <Skeleton width="80%" height="var(--space-8)" />
           <Skeleton width="60%" />
         </div>
       ) : (
-        <>
+        <div className={d.heroText}>
           <h3 className={d.heroTitle}>{title}</h3>
           {body && <p className={d.heroBody}>{body}</p>}
-        </>
+        </div>
       )}
       <div className={d.heroActions}>
         {primary && (
-          <Button variant="inverse" onClick={primary.onClick} disabled={loading}>
+          <Button variant="primary" block iconEnd={primary.icon} onClick={primary.onClick} disabled={loading}>
             {primary.label}
           </Button>
         )}
         {secondary && (
-          <Button variant="inverseOutline" onClick={secondary.onClick} disabled={loading}>
+          <Button
+            block
+            iconEnd={secondary.icon}
+            className={d.heroSecondary}
+            onClick={secondary.onClick}
+            disabled={loading}
+          >
             {secondary.label}
           </Button>
         )}
@@ -185,44 +233,81 @@ export function HeroCard({
   );
 }
 
-/** Large detail panel: last-update caption, title with icon, tools on the right, then content. */
+/** Outer panel: a small title with plain icon tools on the right ("Your active stakings"). */
 export function Panel({
-  caption,
-  icon,
   title,
   tools,
   children,
   label,
 }: {
-  caption?: string;
-  icon?: IconName;
   title: string;
   tools?: ReactNode;
   children: ReactNode;
   label?: string;
+  /** Kept for older call sites; the inner DetailCard shows the caption and icon now. */
+  caption?: string;
+  icon?: IconName;
 }) {
   return (
     <section className={d.panel} aria-label={label ?? title}>
       <header className={d.panelHead}>
-        <div className={d.sectionText}>
-          {caption && <p className={d.caption}>{caption}</p>}
-          <h3 className={d.panelTitle}>
-            {icon && (
-              <span className={d.iconDisc}>
-                <Icon name={icon} />
-              </span>
-            )}
-            {title}
-          </h3>
-        </div>
-        {tools && <div className={d.controls}>{tools}</div>}
+        <h2 className={d.panelTitle}>{title}</h2>
+        {tools && <div className={d.panelTools}>{tools}</div>}
       </header>
       {children}
     </section>
   );
 }
 
-/** One huge number with its actions ("31.39686  Upgrade  Unstake"). */
+/**
+ * Inner card on a dotted grid: last-update caption, a title with an icon tile,
+ * round tools and a link button, then content on the left and an aside on the right.
+ */
+export function DetailCard({
+  caption,
+  title,
+  icon,
+  tone = 'accent',
+  tools,
+  link,
+  aside,
+  children,
+}: {
+  caption?: string;
+  title: string;
+  icon?: IconName;
+  tone?: TileTone;
+  tools?: ReactNode;
+  link?: { label: string; onClick: () => void };
+  aside?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className={d.detail}>
+      <div className={d.detailMain}>
+        {caption && (
+          <p className={d.caption}>
+            {caption} <Icon name="attendance" size="sm" className={d.inlineIcon} />
+          </p>
+        )}
+        <div className={d.detailTitleRow}>
+          <h3 className={d.detailTitle}>{title}</h3>
+          {icon && <IconTile icon={icon} tone={tone} />}
+          {tools}
+          {link && (
+            <Button small iconEnd="arrowUpRight" onClick={link.onClick}>
+              {link.label}
+            </Button>
+          )}
+        </div>
+        {children}
+      </div>
+      {aside && <div className={d.detailAside}>{aside}</div>}
+    </div>
+  );
+}
+
+/** One huge number (fading towards its end) with its actions beside it. */
 export function BigNumber({
   label,
   value,
@@ -238,8 +323,8 @@ export function BigNumber({
 }) {
   return (
     <div className={d.bigNumber}>
-      <div className={d.sectionText}>
-        <span className={d.caption}>{label}</span>
+      <span className={d.caption}>{label}</span>
+      <div className={d.bigRow}>
         {loading ? (
           <Skeleton width="10rem" height="var(--space-12)" />
         ) : (
@@ -248,13 +333,39 @@ export function BigNumber({
             {unit && <span className={d.unit}>{unit}</span>}
           </span>
         )}
+        {actions && <div className={d.controls}>{actions}</div>}
       </div>
-      {actions && <div className={d.controls}>{actions}</div>}
     </div>
   );
 }
 
-/** Small stat card under a sortable header: caption, value, optional change, chip and visual. */
+/** Small card with a title, a caption and a chip on the right ("Investment Period · 6 Month"). */
+export function ControlCard({
+  title,
+  caption,
+  chip,
+  children,
+}: {
+  title: string;
+  caption?: string;
+  chip?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={d.control}>
+      <div className={d.controlHead}>
+        <div className={d.sectionText}>
+          <span className={d.controlTitle}>{title}</span>
+          {caption && <span className={d.caption}>{caption}</span>}
+        </div>
+        {chip && <span className={d.greyChip}>{chip}</span>}
+      </div>
+      <div className={d.controlBody}>{children}</div>
+    </div>
+  );
+}
+
+/** Stat card under a sortable header: caption, grey chip, large light value, optional visual. */
 export function StatTile({
   label,
   value,
@@ -275,36 +386,30 @@ export function StatTile({
   hint?: string;
 }) {
   return (
-    <div className={d.tile} aria-busy={loading || undefined}>
-      <div className={d.tileHead}>
+    <div className={d.stat} aria-busy={loading || undefined}>
+      <div className={d.statHead}>
         <span className={d.caption}>{label}</span>
-        {chip && (
-          <Chip variant="plain" tone="neutral">
-            {chip}
-          </Chip>
-        )}
+        {chip && <span className={d.greyChip}>{chip}</span>}
       </div>
       {loading ? (
         <Skeleton width="50%" height="var(--space-8)" />
+      ) : visual ? (
+        <div className={d.statVisual}>{visual}</div>
       ) : (
-        <div className={d.tileValueRow}>
-          <span className={d.tileValue}>
+        <div className={d.statValueRow}>
+          <span className={d.statValue}>
             {value}
             {unit && <span className={d.unit}>{unit}</span>}
           </span>
           {change && <ChangePill change={change} />}
         </div>
       )}
-      {hint && <span className={d.footnote}>{hint}</span>}
-      {visual && !loading && <div className={d.tileVisual}>{visual}</div>}
+      {hint && !loading && <span className={d.footnote}>{hint}</span>}
     </div>
   );
 }
 
-/**
- * Row of column headers with a caption under each and sort arrows, laid out
- * on the same grid as the tiles below it.
- */
+/** Column headers with a caption under each and up-down sort arrows. */
 export function SortHeaderRow({
   columns,
   sort,
@@ -329,7 +434,7 @@ export function SortHeaderRow({
             aria-label={`Sort by ${c.label}, ${state}`}
             onClick={() => onSort(c.key)}
           >
-            <span className={d.sortText}>
+            <span className={d.sectionText}>
               <span className={d.sortLabel}>{c.label}</span>
               {c.caption && <span className={d.caption}>{c.caption}</span>}
             </span>
