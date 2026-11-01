@@ -173,15 +173,20 @@ class _SosResult extends StatelessWidget {
     final ok = failure == null;
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Icon(ok ? Icons.check_circle_outline : Icons.error_outline, color: ok ? t.colors.success : t.colors.danger, size: TurboSizes.iconLg),
-        const SizedBox(height: TurboSpacing.md),
-        Semantics(liveRegion: true, header: true, child: Text(ok ? l10n.sosAlerted : l10n.sosFailed, style: text.titleLarge)),
+        Center(child: BadgeIcon(icon: ok ? Icons.check : Icons.priority_high)),
+        const SizedBox(height: TurboSpacing.lg),
+        Semantics(
+          liveRegion: true,
+          header: true,
+          child: Text(ok ? l10n.sosAlerted : l10n.sosFailed, style: text.headlineMedium, textAlign: TextAlign.center),
+        ),
         const SizedBox(height: TurboSpacing.sm),
         Text(
           ok ? l10n.sosAlertedBody(t.brand.appName) : (failure == 'no_location' ? l10n.sosNoLocation : l10n.sosFailedBody),
           style: text.bodyLarge,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: TurboSpacing.xl),
         if (!ok)

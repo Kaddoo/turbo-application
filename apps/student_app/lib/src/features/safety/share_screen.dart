@@ -61,11 +61,16 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
             ? ListView(
                 padding: const EdgeInsets.all(TurboSpacing.xl),
                 children: [
-                  Icon(Icons.check_circle_outline, size: TurboSizes.iconLg + TurboSpacing.xl, color: t.colors.success),
-                  const SizedBox(height: TurboSpacing.lg),
-                  Semantics(header: true, liveRegion: true, child: Text(l10n.shareSent, style: text.headlineMedium)),
+                  const SizedBox(height: TurboSpacing.xl),
+                  const Center(child: BadgeIcon(icon: Icons.check)),
+                  const SizedBox(height: TurboSpacing.xl),
+                  Semantics(
+                    header: true,
+                    liveRegion: true,
+                    child: Text(l10n.shareSent, style: text.headlineMedium, textAlign: TextAlign.center),
+                  ),
                   const SizedBox(height: TurboSpacing.md),
-                  Text(l10n.shareSentBody, style: text.bodyLarge),
+                  Text(l10n.shareSentBody, style: text.bodyLarge, textAlign: TextAlign.center),
                   const SizedBox(height: TurboSpacing.xl),
                   TurboButton(
                     label: l10n.shareCopy,
@@ -96,33 +101,100 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                             child: ListView(
                               padding: const EdgeInsets.all(TurboSpacing.lg),
                               children: [
-                                Text(l10n.shareChoose, style: text.titleLarge),
+                                Semantics(header: true, child: Text(l10n.shareChoose, style: text.titleLarge)),
                                 const SizedBox(height: TurboSpacing.md),
                                 for (final c in list)
-                                  CheckboxListTile(
-                                    value: _chosen.contains(c.id),
-                                    onChanged: (v) => setState(() => v == true ? _chosen.add(c.id) : _chosen.remove(c.id)),
-                                    title: Text(c.name, style: text.bodyLarge),
-                                    subtitle: Text(displayPhone(c.phone), style: text.bodySmall),
-                                    activeColor: t.colors.accent,
-                                    checkColor: t.colors.onAccent,
-                                    contentPadding: EdgeInsets.zero,
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
+                                    child: _ContactTile(
+                                      name: c.name,
+                                      phone: displayPhone(c.phone),
+                                      selected: _chosen.contains(c.id),
+                                      onChanged: (v) => setState(() => v ? _chosen.add(c.id) : _chosen.remove(c.id)),
+                                    ),
                                   ),
+                                const SizedBox(height: TurboSpacing.md),
+                                TurboCard(
+                                  color: t.colors.surface,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(l10n.sharePreviewTitle, style: text.labelLarge),
+                                      const SizedBox(height: TurboSpacing.sm),
+                                      Text(l10n.sharePreviewBody, style: text.bodyMedium),
+                                    ],
+                                  ),
+                                ),
                                 if (_error != null)
                                   Padding(
                                     padding: const EdgeInsets.only(top: TurboSpacing.md),
-                                    child: Text(_error!, style: text.bodyMedium?.copyWith(color: t.colors.danger)),
+                                    child: Semantics(
+                                      liveRegion: true,
+                                      child: Text(_error!, style: text.bodyMedium?.copyWith(color: t.colors.danger)),
+                                    ),
                                   ),
                               ],
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(TurboSpacing.lg),
-                            child: TurboButton(label: l10n.shareSend, large: true, loading: _busy, onPressed: _chosen.isEmpty ? null : _send),
+                            child: TurboButton(
+                              label: _chosen.isEmpty ? l10n.shareSend : l10n.shareSendTo(_chosen.length),
+                              large: true,
+                              loading: _busy,
+                              onPressed: _chosen.isEmpty ? null : _send,
+                            ),
                           ),
                         ],
                       ),
               ),
+      ),
+    );
+  }
+}
+
+class _ContactTile extends StatelessWidget {
+  const _ContactTile({required this.name, required this.phone, required this.selected, required this.onChanged});
+
+  final String name;
+  final String phone;
+  final bool selected;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.turbo;
+    final text = Theme.of(context).textTheme;
+    return Semantics(
+      container: true,
+      checked: selected,
+      label: '$name, $phone',
+      excludeSemantics: true,
+      onTap: () => onChanged(!selected),
+      child: TurboCard(
+        onTap: () => onChanged(!selected),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: t.colors.background,
+              child: Text(name.characters.first, style: text.labelLarge),
+            ),
+            const SizedBox(width: TurboSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: text.bodyLarge),
+                  Text(phone, style: text.bodySmall),
+                ],
+              ),
+            ),
+            Icon(
+              selected ? Icons.check_circle : Icons.circle_outlined,
+              color: selected ? t.colors.textPrimary : t.colors.textSecondary,
+            ),
+          ],
+        ),
       ),
     );
   }

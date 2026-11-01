@@ -2074,6 +2074,24 @@ abstract class AppLocalizations {
   /// **'Send link'**
   String get shareSend;
 
+  /// No description provided for @shareSendTo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Send to 1 contact} other{Send to {count} contacts}}'**
+  String shareSendTo(int count);
+
+  /// No description provided for @sharePreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What they get'**
+  String get sharePreviewTitle;
+
+  /// No description provided for @sharePreviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A link to follow your ride live, with your pickup, drop-off, driver and car. It stops working when the ride ends.'**
+  String get sharePreviewBody;
+
   /// No description provided for @shareSent.
   ///
   /// In en, this message translates to:

@@ -1160,6 +1160,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareSend => 'Send link';
 
   @override
+  String shareSendTo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Send to $count contacts',
+      one: 'Send to 1 contact',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sharePreviewTitle => 'What they get';
+
+  @override
+  String get sharePreviewBody =>
+      'A link to follow your ride live, with your pickup, drop-off, driver and car. It stops working when the ride ends.';
+
+  @override
   String get shareSent => 'Link sent';
 
   @override

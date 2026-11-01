@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/fake_server.dart';
 import 'support/home_harness.dart';
@@ -41,6 +42,29 @@ void main() {
       expect(find.text('1 of 3'), findsOneWidget);
       expect(find.text('Call 112'), findsOneWidget);
       expect(find.text('How SOS works'), findsOneWidget);
+    });
+
+    testWidgets('share trip: pick contacts, send, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()
+        ..on('POST /rides/0190a1b2-0000-7e4f-8a5b-000000000001/share', status: 201, body: {
+          'shareUrl': 'https://turbo.test/t/abc',
+          'expiresAt': '2026-11-02T10:00:00Z',
+        });
+      await bootHome(tester, server);
+      final ctx = tester.element(find.byType(Scaffold).first);
+      GoRouter.of(ctx).go('/ride/0190a1b2-0000-7e4f-8a5b-000000000001/share');
+      await tester.pumpAndSettle();
+      expect(find.text('Send link'), findsOneWidget);
+      await tester.tap(find.text('Akosua Mensah'));
+      await tester.pumpAndSettle();
+      expect(find.text('Send to 1 contact'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Send to 1 contact'));
+      await tester.pumpAndSettle();
+      expect(find.text('Link sent'), findsOneWidget);
     });
 
     testWidgets('adds a contact with the number in +233 form', (tester) async {
