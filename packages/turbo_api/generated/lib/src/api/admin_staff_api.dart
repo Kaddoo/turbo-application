@@ -23,7 +23,7 @@ class AdminStaffApi {
   const AdminStaffApi(this._dio);
 
   /// Invite a staff user
-  /// **Access:** admin:super_admin.
+  /// **Access:** admin:super_admin. 409 &#x60;duplicate_email&#x60;: that email already has an account.
   ///
   /// Parameters:
   /// * [staffCreate] 

@@ -886,7 +886,7 @@ _responseData = rawData == null ? null : deserialize<AdjustmentRequest, Adjustme
   }
 
   /// Close a flagged top-up
-  /// **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;.
+  /// **Access:** admin:finance.  Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;. 409 &#x60;topup_not_resolvable&#x60;: the top-up is not flagged, or was already resolved.
   ///
   /// Parameters:
   /// * [idempotencyKey] - Client generated UUID. Reuse it when retrying the same request.

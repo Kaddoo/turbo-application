@@ -384,7 +384,7 @@ _responseData = rawData == null ? null : deserialize<SupportMessage, SupportMess
   }
 
   /// Acknowledge or resolve an incident
-  /// **Access:** admin:support.
+  /// **Access:** admin:support. 409 &#x60;incident_state_invalid&#x60;: the incident is already resolved, or is not open when acknowledging.
   ///
   /// Parameters:
   /// * [id] 

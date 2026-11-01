@@ -686,6 +686,7 @@ export interface paths {
         /**
          * Reply on a ticket
          * @description **Access:** student, driver.
+         *     409 `ticket_state_invalid`: the ticket is closed; open a new one.
          */
         post: operations["replyToSupportTicket"];
         delete?: never;
@@ -1155,7 +1156,7 @@ export interface paths {
          * @description **Access:** admin:verifier.
          *
          *     Notifies the student by push and SMS. Immutable decision record.
-         *     409 `verification_claimed`: another reviewer holds this submission. Other 409s use the generic `conflict`.
+         *     409 `verification_not_pending`: the submission is no longer pending. 409 `verification_claimed`: another reviewer holds it.
          */
         post: operations["decideVerification"];
         delete?: never;
@@ -1225,6 +1226,7 @@ export interface paths {
          * Create a driver and invite them by SMS
          * @description **Access:** admin:hr.
          *     Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
+         *     409 `duplicate_phone`: that number is already registered. 409 `vehicle_already_assigned`: that vehicle already belongs to another driver.
          */
         post: operations["createDriver"];
         delete?: never;
@@ -1253,6 +1255,7 @@ export interface paths {
         /**
          * Edit, suspend or assign vehicle
          * @description **Access:** admin:hr.
+         *     409 `vehicle_already_assigned`: that vehicle already belongs to another driver.
          */
         patch: operations["updateDriver"];
         trace?: never;
@@ -1293,6 +1296,7 @@ export interface paths {
         /**
          * Add a vehicle
          * @description **Access:** admin:hr.
+         *     409 `duplicate_plate`: a vehicle with that plate number already exists.
          */
         post: operations["createVehicle"];
         delete?: never;
@@ -1739,6 +1743,7 @@ export interface paths {
         /**
          * Acknowledge or resolve an incident
          * @description **Access:** admin:support.
+         *     409 `incident_state_invalid`: the incident is already resolved, or is not open when acknowledging.
          */
         patch: operations["updateIncident"];
         trace?: never;
@@ -1894,6 +1899,7 @@ export interface paths {
         /**
          * Invite a staff user
          * @description **Access:** admin:super_admin.
+         *     409 `duplicate_email`: that email already has an account.
          */
         post: operations["createStaff"];
         delete?: never;
@@ -1979,6 +1985,7 @@ export interface paths {
          * @description **Access:** Public.
          *
          *     The invite email carries a single-use token valid for 72 hours. Returns the MFA enrolment to scan. Login stays closed until MFA is confirmed.
+         *     401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)
          */
         post: operations["acceptStaffInvite"];
         delete?: never;
@@ -2001,6 +2008,7 @@ export interface paths {
          * @description **Access:** Public (enrolment token).
          *
          *     First valid TOTP code finishes enrolment and returns tokens.
+         *     401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)
          */
         post: operations["confirmStaffMfa"];
         delete?: never;
@@ -2045,6 +2053,7 @@ export interface paths {
          * @description **Access:** Public.
          *
          *     Single-use token valid for 1 hour. Revokes every session of that staff user. MFA is still required at next login.
+         *     401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)
          */
         post: operations["resetStaffPassword"];
         delete?: never;
@@ -2132,6 +2141,7 @@ export interface paths {
          *
          *     Clears the flag, records the decision in the audit log. Any wallet change goes through the adjustment endpoint, not here.
          *     Send an `Idempotency-Key` (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 `idempotency_key_reused`.
+         *     409 `topup_not_resolvable`: the top-up is not flagged, or was already resolved.
          */
         post: operations["resolveTopup"];
         delete?: never;
@@ -2375,6 +2385,7 @@ export interface paths {
          * @description **Access:** admin:verifier.
          *
          *     Only after re-checking the Ghana Card against the account, with a support ticket as evidence. Revokes all sessions, sends an SMS to the old number, audit-logged. The wallet is unaffected.
+         *     409 `duplicate_phone`: that number belongs to another account.
          */
         put: operations["changeStudentPhone"];
         post?: never;
@@ -2398,6 +2409,7 @@ export interface paths {
          * @description **Access:** admin:verifier.
          *
          *     15-minute lock so two reviewers do not decide the same submission. 409 `verification_claimed` if someone else holds it. Deciding releases it.
+         *     409 `verification_not_pending`: the submission is no longer pending. 409 `verification_claimed`: another reviewer holds it.
          */
         post: operations["claimVerification"];
         delete?: never;
@@ -2549,7 +2561,7 @@ export interface components {
          * @description Stable machine-readable code. Clients switch on this, never on `title` or `detail`.
          * @enum {string}
          */
-        ProblemCode: "validation_failed" | "unauthenticated" | "forbidden" | "not_found" | "conflict" | "rate_limited" | "idempotency_key_reused" | "otp_invalid" | "otp_expired" | "otp_rate_limited" | "account_suspended" | "invalid_credentials" | "mfa_required" | "verification_required" | "verification_not_resubmittable" | "upload_expired" | "outside_service_area" | "route_too_long" | "route_unavailable" | "no_drivers_on_duty" | "quote_expired" | "quote_ineligible" | "insufficient_balance" | "active_ride_exists" | "ride_not_cancellable" | "invalid_ride_state" | "invalid_pin" | "pin_locked" | "driver_has_active_ride" | "driver_not_assigned" | "topup_amount_out_of_range" | "payment_provider_error" | "refund_exceeds_charge" | "shift_overlap" | "sms_budget_exceeded" | "terms_not_accepted" | "duplicate_identity" | "upgrade_required" | "document_expired" | "bookings_paused" | "self_adjustment_forbidden" | "approval_by_requester_forbidden" | "invalid_token" | "account_locked" | "mfa_enrollment_required" | "no_show_too_early" | "account_owes" | "verification_claimed";
+        ProblemCode: "validation_failed" | "unauthenticated" | "forbidden" | "not_found" | "conflict" | "rate_limited" | "idempotency_key_reused" | "otp_invalid" | "otp_expired" | "otp_rate_limited" | "account_suspended" | "invalid_credentials" | "mfa_required" | "verification_required" | "verification_not_resubmittable" | "upload_expired" | "outside_service_area" | "route_too_long" | "route_unavailable" | "no_drivers_on_duty" | "quote_expired" | "quote_ineligible" | "insufficient_balance" | "active_ride_exists" | "ride_not_cancellable" | "invalid_ride_state" | "invalid_pin" | "pin_locked" | "driver_has_active_ride" | "driver_not_assigned" | "topup_amount_out_of_range" | "payment_provider_error" | "refund_exceeds_charge" | "shift_overlap" | "sms_budget_exceeded" | "terms_not_accepted" | "duplicate_identity" | "upgrade_required" | "document_expired" | "bookings_paused" | "self_adjustment_forbidden" | "approval_by_requester_forbidden" | "invalid_token" | "account_locked" | "mfa_enrollment_required" | "no_show_too_early" | "account_owes" | "verification_claimed" | "duplicate_phone" | "duplicate_email" | "duplicate_plate" | "vehicle_already_assigned" | "verification_not_pending" | "ticket_state_invalid" | "topup_not_resolvable" | "incident_state_invalid" | "service_busy" | "link_expired" | "link_invalid";
         /** @description RFC 9457 problem details, served as application/problem+json. */
         Problem: {
             /**
@@ -3840,7 +3852,7 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description Missing, expired or invalid token. */
+        /** @description Missing, expired or invalid access or refresh token (`unauthenticated`, `invalid_token`). Single-use staff links answer `link_invalid` or `link_expired` instead. */
         Unauthorized: {
             headers: {
                 [name: string]: unknown;
@@ -3894,7 +3906,7 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description Temporarily unavailable (the daily SMS ceiling was reached, or the database is busy). Any operation can answer this. Wait `Retry-After` seconds (also in the body as `retryAfterSeconds`), then retry. */
+        /** @description Temporarily unavailable. Code `service_busy` (the database is busy, wait and retry) or `sms_budget_exceeded` (the daily SMS ceiling was reached). Any operation can answer this. Wait `Retry-After` seconds (also in the body as `retryAfterSeconds`), then retry. */
         ServiceUnavailable: {
             headers: {
                 /** @description Seconds to wait before retrying. */
@@ -5007,6 +5019,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
@@ -6740,6 +6753,7 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
             422: components["responses"]["Unprocessable"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];

@@ -284,7 +284,7 @@ _responseData = rawData == null ? null : deserialize<SupportTicketList, SupportT
   }
 
   /// Reply on a ticket
-  /// **Access:** student, driver.
+  /// **Access:** student, driver. 409 &#x60;ticket_state_invalid&#x60;: the ticket is closed; open a new one.
   ///
   /// Parameters:
   /// * [id] 

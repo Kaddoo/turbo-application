@@ -36,7 +36,7 @@ void main() {
 
     // Reply on a ticket
     //
-    // **Access:** student, driver.
+    // **Access:** student, driver. 409 `ticket_state_invalid`: the ticket is closed; open a new one.
     //
     //Future<SupportMessage> replyToSupportTicket(String id, SupportMessageCreate supportMessageCreate) async
     test('test replyToSupportTicket', () async {

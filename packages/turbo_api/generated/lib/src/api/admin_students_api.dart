@@ -25,7 +25,7 @@ class AdminStudentsApi {
   const AdminStudentsApi(this._dio);
 
   /// Change a student&#39;s phone number
-  /// **Access:** admin:verifier.  Only after re-checking the Ghana Card against the account, with a support ticket as evidence. Revokes all sessions, sends an SMS to the old number, audit-logged. The wallet is unaffected.
+  /// **Access:** admin:verifier.  Only after re-checking the Ghana Card against the account, with a support ticket as evidence. Revokes all sessions, sends an SMS to the old number, audit-logged. The wallet is unaffected. 409 &#x60;duplicate_phone&#x60;: that number belongs to another account.
   ///
   /// Parameters:
   /// * [id] 

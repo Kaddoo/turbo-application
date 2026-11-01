@@ -102,7 +102,29 @@ enum ProblemCode {
   @JsonValue(r'account_owes')
   accountOwes(r'account_owes'),
   @JsonValue(r'verification_claimed')
-  verificationClaimed(r'verification_claimed');
+  verificationClaimed(r'verification_claimed'),
+  @JsonValue(r'duplicate_phone')
+  duplicatePhone(r'duplicate_phone'),
+  @JsonValue(r'duplicate_email')
+  duplicateEmail(r'duplicate_email'),
+  @JsonValue(r'duplicate_plate')
+  duplicatePlate(r'duplicate_plate'),
+  @JsonValue(r'vehicle_already_assigned')
+  vehicleAlreadyAssigned(r'vehicle_already_assigned'),
+  @JsonValue(r'verification_not_pending')
+  verificationNotPending(r'verification_not_pending'),
+  @JsonValue(r'ticket_state_invalid')
+  ticketStateInvalid(r'ticket_state_invalid'),
+  @JsonValue(r'topup_not_resolvable')
+  topupNotResolvable(r'topup_not_resolvable'),
+  @JsonValue(r'incident_state_invalid')
+  incidentStateInvalid(r'incident_state_invalid'),
+  @JsonValue(r'service_busy')
+  serviceBusy(r'service_busy'),
+  @JsonValue(r'link_expired')
+  linkExpired(r'link_expired'),
+  @JsonValue(r'link_invalid')
+  linkInvalid(r'link_invalid');
 
   const ProblemCode(this.value);
 

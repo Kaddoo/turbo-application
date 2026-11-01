@@ -23,7 +23,7 @@ class AdminVerificationApi {
   const AdminVerificationApi(this._dio);
 
   /// Claim a submission for review
-  /// **Access:** admin:verifier.  15-minute lock so two reviewers do not decide the same submission. 409 &#x60;verification_claimed&#x60; if someone else holds it. Deciding releases it.
+  /// **Access:** admin:verifier.  15-minute lock so two reviewers do not decide the same submission. 409 &#x60;verification_claimed&#x60; if someone else holds it. Deciding releases it. 409 &#x60;verification_not_pending&#x60;: the submission is no longer pending. 409 &#x60;verification_claimed&#x60;: another reviewer holds it.
   ///
   /// Parameters:
   /// * [id] 
@@ -101,7 +101,7 @@ _responseData = rawData == null ? null : deserialize<VerificationSummary, Verifi
   }
 
   /// Approve, reject or request resubmission
-  /// **Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record. 409 &#x60;verification_claimed&#x60;: another reviewer holds this submission. Other 409s use the generic &#x60;conflict&#x60;.
+  /// **Access:** admin:verifier.  Notifies the student by push and SMS. Immutable decision record. 409 &#x60;verification_not_pending&#x60;: the submission is no longer pending. 409 &#x60;verification_claimed&#x60;: another reviewer holds it.
   ///
   /// Parameters:
   /// * [id] 

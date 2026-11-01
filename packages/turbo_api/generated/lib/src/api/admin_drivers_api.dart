@@ -128,7 +128,7 @@ _responseData = rawData == null ? null : deserialize<DriverDocument, DriverDocum
   }
 
   /// Create a driver and invite them by SMS
-  /// **Access:** admin:hr. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;.
+  /// **Access:** admin:hr. Send an &#x60;Idempotency-Key&#x60; (required). A retry with the same key and body returns the first answer and does nothing twice; the same key with a different body is 409 &#x60;idempotency_key_reused&#x60;. 409 &#x60;duplicate_phone&#x60;: that number is already registered. 409 &#x60;vehicle_already_assigned&#x60;: that vehicle already belongs to another driver.
   ///
   /// Parameters:
   /// * [idempotencyKey] - Client generated UUID. Reuse it when retrying the same request.
@@ -228,7 +228,7 @@ _responseData = rawData == null ? null : deserialize<DriverDetail, DriverDetail>
   }
 
   /// Add a vehicle
-  /// **Access:** admin:hr.
+  /// **Access:** admin:hr. 409 &#x60;duplicate_plate&#x60;: a vehicle with that plate number already exists.
   ///
   /// Parameters:
   /// * [vehicleWrite] 
@@ -664,7 +664,7 @@ _responseData = rawData == null ? null : deserialize<VehicleList, VehicleList>(r
   }
 
   /// Edit, suspend or assign vehicle
-  /// **Access:** admin:hr.
+  /// **Access:** admin:hr. 409 &#x60;vehicle_already_assigned&#x60;: that vehicle already belongs to another driver.
   ///
   /// Parameters:
   /// * [id] 

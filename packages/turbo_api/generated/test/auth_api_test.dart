@@ -9,7 +9,7 @@ void main() {
   group(AuthApi, () {
     // Set a password from an invite link
     //
-    // **Access:** Public.  The invite email carries a single-use token valid for 72 hours. Returns the MFA enrolment to scan. Login stays closed until MFA is confirmed.
+    // **Access:** Public.  The invite email carries a single-use token valid for 72 hours. Returns the MFA enrolment to scan. Login stays closed until MFA is confirmed. 401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)
     //
     //Future<MfaEnrollment> acceptStaffInvite(InviteAccept inviteAccept) async
     test('test acceptStaffInvite', () async {
@@ -27,7 +27,7 @@ void main() {
 
     // Confirm MFA enrolment and sign in
     //
-    // **Access:** Public (enrolment token).  First valid TOTP code finishes enrolment and returns tokens.
+    // **Access:** Public (enrolment token).  First valid TOTP code finishes enrolment and returns tokens. 401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)
     //
     //Future<AuthTokens> confirmStaffMfa(MfaConfirm mfaConfirm) async
     test('test confirmStaffMfa', () async {
@@ -81,7 +81,7 @@ void main() {
 
     // Set a new password from a reset link
     //
-    // **Access:** Public.  Single-use token valid for 1 hour. Revokes every session of that staff user. MFA is still required at next login.
+    // **Access:** Public.  Single-use token valid for 1 hour. Revokes every session of that staff user. MFA is still required at next login. 401 `link_invalid`: the link is not valid or was already used. 401 `link_expired`: the link or enrolment has expired; ask for a new one. (`invalid_token` is only for access and refresh tokens.)
     //
     //Future resetStaffPassword(PasswordReset passwordReset) async
     test('test resetStaffPassword', () async {

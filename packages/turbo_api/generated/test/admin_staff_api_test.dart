@@ -9,7 +9,7 @@ void main() {
   group(AdminStaffApi, () {
     // Invite a staff user
     //
-    // **Access:** admin:super_admin.
+    // **Access:** admin:super_admin. 409 `duplicate_email`: that email already has an account.
     //
     //Future<StaffUser> createStaff(StaffCreate staffCreate) async
     test('test createStaff', () async {

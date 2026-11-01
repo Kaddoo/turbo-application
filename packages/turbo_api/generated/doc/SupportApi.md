@@ -151,7 +151,7 @@ Name | Type | Description  | Notes
 
 Reply on a ticket
 
-**Access:** student, driver.
+**Access:** student, driver. 409 `ticket_state_invalid`: the ticket is closed; open a new one.
 
 ### Example
 ```dart

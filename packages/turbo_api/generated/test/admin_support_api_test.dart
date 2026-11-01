@@ -45,7 +45,7 @@ void main() {
 
     // Acknowledge or resolve an incident
     //
-    // **Access:** admin:support.
+    // **Access:** admin:support. 409 `incident_state_invalid`: the incident is already resolved, or is not open when acknowledging.
     //
     //Future<Incident> updateIncident(String id, IncidentUpdate incidentUpdate) async
     test('test updateIncident', () async {
