@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: core components (branch `design-components`, on `design-foundation`)
+
+**What changed in `packages/turbo_ui`:** buttons are 60 pt pills with new variants (light, outline, text, SOS) and an 80 pt `driver` size; disabled primary is the accent at 40%. Status tags are soft tinted 26 pt pills. New: `TurboChip` (50 pt, selected = light fill; outline 34 pt for "Fare locked"), `TurboSegmented`, `TurboIconButton`, `TurboAvatar`, `TurboBanner` (info, success, warning, danger; live region option), `BentoTile` and `InnerPanel`, `TripPin` (68 x 80 lime mono digits), `TurboKeypad`, `MessageComposer`, `SlideToContinue` (also tap to continue). Restyled: text fields (20 radius, lime focus, red error, mono prefix), cards (`selected` lime outline), sheets (36 radius, handle), OTP boxes (18 radius, mono), the bottom bar (pill with a lime circle for the open tab), switches and radios in lime, wordmark from the type scale. New `onSos` colour; `TurboSizes` gained the kit sizes and `TurboSpacing.screen` (22).
+
+**Checks:** analyze clean; turbo_ui 62 tests (new components in dark and light at 100% and 200% text, 60/80 pt heights, SOS red not accent, chip and segment semantics, PIN, keypad, slide, banner live region, bar circle); student 130 and driver 61 still pass; goldens regenerated.
+
+**Not done:** 3D icons, photos and the booking-panel tabs, map markers and glass photo card (waiting on the asset and map decisions); no screen has been rebuilt on these yet. `large:` on `TurboButton` is now a no-op (every button is 60 pt).
+
 ## 2026-11-02, Kevin with Claude, code: design foundation (branch `design-foundation`)
 
 **Task:** First step of the new design (`design/Turbo-components.pdf`, `Turbo-type-scale.csv`, `Turbo-component-kit/`, 14 boards = 94 screens). Foundation only, in `packages/turbo_ui`.
