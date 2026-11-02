@@ -171,20 +171,27 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('eligible: fare in large type, fixed, wallet line, free cancellation', (tester) async {
+    testWidgets('eligible: the route on a map, fare in large type, fixed, wallet tiles, free cancellation', (tester) async {
       await toQuote(tester, homeServer()..on('POST /rides/quote', body: quote()));
+      expect(find.byKey(const Key('map')), findsOneWidget);
       expect(find.text('GH₵35.00'), findsOneWidget);
-      expect(find.text("Fixed. It won't change."), findsOneWidget);
+      expect(find.text('Fixed fare'), findsOneWidget);
+      expect(find.text("It won't change"), findsOneWidget);
       expect(find.text('9.4 km · about 13 min'), findsOneWidget);
       expect(find.text('Driver reaches you in about 4 min'), findsOneWidget);
-      expect(find.text('Wallet GH₵60.00, GH₵25.00 after this ride'), findsOneWidget);
+      expect(find.text('Wallet'), findsOneWidget);
+      expect(find.text('GH₵60.00'), findsOneWidget);
+      expect(find.text('After this ride'), findsOneWidget);
+      expect(find.text('GH₵25.00'), findsOneWidget);
       expect(find.text("Cancel for free until you're in the car."), findsOneWidget);
       expect(find.text('Book for GH₵35.00'), findsOneWidget);
     });
 
     testWidgets('short on funds shows the exact shortfall as the one action', (tester) async {
       await toQuote(tester, homeServer()..on('POST /rides/quote', body: quote(available: 2000)));
-      expect(find.text('Your wallet is short by GH₵15.00.'), findsOneWidget);
+      expect(find.text('Short by'), findsOneWidget);
+      expect(find.text('GH₵15.00'), findsOneWidget);
+      expect(find.text('Top up with mobile money, then book this ride.'), findsOneWidget);
       expect(find.text('Top up GH₵15.00'), findsOneWidget);
       expect(find.textContaining('Book for'), findsNothing);
     });

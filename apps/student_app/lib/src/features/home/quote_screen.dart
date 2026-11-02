@@ -11,6 +11,7 @@ import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../wallet/wallet_providers.dart';
 import '../ride/ride_providers.dart';
+import 'map_view.dart';
 import 'service_area.dart';
 import 'trip_draft.dart';
 
@@ -134,14 +135,6 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [?error, button]),
     );
 
-    Widget stop(IconData icon, String? label) => Row(
-      children: [
-        Icon(icon, size: TurboSizes.iconSm, color: t.colors.textSecondary),
-        const SizedBox(width: TurboSpacing.md),
-        Expanded(child: Text(label ?? '', style: text.bodyLarge)),
-      ],
-    );
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -244,175 +237,158 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                   final eta = q.pickupEtaSeconds == null
                       ? null
                       : (q.pickupEtaSeconds! / 60).ceil();
+                  final spec = MapSpec(
+                    pickup: draft.pickup?.point,
+                    dropoff: draft.dropoff?.point,
+                    route: q.routePolyline,
+                  );
+                  Widget tile(String label, String title, TurboArt art, {BentoTone tone = BentoTone.surface}) => BentoTile(
+                    label: label,
+                    title: title,
+                    money: true,
+                    tone: tone,
+                    trailing: TurboArtImage(art),
+                  );
                   return Column(
                     children: [
+                      // The route on the map, then the price in a sheet under it.
                       Expanded(
-                        child: ListView(
-                          padding: const EdgeInsets.all(TurboSpacing.screen),
-                          children: [
-                            if (_renewed)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: TurboSpacing.md,
-                                ),
-                                child: Semantics(
-                                  liveRegion: true,
-                                  child: Text(
-                                    l10n.quoteExpired,
-                                    style: text.bodyMedium,
+                        child: Padding(
+                          padding: const EdgeInsets.all(TurboSpacing.lg),
+                          child: LayoutBuilder(
+                            builder: (context, c) => HomeMap(height: c.maxHeight, spec: spec),
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: t.colors.surface,
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(t.radiusSheet)),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: SingleChildScrollView(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    TurboSpacing.screen,
+                                    TurboSpacing.lg,
+                                    TurboSpacing.screen,
+                                    0,
                                   ),
-                                ),
-                              ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Semantics(
-                                    header: true,
-                                    child: Text(
-                                      l10n.quoteTitle,
-                                      style: text.titleLarge,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  l10n.quoteRoute(km, minutes),
-                                  style: text.bodySmall,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: TurboSpacing.md),
-                            Semantics(
-                              label: formatPesewas(fare),
-                              excludeSemantics: true,
-                              child: Text(
-                                formatPesewas(fare),
-                                style: text.displayLarge,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.lock_outline,
-                                  size: TurboSizes.iconSm,
-                                  color: t.colors.textSecondary,
-                                ),
-                                const SizedBox(width: TurboSpacing.sm),
-                                Expanded(
-                                  child: Text(
-                                    l10n.quoteFixed,
-                                    style: text.bodyLarge,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: TurboSpacing.xl),
-                            TurboCard(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  stop(Icons.trip_origin, draft.pickup?.label),
-                                  const SizedBox(height: TurboSpacing.md),
-                                  stop(
-                                    Icons.flag_outlined,
-                                    draft.dropoff?.label,
-                                  ),
-                                  if (eta != null) ...[
-                                    const SizedBox(height: TurboSpacing.md),
-                                    Text(
-                                      l10n.quotePickupEta(eta),
-                                      style: text.bodySmall,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: TurboSpacing.md),
-                            TurboCard(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Icon(
-                                        Icons.account_balance_wallet_outlined,
-                                        size: TurboSizes.iconSm,
-                                        color: t.colors.textSecondary,
-                                      ),
-                                      const SizedBox(width: TurboSpacing.md),
-                                      Expanded(
-                                        child: Text(
-                                          l10n.quoteWalletLine(
-                                            formatPesewas(available),
-                                            formatPesewas(available - fare),
+                                      if (_renewed)
+                                        Padding(
+                                          padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                                          child: Semantics(
+                                            liveRegion: true,
+                                            child: Text(l10n.quoteExpired, style: text.bodyMedium),
                                           ),
-                                          style: text.bodyLarge,
+                                        ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Semantics(
+                                              header: true,
+                                              child: Text(l10n.quoteFareLabel, style: text.bodySmall),
+                                            ),
+                                          ),
+                                          StatusChip(
+                                            label: l10n.quoteWontChange,
+                                            icon: Icons.lock_outline,
+                                            tone: StatusTone.success,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: TurboSpacing.xs),
+                                      Semantics(
+                                        label: '${formatPesewas(fare)}. ${l10n.quoteFixed}',
+                                        excludeSemantics: true,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(formatPesewas(fare), style: text.displayLarge, maxLines: 1),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${draft.pickup?.label ?? ''} → ${draft.dropoff?.label ?? ''}',
+                                        style: text.bodyLarge,
+                                      ),
+                                      Text(l10n.quoteRoute(km, minutes), style: text.bodySmall),
+                                      if (eta != null) Text(l10n.quotePickupEta(eta), style: text.bodySmall),
+                                      const SizedBox(height: TurboSpacing.lg),
+                                      IntrinsicHeight(
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            Expanded(
+                                              child: tile(l10n.quoteTileWallet, formatPesewas(available), TurboArt.moneyBag),
+                                            ),
+                                            const SizedBox(width: TurboSpacing.md),
+                                            Expanded(
+                                              child: q.wallet.sufficient
+                                                  ? tile(l10n.quoteTileAfter, formatPesewas(available - fare), TurboArt.coin)
+                                                  : tile(
+                                                      l10n.quoteTileShort,
+                                                      formatPesewas(q.wallet.shortfallPesewas),
+                                                      TurboArt.warning,
+                                                    ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: TurboSpacing.sm),
+                                      Semantics(
+                                        liveRegion: !q.wallet.sufficient,
+                                        child: Text(
+                                          q.wallet.sufficient ? l10n.quoteCancelRule : l10n.quoteTopUpHint,
+                                          style: text.bodySmall,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: TurboSpacing.sm),
-                                  Text(
-                                    l10n.quoteCancelRule,
-                                    style: text.bodySmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (!q.wallet.sufficient) ...[
-                              const SizedBox(height: TurboSpacing.md),
-                              TurboBanner(
-                                icon: Icons.warning_amber,
-                                message: l10n.quoteShortfall(
-                                  formatPesewas(q.wallet.shortfallPesewas),
                                 ),
-                                tone: StatusTone.warning,
-                                liveRegion: true,
+                              ),
+                              pinned(
+                                _bookError == null
+                                    ? null
+                                    : Padding(
+                                        padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                                        child: Semantics(
+                                          liveRegion: true,
+                                          child: Text(
+                                            _bookError!,
+                                            style: text.bodyMedium?.copyWith(color: t.colors.danger),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                q.wallet.sufficient
+                                    ? TurboButton(
+                                        label: l10n.quoteBook(formatPesewas(fare)),
+                                        haptic: TurboHapticKind.confirm,
+                                        loading: _booking,
+                                        onPressed: () => _book(q),
+                                      )
+                                    : TurboButton(
+                                        label: l10n.quoteTopUp(formatPesewas(q.wallet.shortfallPesewas)),
+                                        onPressed: () async {
+                                          await context.push('/wallet/topup', extra: q.wallet.shortfallPesewas);
+                                          // Back from topping up: the wallet has changed, so ask again.
+                                          ref.invalidate(walletProvider);
+                                          await ref.read(quoteProvider.notifier).refresh();
+                                        },
+                                      ),
                               ),
                             ],
-                          ],
+                          ),
                         ),
-                      ),
-                      pinned(
-                        _bookError == null
-                            ? null
-                            : Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: TurboSpacing.md,
-                                ),
-                                child: Semantics(
-                                  liveRegion: true,
-                                  child: Text(
-                                    _bookError!,
-                                    style: text.bodyMedium?.copyWith(
-                                      color: t.colors.danger,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                        q.wallet.sufficient
-                            ? TurboButton(
-                                label: l10n.quoteBook(formatPesewas(fare)),
-                                haptic: TurboHapticKind.confirm,
-                                loading: _booking,
-                                onPressed: () => _book(q),
-                              )
-                            : TurboButton(
-                                label: l10n.quoteTopUp(
-                                  formatPesewas(q.wallet.shortfallPesewas),
-                                ),
-                                onPressed: () async {
-                                  await context.push(
-                                    '/wallet/topup',
-                                    extra: q.wallet.shortfallPesewas,
-                                  );
-                                  // Back from topping up: the wallet has changed, so ask again.
-                                  ref.invalidate(walletProvider);
-                                  await ref
-                                      .read(quoteProvider.notifier)
-                                      .refresh();
-                                },
-                              ),
                       ),
                     ],
                   );

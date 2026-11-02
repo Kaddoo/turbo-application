@@ -561,6 +561,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quoteCancelRule => 'Cancel for free until you\'re in the car.';
 
   @override
+  String get quoteFareLabel => 'Fixed fare';
+
+  @override
+  String get quoteWontChange => 'It won\'t change';
+
+  @override
+  String get quoteTileWallet => 'Wallet';
+
+  @override
+  String get quoteTileAfter => 'After this ride';
+
+  @override
+  String get quoteTileShort => 'Short by';
+
+  @override
+  String get quoteTopUpHint => 'Top up with mobile money, then book this ride.';
+
+  @override
   String quoteBook(Object fare) {
     return 'Book for $fare';
   }
