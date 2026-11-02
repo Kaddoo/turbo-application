@@ -16,6 +16,8 @@ Name | Type | Description | Notes
 **code** | [**ProblemCode**](ProblemCode.md) |  | 
 **errors** | [**List&lt;ProblemErrorsInner&gt;**](ProblemErrorsInner.md) |  | [optional] 
 **retryAfterSeconds** | **int** |  | [optional] 
+**documentType** | [**DriverDocumentKind**](DriverDocumentKind.md) | Only on 409 `document_expired`. Which of the driver's documents has expired. | [optional] 
+**expiredOn** | [**DateTime**](DateTime.md) | Only on 409 `document_expired`. The day it expired. | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

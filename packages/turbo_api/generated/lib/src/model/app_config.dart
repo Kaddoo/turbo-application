@@ -29,6 +29,10 @@ class AppConfig {
     required  this.bookingsPaused,
 
      this.pauseMessage,
+
+     this.supervisorPhone,
+
+     this.campusSecurityPhone,
   });
 
   @JsonKey(
@@ -79,6 +83,32 @@ class AppConfig {
 
 
 
+      /// The drivers' supervisor, E.164. Null until staff set it; the apps then draw no call button.
+  @JsonKey(
+    
+    name: r'supervisorPhone',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? supervisorPhone;
+
+
+
+      /// Campus security, E.164. Null until staff set it; the apps then show 112 only.
+  @JsonKey(
+    
+    name: r'campusSecurityPhone',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? campusSecurityPhone;
+
+
+
 
 
     @override
@@ -86,14 +116,18 @@ class AppConfig {
       other.minVersion == minVersion &&
       other.maintenance == maintenance &&
       other.bookingsPaused == bookingsPaused &&
-      other.pauseMessage == pauseMessage;
+      other.pauseMessage == pauseMessage &&
+      other.supervisorPhone == supervisorPhone &&
+      other.campusSecurityPhone == campusSecurityPhone;
 
     @override
     int get hashCode =>
         minVersion.hashCode +
         maintenance.hashCode +
         bookingsPaused.hashCode +
-        (pauseMessage == null ? 0 : pauseMessage.hashCode);
+        (pauseMessage == null ? 0 : pauseMessage.hashCode) +
+        (supervisorPhone == null ? 0 : supervisorPhone.hashCode) +
+        (campusSecurityPhone == null ? 0 : campusSecurityPhone.hashCode);
 
   factory AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);
 

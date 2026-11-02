@@ -35,7 +35,7 @@ export function errorHandler(log) {
     res.status(e.status).type('application/problem+json').json({
       type: 'about:blank', title: e.title, status: e.status, code: e.code,
       detail: e.extra.detail, instance: req.originalUrl, errors: e.extra.errors,
-      retryAfterSeconds: e.extra.retryAfterSeconds,
+      retryAfterSeconds: e.extra.retryAfterSeconds, documentType: e.extra.documentType, expiredOn: e.extra.expiredOn,
     });
   };
 }

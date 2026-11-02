@@ -833,7 +833,7 @@ export interface paths {
          *
          *     409 `driver_has_active_ride` when going off duty with an active ride. Duty events also feed attendance.
          *
-         *     Going on duty returns 409 `document_expired` when the driver's licence, the vehicle insurance or the roadworthy certificate has expired.
+         *     Going on duty returns 409 `document_expired` when the driver's licence, the vehicle insurance or the roadworthy certificate has expired. The problem carries `documentType` and `expiredOn`.
          */
         put: operations["setDuty"];
         post?: never;
@@ -2587,6 +2587,13 @@ export interface components {
                 code?: string;
             }[];
             retryAfterSeconds?: number;
+            /** @description Only on 409 `document_expired`. Which of the driver's documents has expired. */
+            documentType?: components["schemas"]["DriverDocumentKind"];
+            /**
+             * Format: date
+             * @description Only on 409 `document_expired`. The day it expired.
+             */
+            expiredOn?: string;
         };
         OtpRequest: {
             /** @description E.164 Ghana number, e.g. +233241234567 */
@@ -3173,6 +3180,22 @@ export interface components {
             dutyStatus: "off_duty" | "on_duty";
             vehicle?: components["schemas"]["Vehicle"] | null;
             currentRideId?: components["schemas"]["Id"] | null;
+            /** @description The documents that decide whether the driver may go on duty, one per type (the one that expires last). A type with no document uploaded is left out. The driver never needs the file, so no upload id or URL is sent. */
+            documents?: components["schemas"]["DriverDocumentStatus"][];
+        };
+        /** @enum {string} */
+        DriverDocumentKind: "drivers_licence" | "vehicle_registration" | "insurance" | "roadworthy";
+        DriverDocumentStatus: {
+            type: components["schemas"]["DriverDocumentKind"];
+            /** Format: date */
+            expiresOn?: string | null;
+            /** @description Whole days from today (Africa/Accra) to `expiresOn`, negative once expired. Null when the document has no expiry. */
+            daysLeft?: number | null;
+            /**
+             * @description `expiring` is under 30 days left; `expired` is past `expiresOn`. Computed by the server so the phone clock does not matter.
+             * @enum {string}
+             */
+            status: "valid" | "expiring" | "expired";
         };
         DutyUpdate: {
             onDuty: boolean;
@@ -3217,6 +3240,24 @@ export interface components {
              * @description Time after which "student not here" can be used. Null until the driver has arrived.
              */
             noShowAvailableAt?: string | null;
+            /** Format: date-time */
+            arrivedAt?: string | null;
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            completedAt?: string | null;
+            /** Format: date-time */
+            cancelledAt?: string | null;
+            /**
+             * @description Who cancelled (as `Cancellation.by`). Null unless the ride is cancelled.
+             * @enum {string|null}
+             */
+            cancelledBy?: "student" | "driver" | "system" | "admin" | null;
+            /**
+             * @description Why (as `Cancellation.reasonCode`). Null unless the ride is cancelled. The free-text note is not sent to drivers.
+             * @enum {string|null}
+             */
+            cancelReasonCode?: "student_changed_mind" | "driver_unavailable" | "vehicle_issue" | "no_driver_available" | "service_issue" | "admin_decision" | "other" | "rider_no_show" | null;
         };
         DeclineRequest: {
             /** @enum {string} */
@@ -3809,6 +3850,10 @@ export interface components {
             };
             bookingsPaused: boolean;
             pauseMessage?: string | null;
+            /** @description The drivers' supervisor, E.164. Null until staff set it; the apps then draw no call button. */
+            supervisorPhone?: string | null;
+            /** @description Campus security, E.164. Null until staff set it; the apps then show 112 only. */
+            campusSecurityPhone?: string | null;
         };
         DriverDocumentExpiry: {
             driverId: components["schemas"]["Id"];

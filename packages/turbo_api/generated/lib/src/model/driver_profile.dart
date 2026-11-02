@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:turbo_api_generated/src/model/driver_document_status.dart';
 import 'package:turbo_api_generated/src/model/account_status.dart';
 import 'package:turbo_api_generated/src/model/vehicle.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -37,6 +38,8 @@ class DriverProfile {
      this.vehicle,
 
      this.currentRideId,
+
+     this.documents,
   });
 
       /// UUID (v7 recommended so ids sort by creation time).
@@ -137,6 +140,19 @@ class DriverProfile {
 
 
 
+      /// The documents that decide whether the driver may go on duty, one per type (the one that expires last). A type with no document uploaded is left out. The driver never needs the file, so no upload id or URL is sent.
+  @JsonKey(
+    
+    name: r'documents',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final List<DriverDocumentStatus>? documents;
+
+
+
 
 
     @override
@@ -148,7 +164,8 @@ class DriverProfile {
       other.status == status &&
       other.dutyStatus == dutyStatus &&
       other.vehicle == vehicle &&
-      other.currentRideId == currentRideId;
+      other.currentRideId == currentRideId &&
+      other.documents == documents;
 
     @override
     int get hashCode =>
@@ -159,7 +176,8 @@ class DriverProfile {
         status.hashCode +
         dutyStatus.hashCode +
         (vehicle == null ? 0 : vehicle.hashCode) +
-        (currentRideId == null ? 0 : currentRideId.hashCode);
+        (currentRideId == null ? 0 : currentRideId.hashCode) +
+        documents.hashCode;
 
   factory DriverProfile.fromJson(Map<String, dynamic> json) => _$DriverProfileFromJson(json);
 

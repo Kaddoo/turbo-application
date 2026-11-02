@@ -117,7 +117,7 @@ void main() {
 
     // Go on or off duty
     //
-    // **Access:** driver.  409 `driver_has_active_ride` when going off duty with an active ride. Duty events also feed attendance.  Going on duty returns 409 `document_expired` when the driver's licence, the vehicle insurance or the roadworthy certificate has expired.
+    // **Access:** driver.  409 `driver_has_active_ride` when going off duty with an active ride. Duty events also feed attendance.  Going on duty returns 409 `document_expired` when the driver's licence, the vehicle insurance or the roadworthy certificate has expired. The problem carries `documentType` and `expiredOn`.
     //
     //Future<DriverProfile> setDuty(DutyUpdate dutyUpdate) async
     test('test setDuty', () async {

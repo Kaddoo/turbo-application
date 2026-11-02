@@ -35,6 +35,18 @@ abstract class _$DriverRideCWProxy {
 
   DriverRide noShowAvailableAt(DateTime? noShowAvailableAt);
 
+  DriverRide arrivedAt(DateTime? arrivedAt);
+
+  DriverRide startedAt(DateTime? startedAt);
+
+  DriverRide completedAt(DateTime? completedAt);
+
+  DriverRide cancelledAt(DateTime? cancelledAt);
+
+  DriverRide cancelledBy(DriverRideCancelledByEnum? cancelledBy);
+
+  DriverRide cancelReasonCode(DriverRideCancelReasonCodeEnum? cancelReasonCode);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DriverRide(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -56,6 +68,12 @@ abstract class _$DriverRideCWProxy {
     DateTime assignedAt,
     DateTime? acknowledgedAt,
     DateTime? noShowAvailableAt,
+    DateTime? arrivedAt,
+    DateTime? startedAt,
+    DateTime? completedAt,
+    DateTime? cancelledAt,
+    DriverRideCancelledByEnum? cancelledBy,
+    DriverRideCancelReasonCodeEnum? cancelReasonCode,
   });
 }
 
@@ -115,6 +133,29 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
       this(noShowAvailableAt: noShowAvailableAt);
 
   @override
+  DriverRide arrivedAt(DateTime? arrivedAt) => this(arrivedAt: arrivedAt);
+
+  @override
+  DriverRide startedAt(DateTime? startedAt) => this(startedAt: startedAt);
+
+  @override
+  DriverRide completedAt(DateTime? completedAt) =>
+      this(completedAt: completedAt);
+
+  @override
+  DriverRide cancelledAt(DateTime? cancelledAt) =>
+      this(cancelledAt: cancelledAt);
+
+  @override
+  DriverRide cancelledBy(DriverRideCancelledByEnum? cancelledBy) =>
+      this(cancelledBy: cancelledBy);
+
+  @override
+  DriverRide cancelReasonCode(
+    DriverRideCancelReasonCodeEnum? cancelReasonCode,
+  ) => this(cancelReasonCode: cancelReasonCode);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DriverRide(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -136,6 +177,12 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
     Object? assignedAt = const $CopyWithPlaceholder(),
     Object? acknowledgedAt = const $CopyWithPlaceholder(),
     Object? noShowAvailableAt = const $CopyWithPlaceholder(),
+    Object? arrivedAt = const $CopyWithPlaceholder(),
+    Object? startedAt = const $CopyWithPlaceholder(),
+    Object? completedAt = const $CopyWithPlaceholder(),
+    Object? cancelledAt = const $CopyWithPlaceholder(),
+    Object? cancelledBy = const $CopyWithPlaceholder(),
+    Object? cancelReasonCode = const $CopyWithPlaceholder(),
   }) {
     return DriverRide(
       id: id == const $CopyWithPlaceholder()
@@ -194,6 +241,30 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
           ? _value.noShowAvailableAt
           // ignore: cast_nullable_to_non_nullable
           : noShowAvailableAt as DateTime?,
+      arrivedAt: arrivedAt == const $CopyWithPlaceholder()
+          ? _value.arrivedAt
+          // ignore: cast_nullable_to_non_nullable
+          : arrivedAt as DateTime?,
+      startedAt: startedAt == const $CopyWithPlaceholder()
+          ? _value.startedAt
+          // ignore: cast_nullable_to_non_nullable
+          : startedAt as DateTime?,
+      completedAt: completedAt == const $CopyWithPlaceholder()
+          ? _value.completedAt
+          // ignore: cast_nullable_to_non_nullable
+          : completedAt as DateTime?,
+      cancelledAt: cancelledAt == const $CopyWithPlaceholder()
+          ? _value.cancelledAt
+          // ignore: cast_nullable_to_non_nullable
+          : cancelledAt as DateTime?,
+      cancelledBy: cancelledBy == const $CopyWithPlaceholder()
+          ? _value.cancelledBy
+          // ignore: cast_nullable_to_non_nullable
+          : cancelledBy as DriverRideCancelledByEnum?,
+      cancelReasonCode: cancelReasonCode == const $CopyWithPlaceholder()
+          ? _value.cancelReasonCode
+          // ignore: cast_nullable_to_non_nullable
+          : cancelReasonCode as DriverRideCancelReasonCodeEnum?,
     );
   }
 }
@@ -272,6 +343,30 @@ DriverRide _$DriverRideFromJson(Map<String, dynamic> json) => $checkedCreate(
         'noShowAvailableAt',
         (v) => v == null ? null : DateTime.parse(v as String),
       ),
+      arrivedAt: $checkedConvert(
+        'arrivedAt',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      startedAt: $checkedConvert(
+        'startedAt',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      completedAt: $checkedConvert(
+        'completedAt',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      cancelledAt: $checkedConvert(
+        'cancelledAt',
+        (v) => v == null ? null : DateTime.parse(v as String),
+      ),
+      cancelledBy: $checkedConvert(
+        'cancelledBy',
+        (v) => $enumDecodeNullable(_$DriverRideCancelledByEnumEnumMap, v),
+      ),
+      cancelReasonCode: $checkedConvert(
+        'cancelReasonCode',
+        (v) => $enumDecodeNullable(_$DriverRideCancelReasonCodeEnumEnumMap, v),
+      ),
     );
     return val;
   },
@@ -293,6 +388,13 @@ Map<String, dynamic> _$DriverRideToJson(DriverRide instance) =>
       'assignedAt': instance.assignedAt.toIso8601String(),
       'acknowledgedAt': ?instance.acknowledgedAt?.toIso8601String(),
       'noShowAvailableAt': ?instance.noShowAvailableAt?.toIso8601String(),
+      'arrivedAt': ?instance.arrivedAt?.toIso8601String(),
+      'startedAt': ?instance.startedAt?.toIso8601String(),
+      'completedAt': ?instance.completedAt?.toIso8601String(),
+      'cancelledAt': ?instance.cancelledAt?.toIso8601String(),
+      'cancelledBy': ?_$DriverRideCancelledByEnumEnumMap[instance.cancelledBy],
+      'cancelReasonCode':
+          ?_$DriverRideCancelReasonCodeEnumEnumMap[instance.cancelReasonCode],
     };
 
 const _$RideStatusEnumMap = {
@@ -302,4 +404,22 @@ const _$RideStatusEnumMap = {
   RideStatus.inProgress: 'in_progress',
   RideStatus.completed: 'completed',
   RideStatus.cancelled: 'cancelled',
+};
+
+const _$DriverRideCancelledByEnumEnumMap = {
+  DriverRideCancelledByEnum.student: 'student',
+  DriverRideCancelledByEnum.driver: 'driver',
+  DriverRideCancelledByEnum.system: 'system',
+  DriverRideCancelledByEnum.admin: 'admin',
+};
+
+const _$DriverRideCancelReasonCodeEnumEnumMap = {
+  DriverRideCancelReasonCodeEnum.studentChangedMind: 'student_changed_mind',
+  DriverRideCancelReasonCodeEnum.driverUnavailable: 'driver_unavailable',
+  DriverRideCancelReasonCodeEnum.vehicleIssue: 'vehicle_issue',
+  DriverRideCancelReasonCodeEnum.noDriverAvailable: 'no_driver_available',
+  DriverRideCancelReasonCodeEnum.serviceIssue: 'service_issue',
+  DriverRideCancelReasonCodeEnum.adminDecision: 'admin_decision',
+  DriverRideCancelReasonCodeEnum.other: 'other',
+  DriverRideCancelReasonCodeEnum.riderNoShow: 'rider_no_show',
 };

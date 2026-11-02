@@ -2,6 +2,16 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: contract 0.5.0 (CR-5, CR-6, CR-10)
+
+**Branch:** `contract-0-5-0`, from main. Done on Kevin's instruction (the contract is normally planning's).
+- **Contract:** `DriverProfile.documents` (`DriverDocumentStatus`: type, expiresOn, daysLeft, status valid/expiring/expired, computed on the Accra date, one per type, the one that expires last); `documentType` and `expiredOn` on the `document_expired` problem; `supervisorPhone` and `campusSecurityPhone` in `AppConfig`; `arrivedAt`, `startedAt`, `completedAt`, `cancelledAt`, `cancelledBy`, `cancelReasonCode` on `DriverRide`. All additive and optional.
+- **API:** `routes/driver.js`, `routes/auth.js`, `lib/errors.js`, `config.js` (env `SUPERVISOR_PHONE`, `CAMPUS_SECURITY_PHONE`, in `.env.example`), `test/contract-050.test.js`. Also fixed an existing bug: `GET /driver/profile` returned 500 for a driver with no vehicle (the vehicle join overwrote `id` and `status`).
+- **Clients:** Dart client, dashboard and landing schemas regenerated; `contract:check` passes.
+- **Driver app:** `driver_gaps.dart` now reads the profile's documents and the app config's supervisor number (sample data still behind `SAMPLE_DRIVER_DATA`); the trip timeline shows the real arrived, started, completed and cancelled times and who cancelled.
+- **Checks:** 36 API tests pass on a scratch Postgres (walks 1-4, driver, reduced views, route polyline, new); driver 89, student 132 pass; analyze clean.
+- **Not done:** approach-road line (`driverToPickupPolyline`) and `dutySince` are not in 0.5.0; CR-2/CR-3 (places, announcements, notification settings), CR-7/CR-8 (legal dates and publishing) and CR-11 (top-up network) are untouched. The two phone numbers are empty on staging until set in the server env. Deploying needs no migration (no schema change).
+
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.
