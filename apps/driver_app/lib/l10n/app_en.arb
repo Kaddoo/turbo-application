@@ -249,10 +249,16 @@
   "assignDecline": "Decline",
   "assignSeconds": "{seconds}",
   "assignPickup": "Pickup",
-  "assignDistance": "{km} km away · about {minutes} min",
   "assignStudent": "Student: {name}",
-  "assignTrip": "Trip: {km} km",
-  "assignFare": "Fare: {amount}",
+  "@assignStudent": {"placeholders": {"name": {"type": "String"}}},
+  "assignTilePickup": "To pickup",
+  "assignTileTrip": "Trip",
+  "assignTileStudent": "Student",
+  "assignTilePays": "Student pays",
+  "assignKm": "{km} km",
+  "@assignKm": {"placeholders": {"km": {"type": "String"}}},
+  "assignEta": "about {minutes} min",
+  "@assignEta": {"placeholders": {"minutes": {"type": "int"}}},
   "assignPassed": "Ride passed to another driver",
   "assignPassedBody": "You're back in the queue. No action needed.",
   "declineTitle": "Why are you declining?",
@@ -327,37 +333,6 @@
     "placeholders": {
       "seconds": {
         "type": "int"
-      }
-    }
-  },
-  "@assignDistance": {
-    "placeholders": {
-      "km": {
-        "type": "String"
-      },
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
-  "@assignStudent": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@assignTrip": {
-    "placeholders": {
-      "km": {
-        "type": "String"
-      }
-    }
-  },
-  "@assignFare": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
       }
     }
   },

@@ -75,9 +75,11 @@ void main() {
       expect(find.text('New ride'), findsOneWidget);
       expect(find.text('Central Gate'), findsOneWidget);
       expect(find.text('By the security post'), findsOneWidget);
-      expect(find.text('Student: Ama'), findsOneWidget);
-      expect(find.text('Fare: GH₵35.00'), findsOneWidget);
-      expect(find.text('1.2 km away · about 4 min'), findsOneWidget);
+      expect(find.text('Ama'), findsOneWidget);
+      expect(find.text('GH₵35.00'), findsOneWidget);
+      expect(find.text('1.2 km'), findsOneWidget);
+      expect(find.text('about 4 min'), findsOneWidget);
+      expect(find.text('Student pays'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text('Accept'), findsOneWidget);
     });

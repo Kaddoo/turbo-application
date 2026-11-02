@@ -189,6 +189,13 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: driver offer as four tiles, D04 (branch `driver-offer-tiles`, cut from `driver-location-priming`)
+
+- **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_ride_test.dart`.
+- **What changed:** the new-ride card became BentoTiles with kit pictures: To pickup (km, minutes, pushpin), Trip (km, motorway), Student (first name, busts), Student pays (lime, money font, money bag; left out when the ride has no fare). Countdown ring, buttons and behaviour are unchanged.
+- **Checks:** analyze clean, 79 driver tests pass (offer already covered in dark mode at 200% text). Not run on a phone.
+- **Not done:** 2x2 decline tiles, D10 trip detail, D11 help tiles, vehicle image on home.
+
 ## 2026-11-02, Claude, code: driver app pattern 5, Always location priming (branch `driver-location-priming`, cut from `driver-records`)
 
 - **Files:** `apps/driver_app/lib/src/features/home/location_priming.dart` (new), `home_screen.dart`, `readiness_board.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_home_test.dart`.

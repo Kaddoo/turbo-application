@@ -604,23 +604,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assignPickup => 'Pickup';
 
   @override
-  String assignDistance(String km, int minutes) {
-    return '$km km away · about $minutes min';
-  }
-
-  @override
   String assignStudent(String name) {
     return 'Student: $name';
   }
 
   @override
-  String assignTrip(String km) {
-    return 'Trip: $km km';
+  String get assignTilePickup => 'To pickup';
+
+  @override
+  String get assignTileTrip => 'Trip';
+
+  @override
+  String get assignTileStudent => 'Student';
+
+  @override
+  String get assignTilePays => 'Student pays';
+
+  @override
+  String assignKm(String km) {
+    return '$km km';
   }
 
   @override
-  String assignFare(String amount) {
-    return 'Fare: $amount';
+  String assignEta(int minutes) {
+    return 'about $minutes min';
   }
 
   @override

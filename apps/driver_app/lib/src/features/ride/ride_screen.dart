@@ -269,9 +269,33 @@ class _OfferState extends ConsumerState<_Offer> {
     final km = ((r.pickupDistanceMeters ?? 0) / 1000).toStringAsFixed(1);
     final minutes = ((r.pickupEtaSeconds ?? 0) / 60).ceil();
 
-    Widget line(String value, TextStyle? style) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: TurboSpacing.sm),
-      child: Text(value, style: style),
+    Widget tile(
+      String label,
+      String title,
+      TurboArt art, {
+      String? footer,
+      BentoTone tone = BentoTone.surface,
+      bool money = false,
+    }) => BentoTile(
+      label: label,
+      title: title,
+      tone: tone,
+      money: money,
+      semanticLabel: footer == null
+          ? '$label, $title'
+          : '$label, $title, $footer',
+      footer: footer == null ? null : Text(footer, style: text.bodyMedium),
+      trailing: TurboArtImage(art),
+    );
+    Widget pair(Widget a, Widget? b) => IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: a),
+          const SizedBox(width: TurboSpacing.md),
+          Expanded(child: b ?? const SizedBox.shrink()),
+        ],
+      ),
     );
     return Column(
       children: [
@@ -324,36 +348,43 @@ class _OfferState extends ConsumerState<_Offer> {
               if (r.pickup.landmark != null)
                 Text(
                   r.pickup.landmark!,
-                  style: text.bodyLarge?.copyWith(color: t.colors.textSecondary),
+                  style: text.bodyLarge?.copyWith(
+                    color: t.colors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: TurboSpacing.xl),
-              TurboCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    line(l10n.assignDistance(km, minutes), text.bodyLarge),
-                    const Divider(),
-                    line(
-                      l10n.assignTrip(
-                        (r.routeDistanceMeters / 1000).toStringAsFixed(1),
-                      ),
-                      text.bodyLarge,
-                    ),
-                    const Divider(),
-                    line(
-                      l10n.assignStudent(r.student.firstName),
-                      text.bodyLarge,
-                    ),
-                    if (r.farePesewas != null) ...[
-                      const Divider(),
-                      line(
-                        l10n.assignFare(formatPesewas(r.farePesewas!)),
-                        text.bodyLarge,
-                      ),
-                    ],
-                  ],
+              pair(
+                tile(
+                  l10n.assignTilePickup,
+                  l10n.assignKm(km),
+                  TurboArt.roundPushpin,
+                  footer: l10n.assignEta(minutes),
                 ),
+                tile(
+                  l10n.assignTileTrip,
+                  l10n.assignKm(
+                    (r.routeDistanceMeters / 1000).toStringAsFixed(1),
+                  ),
+                  TurboArt.motorway,
+                ),
+              ),
+              const SizedBox(height: TurboSpacing.md),
+              pair(
+                tile(
+                  l10n.assignTileStudent,
+                  r.student.firstName,
+                  TurboArt.bustsInSilhouette,
+                ),
+                r.farePesewas == null
+                    ? null
+                    : tile(
+                        l10n.assignTilePays,
+                        formatPesewas(r.farePesewas!),
+                        TurboArt.moneyBag,
+                        tone: BentoTone.lime,
+                        money: true,
+                      ),
               ),
             ],
           ),
@@ -366,7 +397,12 @@ class _OfferState extends ConsumerState<_Offer> {
               if (_error != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: TurboSpacing.md),
-                  child: TurboBanner(icon: Icons.error_outline, message: _error!, tone: StatusTone.danger, liveRegion: true),
+                  child: TurboBanner(
+                    icon: Icons.error_outline,
+                    message: _error!,
+                    tone: StatusTone.danger,
+                    liveRegion: true,
+                  ),
                 ),
               TurboButton(
                 label: l10n.assignAccept,

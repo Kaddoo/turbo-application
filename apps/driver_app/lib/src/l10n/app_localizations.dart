@@ -1132,29 +1132,47 @@ abstract class AppLocalizations {
   /// **'Pickup'**
   String get assignPickup;
 
-  /// No description provided for @assignDistance.
-  ///
-  /// In en, this message translates to:
-  /// **'{km} km away · about {minutes} min'**
-  String assignDistance(String km, int minutes);
-
   /// No description provided for @assignStudent.
   ///
   /// In en, this message translates to:
   /// **'Student: {name}'**
   String assignStudent(String name);
 
-  /// No description provided for @assignTrip.
+  /// No description provided for @assignTilePickup.
   ///
   /// In en, this message translates to:
-  /// **'Trip: {km} km'**
-  String assignTrip(String km);
+  /// **'To pickup'**
+  String get assignTilePickup;
 
-  /// No description provided for @assignFare.
+  /// No description provided for @assignTileTrip.
   ///
   /// In en, this message translates to:
-  /// **'Fare: {amount}'**
-  String assignFare(String amount);
+  /// **'Trip'**
+  String get assignTileTrip;
+
+  /// No description provided for @assignTileStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Student'**
+  String get assignTileStudent;
+
+  /// No description provided for @assignTilePays.
+  ///
+  /// In en, this message translates to:
+  /// **'Student pays'**
+  String get assignTilePays;
+
+  /// No description provided for @assignKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String assignKm(String km);
+
+  /// No description provided for @assignEta.
+  ///
+  /// In en, this message translates to:
+  /// **'about {minutes} min'**
+  String assignEta(int minutes);
 
   /// No description provided for @assignPassed.
   ///
