@@ -194,25 +194,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                     const SizedBox(height: TurboSpacing.lg),
                     TurboCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(l10n.homeYourVehicle, style: text.bodySmall),
-                          const SizedBox(height: TurboSpacing.xs),
-                          Text(
-                            vehicle == null
-                                ? l10n.homeNoVehicle
-                                : l10n.homeVehicle(
-                                    vehicle.colour,
-                                    vehicle.make,
-                                    vehicle.model,
-                                    vehicle.plateNumber,
-                                  ),
-                            style: text.titleLarge,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(l10n.homeYourVehicle, style: text.bodySmall),
+                                const SizedBox(height: TurboSpacing.xs),
+                                Text(
+                                  vehicle == null
+                                      ? l10n.homeNoVehicle
+                                      : l10n.homeVehicle(
+                                          vehicle.colour,
+                                          vehicle.make,
+                                          vehicle.model,
+                                          vehicle.plateNumber,
+                                        ),
+                                  style: text.titleLarge,
+                                ),
+                              ],
+                            ),
                           ),
                           if (vehicle != null) ...[
-                            const SizedBox(height: TurboSpacing.md),
-                            const Center(child: VehicleImage()),
+                            const SizedBox(width: TurboSpacing.md),
+                            const VehicleImage(height: TurboSizes.primaryAction),
                           ],
                         ],
                       ),

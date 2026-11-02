@@ -744,7 +744,7 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(),
-            const BadgeIcon(icon: Icons.lock_outline),
+            const HeroIcon(art: TurboArt.locked),
             const SizedBox(height: TurboSpacing.lg),
             Semantics(
               header: true,
@@ -766,6 +766,11 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: TurboArtImage(TurboArt.key, size: TurboSizes.primaryAction),
+              ),
+              const SizedBox(height: TurboSpacing.sm),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Semantics(
@@ -1110,9 +1115,9 @@ class _End extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
-    final (IconData icon, String title, String body) = switch (outcome) {
+    final (TurboArt art, String title, String body) = switch (outcome) {
       RideOutcome.completed => (
-        Icons.check,
+        TurboArt.checkMarkButton,
         l10n.doneTitle,
         l10n.doneDetails(
           (ride.routeDistanceMeters / 1000).toStringAsFixed(1),
@@ -1120,12 +1125,12 @@ class _End extends StatelessWidget {
         ),
       ),
       RideOutcome.cancelled => (
-        Icons.close,
+        TurboArt.warning,
         l10n.cancelledTitle,
         '${l10n.cancelledBySystem} ${l10n.cancelledBody}',
       ),
       RideOutcome.passed => (
-        Icons.swap_horiz,
+        TurboArt.hourglassNotDone,
         l10n.assignPassed,
         l10n.assignPassedBody,
       ),
@@ -1138,7 +1143,7 @@ class _End extends StatelessWidget {
             child: ListView(
               children: [
                 const SizedBox(height: TurboSpacing.xxl),
-                Center(child: BadgeIcon(icon: icon)),
+                Center(child: HeroIcon(art: art)),
                 const SizedBox(height: TurboSpacing.xl),
                 Semantics(
                   header: true,

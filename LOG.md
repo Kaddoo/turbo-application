@@ -189,6 +189,14 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: design check, 3D pictures on the end and PIN screens (branch `driver-art-screens`, cut from `driver-contract-gaps`)
+
+- **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `features/home/home_screen.dart`, `test/driver_home_test.dart`.
+- **What I compared:** all 60 screens in `design/new` (as contact sheets, not on a device) against the driver code.
+- **Changed to match the design:** Trip complete, Ride cancelled and Ride passed use the kit's check-mark, warning and hourglass pictures; PIN locked uses the padlock; the PIN entry screen has the key; the home vehicle card puts the car at the right of the plate.
+- **Differences left as they are:** the design shows Internet and Notifications as a small tick line under the tiles (mine are tiles); the offer's Student tile has a photo (the contract has no student photo); the dark map style; the on-duty chips and "time on shift" are not compared line by line.
+- **Checks:** analyze clean, 89 driver tests pass. Not run on a phone, so spacing and the map screens are unchecked.
+
 ## 2026-11-02, Claude, code: documents, supervisor call and shift tile on stand-ins (branch `driver-contract-gaps`, cut from `driver-vehicle-image`)
 
 - **Files:** `CONTRACT_REPORT_driver_app.md` (new: what the API must add, per screen), `apps/driver_app/lib/src/core/driver_gaps.dart`, `features/me/documents_screen.dart`, `features/support/call_supervisor_button.dart` (all new), `readiness_board.dart`, `home_screen.dart`, `me_screen.dart`, `ride_screen.dart`, `router.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_gaps_test.dart`.

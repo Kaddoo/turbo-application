@@ -102,7 +102,7 @@ void main() {
       tester.platformDispatcher.textScaleFactorTestValue = 2.0;
       addTearDown(tester.platformDispatcher.clearAllTestValues);
       final readiness = FakeReadiness(access: DriverLocationAccess.denied);
-      await bootDriver(tester, driverServer(), readiness: readiness, size: const Size(360, 2400));
+      await bootDriver(tester, driverServer(), readiness: readiness, size: const Size(360, 3600));
       await settle(tester);
       await tester.tap(find.text('Allow location always'));
       await settle(tester);
