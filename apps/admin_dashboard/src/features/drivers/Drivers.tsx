@@ -3,17 +3,25 @@ import { newIdempotencyKey } from '@/services/http';
 import { useNavigate, useParams } from 'react-router';
 import type { Schemas } from '@/types';
 import {
+  ActionList,
+  ActionRow,
+  Banner,
   Button,
   Card,
   Chip,
   ConfirmDialog,
   DataTable,
-  Details,
   Dialog,
   DialogActions,
   ErrorState,
+  Fact,
+  Facts,
+  Figure,
+  Icon,
   Money,
   PageHeader,
+  Plate,
+  ProfileHero,
   Select,
   Skeleton,
   TextField,
@@ -24,11 +32,11 @@ import {
   CardTop,
   Callout,
   Person,
-  Plate,
   Row,
 } from '@/components';
 import { accountTone } from '@/components/statusTones';
-import { formatDate, formatPhone, humanize, maskPhone } from '@/utils/format';
+import { formatDate, formatPhone, formatRelative, humanize, maskPhone } from '@/utils/format';
+import a from './drivers.module.css';
 import { problemMessage } from '@/utils/problems';
 import { useAllVehicles } from '@/hooks';
 import {
@@ -262,8 +270,20 @@ export function Drivers() {
   );
 }
 
+const DAY = 86_400_000;
+
+/** A document's state from its expiry date: expired, expiring within 30 days, or valid. */
+function docStatus(expiresOn: string | null | undefined): { tone: 'success' | 'warning' | 'danger'; label: string } {
+  if (!expiresOn) return { tone: 'success', label: 'Valid' };
+  const days = Math.ceil((new Date(expiresOn).getTime() - Date.now()) / DAY);
+  if (days < 0) return { tone: 'danger', label: days === -1 ? 'Expired yesterday' : `Expired ${-days} days ago` };
+  if (days <= 30) return { tone: 'warning', label: days === 0 ? 'Expires today' : `${days} days left` };
+  return { tone: 'success', label: 'Valid' };
+}
+
 export function DriverDetail() {
   const { id = '' } = useParams();
+  const navigate = useNavigate();
   const toast = useToast();
   const q = useDriver(id);
   const vehicles = useAllVehicles();
@@ -294,115 +314,179 @@ export function DriverDetail() {
   if (q.error) return <ErrorState error={q.error} onRetry={() => void q.refetch()} />;
   const d = q.data;
   const suspended = d.status === 'suspended';
+  const expiredDocs = (d.documents ?? []).filter((x) => docStatus(x.expiresOn).tone === 'danger').length;
   return (
     <>
-      <PageHeader
-        title={d.fullName}
-        description={`Added ${formatDate(d.createdAt)}.`}
-        actions={
+      <PageHeader title="Driver" description="Their profile, vehicle, documents and pay." />
+      <ProfileHero
+        label="Driver profile"
+        name={d.fullName}
+        lines={[formatPhone(d.phone), d.email].filter((l): l is string => !!l)}
+        chips={
           <>
             <Chip tone={d.dutyStatus === 'on_duty' ? 'success' : 'neutral'}>{humanize(d.dutyStatus)}</Chip>
             <Chip tone={accountTone[d.status]}>{humanize(d.status)}</Chip>
+            {d.currentRideId && <Chip tone="accent">On a ride</Chip>}
           </>
         }
+        stats={[
+          { label: 'Last seen', value: d.lastLocation ? formatRelative(d.lastLocation.recordedAt) : 'Never' },
+          { label: 'Added', value: formatDate(d.createdAt) },
+        ]}
       />
-      <div className={ui.grid2}>
-        <Card title="Details">
-          <Details
-            items={[
-              ['Phone', formatPhone(d.phone)],
-              ['Email', d.email ?? '—'],
-              ['Last seen', <When iso={d.lastLocation?.recordedAt} />],
-              ['Current ride', d.currentRideId ? <a href={`/rides/${d.currentRideId}`}>Open ride</a> : 'None'],
-            ]}
-          />
-          <div className={ui.actions} style={{ marginTop: 16 }}>
-            <Button variant={suspended ? 'primary' : 'danger'} onClick={() => setSuspendOpen(true)}>
-              {suspended ? 'Reactivate' : 'Deactivate'}
-            </Button>
-          </div>
-        </Card>
-        <Card title="Vehicle">
-          <Select
-            label="Assigned vehicle"
-            value={d.vehicle?.id ?? ''}
-            disabled={update.isPending}
-            onChange={(e) =>
-              update.mutate({ vehicleId: e.target.value || null }, { onSuccess: () => toast('Vehicle updated.') })
-            }
-            options={[
-              { value: '', label: 'None' },
-              ...(vehicles.data?.data ?? [])
-                .filter((v) => v.status === 'active' || v.id === d.vehicle?.id)
-                .map((v) => ({ value: v.id, label: `${v.plateNumber} · ${v.make} ${v.model} (${v.colour})` })),
-            ]}
-          />
-          {update.error ? (
-            <p role="alert" className={ui.muted}>
-              {problemMessage(update.error)}
-            </p>
-          ) : null}
-        </Card>
-        <Card
-          title="Documents"
-          actions={
-            <Button small onClick={() => setDocOpen(true)}>
-              Add document
-            </Button>
-          }
-        >
-          {d.documents?.length ? (
-            <div className={ui.stack} style={{ gap: 8 }}>
-              {d.documents.map((x) => {
-                const expired = x.expiresOn ? new Date(x.expiresOn) < new Date() : false;
-                return (
-                  <div key={x.id} className={ui.row}>
-                    <strong>{humanize(x.type)}</strong>
-                    <span className={ui.muted}>{x.expiresOn ? `expires ${formatDate(x.expiresOn)}` : 'no expiry'}</span>
-                    {expired && <Chip tone="danger">Expired</Chip>}
+      {suspended && <Banner tone="danger">This driver is deactivated. They cannot go on duty or receive rides.</Banner>}
+      {expiredDocs > 0 && (
+        <Banner tone="warning">
+          {expiredDocs === 1 ? 'A document has' : `${expiredDocs} documents have`} expired. A driver with an expired
+          licence, insurance or roadworthy certificate cannot go on duty.
+        </Banner>
+      )}
+      <div className={`${ui.grid2} ${ui.gridStart}`}>
+        <div className={ui.stack}>
+          <Card title="Vehicle">
+            <div className={d.vehicle ? a.vehicle : undefined}>
+              {d.vehicle ? (
+                <>
+                  <div className={a.vehicleHead}>
+                    <Plate>{d.vehicle.plateNumber}</Plate>
+                    <span className={a.vehicleName}>
+                      {d.vehicle.make} {d.vehicle.model}
+                    </span>
                   </div>
-                );
-              })}
+                  <Facts>
+                    <Fact label="Colour">{d.vehicle.colour}</Fact>
+                    <Fact label="Seats">{d.vehicle.seats ?? '—'}</Fact>
+                  </Facts>
+                </>
+              ) : (
+                <Callout tone="warning" icon="warning">
+                  No vehicle assigned. A driver needs one before going on duty.
+                </Callout>
+              )}
             </div>
-          ) : (
-            <p className={ui.muted} style={{ margin: 0 }}>
-              No documents yet. Add the licence, insurance and roadworthy certificate.
-            </p>
-          )}
-        </Card>
-        <Card
-          title="Salary"
-          actions={
-            <Button
-              small
-              onClick={() => {
-                setSalaryForm({
-                  cedis: salary.data ? String(salary.data.monthlySalaryPesewas / 100) : '',
-                  payPeriod: salary.data?.payPeriod ?? 'monthly',
-                });
-                setSalaryOpen(true);
-              }}
-            >
-              Edit
-            </Button>
-          }
-        >
-          {salary.isPending ? (
-            <Skeleton />
-          ) : salary.data ? (
-            <Details
-              items={[
-                ['Monthly salary', <Money pesewas={salary.data.monthlySalaryPesewas} />],
-                ['Pay period', humanize(salary.data.payPeriod)],
-                ['Updated', <When iso={salary.data.updatedAt} />],
-              ]}
-            />
-          ) : (
-            <p className={ui.muted} style={{ margin: 0 }}>
-              No salary set yet.
-            </p>
-          )}
-        </Card>
+            <div style={{ marginTop: 'var(--space-4)' }}>
+              <Select
+                label={d.vehicle ? 'Change vehicle' : 'Assign a vehicle'}
+                value={d.vehicle?.id ?? ''}
+                disabled={update.isPending}
+                onChange={(e) =>
+                  update.mutate({ vehicleId: e.target.value || null }, { onSuccess: () => toast('Vehicle updated.') })
+                }
+                options={[
+                  { value: '', label: 'None' },
+                  ...(vehicles.data?.data ?? [])
+                    .filter((v) => v.status === 'active' || v.id === d.vehicle?.id)
+                    .map((v) => ({ value: v.id, label: `${v.plateNumber} · ${v.make} ${v.model} (${v.colour})` })),
+                ]}
+              />
+            </div>
+            {update.error ? (
+              <p role="alert" className={ui.muted}>
+                {problemMessage(update.error)}
+              </p>
+            ) : null}
+          </Card>
+
+          <Card
+            title="Documents"
+            actions={
+              <Button small onClick={() => setDocOpen(true)}>
+                Add document
+              </Button>
+            }
+          >
+            {d.documents?.length ? (
+              <ul className={a.docs} aria-label="Documents">
+                {d.documents.map((x) => {
+                  const st = docStatus(x.expiresOn);
+                  return (
+                    <li key={x.id} className={a.doc} data-tone={st.tone}>
+                      <span className={a.docIcon} aria-hidden="true">
+                        <Icon name={st.tone === 'success' ? 'check' : 'warning'} size="sm" />
+                      </span>
+                      <span className={a.docText}>
+                        <span className={a.docTitle}>{humanize(x.type)}</span>
+                        <span className={a.docWhen}>
+                          {x.expiresOn ? `Expires ${formatDate(x.expiresOn)}` : 'No expiry'}
+                        </span>
+                      </span>
+                      <Chip tone={st.tone}>{st.label}</Chip>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className={ui.muted} style={{ margin: 0 }}>
+                No documents yet. Add the licence, insurance and roadworthy certificate.
+              </p>
+            )}
+          </Card>
+        </div>
+
+        <div className={ui.stack}>
+          <Card
+            title="Salary"
+            actions={
+              <Button
+                small
+                onClick={() => {
+                  setSalaryForm({
+                    cedis: salary.data ? String(salary.data.monthlySalaryPesewas / 100) : '',
+                    payPeriod: salary.data?.payPeriod ?? 'monthly',
+                  });
+                  setSalaryOpen(true);
+                }}
+              >
+                {salary.data ? 'Edit' : 'Set salary'}
+              </Button>
+            }
+          >
+            {salary.isPending ? (
+              <Skeleton />
+            ) : salary.data ? (
+              <div className={ui.stack}>
+                <Figure label="Monthly salary" size="lg">
+                  <Money pesewas={salary.data.monthlySalaryPesewas} />
+                </Figure>
+                <Facts>
+                  <Fact label="Pay period">{humanize(salary.data.payPeriod)}</Fact>
+                  <Fact label="Updated">
+                    <When iso={salary.data.updatedAt} />
+                  </Fact>
+                </Facts>
+              </div>
+            ) : (
+              <p className={ui.muted} style={{ margin: 0 }}>
+                No salary set yet.
+              </p>
+            )}
+          </Card>
+
+          <Card title="Account actions">
+            <ActionList label="Account actions">
+              {d.currentRideId && (
+                <ActionRow
+                  icon="rides"
+                  tone="accent"
+                  title="Open current ride"
+                  description="See where they are and what the student is waiting for."
+                  onClick={() => navigate(`/rides/${d.currentRideId}`)}
+                />
+              )}
+              <ActionRow
+                icon={suspended ? 'check' : 'lock'}
+                tone={suspended ? 'success' : 'danger'}
+                title={suspended ? 'Reactivate driver' : 'Deactivate driver'}
+                description={
+                  suspended
+                    ? 'They can go on duty again.'
+                    : 'They cannot go on duty or receive rides. Their history stays.'
+                }
+                onClick={() => setSuspendOpen(true)}
+              />
+            </ActionList>
+          </Card>
+        </div>
       </div>
 
       <ConfirmDialog

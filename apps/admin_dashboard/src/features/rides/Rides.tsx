@@ -7,13 +7,14 @@ import { canDo } from '@/utils/permissions';
 import { useSession } from '@/state/session';
 import { MapView, type MapMarker } from '@/components/MapView';
 import {
+  ActionList,
+  ActionRow,
   Banner,
   Button,
   Card,
   Chip,
   Icon,
   DataTable,
-  Details,
   Dialog,
   DialogActions,
   ErrorState,
@@ -33,6 +34,8 @@ import {
   Callout,
   Figure,
   Person,
+  Plate,
+  Row,
 } from '@/components';
 import { formatKm, formatPesewas, formatRelative, formatTime, humanize, parseCedis } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -75,6 +78,15 @@ export function Flags({ flags }: { flags?: RideFlag[] }) {
       ))}
     </span>
   );
+}
+
+/** Dot colour for a timeline event, from what happened. */
+function eventTone(type: string): 'success' | 'danger' | 'warning' | 'accent' | undefined {
+  if (/cancel|declin|unreach|overdue/.test(type)) return 'danger';
+  if (/reassign|refund/.test(type)) return 'warning';
+  if (/complet/.test(type)) return 'success';
+  if (/assign|arriv|start/.test(type)) return 'accent';
+  return undefined;
 }
 
 function useTabVisible() {
@@ -316,6 +328,29 @@ export function RideDetail() {
   const idleDrivers = live.data?.onDutyDrivers.filter((d) => d.idle && d.driverId !== driver?.id) ?? [];
   const refundAmount = refund.amount ? parseCedis(refund.amount) : refundable;
 
+  const cancelled = ride.status === 'cancelled';
+  const stepList = [
+    { key: 'requested', label: 'Requested', at: ride.requestedAt },
+    { key: 'assigned', label: 'Driver assigned', at: ride.assignedAt },
+    { key: 'arrived', label: 'Driver arrived', at: ride.driverArrivedAt },
+    { key: 'started', label: 'Trip started', at: ride.startedAt },
+    cancelled
+      ? { key: 'cancelled', label: 'Cancelled', at: ride.cancellation?.cancelledAt }
+      : { key: 'completed', label: 'Completed', at: ride.completedAt },
+  ];
+  const firstOpen = stepList.findIndex((x) => !x.at);
+  const steps = stepList.map((x, i) => ({
+    ...x,
+    state:
+      cancelled && x.key === 'cancelled'
+        ? 'cancelled'
+        : x.at
+          ? 'done'
+          : i === firstOpen && !cancelled
+            ? 'current'
+            : 'todo',
+  }));
+
   const markers: MapMarker[] = [
     {
       id: 'pickup',
@@ -347,122 +382,217 @@ export function RideDetail() {
 
   return (
     <>
-      <PageHeader
-        title={`${ride.pickup.label ?? 'Pickup'} → ${ride.dropoff.label ?? 'Drop-off'}`}
-        description={`Requested ${formatRelative(ride.requestedAt)} · ${formatKm(ride.routeDistanceMeters)} · fare locked at ${formatPesewas(ride.farePesewas)}`}
-        actions={
-          <>
+      <PageHeader title="Ride" description="The trip, the people on it, the money, and what you can do." />
+      <section
+        className={r.trip}
+        data-tone={flags?.length ? 'danger' : rideTone[ride.status]}
+        aria-label="Trip summary"
+      >
+        <div className={r.tripTop}>
+          <span className={ui.row}>
             <Chip tone={rideTone[ride.status]}>{humanize(ride.status)}</Chip>
             <Flags flags={flags} />
-          </>
-        }
-      />
+          </span>
+          <span className={ui.muted}>
+            Requested <When iso={ride.requestedAt} exact />
+          </span>
+        </div>
+        <div className={r.tripBody}>
+          <div className={r.route}>
+            <div className={r.stop}>
+              <span className={r.stopLabel}>Pickup</span>
+              <span className={r.stopName}>{ride.pickup.label ?? 'Pickup'}</span>
+              {ride.pickup.landmark && <span className={r.stopNote}>{ride.pickup.landmark}</span>}
+            </div>
+            <div className={r.stop} data-end="true">
+              <span className={r.stopLabel}>Drop-off</span>
+              <span className={r.stopName}>{ride.dropoff.label ?? 'Drop-off'}</span>
+              {ride.dropoff.landmark && <span className={r.stopNote}>{ride.dropoff.landmark}</span>}
+            </div>
+          </div>
+          <dl className={r.tripStats}>
+            <Figure label="Fare locked" size="lg">
+              <Money pesewas={ride.farePesewas} />
+            </Figure>
+            <Figure label="Distance" size="lg">
+              {formatKm(ride.routeDistanceMeters)}
+            </Figure>
+          </dl>
+        </div>
+        <ol className={r.steps} aria-label="Progress">
+          {steps.map((st) => (
+            <li key={st.key} className={r.step} data-state={st.state}>
+              <span className={r.stepName}>{st.label}</span>
+              <span>{st.at ? formatTime(st.at) : st.state === 'current' ? 'Waiting' : '—'}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
       {flags?.includes('driver_unreachable') && (
         <Banner tone="danger">
           No location from the driver for several minutes. Contact the driver; if the trip is over, force-complete it so
           the student can book again.
         </Banner>
       )}
-      <div className={ui.actions}>
-        {canDispatch && active && ride.status !== 'in_progress' && (
-          <Button onClick={() => setDialog('reassign')}>Reassign</Button>
-        )}
-        {canDispatch && active && (
-          <Button variant="danger" onClick={() => setDialog('cancel')}>
-            Cancel ride
-          </Button>
-        )}
-        {canDispatch && ride.status === 'in_progress' && (
-          <Button variant="primary" onClick={() => setDialog('complete')}>
-            Force-complete
-          </Button>
-        )}
-        {canDo(role, 'ride.refund') && refundable > 0 && (
-          <Button
-            onClick={() => {
-              setRefundKey(newIdempotencyKey());
-              setDialog('refund');
-            }}
-          >
-            Refund
-          </Button>
-        )}
-      </div>
-      <div className={ui.grid2}>
-        <Card title="Route">
-          <MapView
-            markers={markers}
-            lines={[
-              {
-                id: 'r',
-                tone: 'accent',
-                points: [
-                  [ride.pickup.point.lat, ride.pickup.point.lng],
-                  [ride.dropoff.point.lat, ride.dropoff.point.lng],
-                ],
-              },
-            ]}
-            height={320}
-          />
-        </Card>
+      <div className={`${ui.grid2} ${ui.gridStart}`}>
+        <div className={ui.stack}>
+          <Card title="Route">
+            <MapView
+              markers={markers}
+              lines={[
+                {
+                  id: 'r',
+                  tone: 'accent',
+                  points: [
+                    [ride.pickup.point.lat, ride.pickup.point.lng],
+                    [ride.dropoff.point.lat, ride.dropoff.point.lng],
+                  ],
+                },
+              ]}
+              height={320}
+            />
+          </Card>
+          <Card title="Timeline">
+            <ol className={r.timeline} aria-label="Timeline">
+              {events.map((e, i) => (
+                <li key={`${e.at}-${i}`} className={r.event} data-tone={eventTone(e.type)}>
+                  <span className={r.eventTop}>
+                    <span className={r.eventName}>{humanize(e.type)}</span>
+                    <span className={r.eventMeta}>
+                      {formatTime(e.at)} · {e.actor.startsWith('staff:') ? 'Staff' : humanize(e.actor)}
+                    </span>
+                  </span>
+                  {e.detail && <span className={r.eventMeta}>{e.detail}</span>}
+                </li>
+              ))}
+            </ol>
+          </Card>
+        </div>
         <div className={ui.stack}>
           <Card title="People">
-            <Details
-              items={[
-                ['Student', student.fullName ?? '—'],
-                ['Driver', driver ? driver.fullName : 'Not assigned'],
-                [
-                  'Vehicle',
-                  driver?.vehicle
-                    ? `${driver.vehicle.plateNumber} · ${driver.vehicle.make} ${driver.vehicle.model}`
-                    : '—',
-                ],
-                ['Pickup landmark', ride.pickup.landmark ?? '—'],
-              ]}
-            />
+            <div className={ui.stack}>
+              <CardLink>
+                <Person name={student.fullName ?? 'Student'} sub="Rider" />
+                {driver ? (
+                  <Person
+                    name={driver.fullName}
+                    sub="Driver"
+                    tone="accent"
+                    presence={driver.dutyStatus === 'on_duty' ? 'on' : 'off'}
+                  />
+                ) : (
+                  <Callout tone="warning" icon="info">
+                    No driver assigned
+                  </Callout>
+                )}
+              </CardLink>
+              {driver?.vehicle && (
+                <Row>
+                  <Plate>{driver.vehicle.plateNumber}</Plate>
+                  <span className={ui.muted}>
+                    {driver.vehicle.make} {driver.vehicle.model} · {driver.vehicle.colour}
+                  </span>
+                </Row>
+              )}
+            </div>
           </Card>
+
           <Card title="Payment">
-            <Details
-              items={[
-                [
-                  'Status',
-                  <Chip tone={ride.payment.status === 'charged' ? 'success' : 'neutral'}>
-                    {humanize(ride.payment.status)}
-                  </Chip>,
-                ],
-                ['Held', <Money pesewas={ride.payment.heldPesewas} />],
-                ['Charged', <Money pesewas={ride.payment.chargedPesewas} />],
-                ['Refunded', <Money pesewas={ride.payment.refundedPesewas} />],
-              ]}
-            />
+            <div className={ui.stack}>
+              <Row>
+                <Chip tone={ride.payment.status === 'charged' ? 'success' : 'neutral'}>
+                  {humanize(ride.payment.status)}
+                </Chip>
+              </Row>
+              <dl className={r.receipt}>
+                <div className={r.receiptLine}>
+                  <dt>Held</dt>
+                  <dd>
+                    <Money pesewas={ride.payment.heldPesewas} />
+                  </dd>
+                </div>
+                <div className={r.receiptLine}>
+                  <dt>Charged</dt>
+                  <dd>
+                    <Money pesewas={ride.payment.chargedPesewas} />
+                  </dd>
+                </div>
+                <div className={r.receiptLine}>
+                  <dt>Refunded</dt>
+                  <dd>
+                    <Money pesewas={ride.payment.refundedPesewas} />
+                  </dd>
+                </div>
+                <div className={`${r.receiptLine} ${r.receiptTotal}`}>
+                  <dt>Charged after refunds</dt>
+                  <dd>
+                    <Money pesewas={refundable} />
+                  </dd>
+                </div>
+              </dl>
+            </div>
           </Card>
+
           {ride.cancellation && (
             <Card title="Cancellation">
-              <Details
-                items={[
-                  ['By', humanize(ride.cancellation.by)],
-                  ['Reason', humanize(ride.cancellation.reasonCode)],
-                  ['Note', ride.cancellation.note ?? '—'],
-                  ['When', <When iso={ride.cancellation.cancelledAt} exact />],
-                ]}
-              />
+              <div className={ui.stack}>
+                <Callout tone="danger" icon="danger">
+                  Cancelled by {humanize(ride.cancellation.by).toLowerCase()}:{' '}
+                  {humanize(ride.cancellation.reasonCode).toLowerCase()}
+                </Callout>
+                {ride.cancellation.note && <p style={{ margin: 0 }}>{ride.cancellation.note}</p>}
+                <span className={ui.muted}>
+                  <When iso={ride.cancellation.cancelledAt} exact />
+                </span>
+              </div>
+            </Card>
+          )}
+
+          {(canDispatch || canDo(role, 'ride.refund')) && (
+            <Card title="Ride actions">
+              <ActionList label="Ride actions">
+                {canDispatch && active && ride.status !== 'in_progress' && (
+                  <ActionRow
+                    icon="refresh"
+                    title="Reassign"
+                    description="Hand the ride to another idle driver. Both people are told."
+                    onClick={() => setDialog('reassign')}
+                  />
+                )}
+                {canDispatch && ride.status === 'in_progress' && (
+                  <ActionRow
+                    icon="check"
+                    tone="warning"
+                    title="Force-complete"
+                    description="End the trip and charge the locked fare. Only when it really ended."
+                    onClick={() => setDialog('complete')}
+                  />
+                )}
+                {canDo(role, 'ride.refund') && refundable > 0 && (
+                  <ActionRow
+                    icon="topups"
+                    title="Refund"
+                    description={`Return up to ${formatPesewas(refundable)} to the student's wallet.`}
+                    onClick={() => {
+                      setRefundKey(newIdempotencyKey());
+                      setDialog('refund');
+                    }}
+                  />
+                )}
+                {canDispatch && active && (
+                  <ActionRow
+                    icon="danger"
+                    tone="danger"
+                    title="Cancel ride"
+                    description="Release the held fare. Cancellations are free for students."
+                    onClick={() => setDialog('cancel')}
+                  />
+                )}
+              </ActionList>
             </Card>
           )}
         </div>
       </div>
-      <Card title="Timeline">
-        <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 10 }}>
-          {events.map((e, i) => (
-            <li key={`${e.at}-${i}`}>
-              <strong>{humanize(e.type)}</strong>{' '}
-              <span className={ui.muted}>
-                · {formatTime(e.at)} · {e.actor.startsWith('staff:') ? 'staff' : e.actor}
-              </span>
-              {e.detail && <div className={ui.muted}>{e.detail}</div>}
-            </li>
-          ))}
-        </ol>
-      </Card>
 
       <Dialog open={dialog === 'reassign'} onClose={close} title="Reassign to another driver">
         <Select
