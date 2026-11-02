@@ -1406,6 +1406,9 @@ textarea.input {
   grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
   gap: var(--space-4);
 }
+.gridStart {
+  align-items: start;
+}
 .grid4 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
