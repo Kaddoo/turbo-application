@@ -2,6 +2,35 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: landing page public reads wired to the contract
+
+**Task:** Module 1 of the landing page integration: `GET /service-area`, `/legal` and `/app-config`, through a service layer, typed from the contract, with every failure handled.
+
+**Files touched:**
+- `apps/landing_page`:
+  - `src/lib/api.ts` (service layer on openapi-fetch) and `src/lib/useApi.ts` (shared cache, cancellation, refetch);
+  - new: `src/lib/problems.ts`, `src/lib/guards.ts`, `src/lib/hours.ts`, `src/components/ui/LoadProblem.tsx`, `src/api/` (generated schema, contract stamp, typed mock), `scripts/write-mock.ts`, `test/api-rules.test.ts`;
+  - the six components that read the API;
+  - `public/mock-api/*` (now generated), `package.json`, `next.config.ts`, `tsconfig.json`.
+- `tools/check-contract.mjs`, `.github/workflows/contract.yml` (new `landing-schema` job), `docs/api-tracker.md`, `CONTRACT_REQUESTS.md` (CR-7).
+
+**What changed:**
+- Fares, legal links and versions, and operating hours never displayed against the real API: the old parser looked for field names the contract does not use. They now use the contract's fields.
+- Closed pickup points are hidden.
+- "Bookings paused" now shows in the banner.
+- Failures say what happened and offer Try again where it can help. A body that does not match the contract is reported in the console and treated as a failure, not repaired.
+- Answers are cached for the API's own max-age and shared between sections. A request is cancelled when no section needs it any more, and data refetches when the tab comes back into view; app-config also refetches every minute.
+
+**Acceptance:**
+- `npm run lint` and `npm test` (7 tests) pass, and so do `npm run build:mock` and `npm run check` (12 page and size combinations, 0 accessibility or console errors) and `node tools/check-contract.mjs`.
+- In Chrome on the mock build, 8 of 9 scripted checks passed. The ninth expected two requests on the home page; there are three, one per endpoint, which is correct.
+
+**Deviations:** Footer links and the maintenance banner fall back without a message when their call fails: the hosted pages are the same documents, and there is nothing to announce.
+
+**Status:** Branch `landing-api`, ready. Not tested against staging from a browser: CORS blocks the landing page's addresses (issue posted for the backend).
+
+**Next step:** After the backend adds the landing addresses to `CORS_ORIGINS`, build with `PUBLIC_API_BASE_URL=https://api.turbogh.app/v1` and mark Tested.
+
 ## 2026-11-02, Claude, code: landing page moved into the repo
 
 **Task:** `apps/landing_page` was committed as a bare pointer to another repo (`97ee0e5` on `staging-checks-032`, no `.gitmodules`), so clones got an empty folder. Bring it in like the other apps.

@@ -1,5 +1,6 @@
 {
-  "_note": "MOCK DATA for local development only.",
-  "terms": { "url": null, "version": "1.0", "updatedAt": "2026-10-01" },
-  "privacy": { "url": null, "version": "1.0", "updatedAt": "2026-10-01" }
+  "termsVersion": "1.0",
+  "privacyVersion": "1.0",
+  "termsUrl": "https://turbo.example/terms/",
+  "privacyUrl": "https://turbo.example/privacy/"
 }

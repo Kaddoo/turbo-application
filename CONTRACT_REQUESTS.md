@@ -44,3 +44,11 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 
 **What:** "Too many tries. Call your supervisor." (PIN locked), the Safety screens and the help screens need real phone numbers. The apps show 112 only.
 **Suggested:** `supervisorPhone` and `campusSecurityPhone` in `GET /app-config` (see CR-3).
+
+## 2026-11-02, landing page
+
+### CR-7. `GET /legal` has no publication date
+
+**What:** The privacy and terms pages must show "Version 1.0, updated <date>" (prompt 01, and the app stores ask for it). `LegalVersions` carries versions and URLs only, so the landing page keeps the date in its own config and shows it only while that config describes the same version. A new version published through the API shows without a date.
+**Suggested:** `termsUpdatedAt` and `privacyUpdatedAt` (`format: date`) in `LegalVersions`.
+

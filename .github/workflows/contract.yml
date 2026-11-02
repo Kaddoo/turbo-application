@@ -23,3 +23,16 @@ jobs:
       # Regenerates the schema and fails if it differs from what is committed.
       - run: npm run gen:api && git diff --exit-code -- src/types
         working-directory: apps/admin_dashboard
+  landing-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+        working-directory: apps/landing_page
+      # Regenerates the schema and the mock, fails if either differs from what is committed, then type-checks and tests.
+      - run: npm run gen:api && npm run mock:write && git diff --exit-code -- src/api public/mock-api
+        working-directory: apps/landing_page
+      - run: npm run lint && npm test
+        working-directory: apps/landing_page
