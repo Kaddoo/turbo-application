@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: SOS countdown ring and 3D result (branch `student-sos-ring`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/safety/sos.dart`, `test/ride_test.dart`.
+- **What changed:** while the SOS button is held, a ring fills round the seconds left (drawn in code, in the separate SOS red's own text colour), beside the fill that already crosses the button. Letting go clears it and sends nothing, as before. The result sheet shows the 3D shield for "Help has been alerted" and the 3D warning when the alert could not be sent, in place of plain icons.
+- **Not changed:** the three-second hold, the haptics, the call-112 fallback and the campus security button.
+- **Checks:** analyze clean, 177 student tests pass (the ring shows at one second and is gone on release; the shield shows in the result sheet). Not run on a phone.
+
 ## 2026-11-02, Claude, code: share trip as contact chips and a photo preview (branch `student-share-card`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/safety/share_screen.dart`, `test/safety_support_profile_test.dart`.
