@@ -1,13 +1,13 @@
 "use client";
 
-import { CarFront, Info, ReceiptText, ShieldCheck } from "lucide-react";
+import { CarFront } from "lucide-react";
 import { serviceArea, formatCedis, formatKm } from "@/lib/api";
 import { useApi } from "@/lib/useApi";
 import { LoadProblem } from "../ui/LoadProblem";
 import { Phone } from "../ui/Phone";
 import { Photo } from "../ui/Photo";
-import { RiseHeading } from "../ui/ScrubHeading";
-import { Tag } from "../ui/Tag";
+import { Icon3d } from "../ui/Icon3d";
+import { SectionHead } from "../ui/SectionHead";
 
 function Skeleton() {
   return (
@@ -65,20 +65,17 @@ export function Fares() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="-my-8 flex justify-center lg:-my-12 lg:justify-start lg:pl-10">
           <div data-tilt="-1">
-            <Phone pose="tiltLeft" className="w-[16rem] sm:w-[19rem] lg:w-[22rem]">
+            <Phone pose="tiltLeft" className="w-[17rem] sm:w-[21rem] lg:w-[27rem]">
               <FareScreen />
             </Phone>
           </div>
         </div>
 
         <div className="max-w-md">
-          <Tag icon={ReceiptText}>Fixed fares</Tag>
-          <RiseHeading id="fares-title" className="mt-5 text-title font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-            One price per distance band.
-          </RiseHeading>
+          <SectionHead id="fares-title" label="Fixed fares" title="One price per distance band." align="start" size="title" />
           {!fallback && (
-            <p data-reveal className="mt-5 flex gap-2.5 text-base leading-relaxed lg:text-[15px] text-ink/70">
-              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden />
+            <p data-reveal className="mt-5 flex items-center gap-3 text-base leading-relaxed lg:text-[15px] text-ink/70">
+              <Icon3d name="shield" className="size-11" />
               You see the exact fare before you confirm. It never changes after.
             </p>
           )}
@@ -129,8 +126,8 @@ export function Fares() {
                     })}
                   </tbody>
                 </table>
-                <p className="mt-4 flex items-center gap-2 text-base text-ink/60 lg:text-sm">
-                  <Info className="size-4" aria-hidden />
+                <p className="mt-4 flex items-center gap-3 text-base text-ink/60 lg:text-sm">
+                  <Icon3d name="warning" className="size-8" />
                   Trips over {formatKm(state.data.maxTripDistanceMeters)} are not available.
                 </p>
               </>

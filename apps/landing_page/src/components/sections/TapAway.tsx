@@ -1,8 +1,9 @@
-import { Bell, CarFront, MapPin, Play, Wallet } from "lucide-react";
+import { Bell, CarFront, MapPin, Play } from "lucide-react";
 import { links } from "@/config/links";
 import { Phone } from "../ui/Phone";
 import { Photo } from "../ui/Photo";
-import { ScrubHeading } from "../ui/ScrubHeading";
+import { Icon3d } from "../ui/Icon3d";
+import { RiseHeading } from "../ui/ScrubHeading";
 
 function HomeScreen() {
   return (
@@ -20,7 +21,7 @@ function HomeScreen() {
           <span className="size-1.5 rounded-full bg-turbo" /> Fixed fare
         </span>
         <p className="mt-4 max-w-[9rem] text-lg font-medium leading-tight tracking-tight">Paid from your wallet</p>
-        <Wallet className="absolute -bottom-4 -right-3 size-36 rotate-[-12deg] text-ink/90" strokeWidth={1.2} />
+        <Icon3d name="money-bag" eager className="absolute -bottom-3 -right-2 size-36 rotate-[-10deg] drop-shadow-[0_12px_18px_rgba(0,0,0,0.35)]" />
       </div>
     </div>
   );
@@ -81,7 +82,7 @@ function ArrivingScreen() {
  */
 export function TapAway() {
   return (
-    <section id="tap-away" data-bg="ink" aria-labelledby="tapaway-title" data-tapaway className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,46rem)_+_110svh)]">
+    <section id="tap-away" data-bg="ink" data-bg-solid aria-labelledby="tapaway-title" data-tapaway className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,46rem)_+_110svh)]">
       <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28 lg:motion-safe:sticky lg:motion-safe:top-0">
         <div
           data-tapaway-glow
@@ -89,26 +90,26 @@ export function TapAway() {
           className="pointer-events-none absolute -bottom-40 left-1/2 h-[42rem] w-[min(70rem,140vw)] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(212,255,58,0.32),rgba(212,255,58,0.08)_55%,transparent)]"
         />
 
-        <ScrubHeading
+        <RiseHeading
           id="tapaway-title"
-          className="relative max-w-[11ch] text-center text-display font-medium leading-[0.95] tracking-[-0.05em] text-paper sm:text-7xl lg:text-[6.75rem]"
+          className="relative max-w-[11ch] text-center text-display font-medium leading-[0.95] tracking-[-0.05em] text-paper sm:text-7xl lg:text-[8.25rem]"
         >
           Smart, safe, and fast rides just a tap away
-        </ScrubHeading>
+        </RiseHeading>
 
-        <div data-tapaway-phones className="relative mt-0 flex w-full justify-center sm:-mt-8 lg:-mt-8">
-          <div data-tapaway-side="-1" className="absolute left-1/2 top-24 -translate-x-[118%] sm:-translate-x-[122%]">
-            <Phone className="w-[13rem] sm:w-[17rem] lg:w-[22rem]">
+        <div data-tapaway-phones className="relative -mt-4 flex w-full justify-center sm:-mt-10 lg:-mt-24">
+          <div data-tapaway-side="-1" className="absolute left-1/2 top-20 -translate-x-[132%] sm:top-28 lg:top-40">
+            <Phone className="w-[12rem] sm:w-[16rem] lg:w-[23rem]">
               <DriverScreen />
             </Phone>
           </div>
-          <div data-tapaway-side="1" className="absolute left-1/2 top-24 translate-x-[18%] sm:translate-x-[22%]">
-            <Phone className="w-[13rem] sm:w-[17rem] lg:w-[22rem]">
+          <div data-tapaway-side="1" className="absolute left-1/2 top-20 translate-x-[32%] sm:top-28 lg:top-40">
+            <Phone className="w-[12rem] sm:w-[16rem] lg:w-[23rem]">
               <ArrivingScreen />
             </Phone>
           </div>
           <div className="relative z-10">
-            <Phone className="w-[17rem] sm:w-[21rem] lg:w-[27rem]">
+            <Phone className="w-[17rem] sm:w-[22rem] lg:w-[32rem]">
               <HomeScreen />
             </Phone>
             <a
@@ -119,8 +120,10 @@ export function TapAway() {
             </a>
           </div>
         </div>
-        {/* Fade into the next section. An overlay, not a mask: a mask over the moving phones re-renders the whole scene every frame. */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-1/5 bg-gradient-to-b from-transparent to-ink" />
+        {/* Fade the phones out at the bottom. An overlay, not a mask: a mask over the moving phones re-renders
+            the whole scene every frame. Full width (the side phones reach past the container), and the section
+            stays solid ink (data-bg-solid) so the paper fading in behind How it works never shows at the sides. */}
+        <div aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-1/5 w-screen -translate-x-1/2 bg-gradient-to-b from-transparent to-ink" />
       </div>
     </section>
   );

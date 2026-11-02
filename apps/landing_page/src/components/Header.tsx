@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, Play, X } from "lucide-react";
 import { MaintenanceBanner } from "./MaintenanceBanner";
 import { links } from "@/config/links";
 import { cn } from "@/lib/cn";
@@ -14,14 +14,39 @@ const nav = [
 ];
 
 export function Header() {
-  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
 
+  // Floating nav: slides away while scrolling down the page, comes back on any scroll up.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 6) return;
+      setHidden(y > last && y > 120);
+      last = y;
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Highlights the pill for the section in the middle of the screen (home page only).
+  useEffect(() => {
+    const ids = nav.map((n) => n.href.split("#")[1]);
+    const els = ids.map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e);
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    els.forEach((e) => io.observe(e));
+    const onTop = () => window.scrollY < 200 && setActive(null);
+    window.addEventListener("scroll", onTop, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onTop);
+    };
   }, []);
 
   useEffect(() => {
@@ -39,21 +64,17 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4">
+    <header className={cn("fixed inset-x-0 top-0 z-50 px-4 pt-3 transition-transform duration-500 ease-out sm:px-6 sm:pt-4", hidden && !open && "-translate-y-[130%]")}>
       <div className="-mx-4 -mt-3 mb-3 sm:-mx-6 sm:-mt-4">
         <MaintenanceBanner />
       </div>
       <div
-        className={cn(
-          "mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto] items-center rounded-2xl px-2 transition-all duration-500 md:grid-cols-[1fr_auto_1fr]",
-          scrolled || open ? "bg-ink/90 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.6)]" : "bg-transparent",
-        )}
+        className="mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto] items-center px-0 md:grid-cols-[1fr_auto_1fr]"
       >
         <a href="/" className="inline-flex items-center gap-2.5 justify-self-start text-lg text-paper" aria-label="Turbo home">
-          <span aria-hidden className="inline-flex size-11 items-center justify-center rounded-xl bg-turbo">
+          <span aria-hidden className="inline-flex size-11 items-center justify-center rounded-full bg-turbo shadow-[0_6px_20px_-8px_rgba(0,0,0,0.6)]">
             <span className="size-3 rounded-full bg-ink" />
           </span>
-          <span className="hidden font-semibold tracking-tight sm:inline">Turbo</span>
         </a>
 
         <nav aria-label="Main" className="hidden md:block">
@@ -62,7 +83,8 @@ export function Header() {
               <li key={n.href}>
                 <a
                   href={n.href}
-                  className="inline-flex h-9 items-center rounded-full bg-white/[0.07] px-4 pointer-coarse:h-11 text-[13px] text-paper/75 transition-colors hover:bg-white/15 hover:text-paper"
+                  aria-current={active === n.href.split("#")[1] ? "true" : undefined}
+                  className="inline-flex h-9 items-center rounded-full bg-ink-3/95 px-4 pointer-coarse:h-11 text-[13px] text-paper/60 shadow-[0_6px_20px_-10px_rgba(0,0,0,0.7)] transition-colors hover:bg-line hover:text-paper aria-[current=true]:bg-line aria-[current=true]:text-paper"
                 >
                   {n.label}
                 </a>
@@ -74,13 +96,14 @@ export function Header() {
         <div className="flex items-center gap-2 justify-self-end">
           <a
             href="/#download"
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-turbo px-5 text-sm font-medium text-ink transition-colors hover:bg-white"
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-turbo px-5 text-sm font-medium text-ink shadow-[0_6px_20px_-8px_rgba(0,0,0,0.6)] transition-colors hover:bg-white"
           >
+            <Play aria-hidden className="size-3.5 fill-ink" />
             Get the app
           </a>
           <button
             type="button"
-            className="inline-flex size-11 items-center justify-center rounded-full text-paper hover:bg-white/10 md:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-full bg-ink-3/95 text-paper hover:bg-line md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((o) => !o)}

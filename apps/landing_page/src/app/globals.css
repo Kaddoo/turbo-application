@@ -76,14 +76,20 @@
   .motion [data-reveal] { opacity: 0; transform: translateY(28px); }
   .motion [data-split] .w > span { transform: translateY(110%); }
   .motion [data-scrub] .sw { opacity: 0.18; }
-  .motion [data-words] .rw { opacity: 0; transform: translateY(0.45em); }
-  .motion [data-words] [data-pop] { opacity: 0; transform: scale(0.85); }
+  .motion [data-words] .rw > span { transform: translateY(110%); }
+  .motion [data-chars] .c { transform: translateY(105%) rotate(6deg); }
+  .motion [data-pop] { clip-path: inset(calc(50% - 1px) 0 calc(50% - 1px) 0 round 9999px); }
+  .motion [data-pop] > * { opacity: 0; }
 }
 [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
 [data-split] .w > span { display: inline-block; }
-[data-words] .rw { display: inline-block; }
+[data-words] .rw { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+[data-words] .rw > span { display: inline-block; }
+/* Word masks for data-chars: letters rise from below the baseline; the padding keeps descenders. */
+[data-chars] .w { display: inline-block; overflow: hidden; vertical-align: top; white-space: nowrap; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+[data-chars] .c { display: inline-block; transform-origin: 0 100%; }
 /* Sections go transparent while Motion fades #main between their colours. */
-html.bg-scroll [data-bg] { background-color: transparent; }
+html.bg-scroll [data-bg]:not([data-bg-solid]) { background-color: transparent; }
 .motion.hero-intro [data-hero-shade] { opacity: 0; }
 .motion.hero-intro [data-hero-copy] { pointer-events: none; }
 /* Phones (below md): the hero copy is the largest paint, so it shows at once

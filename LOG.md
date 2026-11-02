@@ -2,6 +2,40 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: matched to the inspiration video (animations, pills, 3D icons, nav)
+
+- **Branch:** main. **Reference:** Kevin's screen recording of the inspiration site (Desktop, 2026-10-31 11.44.42).
+- **Files:**
+  - `apps/landing_page/src/components/`: `Motion.tsx`, `Header.tsx`, `Footer.tsx`, `ui/Tag.tsx`, `ui/ScrubHeading.tsx`.
+  - New: `ui/SectionHead.tsx`, `ui/Icon3d.tsx`, `ui/icons3d.json`.
+  - `sections/`: TapAway, HowItWorks, Features, Fares, Coverage, PickupChips, Safety, Wallet, Faq.
+  - `app/globals.css`, `app/support/page.tsx`, `scripts/images.mjs`, `public/icons3d/` (new).
+- **What changed:**
+  - **Smart section:**
+    - It stays solid black (`data-bg-solid`), so the paper fading in behind How it works no longer shows at the sides.
+    - The bottom fade is full width.
+    - The headline is bigger and its words rise out of masks.
+    - The phones are bigger and sit tucked behind the centre phone, as in the video.
+    - The 3D money bag replaces the outline wallet icon.
+  - **Section headers:** big and centred (Fares and Where we go stay left in their columns). Letters rise out of word masks on scroll (`data-chars`).
+  - **Pills:** video style, a dark pill with a small 3D icon. Headline pills (Features, Safety) open out of a thin line after the letters. Eyebrow and footer pills open on their own.
+  - **3D icons:** silver-and-lime 3D icons from `packages/turbo_ui/assets/icons3d`, exported to WebP by `npm run images`. They replace the lucide icons outside the hero marquee, the store logos and the controls.
+  - **Fixed fares and Where we go:** the phones are bigger and slide in from their side. The price list and its bar animation are unchanged.
+  - **Safety:** the video's card design and photos are kept. On large screens the section is sticky: it holds while the cards arrive one by one and the strip slides until the last card is in view, then the page moves on.
+  - **Nav:** floating, with no bar.
+    - A lime round logo.
+    - Solid separate pills, with the section on screen highlighted.
+    - "Get the app" has a play icon.
+    - It hides while scrolling down and returns on scroll up.
+  - **Fixed:** revealed blocks used to end 28 px low because the animation cleared its transform at the end.
+- **Acceptance:**
+  - lint and `npm test` (8) pass.
+  - `npm run check`: axe, console and links are clean on 6 pages at 1440 and 390.
+  - After scrolling the whole page, no animated text is left hidden at 1440 or 390.
+  - CLS is 0 on mobile and desktop.
+  - Mobile LCP is about 1.6 s on the local build.
+- **Not changed:** on desktop the hero copy still waits for the hero video to hand over to the map (about 10–15 s on first load). That is the existing hero design. Say if it should appear sooner.
+
 ## 2026-11-02 · landing page: scroll lag
 
 - **Branch:** main. **Files:** `apps/landing_page/src/components/Motion.tsx`, `hero/Hero.tsx`, `sections/TapAway.tsx`, `app/globals.css`, `package.json` and lock (lenis removed).

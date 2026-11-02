@@ -1,7 +1,7 @@
-import { MapPin, Navigation } from "lucide-react";
+import { Navigation } from "lucide-react";
 import { MapScreen, Phone } from "../ui/Phone";
-import { RiseHeading, ScrubHeading } from "../ui/ScrubHeading";
-import { Tag } from "../ui/Tag";
+import { ScrubHeading } from "../ui/ScrubHeading";
+import { SectionHead } from "../ui/SectionHead";
 import { PickupChips } from "./PickupChips";
 
 /** Schematic route screen only: not to scale, not a map (open decision D1). */
@@ -34,10 +34,7 @@ export function Coverage() {
     <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-section-tight text-ink">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="max-w-md lg:order-1">
-          <Tag icon={MapPin}>Where we go</Tag>
-          <RiseHeading id="where-title" className="mt-5 text-title font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-            Miotso toward Ashaiman China Mall.
-          </RiseHeading>
+          <SectionHead id="where-title" label="Where we go" title="Miotso toward Ashaiman China Mall." align="start" size="title" />
           <ScrubHeading as="p" className="mt-5 text-base leading-relaxed text-ink/80 lg:text-[15px]">
             One corridor, served well. Pick up from the points below; the app shows exactly where to stand.
           </ScrubHeading>
@@ -50,7 +47,7 @@ export function Coverage() {
 
         <div className="-my-8 flex justify-center lg:order-2 lg:-my-12 lg:justify-end lg:pr-10">
           <div data-tilt="1">
-            <Phone pose="tiltRight" className="w-[16rem] sm:w-[19rem] lg:w-[22rem]">
+            <Phone pose="tiltRight" className="w-[17rem] sm:w-[21rem] lg:w-[27rem]">
               <RouteScreen />
             </Phone>
           </div>

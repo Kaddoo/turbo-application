@@ -2,10 +2,11 @@ import { Fragment } from "react";
 
 function split(text: string, cls: string) {
   const words = text.split(" ");
+  // Rising words sit in a clipping mask (.rw) and slide up out of it (the inner span).
   return words.map((w, i) => (
     <Fragment key={i}>
       <span aria-hidden className={cls}>
-        {w}
+        {cls === "rw" ? <span>{w}</span> : w}
       </span>
       {i < words.length - 1 ? " " : null}
     </Fragment>
@@ -33,7 +34,7 @@ export function ScrubHeading({
 }
 
 /**
- * Words that rise, unblur and fade in one after another when scrolled into
+ * Words that rise out of a mask, one after another, when scrolled into
  * view (data-words in Motion.tsx). Use inside a heading that carries
  * `data-words` and an aria-label with the full text.
  */
