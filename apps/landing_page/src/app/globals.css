@@ -90,6 +90,13 @@ html.lenis, html.lenis body { height: auto; }
 html.bg-scroll [data-bg] { background-color: transparent; }
 .motion.hero-intro [data-hero-shade] { opacity: 0; }
 .motion.hero-intro [data-hero-copy] { pointer-events: none; }
+/* Phones (below md): the hero copy is the largest paint, so it shows at once
+   instead of waiting for the animation code to load and fade it in. */
+@media (width < 48rem) {
+  .motion [data-hero] [data-reveal] { opacity: 1; transform: none; }
+  .motion [data-hero] [data-split] .w > span { transform: none; }
+  .motion.hero-intro [data-hero-copy] { pointer-events: auto; }
+}
 
 /* Car-door loader: plays on every page load (head script adds html.door). The door
    handle pulls, then the door swings open on its hinge to reveal the page.

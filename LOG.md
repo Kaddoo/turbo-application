@@ -6,7 +6,7 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.
 - **Performance:**
-  - R1: phones (under 768 px) skip the hero video and show the flat map with the copy straight away (`HeroStage.tsx`).
+  - R1: phones (under 768 px) skip the hero video and show the flat map with the copy straight away (`HeroStage.tsx`). The hero copy is not hidden for the entrance animation on phones (`globals.css`), so it paints without waiting for GSAP.
   - R2: the tap-away section uses CSS sticky instead of a GSAP pin, which cut desktop and iPad CLS from 1.3–2.0 to 0 (`TapAway.tsx`, `Motion.tsx`).
   - R11: the scroll colour change fades a fixed paper layer's opacity instead of repainting the body colour (`Motion.tsx`).
 - **Layout and type:**
