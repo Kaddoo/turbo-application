@@ -724,6 +724,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get topupNumberLabel => 'Mobile money number';
+
+  @override
   String topupPhoneNote(Object phone) {
     return 'We\'ll send a payment prompt to $phone.';
   }

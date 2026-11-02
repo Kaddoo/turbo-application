@@ -1330,6 +1330,12 @@ abstract class AppLocalizations {
   /// **'Pay {amount}'**
   String topupPay(Object amount);
 
+  /// No description provided for @topupNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile money number'**
+  String get topupNumberLabel;
+
   /// No description provided for @topupPhoneNote.
   ///
   /// In en, this message translates to:
