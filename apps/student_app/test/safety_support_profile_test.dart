@@ -44,6 +44,26 @@ void main() {
       expect(find.text('How SOS works'), findsOneWidget);
     });
 
+    testWidgets('with a campus security number: a call tile next to 112, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()..on('GET /app-config', body: appConfig(securityPhone: '+233241230000'));
+      await openSafety(tester, server);
+      await tester.scrollUntilVisible(find.text('Campus security'), 300, scrollable: find.byType(Scrollable).first);
+      expect(find.text('Campus security'), findsOneWidget);
+      expect(find.text('+233 24 123 0000'), findsOneWidget);
+      expect(find.text('Emergency'), findsOneWidget);
+      expect(find.text('112'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('without a number the screen offers 112 only', (tester) async {
+      await openSafety(tester, base());
+      expect(find.text('Campus security'), findsNothing);
+      expect(find.text('Call 112'), findsOneWidget);
+    });
+
     testWidgets('share trip: pick contacts, send, in dark mode at 200% text', (tester) async {
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
       tester.platformDispatcher.textScaleFactorTestValue = 2.0;

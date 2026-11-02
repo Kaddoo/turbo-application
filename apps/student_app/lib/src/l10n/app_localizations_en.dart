@@ -1144,6 +1144,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sosFailedBody => 'Call the emergency number now.';
 
   @override
+  String get sosCallSecurity => 'Call campus security';
+
+  @override
+  String get safetyTileSecurity => 'Campus security';
+
+  @override
+  String get safetyTileEmergency => 'Emergency';
+
+  @override
   String sosCall(Object number) {
     return 'Call $number';
   }

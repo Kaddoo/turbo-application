@@ -6,6 +6,7 @@ import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/gate.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
 import '../home/location_service.dart';
@@ -160,17 +161,18 @@ class _HoldToSosState extends ConsumerState<HoldToSos> with SingleTickerProvider
   }
 }
 
-class _SosResult extends StatelessWidget {
+class _SosResult extends ConsumerWidget {
   const _SosResult({this.failure});
 
   final String? failure;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final ok = failure == null;
+    final securityPhone = ref.watch(campusSecurityPhoneProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -197,6 +199,15 @@ class _SosResult extends StatelessWidget {
               variant: TurboButtonVariant.destructive,
               large: true,
               onPressed: () => callNumber(emergencyNumber),
+            ),
+          ),
+        if (!ok && securityPhone != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+            child: TurboButton(
+              label: l10n.sosCallSecurity,
+              variant: TurboButtonVariant.secondary,
+              onPressed: () => callNumber(securityPhone),
             ),
           ),
         TurboButton(label: l10n.sosDismiss, variant: TurboButtonVariant.secondary, onPressed: () => Navigator.of(context).pop()),

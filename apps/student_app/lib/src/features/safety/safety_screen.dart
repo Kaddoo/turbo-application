@@ -5,6 +5,7 @@ import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../core/auth_draft.dart';
+import '../../core/gate.dart';
 import '../../core/problem_messages.dart';
 import '../../l10n/app_localizations.dart';
 import 'safety_providers.dart';
@@ -22,6 +23,7 @@ class SafetyScreen extends ConsumerWidget {
     final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final contacts = ref.watch(contactsProvider);
+    final securityPhone = ref.watch(campusSecurityPhoneProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -103,12 +105,40 @@ class SafetyScreen extends ConsumerWidget {
             const SizedBox(height: TurboSpacing.xl),
             Semantics(header: true, child: Text(l10n.safetyCallForHelp, style: text.titleSmall)),
             const SizedBox(height: TurboSpacing.sm),
-            TurboButton(
-              label: l10n.sosCall(emergencyNumber),
-              variant: TurboButtonVariant.secondary,
-              icon: Icons.call,
-              onPressed: () => callNumber(emergencyNumber),
-            ),
+            if (securityPhone == null)
+              TurboButton(
+                label: l10n.sosCall(emergencyNumber),
+                variant: TurboButtonVariant.secondary,
+                icon: Icons.call,
+                onPressed: () => callNumber(emergencyNumber),
+              )
+            else
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: BentoTile(
+                        label: l10n.safetyTileSecurity,
+                        title: displayPhone(securityPhone),
+                        semanticLabel: '${l10n.sosCallSecurity}, ${displayPhone(securityPhone)}',
+                        trailing: const TurboArtImage(TurboArt.telephoneReceiver),
+                        onTap: () => callNumber(securityPhone),
+                      ),
+                    ),
+                    const SizedBox(width: TurboSpacing.md),
+                    Expanded(
+                      child: BentoTile(
+                        label: l10n.safetyTileEmergency,
+                        title: emergencyNumber,
+                        semanticLabel: l10n.sosCall(emergencyNumber),
+                        trailing: const TurboArtImage(TurboArt.shield),
+                        onTap: () => callNumber(emergencyNumber),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const SizedBox(height: TurboSpacing.xl),
             Semantics(header: true, child: Text(l10n.safetyHowSosWorks, style: text.titleSmall)),
             const SizedBox(height: TurboSpacing.sm),

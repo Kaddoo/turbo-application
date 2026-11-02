@@ -2056,6 +2056,24 @@ abstract class AppLocalizations {
   /// **'Call the emergency number now.'**
   String get sosFailedBody;
 
+  /// No description provided for @sosCallSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Call campus security'**
+  String get sosCallSecurity;
+
+  /// No description provided for @safetyTileSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus security'**
+  String get safetyTileSecurity;
+
+  /// No description provided for @safetyTileEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get safetyTileEmergency;
+
   /// No description provided for @sosCall.
   ///
   /// In en, this message translates to:
