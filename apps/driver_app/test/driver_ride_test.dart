@@ -75,9 +75,11 @@ void main() {
       expect(find.text('New ride'), findsOneWidget);
       expect(find.text('Central Gate'), findsOneWidget);
       expect(find.text('By the security post'), findsOneWidget);
-      expect(find.text('Student: Ama'), findsOneWidget);
-      expect(find.text('Fare: GH₵35.00'), findsOneWidget);
-      expect(find.text('1.2 km away · about 4 min'), findsOneWidget);
+      expect(find.text('Ama'), findsOneWidget);
+      expect(find.text('GH₵35.00'), findsOneWidget);
+      expect(find.text('1.2 km'), findsOneWidget);
+      expect(find.text('about 4 min'), findsOneWidget);
+      expect(find.text('Student pays'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text('Accept'), findsOneWidget);
     });
@@ -101,6 +103,20 @@ void main() {
       expect(server.calls('POST /driver/rides/$rideId/ack'), hasLength(1));
       expect(find.text('Go to the pickup'), findsOneWidget);
       expect(find.text('Navigate'), findsOneWidget);
+    });
+
+    testWidgets('the four reasons lay out as tiles in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await bootDriver(tester, rideServer(driverRide('assigned', acknowledged: false)), size: const Size(360, 1600));
+      await settle(tester, 12);
+      await tester.tap(find.text('Decline'));
+      await settle(tester);
+      for (final reason in ['Car problem', 'Too far', 'Unwell', 'Other']) {
+        expect(find.text(reason), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('Decline asks why and sends the reason', (tester) async {

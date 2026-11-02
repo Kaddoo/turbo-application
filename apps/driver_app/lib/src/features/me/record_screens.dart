@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -36,15 +37,29 @@ final salaryProvider = FutureProvider.autoDispose<List<SalaryPayment>>((ref) asy
 String _day(DateTime d) => DateFormat('EEE d MMM').format(d.toUtc());
 String _time(DateTime d) => DateFormat('HH:mm').format(d.toUtc());
 
-/// A read-only list screen with the four states.
+/// A read-only list screen with the four states. An optional [header] stays
+/// pinned at the top while the list scrolls under it.
 class _RecordList<T> extends ConsumerWidget {
-  const _RecordList({required this.index, required this.title, required this.provider, required this.empty, required this.builder, this.footer});
+  const _RecordList({
+    required this.index,
+    required this.title,
+    required this.provider,
+    required this.empty,
+    required this.art,
+    required this.builder,
+    this.header,
+    this.footer,
+  });
 
   final int index;
   final String title;
   final FutureProvider<List<T>> provider;
   final String empty;
+  final TurboArt art;
   final Widget Function(BuildContext, T) builder;
+
+  /// The aggregate for the list, shown as a pinned bar when there is data.
+  final Widget Function(BuildContext, List<T>)? header;
   final Widget? footer;
 
   @override
@@ -59,24 +74,91 @@ class _RecordList<T> extends ConsumerWidget {
             RecordsTabs(index: index),
             Expanded(
               child: items.when(
-          loading: () => const LoadingState(),
-          error: (_, _) => ErrorState(message: l10n.meLoadFailed, onRetry: () => ref.invalidate(provider)),
-          data: (list) => list.isEmpty
-              ? EmptyState(icon: Icons.inbox_outlined, message: empty)
-              : RefreshIndicator(
-                  onRefresh: () async => ref.invalidate(provider),
-                  child: ListView(
-                    padding: const EdgeInsets.all(TurboSpacing.lg),
-                    children: [
-                      for (final item in list) Padding(padding: const EdgeInsets.only(bottom: TurboSpacing.md), child: builder(context, item)),
-                      ?footer,
-                    ],
-                  ),
-                ),
+                loading: () => const LoadingState(),
+                error: (_, _) => ErrorState(message: l10n.meLoadFailed, onRetry: () => ref.invalidate(provider)),
+                data: (list) => list.isEmpty
+                    ? EmptyState(art: art, message: empty)
+                    : RefreshIndicator(
+                        onRefresh: () async => ref.invalidate(provider),
+                        child: CustomScrollView(
+                          slivers: [
+                            if (header != null)
+                              SliverPersistentHeader(
+                                pinned: true,
+                                delegate: _PinnedBar(
+                                  // Tall enough for two lines at the largest text size.
+                                  extent: MediaQuery.textScalerOf(context).scale(TurboSizes.pinnedBar) + TurboSpacing.lg,
+                                  child: header!(context, list),
+                                ),
+                              ),
+                            SliverPadding(
+                              padding: const EdgeInsets.all(TurboSpacing.lg),
+                              sliver: SliverList.list(
+                                children: [
+                                  for (var i = 0; i < list.length; i++)
+                                    TurboStagger(
+                                      index: i,
+                                      child: Padding(padding: const EdgeInsets.only(bottom: TurboSpacing.md), child: builder(context, list[i])),
+                                    ),
+                                  ?footer,
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// A bar that stays at the top of a scrolling list.
+class _PinnedBar extends SliverPersistentHeaderDelegate {
+  _PinnedBar({required this.extent, required this.child});
+
+  final double extent;
+  final Widget child;
+
+  @override
+  double get minExtent => extent;
+  @override
+  double get maxExtent => extent;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final t = context.turbo;
+    return Container(
+      color: t.colors.background,
+      padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
+      alignment: Alignment.centerLeft,
+      child: child,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_PinnedBar old) => old.extent != extent || old.child != child;
+}
+
+/// A small label over a big number, for the pinned aggregate.
+class _Aggregate extends StatelessWidget {
+  const _Aggregate({required this.label, required this.value});
+
+  final String label;
+  final Widget value;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Semantics(
+      container: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Text(label, style: text.bodySmall), value],
       ),
     );
   }
@@ -94,6 +176,7 @@ class ShiftsScreen extends StatelessWidget {
       title: l10n.shiftsTitle,
       provider: shiftsProvider,
       empty: l10n.shiftsEmpty,
+      art: TurboArt.calendar,
       builder: (context, s) {
         final (label, icon, tone) = switch (s.status) {
           ShiftStatusEnum.scheduled => (l10n.shiftScheduled, Icons.event_outlined, StatusTone.neutral),
@@ -135,6 +218,22 @@ class AttendanceScreen extends StatelessWidget {
       title: l10n.attendanceTitle,
       provider: attendanceProvider,
       empty: l10n.attendanceEmpty,
+      art: TurboArt.alarmClock,
+      header: (context, list) {
+        // The week that holds today, Monday to Sunday.
+        final today = clock.now().toUtc();
+        final monday = DateTime.utc(today.year, today.month, today.day).subtract(Duration(days: today.weekday - 1));
+        final minutes = list
+            .where((a) {
+              final d = a.date.toUtc();
+              return !d.isBefore(monday) && d.isBefore(monday.add(const Duration(days: 7)));
+            })
+            .fold<int>(0, (sum, a) => sum + a.minutesWorked);
+        return _Aggregate(
+          label: l10n.hoursWeekLabel,
+          value: Text(l10n.hoursWeekTotal(minutes ~/ 60, minutes % 60), style: text.titleLarge),
+        );
+      },
       footer: TextButton(
         onPressed: () => context.push('/support/new'),
         child: Text(l10n.attendanceWrong, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
@@ -181,6 +280,12 @@ class SalaryScreen extends StatelessWidget {
       title: l10n.salaryTitle,
       provider: salaryProvider,
       empty: l10n.salaryEmpty,
+      art: TurboArt.moneyBag,
+      header: (context, list) {
+        final year = clock.now().toUtc().year;
+        final total = list.where((p) => p.paidAt.toUtc().year == year).fold<int>(0, (sum, p) => sum + p.amountPesewas);
+        return _Aggregate(label: l10n.salaryYearLabel(year), value: MoneyText(total, style: text.titleLarge));
+      },
       footer: Padding(
         padding: const EdgeInsets.only(top: TurboSpacing.sm),
         child: Text(l10n.salaryNote, style: text.bodySmall),

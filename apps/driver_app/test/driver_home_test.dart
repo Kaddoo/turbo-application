@@ -2,6 +2,7 @@ import 'package:driver_app/src/location/location_access.dart';
 import 'package:driver_app/src/location/tracked_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import 'support/fake_server.dart';
 import 'support/harness.dart';
@@ -77,9 +78,44 @@ void main() {
       await settle(tester);
       expect(find.text('Hello, Kofi'), findsOneWidget);
       expect(find.text('Silver Toyota Corolla · GR-4821-24'), findsOneWidget);
+      expect(find.byType(VehicleImage), findsOneWidget);
       expect(find.text('Before you go on duty'), findsOneWidget);
+      expect(find.text('Ready to go'), findsOneWidget);
       expect(find.text('Ready'), findsNWidgets(4));
       expect(find.text('Documents checked when you go on duty'), findsOneWidget);
+    });
+
+    for (final (name, ok) in [('ready', true), ('blocked', false)]) {
+      testWidgets('the readiness tiles lay out in dark mode at 200% text when $name', (tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+        tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+        addTearDown(tester.platformDispatcher.clearAllTestValues);
+        final readiness = ok ? FakeReadiness() : FakeReadiness(access: DriverLocationAccess.whileInUse, percent: 12, notificationsOn: false, isOnline: false);
+        await bootDriver(tester, driverServer(), readiness: readiness, size: const Size(360, 800));
+        await settle(tester);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('Always location is explained first, and Not now changes nothing', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final readiness = FakeReadiness(access: DriverLocationAccess.denied);
+      await bootDriver(tester, driverServer(), readiness: readiness, size: const Size(360, 3600));
+      await settle(tester);
+      await tester.tap(find.text('Allow location always'));
+      await settle(tester);
+      expect(find.text('Choose Allow While Using App'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Not now'));
+      await settle(tester);
+      expect(readiness.locationAsked, 0);
+      await tester.tap(find.text('Allow location always'));
+      await settle(tester);
+      await tester.tap(find.text('Continue'));
+      await settle(tester);
+      expect(readiness.locationAsked, 1);
     });
 
     testWidgets('failures say what is wrong, with a fix where one exists', (tester) async {
@@ -90,9 +126,20 @@ void main() {
       expect(find.text('Open Settings'), findsOneWidget);
       await tester.tap(find.text('Open Settings'));
       await settle(tester);
+      // A sheet explains the choice first; nothing opens until the driver agrees.
+      expect(find.text('Choose Always'), findsOneWidget);
+      expect(readiness.settingsOpened, 0);
+      await tester.tap(find.text('Open Settings').last);
+      await settle(tester);
       expect(readiness.settingsOpened, 1);
-      // Battery has no fix button: the driver must charge the phone.
-      expect(find.text('Battery above 20% or charging'), findsOneWidget);
+      // The headline names the one thing in the way.
+      expect(find.text('Location set to Always'), findsOneWidget);
+      expect(find.text('Ready to go'), findsNothing);
+      // Battery has no fix: the driver must charge the phone. It says so with a word, not only a colour.
+      expect(find.text('Battery'), findsOneWidget);
+      expect(find.text('12%'), findsOneWidget);
+      expect(find.text('Needs attention'), findsNWidgets(2));
+      expect(find.text('Offline'), findsOneWidget);
     });
 
     testWidgets('charging counts even when the battery is low', (tester) async {

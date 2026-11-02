@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:driver_app/src/app.dart';
+import 'package:driver_app/src/core/keep_awake.dart';
 import 'package:driver_app/src/core/token_store.dart';
 import 'package:driver_app/src/features/duty/connectivity.dart';
 import 'package:driver_app/src/features/duty/location_sharing.dart';
@@ -96,6 +97,7 @@ Future<void> bootDriver(
   bool online = true,
   FakePosition? position,
   Size size = const Size(390, 900),
+  Future<void> Function(bool awake)? awake,
   List<Override> extra = const [],
 }) async {
   tester.view.physicalSize = size;
@@ -110,6 +112,7 @@ Future<void> bootDriver(
         positionSourceProvider.overrideWithValue((positions ?? FakePositions()).call),
         onlineProvider.overrideWith((_) => Stream.value(online)),
         mapBuilderProvider.overrideWithValue((context, spec) => const SizedBox.expand(key: Key('map'))),
+        screenAwakeProvider.overrideWithValue(awake ?? (_) async {}),
         positionReaderProvider.overrideWithValue(position ?? FakePosition(GeoPoint(lat: 5.7203, lng: 0.0757))),
         ...extra,
       ],

@@ -15,10 +15,10 @@ class HelpScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final text = Theme.of(context).textTheme;
     final topics = [
-      (Icons.directions_car_outlined, l10n.catVehicle),
-      (Icons.person_outline, l10n.catStudent),
-      (Icons.smartphone, l10n.catApp),
-      (Icons.shield_outlined, l10n.catSafety),
+      (TurboArt.wrench, l10n.catVehicle),
+      (TurboArt.bustsInSilhouette, l10n.catStudent),
+      (TurboArt.mobilePhone, l10n.catApp),
+      (TurboArt.shield, l10n.catSafety),
     ];
     return Scaffold(
       appBar: AppBar(title: Text(l10n.helpTitle)),
@@ -30,12 +30,27 @@ class HelpScreen extends StatelessWidget {
             const SizedBox(height: TurboSpacing.xl),
             Semantics(header: true, child: Text(l10n.helpReportTitle, style: text.titleLarge)),
             const SizedBox(height: TurboSpacing.sm),
-            for (final (icon, label) in topics)
-              TurboListRow(
-                title: label,
-                leading: Icon(icon),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push('/support/new'),
+            for (var row = 0; row < topics.length; row += 2)
+              Padding(
+                padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final (i, (art, label)) in topics.skip(row).take(2).indexed) ...[
+                        if (i > 0) const SizedBox(width: TurboSpacing.md),
+                        Expanded(
+                          child: BentoTile(
+                            label: '',
+                            title: label,
+                            trailing: TurboArtImage(art),
+                            onTap: () => context.push('/support/new'),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
             const SizedBox(height: TurboSpacing.md),
             TextButton(

@@ -341,6 +341,146 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readinessDocuments => 'Documents checked when you go on duty';
 
   @override
+  String get readinessReadyToGo => 'Ready to go';
+
+  @override
+  String get readinessTileLocation => 'Location';
+
+  @override
+  String get readinessLocationAlways => 'Always';
+
+  @override
+  String get readinessLocationWhileUsing => 'Only while using';
+
+  @override
+  String get readinessLocationOff => 'Off';
+
+  @override
+  String get readinessTileBattery => 'Battery';
+
+  @override
+  String readinessBatteryPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get readinessTileNotifications => 'Notifications';
+
+  @override
+  String get readinessTileInternet => 'Internet';
+
+  @override
+  String get readinessOn => 'On';
+
+  @override
+  String get readinessOff => 'Off';
+
+  @override
+  String get readinessConnected => 'Connected';
+
+  @override
+  String get readinessOffline => 'Offline';
+
+  @override
+  String get readinessTileDocuments => 'Documents';
+
+  @override
+  String get primingTitle => 'Allow location Always';
+
+  @override
+  String get primingBody =>
+      'Rides reach you and students see you arrive even when the screen is locked. Sharing stops when you go off duty.';
+
+  @override
+  String get primingAskStep1 => 'Tap Continue';
+
+  @override
+  String get primingAskStep2 => 'Choose Allow While Using App';
+
+  @override
+  String get primingAskStep3 =>
+      'When asked again, choose Change to Always Allow';
+
+  @override
+  String get primingSettingsStep1 => 'Tap Open Settings, then Location';
+
+  @override
+  String get primingSettingsStep2 => 'Choose Always';
+
+  @override
+  String get primingSettingsStep3 => 'Come back to the app';
+
+  @override
+  String get primingContinue => 'Continue';
+
+  @override
+  String get primingNotNow => 'Not now';
+
+  @override
+  String get callSupervisor => 'Call supervisor';
+
+  @override
+  String get readinessDocumentsValid => 'Documents up to date';
+
+  @override
+  String get docsTitle => 'Documents';
+
+  @override
+  String get docsEmpty =>
+      'Your documents will show here once your supervisor adds them.';
+
+  @override
+  String get docsUnavailable => 'Your documents will show here soon.';
+
+  @override
+  String get docsRenewHint => 'Contact your supervisor to renew.';
+
+  @override
+  String get docDriversLicence => 'Driver\'s licence';
+
+  @override
+  String get docVehicleRegistration => 'Vehicle registration';
+
+  @override
+  String get docInsurance => 'Insurance';
+
+  @override
+  String get docRoadworthy => 'Roadworthy certificate';
+
+  @override
+  String get docValid => 'Valid';
+
+  @override
+  String get docExpiring => 'Expiring soon';
+
+  @override
+  String get docExpired => 'Expired';
+
+  @override
+  String docExpiresOn(String date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String docExpiredOn(String date) {
+    return 'Expired $date';
+  }
+
+  @override
+  String docBanner(String document, String date) {
+    return 'Your $document expired on $date. You can\'t go on duty until it\'s renewed.';
+  }
+
+  @override
+  String get readinessTileShift => 'Today\'s shift';
+
+  @override
+  String get shiftNoneToday => 'No shift today';
+
+  @override
+  String get meDocuments => 'Documents';
+
+  @override
   String get readinessFix => 'Fix';
 
   @override
@@ -442,6 +582,44 @@ class AppLocalizationsEn extends AppLocalizations {
       'We couldn\'t load your trips. Check your connection and try again.';
 
   @override
+  String get tripDetailTitle => 'Trip';
+
+  @override
+  String get tripDetailDistance => 'Distance';
+
+  @override
+  String get tripDetailTime => 'Time';
+
+  @override
+  String tripDetailMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get tripDetailProgress => 'Progress';
+
+  @override
+  String get tripDetailReport => 'Report a problem with this trip';
+
+  @override
+  String get tripStepAssigned => 'Ride assigned';
+
+  @override
+  String get tripStepAccepted => 'You accepted';
+
+  @override
+  String get tripStepArrived => 'You arrived';
+
+  @override
+  String get tripStepStarted => 'Trip started';
+
+  @override
+  String get tripStepCompleted => 'Trip completed';
+
+  @override
+  String get tripStepCancelled => 'Ride cancelled';
+
+  @override
   String get rideStatusSearching => 'Finding a driver';
 
   @override
@@ -528,23 +706,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assignPickup => 'Pickup';
 
   @override
-  String assignDistance(String km, int minutes) {
-    return '$km km away · about $minutes min';
-  }
-
-  @override
   String assignStudent(String name) {
     return 'Student: $name';
   }
 
   @override
-  String assignTrip(String km) {
-    return 'Trip: $km km';
+  String get assignTilePickup => 'To pickup';
+
+  @override
+  String get assignTileTrip => 'Trip';
+
+  @override
+  String get assignTileStudent => 'Student';
+
+  @override
+  String get assignTilePays => 'Student pays';
+
+  @override
+  String assignKm(String km) {
+    return '$km km';
   }
 
   @override
-  String assignFare(String amount) {
-    return 'Fare: $amount';
+  String assignEta(int minutes) {
+    return 'about $minutes min';
   }
 
   @override
@@ -806,7 +991,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceTitle => 'Attendance';
 
   @override
-  String get attendanceEmpty => 'No attendance records yet.';
+  String get attendanceEmpty =>
+      'No attendance records yet. Your hours show up here once you have been on duty.';
+
+  @override
+  String get hoursWeekLabel => 'This week';
+
+  @override
+  String hoursWeekTotal(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
 
   @override
   String attendanceIn(String time) {
@@ -847,7 +1041,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get salaryTitle => 'Salary history';
 
   @override
-  String get salaryEmpty => 'No payments recorded yet.';
+  String get salaryEmpty =>
+      'No payments recorded yet. Your pay history shows up here.';
+
+  @override
+  String salaryYearLabel(int year) {
+    return 'Paid in $year';
+  }
 
   @override
   String get salaryNote =>

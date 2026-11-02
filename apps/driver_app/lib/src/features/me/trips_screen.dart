@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
@@ -44,30 +45,42 @@ class TripsScreen extends ConsumerWidget {
           loading: () => const LoadingState(),
           error: (_, _) => ErrorState(message: l10n.tripsLoadFailed, onRetry: () => ref.invalidate(tripsProvider)),
           data: (list) => list.isEmpty
-              ? EmptyState(icon: Icons.route_outlined, message: l10n.tripsEmpty)
+              ? EmptyState(art: TurboArt.oncomingTaxi, message: l10n.tripsEmpty)
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(tripsProvider),
                   child: ListView(
                     padding: const EdgeInsets.all(TurboSpacing.lg),
                     children: [
-                      for (final r in list)
-                        Padding(
+                      for (final (i, r) in list.indexed)
+                        TurboStagger(
+                          index: i,
+                          child: Padding(
                           padding: const EdgeInsets.only(bottom: TurboSpacing.md),
                           child: TurboCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            onTap: () => context.push('/trips/detail', extra: r),
+                            child: Row(
                               children: [
-                                Text('${r.pickup.label ?? ''} → ${r.dropoff.label ?? ''}', style: text.labelLarge),
-                                const SizedBox(height: TurboSpacing.xs),
-                                Text(DateFormat('d MMM, HH:mm').format(r.assignedAt.toUtc()), style: text.bodySmall),
-                                const SizedBox(height: TurboSpacing.sm),
-                                Builder(builder: (_) {
-                                  final (label, icon, tone) = rideStatusChip(l10n, r.status);
-                                  return StatusChip(label: label, icon: icon, tone: tone);
-                                }),
+                                const TurboArtImage(TurboArt.oncomingTaxi),
+                                const SizedBox(width: TurboSpacing.md),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('${r.pickup.label ?? ''} → ${r.dropoff.label ?? ''}', style: text.labelLarge),
+                                      const SizedBox(height: TurboSpacing.xs),
+                                      Text(DateFormat('d MMM, HH:mm').format(r.assignedAt.toUtc()), style: text.bodySmall),
+                                      const SizedBox(height: TurboSpacing.sm),
+                                      Builder(builder: (_) {
+                                        final (label, icon, tone) = rideStatusChip(l10n, r.status);
+                                        return StatusChip(label: label, icon: icon, tone: tone);
+                                      }),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
+                        ),
                         ),
                     ],
                   ),

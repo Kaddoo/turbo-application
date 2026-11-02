@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:driver_app/src/features/push/push_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +17,18 @@ Map<String, Object?> page(List<Object?> items) => {'data': items, 'page': {'next
 FakeServer base() => driverServer()
   ..on('GET /driver/rides/current', status: 204, body: null)
   ..on('GET /driver/rides', body: page([]));
+
+Map<String, Object?> pastRide(String status, {bool accepted = true}) => {
+  'id': '0190a1b2-0000-7e4f-8a5b-0000000a0001',
+  'status': status,
+  'pickup': {'point': {'lat': 5.7203, 'lng': 0.0757}, 'label': 'Central Gate'},
+  'dropoff': {'point': {'lat': 5.6942, 'lng': -0.0335}, 'label': 'Ashaiman China Mall'},
+  'routeDistanceMeters': 9400,
+  'routeDurationSeconds': 840,
+  'student': {'firstName': 'Ama'},
+  'assignedAt': '2026-11-01T08:00:00Z',
+  'acknowledgedAt': accepted ? '2026-11-01T08:00:20Z' : null,
+};
 
 Future<void> openMe(WidgetTester tester, FakeServer server) async {
   await bootDriver(tester, server);
@@ -47,6 +60,23 @@ void main() {
       for (final topic in ['Vehicle', 'Student behaviour', 'App problem', 'Safety']) {
         expect(find.text(topic), findsOneWidget);
       }
+    });
+
+    testWidgets('help tiles lay out in dark mode at 200% text and open the report form', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()..on('GET /support/tickets', body: page([]));
+      await bootDriver(tester, server);
+      tester.view.physicalSize = const Size(360, 2400);
+      addTearDown(tester.view.reset);
+      await settle(tester);
+      await tester.tap(find.bySemanticsLabel('Help'));
+      await settle(tester);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Safety'));
+      await settle(tester);
+      expect(find.byType(TextField), findsWidgets);
     });
 
     testWidgets('records: the four views are one control, in dark mode and at 200% text', (tester) async {
@@ -89,6 +119,35 @@ void main() {
       expect(find.text('No trips yet.'), findsOneWidget);
     });
 
+    for (final (status, dark) in [('completed', false), ('cancelled', true)]) {
+      testWidgets('a $status trip opens its detail with a timeline (dark: $dark)', (tester) async {
+        if (dark) {
+          tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+          tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+        }
+        final server = driverServer()
+          ..on('GET /driver/rides/current', status: 204, body: null)
+          ..on('GET /driver/rides', body: page([pastRide(status)]));
+        await bootDriver(tester, server);
+        tester.view.physicalSize = const Size(390, 1800);
+        addTearDown(tester.view.reset);
+        await settle(tester);
+        await tester.tap(find.bySemanticsLabel('Trips'));
+        await settle(tester);
+        await tester.tap(find.textContaining('Central Gate'));
+        await settle(tester);
+        expect(find.text('9.4 km'), findsOneWidget);
+        expect(find.text('14 min'), findsOneWidget);
+        expect(find.text('Ride assigned'), findsOneWidget);
+        expect(find.text('You accepted'), findsOneWidget);
+        expect(find.text('Trip completed'), status == 'completed' ? findsOneWidget : findsNothing);
+        expect(find.text('Ride cancelled'), status == 'cancelled' ? findsOneWidget : findsNothing);
+        expect(find.text('Report a problem with this trip'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
     testWidgets('shifts: empty teaches who sets them', (tester) async {
       final server = base()..on('GET /driver/shifts', body: page([]));
       await openMe(tester, server);
@@ -123,9 +182,13 @@ void main() {
             'correctionNote': 'Phone died',
           },
         ]));
-      await openMe(tester, server);
-      await tester.tap(find.text('Attendance'));
-      await settle(tester);
+      await withClock(Clock.fixed(DateTime.utc(2026, 11, 2, 12)), () async {
+        await openMe(tester, server);
+        await tester.tap(find.text('Attendance'));
+        await settle(tester);
+      });
+      expect(find.text('This week'), findsOneWidget);
+      expect(find.text('7 h 58 min'), findsOneWidget);
       expect(find.text('In 06:02'), findsOneWidget);
       expect(find.text('478 min worked'), findsOneWidget);
       expect(find.text('Corrected by staff: Phone died'), findsOneWidget);
@@ -146,12 +209,43 @@ void main() {
             'paidAt': '2026-11-01T09:00:00Z',
           },
         ]));
-      await openMe(tester, server);
-      await tester.tap(find.text('Salary history'));
-      await settle(tester);
-      expect(find.text('GH₵2,500.00'), findsOneWidget);
+      await withClock(Clock.fixed(DateTime.utc(2026, 11, 2, 12)), () async {
+        await openMe(tester, server);
+        await tester.tap(find.text('Salary history'));
+        await settle(tester);
+      });
+      // The amount shows on the payment and again in the pinned year total.
+      expect(find.text('GH₵2,500.00'), findsNWidgets(2));
+      expect(find.text('Paid in 2026'), findsOneWidget);
       expect(find.text('Reference BT-77'), findsOneWidget);
       expect(find.textContaining('Payment is made by your employer outside the app.'), findsOneWidget);
+    });
+
+    testWidgets('the year total stays pinned while a long salary list scrolls', (tester) async {
+      final server = base()
+        ..on('GET /driver/salary-payments', body: page([
+          for (var i = 0; i < 14; i++)
+            {
+              'id': '0190a1b2-0000-7e4f-8a5b-0000000f01${i.toString().padLeft(2, '0')}',
+              'driverId': '0190a1b2-0000-7e4f-8a5b-0000000d0001',
+              'periodStart': '2026-01-01',
+              'periodEnd': '2026-01-31',
+              'amountPesewas': 100000,
+              'method': 'bank_transfer',
+              'reference': 'BT-$i',
+              'paidAt': '2026-02-01T09:00:00Z',
+            },
+        ]));
+      await withClock(Clock.fixed(DateTime.utc(2026, 11, 2, 12)), () async {
+        await openMe(tester, server);
+        await tester.tap(find.text('Salary history'));
+        await settle(tester);
+      });
+      expect(find.text('GH₵14,000.00'), findsOneWidget);
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -1500));
+      await settle(tester);
+      expect(find.text('Reference BT-0'), findsNothing, reason: 'the first rows have scrolled away');
+      expect(find.text('GH₵14,000.00'), findsOneWidget);
     });
 
     testWidgets('a failed list offers to try again', (tester) async {

@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
+import '../../core/driver_feedback.dart';
+import '../../core/driver_gaps.dart';
 import '../../core/profile.dart';
 import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
@@ -15,6 +19,11 @@ import '../duty/connectivity.dart';
 import '../duty/location_sharing.dart';
 import '../duty/readiness.dart';
 import '../map/map_view.dart';
+import '../me/documents_screen.dart';
+import '../me/record_screens.dart';
+import '../support/call_supervisor_button.dart';
+import 'location_priming.dart';
+import 'readiness_board.dart';
 
 /// The home tab: off duty (readiness and the big button) or on duty (waiting).
 class HomeScreen extends ConsumerStatefulWidget {
@@ -108,6 +117,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final on = profile.dutyStatus == DriverProfileDutyStatusEnum.onDuty;
     final sharing = ref.watch(locationSharingProvider);
     final online = ref.watch(onlineProvider).value ?? true;
+    ref.listen(onlineProvider, (prev, next) {
+      if (prev?.value != false && next.value == false) DriverFeedback.wentOffline();
+    });
     final now = clock.now();
 
     Widget banner(String message, {bool danger = true}) => Padding(
@@ -132,6 +144,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     final vehicle = profile.vehicle;
+    final docs = ref.watch(driverDocsProvider).value;
+    final expired = [for (final d in docs ?? const <DriverDoc>[]) if (d.status == DocStatus.expired) d];
+    // Today's shift, by the Accra date (UTC).
+    final shifts = ref.watch(shiftsProvider).value;
+    String? shiftText;
+    if (shifts != null) {
+      final today = clock.now().toUtc();
+      final mine = shifts.where((x) {
+        final d = x.startsAt.toUtc();
+        return d.year == today.year && d.month == today.month && d.day == today.day;
+      });
+      shiftText = mine.isEmpty
+          ? l10n.shiftNoneToday
+          : '${DateFormat('HH:mm').format(mine.first.startsAt.toUtc())} – ${DateFormat('HH:mm').format(mine.first.endsAt.toUtc())}';
+    }
     final firstName = profile.fullName.split(' ').first;
 
     if (!on) {
@@ -167,120 +194,75 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                     const SizedBox(height: TurboSpacing.lg),
                     TurboCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(l10n.homeYourVehicle, style: text.bodySmall),
-                          const SizedBox(height: TurboSpacing.xs),
-                          Text(
-                            vehicle == null
-                                ? l10n.homeNoVehicle
-                                : l10n.homeVehicle(
-                                    vehicle.colour,
-                                    vehicle.make,
-                                    vehicle.model,
-                                    vehicle.plateNumber,
-                                  ),
-                            style: text.titleLarge,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(l10n.homeYourVehicle, style: text.bodySmall),
+                                const SizedBox(height: TurboSpacing.xs),
+                                Text(
+                                  vehicle == null
+                                      ? l10n.homeNoVehicle
+                                      : l10n.homeVehicle(
+                                          vehicle.colour,
+                                          vehicle.make,
+                                          vehicle.model,
+                                          vehicle.plateNumber,
+                                        ),
+                                  style: text.titleLarge,
+                                ),
+                              ],
+                            ),
                           ),
+                          if (vehicle != null) ...[
+                            const SizedBox(width: TurboSpacing.md),
+                            const VehicleImage(height: TurboSizes.primaryAction),
+                          ],
                         ],
                       ),
                     ),
                     const SizedBox(height: TurboSpacing.xl),
-                    Semantics(
-                      header: true,
-                      child: Text(l10n.readinessTitle, style: text.titleLarge),
-                    ),
-                    const SizedBox(height: TurboSpacing.sm),
+                    if (expired.isNotEmpty) ...[
+                      banner(
+                        l10n.docBanner(
+                          docName(l10n, expired.first.type),
+                          DateFormat('d MMM').format(expired.first.expiresOn!),
+                        ),
+                      ),
+                      const CallSupervisorButton(),
+                      const SizedBox(height: TurboSpacing.lg),
+                    ],
                     readiness.when(
-                      loading: () => const LoadingState(rows: 1),
+                      loading: () => const LoadingState(rows: 2),
                       error: (_, _) => ErrorState(
                         onRetry: () => ref.invalidate(readinessProvider),
                       ),
                       data: (r) {
                         final source = ref.read(readinessSourceProvider);
-                        Widget row(
-                          String label,
-                          bool ok, {
-                          VoidCallback? fix,
-                          String? fixLabel,
-                        }) => TurboListRow(
-                          card: true,
-                          title: label,
-                          leading: Icon(
-                            ok ? Icons.check : Icons.close,
-                            color: ok ? t.colors.success : t.colors.danger,
-                          ),
-                          trailing: ok
-                              ? Text(
-                                  l10n.readinessOk,
-                                  style: text.bodyMedium?.copyWith(
-                                    color: t.colors.success,
-                                  ),
-                                )
-                              : OutlinedButton(
-                                  onPressed: fix,
-                                  style: OutlinedButton.styleFrom(
-                                    minimumSize: const Size(
-                                      TurboSizes.minTap,
-                                      TurboSizes.minTap,
-                                    ),
-                                    foregroundColor: t.colors.danger,
-                                    side: BorderSide(color: t.colors.danger),
-                                  ),
-                                  child: Text(
-                                    fixLabel ?? l10n.readinessFix,
-                                    style: text.bodyMedium?.copyWith(
-                                      color: t.colors.danger,
-                                    ),
-                                  ),
-                                ),
-                        );
-                        return Column(
-                          children: [
-                            row(
-                              l10n.readinessLocation,
-                              r.locationOk,
-                              fixLabel:
-                                  r.location ==
-                                          DriverLocationAccess.whileInUse ||
-                                      r.location ==
-                                          DriverLocationAccess.deniedForever
-                                  ? l10n.readinessOpenSettings
-                                  : l10n.readinessLocationFix,
-                              fix: () async {
-                                if (r.location ==
-                                        DriverLocationAccess.whileInUse ||
-                                    r.location ==
-                                        DriverLocationAccess.deniedForever) {
-                                  await source.openSettings();
-                                } else {
-                                  await source.requestLocation();
-                                }
-                                ref.invalidate(readinessProvider);
-                              },
-                            ),
-                            row(l10n.readinessBattery, r.batteryOk),
-                            row(l10n.readinessInternet, r.online),
-                            row(
-                              l10n.readinessNotifications,
-                              r.notifications,
-                              fix: () async {
-                                if (!await source.requestNotifications()) {
-                                  await source.openSettings();
-                                }
-                                ref.invalidate(readinessProvider);
-                              },
-                            ),
-                            TurboListRow(
-                              card: true,
-                              title: l10n.readinessDocuments,
-                              leading: Icon(
-                                Icons.description_outlined,
-                                color: t.colors.textSecondary,
-                              ),
-                            ),
-                          ],
+                        return ReadinessBoard(
+                          readiness: r,
+                          documents: docs,
+                          shift: shiftText,
+                          onOpenDocuments: () => context.go('/me/documents'),
+                          onFixLocation: () async {
+                            final viaSettings = r.location == DriverLocationAccess.whileInUse ||
+                                r.location == DriverLocationAccess.deniedForever;
+                            if (!await showLocationPriming(context, viaSettings: viaSettings)) return;
+                            if (viaSettings) {
+                              await source.openSettings();
+                            } else {
+                              await source.requestLocation();
+                            }
+                            ref.invalidate(readinessProvider);
+                          },
+                          onFixNotifications: () async {
+                            if (!await source.requestNotifications()) {
+                              await source.openSettings();
+                            }
+                            ref.invalidate(readinessProvider);
+                          },
                         );
                       },
                     ),

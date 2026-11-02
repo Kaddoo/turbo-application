@@ -109,6 +109,53 @@
   "readinessInternet": "Internet connected",
   "readinessNotifications": "Notifications on",
   "readinessDocuments": "Documents checked when you go on duty",
+  "readinessReadyToGo": "Ready to go",
+  "readinessTileLocation": "Location",
+  "readinessLocationAlways": "Always",
+  "readinessLocationWhileUsing": "Only while using",
+  "readinessLocationOff": "Off",
+  "readinessTileBattery": "Battery",
+  "readinessBatteryPercent": "{percent}%",
+  "@readinessBatteryPercent": {"placeholders": {"percent": {"type": "int"}}},
+  "readinessTileNotifications": "Notifications",
+  "readinessTileInternet": "Internet",
+  "readinessOn": "On",
+  "readinessOff": "Off",
+  "readinessConnected": "Connected",
+  "readinessOffline": "Offline",
+  "readinessTileDocuments": "Documents",
+  "primingTitle": "Allow location Always",
+  "primingBody": "Rides reach you and students see you arrive even when the screen is locked. Sharing stops when you go off duty.",
+  "primingAskStep1": "Tap Continue",
+  "primingAskStep2": "Choose Allow While Using App",
+  "primingAskStep3": "When asked again, choose Change to Always Allow",
+  "primingSettingsStep1": "Tap Open Settings, then Location",
+  "primingSettingsStep2": "Choose Always",
+  "primingSettingsStep3": "Come back to the app",
+  "primingContinue": "Continue",
+  "primingNotNow": "Not now",
+  "callSupervisor": "Call supervisor",
+  "readinessDocumentsValid": "Documents up to date",
+  "docsTitle": "Documents",
+  "docsEmpty": "Your documents will show here once your supervisor adds them.",
+  "docsUnavailable": "Your documents will show here soon.",
+  "docsRenewHint": "Contact your supervisor to renew.",
+  "docDriversLicence": "Driver's licence",
+  "docVehicleRegistration": "Vehicle registration",
+  "docInsurance": "Insurance",
+  "docRoadworthy": "Roadworthy certificate",
+  "docValid": "Valid",
+  "docExpiring": "Expiring soon",
+  "docExpired": "Expired",
+  "docExpiresOn": "Expires {date}",
+  "@docExpiresOn": {"placeholders": {"date": {"type": "String"}}},
+  "docExpiredOn": "Expired {date}",
+  "@docExpiredOn": {"placeholders": {"date": {"type": "String"}}},
+  "docBanner": "Your {document} expired on {date}. You can't go on duty until it's renewed.",
+  "@docBanner": {"placeholders": {"document": {"type": "String"}, "date": {"type": "String"}}},
+  "readinessTileShift": "Today's shift",
+  "shiftNoneToday": "No shift today",
+  "meDocuments": "Documents",
   "readinessFix": "Fix",
   "readinessOk": "Ready",
   "readinessProblem": "Needs attention",
@@ -190,6 +237,19 @@
   "tripsTitle": "Trips",
   "tripsEmpty": "No trips yet.",
   "tripsLoadFailed": "We couldn't load your trips. Check your connection and try again.",
+  "tripDetailTitle": "Trip",
+  "tripDetailDistance": "Distance",
+  "tripDetailTime": "Time",
+  "tripDetailMinutes": "{minutes} min",
+  "@tripDetailMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "tripDetailProgress": "Progress",
+  "tripDetailReport": "Report a problem with this trip",
+  "tripStepAssigned": "Ride assigned",
+  "tripStepAccepted": "You accepted",
+  "tripStepArrived": "You arrived",
+  "tripStepStarted": "Trip started",
+  "tripStepCompleted": "Trip completed",
+  "tripStepCancelled": "Ride cancelled",
   "rideStatusSearching": "Finding a driver",
   "rideStatusAssigned": "Assigned",
   "rideStatusArrived": "Arrived",
@@ -224,10 +284,16 @@
   "assignDecline": "Decline",
   "assignSeconds": "{seconds}",
   "assignPickup": "Pickup",
-  "assignDistance": "{km} km away · about {minutes} min",
   "assignStudent": "Student: {name}",
-  "assignTrip": "Trip: {km} km",
-  "assignFare": "Fare: {amount}",
+  "@assignStudent": {"placeholders": {"name": {"type": "String"}}},
+  "assignTilePickup": "To pickup",
+  "assignTileTrip": "Trip",
+  "assignTileStudent": "Student",
+  "assignTilePays": "Student pays",
+  "assignKm": "{km} km",
+  "@assignKm": {"placeholders": {"km": {"type": "String"}}},
+  "assignEta": "about {minutes} min",
+  "@assignEta": {"placeholders": {"minutes": {"type": "int"}}},
   "assignPassed": "Ride passed to another driver",
   "assignPassedBody": "You're back in the queue. No action needed.",
   "declineTitle": "Why are you declining?",
@@ -305,37 +371,6 @@
       }
     }
   },
-  "@assignDistance": {
-    "placeholders": {
-      "km": {
-        "type": "String"
-      },
-      "minutes": {
-        "type": "int"
-      }
-    }
-  },
-  "@assignStudent": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@assignTrip": {
-    "placeholders": {
-      "km": {
-        "type": "String"
-      }
-    }
-  },
-  "@assignFare": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "@waitingTimer": {
     "placeholders": {
       "time": {
@@ -404,7 +439,10 @@
   "shiftCompleted": "Completed",
   "shiftMissed": "Missed",
   "attendanceTitle": "Attendance",
-  "attendanceEmpty": "No attendance records yet.",
+  "attendanceEmpty": "No attendance records yet. Your hours show up here once you have been on duty.",
+  "hoursWeekLabel": "This week",
+  "hoursWeekTotal": "{hours} h {minutes} min",
+  "@hoursWeekTotal": {"placeholders": {"hours": {"type": "int"}, "minutes": {"type": "int"}}},
   "attendanceIn": "In {time}",
   "attendanceOut": "Out {time}",
   "attendanceMinutes": "{minutes} min worked",
@@ -415,7 +453,9 @@
   "attendanceAbsent": "Absent",
   "attendanceCorrectedChip": "Corrected",
   "salaryTitle": "Salary history",
-  "salaryEmpty": "No payments recorded yet.",
+  "salaryEmpty": "No payments recorded yet. Your pay history shows up here.",
+  "salaryYearLabel": "Paid in {year}",
+  "@salaryYearLabel": {"placeholders": {"year": {"type": "int"}}},
   "salaryNote": "This is a record. Payment is made by your employer outside the app.",
   "salaryPeriod": "{from} to {to}",
   "salaryPaid": "Paid {date}",

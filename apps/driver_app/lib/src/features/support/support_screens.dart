@@ -52,7 +52,7 @@ class SupportListScreen extends ConsumerWidget {
                 loading: () => const LoadingState(),
                 error: (_, _) => ErrorState(message: l10n.supportLoadFailed, onRetry: () => ref.invalidate(ticketsProvider)),
                 data: (list) => list.isEmpty
-                    ? EmptyState(icon: Icons.support_agent, message: l10n.supportEmpty)
+                    ? EmptyState(art: TurboArt.speechBalloon, message: l10n.supportEmpty)
                     : RefreshIndicator(
                         onRefresh: () async => ref.invalidate(ticketsProvider),
                         child: ListView(

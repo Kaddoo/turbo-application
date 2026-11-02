@@ -231,6 +231,92 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: design check, 3D pictures on the end and PIN screens (branch `driver-art-screens`, cut from `driver-contract-gaps`)
+
+- **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `features/home/home_screen.dart`, `test/driver_home_test.dart`.
+- **What I compared:** all 60 screens in `design/new` (as contact sheets, not on a device) against the driver code.
+- **Changed to match the design:** Trip complete, Ride cancelled and Ride passed use the kit's check-mark, warning and hourglass pictures; PIN locked uses the padlock; the PIN entry screen has the key; the home vehicle card puts the car at the right of the plate.
+- **Differences left as they are:** the design shows Internet and Notifications as a small tick line under the tiles (mine are tiles); the offer's Student tile has a photo (the contract has no student photo); the dark map style; the on-duty chips and "time on shift" are not compared line by line.
+- **Checks:** analyze clean, 89 driver tests pass. Not run on a phone, so spacing and the map screens are unchecked.
+
+## 2026-11-02, Claude, code: documents, supervisor call and shift tile on stand-ins (branch `driver-contract-gaps`, cut from `driver-vehicle-image`)
+
+- **Files:** `CONTRACT_REPORT_driver_app.md` (new: what the API must add, per screen), `apps/driver_app/lib/src/core/driver_gaps.dart`, `features/me/documents_screen.dart`, `features/support/call_supervisor_button.dart` (all new), `readiness_board.dart`, `home_screen.dart`, `me_screen.dart`, `ride_screen.dart`, `router.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_gaps_test.dart`.
+- **What changed:**
+  - Home: a "Today's shift" tile from the real `GET /driver/shifts`; the Documents tile shows the worst document (name and Valid / Expiring soon / Expired); an expired document shows a red banner and a Call supervisor button.
+  - Me has a Documents row and a list screen (`/me/documents`).
+  - The PIN-locked screen has a Call supervisor button.
+- **Stand-in:** documents and the supervisor number are not in the contract (CR-5, CR-6). `DriverGaps` is the one seam: a real build uses `ApiGaps`, which returns nothing, so no documents are invented and no call button is drawn. Run with `--dart-define=SAMPLE_DRIVER_DATA=true` to see the screens with sample values. When the contract lands only `ApiGaps` changes.
+- **Not done:** timeline times (CR-10) and the approach-road line need generated client fields that do not exist; no "not registered as a driver" call button on sign-in.
+- **Checks:** analyze clean, 89 driver tests pass. Not run on a phone.
+
+## 2026-11-02, Claude, code: vehicle image on driver home (branch `driver-vehicle-image`, cut from `driver-help-tiles`)
+
+- **Files:** `packages/turbo_ui/lib/src/components/vehicle_image.dart` (new, exported), `assets/images/car-side.png` and `README.md` (new), `pubspec.yaml`, `apps/driver_app/lib/src/features/home/home_screen.dart`, `test/driver_home_test.dart`.
+- **What changed:** the home vehicle card shows the kit's side-view car under the make, model and plate (hidden from screen readers; not shown when no vehicle is assigned).
+- **Deviation:** it is one stand-in picture, not the driver's own car, and it is silver whatever the colour. The kit does not say where the image came from: confirm the source and licence with the designer (noted in `assets/images/README.md`). No Pexels download was needed.
+- **Checks:** analyze clean; turbo_ui 87, driver 83, student 132 tests pass. Not run on a phone.
+- **Not done:** D12 documents (CR-5), dark map style, patterns 13 and 15.
+
+## 2026-11-02, Claude, code: Help topics as tiles, D11 (branch `driver-help-tiles`, cut from `driver-trip-detail`)
+
+- **Files:** `apps/driver_app/lib/src/features/support/help_screen.dart`, `test/driver_misc_test.dart`.
+- **What changed:** the four report topics (Vehicle, Student behaviour, App problem, Safety) are a 2x2 grid of tiles with the wrench, busts, phone and shield pictures. The Hold for SOS block, the topic taps and "My help requests" are unchanged.
+- **Checks:** analyze clean, 83 driver tests pass (dark mode, 200% text, a tap opens the report form). Not run on a phone.
+- **Not done:** supervisor and security call tiles (CR-6), vehicle image on home, D12 documents (CR-5).
+
+## 2026-11-02, Claude, code: trip detail with a timeline, D10 (branch `driver-trip-detail`, cut from `driver-decline-tiles`)
+
+- **Files:** `apps/driver_app/lib/src/features/me/trip_detail_screen.dart` (new), `trips_screen.dart`, `lib/src/router.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_misc_test.dart`, `CONTRACT_REQUESTS.md` (CR-10).
+- **What changed:** trip rows in Records now start with the kit's taxi picture and open `/trips/detail`: route, status, Distance and Time tiles, a timeline of the ride, and "Report a problem with this trip" (opens the existing new-ticket screen with the ride). No new endpoint: the list's ride is passed along.
+- **Deviation:** the contract only has assigned and accepted times, so later timeline steps show a state without a time and a cancelled ride does not say who cancelled. CR-10 asks for the missing times. The detail path is under `/trips` because the route guard only allows known prefixes.
+- **Checks:** analyze clean, 82 driver tests pass (completed, and cancelled in dark mode at 200% text). Not run on a phone.
+- **Not done:** D11 help tiles, vehicle image on home.
+
+## 2026-11-02, Claude, code: decline reasons as 2x2 tiles (branch `driver-decline-tiles`, cut from `driver-offer-tiles`)
+
+- **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `test/driver_ride_test.dart`, `packages/turbo_ui/lib/src/components/bento_tile.dart`.
+- **What changed:** the decline sheet shows Car problem (wrench), Too far (motorway), Unwell (hourglass) and Other (speech balloon) as a 2x2 grid of tiles; tapping one sends the same reason as before. `BentoTile` now leaves out its small label line when the label is empty.
+- **Checks:** analyze clean; turbo_ui 87, driver 80, student 132 tests pass. Not run on a phone.
+- **Not done:** D10 trip detail, D11 help tiles, vehicle image on home.
+
+## 2026-11-02, Claude, code: driver offer as four tiles, D04 (branch `driver-offer-tiles`, cut from `driver-location-priming`)
+
+- **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_ride_test.dart`.
+- **What changed:** the new-ride card became BentoTiles with kit pictures: To pickup (km, minutes, pushpin), Trip (km, motorway), Student (first name, busts), Student pays (lime, money font, money bag; left out when the ride has no fare). Countdown ring, buttons and behaviour are unchanged.
+- **Checks:** analyze clean, 79 driver tests pass (offer already covered in dark mode at 200% text). Not run on a phone.
+- **Not done:** 2x2 decline tiles, D10 trip detail, D11 help tiles, vehicle image on home.
+
+## 2026-11-02, Claude, code: driver app pattern 5, Always location priming (branch `driver-location-priming`, cut from `driver-records`)
+
+- **Files:** `apps/driver_app/lib/src/features/home/location_priming.dart` (new), `home_screen.dart`, `readiness_board.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_home_test.dart`.
+- **What changed:** fixing Location on the readiness tiles now opens a sheet first: the pushpin, why Always is needed, and three steps (one set for the system prompt, one for Settings), with Continue / Open Settings and Not now. Nothing asks or opens Settings until the driver agrees.
+- **Also fixed:** tile tags (StatusChip) overflowed by 6 px at 200% text on a 360 pt phone because the picture squeezed them; the tag and picture now wrap.
+- **Checks:** analyze clean, driver app 79 tests pass. Not run on a phone.
+- **Not done:** the screen rebuilds (D04 offer tiles, decline tiles, D10 trip detail, D11 help tiles, vehicle image), pattern 12 (CR-5), 13, 15.
+
+## 2026-11-02, Claude, code: driver app patterns 1 to 4, 7, 8, 9, 11
+
+**Task:** Build the driver patterns from the pasted work list, in order, with the design kit's 3D pictures instead of Material icons where the kit has one. Branches are stacked (each cut from the one before): `driver-haptics`, `driver-pin-shake`, `driver-keep-awake`, `driver-readiness-bento`, `driver-records`. Merge them in that order.
+
+**What changed:**
+- **Haptics and sounds (1, 2):** `core/driver_feedback.dart` names each event: accept medium, arrived light, PIN right light plus click, PIN wrong heavy, trip complete heavy once, offline medium, a second alert sound at 10 seconds left on an offer. The offer's alert sound used to be tied to a listener that never fires when the app arrives on the ride screen from home; it now plays when the offer shows. The offer also counts down every second now.
+- **PIN shake (3):** `TurboShake` in `turbo_ui` (200 ms, none with Reduce Motion), used on the PIN boxes.
+- **Screen awake (4):** `wakelock_plus`; on while going to pickup, waiting and on the trip, off when the ride ends.
+- **Readiness (7):** `home/readiness_board.dart`: "Ready to go" or the one blocker, then tiles for Location, Battery, Notifications, Internet and Documents, each with a word tag; a tile that needs fixing opens the fix.
+- **Records (8, 9, 11):** `EmptyState` takes a 3D `art` (taxi, calendar, alarm clock, money bag, speech balloon) with a teaching sentence; Hours pins "This week" and Salary pins "Paid in <year>"; `TurboStagger` (30 ms steps, first 10 rows, none with Reduce Motion).
+
+**Acceptance:** `flutter analyze` clean and `flutter test` passing in `turbo_ui`, the driver app (78) and the student app (132) on the last branch.
+
+**Not done:**
+- Pattern 5 (the "Always location" priming sheet), 12 (needs CR-5), 13, 15; 6 stays parked with Android; 10 and 14 skipped as the list says.
+- Screen work from the list: D04 offer as four tiles and the 2x2 decline tiles with 3D icons, D10 trip detail timeline, D11 and D12 tiles, vehicle photo on home.
+- Nothing has been seen on a phone. Patterns 4 needs a real phone in a mount; the next iOS build needs `pod install` for the new `wakelock_plus`.
+- The Documents tile has no status, and the readiness tiles omit "Today's shift", until CR-5. Internet uses the phone picture and Battery a Material icon, as the kit has no better match.
+- The dark map style, supervisor numbers (CR-6) and the approach-road line are still open.
+
+**Next step:** Build pattern 5, then the screen work above, and ship one TestFlight build with all of it.
+
 ## 2026-11-01, Claude, code: Maps keys (branch `maps-wiring`)
 
 **Task:** Get real Google Maps working: Routes quota, server key on staging, app keys.

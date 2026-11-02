@@ -64,3 +64,10 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 **Suggested:** add `routePolyline` (Google encoded polyline string) to `Ride` and to the quote, computed by the server from the Routes call it already makes, so no Maps key with Directions access ships in the apps. Optional later: `driverToPickupPolyline` for the approach leg.
 **Until then:** the apps draw markers and the driver position only.
 **Applied:** contract 0.4.0 adds nullable `routePolyline` to `Quote`, `Ride` and `DriverRide` (migration 016, API fills it from the Routes call; without a Maps key it is the straight line). The approach leg (`driverToPickupPolyline`) is still not provided.
+
+
+### CR-10. A driver ride has no arrived, started, completed or cancelled times
+
+**What:** The trip detail timeline can only show times for "assigned" and "accepted" (`assignedAt`, `acknowledgedAt`). The steps after that (arrived, trip started, completed, cancelled) show a state but no time, and a cancelled ride does not say who cancelled or why.
+**Suggested:** add nullable `arrivedAt`, `startedAt`, `completedAt`, `cancelledAt` to `DriverRide` (the server already records them for the state machine), and optionally `cancelReasonCode`.
+**Until then:** the timeline shows states only for those steps.

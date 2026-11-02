@@ -6,7 +6,7 @@ import '../theme/turbo_theme.dart';
 enum BentoTone { surface, lime, light }
 
 /// One tile of the home and profile "bento" grid: a small label, a headline, and an optional picture or icon in the corner.
-/// The lime tile is for the one number that matters (the wallet).
+/// An empty [label] leaves the small line out. The lime tile is for the one number that matters (the wallet).
 class BentoTile extends StatelessWidget {
   const BentoTile({super.key, required this.label, required this.title, this.trailing, this.tone = BentoTone.surface, this.onTap, this.semanticLabel, this.footer, this.money = false});
 
@@ -51,8 +51,10 @@ class BentoTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(label, style: t.styles.tag.copyWith(color: sub)),
-                const SizedBox(height: TurboSpacing.xs),
+                if (label.isNotEmpty) ...[
+                  Text(label, style: t.styles.tag.copyWith(color: sub)),
+                  const SizedBox(height: TurboSpacing.xs),
+                ],
                 if (money)
                   FittedBox(
                     fit: BoxFit.scaleDown,

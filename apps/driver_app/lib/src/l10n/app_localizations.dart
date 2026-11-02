@@ -646,6 +646,264 @@ abstract class AppLocalizations {
   /// **'Documents checked when you go on duty'**
   String get readinessDocuments;
 
+  /// No description provided for @readinessReadyToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to go'**
+  String get readinessReadyToGo;
+
+  /// No description provided for @readinessTileLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get readinessTileLocation;
+
+  /// No description provided for @readinessLocationAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get readinessLocationAlways;
+
+  /// No description provided for @readinessLocationWhileUsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Only while using'**
+  String get readinessLocationWhileUsing;
+
+  /// No description provided for @readinessLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get readinessLocationOff;
+
+  /// No description provided for @readinessTileBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery'**
+  String get readinessTileBattery;
+
+  /// No description provided for @readinessBatteryPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String readinessBatteryPercent(int percent);
+
+  /// No description provided for @readinessTileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get readinessTileNotifications;
+
+  /// No description provided for @readinessTileInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet'**
+  String get readinessTileInternet;
+
+  /// No description provided for @readinessOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get readinessOn;
+
+  /// No description provided for @readinessOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get readinessOff;
+
+  /// No description provided for @readinessConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get readinessConnected;
+
+  /// No description provided for @readinessOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get readinessOffline;
+
+  /// No description provided for @readinessTileDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get readinessTileDocuments;
+
+  /// No description provided for @primingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location Always'**
+  String get primingTitle;
+
+  /// No description provided for @primingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides reach you and students see you arrive even when the screen is locked. Sharing stops when you go off duty.'**
+  String get primingBody;
+
+  /// No description provided for @primingAskStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Continue'**
+  String get primingAskStep1;
+
+  /// No description provided for @primingAskStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Allow While Using App'**
+  String get primingAskStep2;
+
+  /// No description provided for @primingAskStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'When asked again, choose Change to Always Allow'**
+  String get primingAskStep3;
+
+  /// No description provided for @primingSettingsStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Open Settings, then Location'**
+  String get primingSettingsStep1;
+
+  /// No description provided for @primingSettingsStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Always'**
+  String get primingSettingsStep2;
+
+  /// No description provided for @primingSettingsStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back to the app'**
+  String get primingSettingsStep3;
+
+  /// No description provided for @primingContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get primingContinue;
+
+  /// No description provided for @primingNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get primingNotNow;
+
+  /// No description provided for @callSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Call supervisor'**
+  String get callSupervisor;
+
+  /// No description provided for @readinessDocumentsValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents up to date'**
+  String get readinessDocumentsValid;
+
+  /// No description provided for @docsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get docsTitle;
+
+  /// No description provided for @docsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents will show here once your supervisor adds them.'**
+  String get docsEmpty;
+
+  /// No description provided for @docsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents will show here soon.'**
+  String get docsUnavailable;
+
+  /// No description provided for @docsRenewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact your supervisor to renew.'**
+  String get docsRenewHint;
+
+  /// No description provided for @docDriversLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver\'s licence'**
+  String get docDriversLicence;
+
+  /// No description provided for @docVehicleRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle registration'**
+  String get docVehicleRegistration;
+
+  /// No description provided for @docInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get docInsurance;
+
+  /// No description provided for @docRoadworthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Roadworthy certificate'**
+  String get docRoadworthy;
+
+  /// No description provided for @docValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid'**
+  String get docValid;
+
+  /// No description provided for @docExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring soon'**
+  String get docExpiring;
+
+  /// No description provided for @docExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get docExpired;
+
+  /// No description provided for @docExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires {date}'**
+  String docExpiresOn(String date);
+
+  /// No description provided for @docExpiredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired {date}'**
+  String docExpiredOn(String date);
+
+  /// No description provided for @docBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {document} expired on {date}. You can\'t go on duty until it\'s renewed.'**
+  String docBanner(String document, String date);
+
+  /// No description provided for @readinessTileShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s shift'**
+  String get readinessTileShift;
+
+  /// No description provided for @shiftNoneToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No shift today'**
+  String get shiftNoneToday;
+
+  /// No description provided for @meDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get meDocuments;
+
   /// No description provided for @readinessFix.
   ///
   /// In en, this message translates to:
@@ -826,6 +1084,78 @@ abstract class AppLocalizations {
   /// **'We couldn\'t load your trips. Check your connection and try again.'**
   String get tripsLoadFailed;
 
+  /// No description provided for @tripDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip'**
+  String get tripDetailTitle;
+
+  /// No description provided for @tripDetailDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get tripDetailDistance;
+
+  /// No description provided for @tripDetailTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get tripDetailTime;
+
+  /// No description provided for @tripDetailMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String tripDetailMinutes(int minutes);
+
+  /// No description provided for @tripDetailProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get tripDetailProgress;
+
+  /// No description provided for @tripDetailReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem with this trip'**
+  String get tripDetailReport;
+
+  /// No description provided for @tripStepAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride assigned'**
+  String get tripStepAssigned;
+
+  /// No description provided for @tripStepAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'You accepted'**
+  String get tripStepAccepted;
+
+  /// No description provided for @tripStepArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'You arrived'**
+  String get tripStepArrived;
+
+  /// No description provided for @tripStepStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip started'**
+  String get tripStepStarted;
+
+  /// No description provided for @tripStepCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip completed'**
+  String get tripStepCompleted;
+
+  /// No description provided for @tripStepCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride cancelled'**
+  String get tripStepCancelled;
+
   /// No description provided for @rideStatusSearching.
   ///
   /// In en, this message translates to:
@@ -988,29 +1318,47 @@ abstract class AppLocalizations {
   /// **'Pickup'**
   String get assignPickup;
 
-  /// No description provided for @assignDistance.
-  ///
-  /// In en, this message translates to:
-  /// **'{km} km away · about {minutes} min'**
-  String assignDistance(String km, int minutes);
-
   /// No description provided for @assignStudent.
   ///
   /// In en, this message translates to:
   /// **'Student: {name}'**
   String assignStudent(String name);
 
-  /// No description provided for @assignTrip.
+  /// No description provided for @assignTilePickup.
   ///
   /// In en, this message translates to:
-  /// **'Trip: {km} km'**
-  String assignTrip(String km);
+  /// **'To pickup'**
+  String get assignTilePickup;
 
-  /// No description provided for @assignFare.
+  /// No description provided for @assignTileTrip.
   ///
   /// In en, this message translates to:
-  /// **'Fare: {amount}'**
-  String assignFare(String amount);
+  /// **'Trip'**
+  String get assignTileTrip;
+
+  /// No description provided for @assignTileStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Student'**
+  String get assignTileStudent;
+
+  /// No description provided for @assignTilePays.
+  ///
+  /// In en, this message translates to:
+  /// **'Student pays'**
+  String get assignTilePays;
+
+  /// No description provided for @assignKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String assignKm(String km);
+
+  /// No description provided for @assignEta.
+  ///
+  /// In en, this message translates to:
+  /// **'about {minutes} min'**
+  String assignEta(int minutes);
 
   /// No description provided for @assignPassed.
   ///
@@ -1489,8 +1837,20 @@ abstract class AppLocalizations {
   /// No description provided for @attendanceEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No attendance records yet.'**
+  /// **'No attendance records yet. Your hours show up here once you have been on duty.'**
   String get attendanceEmpty;
+
+  /// No description provided for @hoursWeekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get hoursWeekLabel;
+
+  /// No description provided for @hoursWeekTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String hoursWeekTotal(int hours, int minutes);
 
   /// No description provided for @attendanceIn.
   ///
@@ -1555,8 +1915,14 @@ abstract class AppLocalizations {
   /// No description provided for @salaryEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No payments recorded yet.'**
+  /// **'No payments recorded yet. Your pay history shows up here.'**
   String get salaryEmpty;
+
+  /// No description provided for @salaryYearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in {year}'**
+  String salaryYearLabel(int year);
 
   /// No description provided for @salaryNote.
   ///

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/turbo_button.dart';
+import '../components/turbo_art.dart';
 import '../components/turbo_skeleton.dart';
 import '../l10n/turbo_ui_localizations.dart';
 import '../theme/spacing.dart';
@@ -34,17 +35,20 @@ class LoadingState extends StatelessWidget {
   }
 }
 
-/// Teaches what goes here and offers one action.
+/// Teaches what goes here and offers one action. Give it a 3D [art] picture
+/// from the kit, or an [icon] where the kit has none.
 class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
-    required this.icon,
+    this.icon,
+    this.art,
     required this.message,
     this.actionLabel,
     this.onAction,
-  });
+  }) : assert(icon != null || art != null, 'give an icon or an art');
 
-  final IconData icon;
+  final IconData? icon;
+  final TurboArt? art;
   final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
@@ -58,7 +62,10 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: TurboSizes.iconLg, color: t.colors.textSecondary),
+            if (art != null)
+              TurboArtImage(art!, size: TurboSizes.heroIcon)
+            else
+              Icon(icon, size: TurboSizes.iconLg, color: t.colors.textSecondary),
             const SizedBox(height: TurboSpacing.lg),
             Text(message, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
             if (actionLabel != null && onAction != null) ...[
