@@ -87,7 +87,11 @@ export function Topups() {
         columns={[
           { header: 'When', cell: (r) => <When iso={r.createdAt} exact /> },
           { header: 'Reference', cell: (r) => <span className={ui.num}>{r.reference}</span> },
-          { header: 'Status', cell: (r) => <Chip tone={topupTone[r.status]}>{humanize(r.status)}</Chip> },
+          {
+            header: 'Status',
+            slot: 'badge',
+            cell: (r) => <Chip tone={topupTone[r.status]}>{humanize(r.status)}</Chip>,
+          },
           { header: 'Requested', align: 'right', cell: (r) => <Money pesewas={r.amountPesewas} /> },
           { header: 'Received', align: 'right', cell: (r) => <Money pesewas={r.amountReceivedPesewas} /> },
           {

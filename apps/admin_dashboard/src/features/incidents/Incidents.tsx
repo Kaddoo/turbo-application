@@ -93,6 +93,7 @@ export function Incidents() {
           },
           {
             header: 'Status',
+            slot: 'badge',
             cell: (r) => (
               <span className={ui.row}>
                 <Chip tone={incidentTone[r.status]}>{humanize(r.status)}</Chip>

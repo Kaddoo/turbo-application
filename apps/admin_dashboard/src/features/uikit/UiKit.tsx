@@ -75,6 +75,7 @@ export function UiKit() {
   const toast = useToast();
   const [seg, setSeg] = useState<'a' | 'b'>('a');
   const [filter, setFilter] = useState<'24h' | '7d'>('24h');
+  const [pick, setPick] = useState('a');
   const [q, setQ] = useState('');
   const [on, setOn] = useState(true);
   const [slider, setSlider] = useState(15);
@@ -198,6 +199,8 @@ export function UiKit() {
           <TextField label="Read only" readOnly defaultValue="GH₵35.00" />
           <Select
             label="Select"
+            value={pick}
+            onChange={(e) => setPick(e.target.value)}
             options={[
               { value: 'a', label: 'Any' },
               { value: 'b', label: 'Pending' },
@@ -342,7 +345,7 @@ export function UiKit() {
           empty={{ title: 'Nothing here.' }}
           columns={[
             { header: 'Student', cell: (r) => r.name, sortValue: (r) => r.name },
-            { header: 'Status', cell: (r) => r.status, sortValue: (r) => r.status },
+            { header: 'Status', slot: 'badge', cell: (r) => r.status, sortValue: (r) => r.status },
             { header: 'Fare (pesewas)', cell: (r) => r.fare, align: 'right', sortValue: (r) => r.fare },
           ]}
         />

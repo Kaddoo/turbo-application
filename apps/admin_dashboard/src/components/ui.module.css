@@ -337,7 +337,7 @@
 }
 .label {
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-secondary);
 }
 .input {
@@ -353,6 +353,10 @@
 }
 .input:hover:not(:disabled) {
   border-color: var(--color-text-secondary);
+}
+.input:focus-visible {
+  border-color: var(--color-focus-ring);
+  outline-offset: 0;
 }
 .input:disabled {
   opacity: 0.55;
@@ -371,6 +375,85 @@ textarea.input {
 .input[aria-invalid='true'] {
   border-color: var(--color-danger);
 }
+/* ---------- Dropdown (Select) ---------- */
+.selectAnchor {
+  position: relative;
+  min-width: 0;
+}
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  text-align: left;
+  cursor: pointer;
+}
+.selectTrigger[aria-expanded='true'] {
+  border-color: var(--color-focus-ring);
+}
+.selectValue {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.selectPlaceholder {
+  color: var(--color-text-secondary);
+}
+.selectChevron {
+  flex: none;
+  color: var(--color-text-secondary);
+  transition: transform var(--motion-fast);
+}
+.selectChevronOpen {
+  transform: rotate(180deg);
+}
+.selectPanel {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: var(--space-2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-raised);
+  animation: selectIn var(--motion-fast) ease-out;
+}
+.selectPanel:focus {
+  outline: none;
+}
+.selectOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-target);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-input);
+  cursor: pointer;
+}
+.selectOption[data-active='true'] {
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+}
+.selectOption[aria-selected='true'] {
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+.selectOptionLabel {
+  flex: 1;
+  min-width: 0;
+}
+@keyframes selectIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-1) * -1));
+  }
+}
+
 .hint {
   font-size: var(--text-caption);
   color: var(--color-text-secondary);
@@ -679,7 +762,7 @@ textarea.input {
 
 /* ---------- Cards and headers ---------- */
 .card {
-  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   padding: var(--space-5);
@@ -711,12 +794,20 @@ textarea.input {
   color: inherit;
   width: 100%;
 }
+.stat {
+  transition:
+    border-color var(--motion-fast),
+    transform var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
 .stat:hover {
   border-color: var(--color-control-border);
+  transform: translateY(calc(var(--space-1) * -0.5));
+  box-shadow: var(--shadow-raised);
 }
 .statValue {
   font-size: var(--text-display);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
@@ -737,23 +828,29 @@ textarea.input {
   justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
 }
 .pageCaption {
-  margin: 0 0 var(--space-1);
-  font-size: var(--text-caption);
-  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
 }
 .pageTitle {
   margin: 0;
   font-size: var(--text-display);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 .pageDescription {
-  margin: var(--space-1) 0 0;
+  margin: var(--space-2) 0 0;
   color: var(--color-text-secondary);
+  font-size: var(--text-body-large);
   max-width: 48rem;
 }
 .actions {
@@ -763,68 +860,170 @@ textarea.input {
   align-items: center;
 }
 
-/* ---------- Data table ---------- */
+/* ---------- Data cards ---------- */
 .tableWrap {
-  overflow-x: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  background: linear-gradient(180deg, var(--color-surface), var(--color-background));
+  background: var(--color-surface);
 }
-.table {
-  width: 100%;
-  border-collapse: collapse;
+.cardsWrap {
+  display: grid;
+  gap: var(--space-4);
 }
-.table th {
-  position: sticky;
-  top: 0;
-  text-align: left;
-  font-size: var(--text-caption);
-  font-weight: 400;
+.sortBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.sortLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--color-text-secondary);
-  padding: var(--space-3) var(--space-4);
-  background: transparent;
-  border-bottom: 1px solid var(--color-border);
-  white-space: nowrap;
+  font-size: var(--text-caption);
+  font-weight: 600;
 }
-.table td {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
-  vertical-align: middle;
+.sortSelect {
+  width: auto;
+  min-width: 11rem;
 }
-.table tr:last-child td {
-  border-bottom: none;
-}
-.sortButton {
+.sortDir {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  margin: calc(var(--space-1) * -1) calc(var(--space-2) * -1);
-  padding: var(--space-1) var(--space-2);
-  border: 0;
-  border-radius: var(--radius-small);
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.sortButton:hover,
-th[aria-sort='ascending'] .sortButton,
-th[aria-sort='descending'] .sortButton {
+  min-height: var(--size-target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-surface);
   color: var(--color-text-primary);
-}
-.rowLink {
+  font: inherit;
+  font-size: var(--text-caption);
   cursor: pointer;
 }
-.rowLink:hover td,
-.rowLink:focus-visible td {
+.sortDir:hover {
   background: var(--color-surface-raised);
 }
-.right {
-  text-align: right !important;
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min, 19rem)), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dataCard {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  transition:
+    border-color var(--motion-fast),
+    transform var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+.dataCard {
+  position: relative;
+  overflow: hidden;
+}
+/* A stripe along the top shows the card's state before any text is read. */
+.dataCard[data-tone]::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--space-1);
+  background: var(--color-text-secondary);
+}
+.dataCard[data-tone='success']::before {
+  background: var(--color-success);
+}
+.dataCard[data-tone='warning']::before {
+  background: var(--color-warning);
+}
+.dataCard[data-tone='danger']::before {
+  background: var(--color-danger);
+}
+.dataCard[data-tone='accent']::before {
+  background: var(--color-accent);
+}
+.dataCard[data-tone='neutral']::before {
+  background: var(--color-border);
+}
+.dataCardLink {
+  cursor: pointer;
+}
+.dataCardLink:hover,
+.dataCardLink:focus-visible {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+  transform: translateY(calc(var(--space-1) * -0.5));
+  box-shadow: var(--shadow-raised);
+}
+.dataHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.dataTitle {
+  min-width: 0;
+  font-size: var(--text-body-large);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.dataBadge {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  max-width: 60%;
+}
+.dataFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-4);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.dataField {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.dataLabel {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.dataValue {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dataActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
 }
 .num {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+.right {
+  text-align: right !important;
 }
 .tableFooter {
   display: flex;
@@ -1181,13 +1380,20 @@ th[aria-sort='descending'] .sortButton {
 /* ---------- Layout helpers used by screens ---------- */
 .filters {
   display: flex;
-  gap: var(--space-3);
+  gap: var(--space-4);
   flex-wrap: wrap;
   margin-bottom: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   align-items: flex-end;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
 }
 .filters .field {
   min-width: 12rem;
+}
+.filters .input {
+  background: var(--color-background);
 }
 .muted {
   color: var(--color-text-secondary);
@@ -1219,9 +1425,6 @@ th[aria-sort='descending'] .sortButton {
 
 /* ---------- Phones ---------- */
 @media (max-width: 640px) {
-  .hideMobile {
-    display: none !important;
-  }
   .filters .field {
     min-width: 0;
     flex: 1 1 100%;
@@ -1241,65 +1444,6 @@ th[aria-sort='descending'] .sortButton {
   }
   .bannerAction {
     flex-basis: 100%;
-  }
-
-  /* Each table row becomes a card; the column header is printed as a label. */
-  .tableWrap {
-    overflow: visible;
-    border: 0;
-    background: transparent;
-  }
-  .table,
-  .table tbody,
-  .table tr,
-  .table td {
-    display: block;
-    width: 100%;
-  }
-  .table thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-  .table tr {
-    margin-bottom: var(--space-3);
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-  }
-  .table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-2) 0;
-    text-align: right;
-  }
-  .table td::before {
-    content: attr(data-label);
-    flex: none;
-    max-width: 45%;
-    text-align: left;
-    color: var(--color-text-secondary);
-    font-size: var(--text-caption);
-  }
-  .table td:not([data-label])::before,
-  .table td[data-label='']::before {
-    content: none;
-  }
-  .rowLink:hover td,
-  .rowLink:focus-visible td {
-    background: transparent;
-  }
-  .rowLink:hover,
-  .rowLink:focus-visible {
-    background: var(--color-surface-raised) !important;
-  }
-  .tableFooter {
-    border: 0;
   }
 
   .dialog {

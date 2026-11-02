@@ -1,4 +1,4 @@
-# Admin dashboard
+# Turbo Admin dashboard
 
 Staff web portal for Turbo operations. React + Vite + TypeScript. Spec: `prompts/02-admin-portal.md`; contract: `api/contract/openapi.yaml`.
 
@@ -49,7 +49,7 @@ src/
                 finance, support, incidents, workforce, configuration, announcements, staff, audit):
                 its screens, plus queries.ts with its React Query hooks and query keys
   components/   shared UI, one file per component; import from @/components.
-                MapView is imported from @/components/MapView so Leaflet stays out of the main bundle
+                MapView is imported from @/components/MapView so Google Maps stays out of the main bundle
   services/     http.ts (the only HTTP client) and one module per API resource
   hooks/        shared hooks: useCursorList, useAction, useIdleTimer, and queries several features read
   state/        client state: the session (signed-in user, sign in and out)
@@ -87,4 +87,18 @@ Each `services/<resource>.ts` is a set of plain functions such as `verifications
 
 ## Environment variables
 
-See `.env.example`. `VITE_API_BASE_URL` (deployed builds), `VITE_APP_ENV` (`local`, `staging`, `production` or `demo`), `VITE_APP_VERSION` (sent as `X-App-Version`), and `API_PROXY_TARGET` (development only, never bundled). No secrets: the dashboard holds none.
+See `.env.example`. `VITE_API_BASE_URL` (deployed builds), `VITE_APP_ENV` (`local`, `staging`, `production` or `demo`), `VITE_APP_VERSION` (sent as `X-App-Version`), `VITE_GOOGLE_MAPS_API_KEY` (a browser key restricted to the dashboard's origins; without it the map screens show a notice), and `API_PROXY_TARGET` (development only, never bundled). No secrets: the dashboard holds none.
+
+## Keeping crawlers out
+
+This is a staff-only app, so it asks search engines and AI crawlers to stay away in three layers:
+
+- `public/robots.txt` disallows everything, and names the known AI and scraper bots (GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended and others) as well as `*`.
+- `index.html` carries `noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai` robots meta tags.
+- The dev and preview servers send the matching `X-Robots-Tag` header. **The production host must send it too** (a static host does not read `vite.config.ts`):
+
+```
+X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai
+```
+
+Honest limit: these are requests that well-behaved crawlers follow. They do not stop a scraper that ignores them. Keep the real protection where it is: sign-in with MFA, and nothing public behind it. If bots still reach the host, block them there (the host's bot or WAF rules) by user agent.

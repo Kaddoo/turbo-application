@@ -240,6 +240,7 @@ function PickupsTab({ area }: { area: Schemas['ServiceArea'] }) {
           },
           {
             header: 'Status',
+            slot: 'badge',
             cell: (r) => <Chip tone={r.isActive ? 'success' : 'neutral'}>{r.isActive ? 'Active' : 'Inactive'}</Chip>,
           },
           {

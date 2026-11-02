@@ -285,7 +285,7 @@ function ApprovalsTab() {
               </>
             ),
           },
-          { header: 'Status', cell: (r) => <Chip tone={adjTone[r.status]}>{humanize(r.status)}</Chip> },
+          { header: 'Status', slot: 'badge', cell: (r) => <Chip tone={adjTone[r.status]}>{humanize(r.status)}</Chip> },
           {
             header: '',
             cell: (r) =>

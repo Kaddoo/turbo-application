@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
-import { Badge, DataTable, FilterChip, SegmentedControl, Sparkline } from '@/components';
+import { Badge, DataTable, FilterChip, SegmentedControl, Select, Sparkline } from '@/components';
 import { compare, nextSort } from '@/hooks/useSort';
 import { bucketCounts, countInPeriod } from '@/utils/series';
 import { GlobalSearch } from '@/app/shell/GlobalSearch';
@@ -91,6 +91,65 @@ describe('FilterChip', () => {
   });
 });
 
+describe('Select', () => {
+  const options = [
+    { value: '', label: 'Any' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+  ];
+  const setup = (value = '') => {
+    const onChange = vi.fn();
+    render(<Select label="Status" value={value} options={options} onChange={onChange} />);
+    return { onChange, box: screen.getByRole('combobox', { name: 'Status' }) };
+  };
+
+  it('shows the chosen label and opens a listbox of options', () => {
+    const { box } = setup('pending');
+    expect(box.textContent).toBe('Pending');
+    fireEvent.click(box);
+    expect(box.getAttribute('aria-expanded')).toBe('true');
+    expect(screen.getAllByRole('option').map((o) => o.textContent)).toEqual(['Any', 'Pending', 'Approved']);
+    expect(screen.getByRole('option', { name: 'Pending' }).getAttribute('aria-selected')).toBe('true');
+  });
+
+  it('chooses with the mouse, reporting e.target.value, and closes', () => {
+    const { box, onChange } = setup();
+    fireEvent.click(box);
+    fireEvent.click(screen.getByRole('option', { name: 'Approved' }));
+    expect(onChange).toHaveBeenCalledWith({ target: { value: 'approved' } });
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
+
+  it('chooses with the arrow keys and Enter, and Escape closes without choosing', () => {
+    const { box, onChange } = setup();
+    fireEvent.keyDown(box, { key: 'ArrowDown' });
+    const list = screen.getByRole('listbox');
+    fireEvent.keyDown(list, { key: 'ArrowDown' });
+    fireEvent.keyDown(list, { key: 'Enter' });
+    expect(onChange).toHaveBeenCalledWith({ target: { value: 'pending' } });
+    fireEvent.click(box);
+    fireEvent.keyDown(screen.getByRole('listbox'), { key: 'Escape' });
+    expect(screen.queryByRole('listbox')).toBeNull();
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('jumps to an option by typing its first letters', () => {
+    const { box, onChange } = setup();
+    fireEvent.click(box);
+    const list = screen.getByRole('listbox');
+    fireEvent.keyDown(list, { key: 'a' });
+    fireEvent.keyDown(list, { key: 'p' });
+    fireEvent.keyDown(list, { key: 'Enter' });
+    expect(onChange).toHaveBeenCalledWith({ target: { value: 'approved' } });
+  });
+
+  it('does not open when disabled', () => {
+    render(<Select label="Locked" value="" options={options} disabled />);
+    fireEvent.click(screen.getByRole('combobox', { name: 'Locked' }));
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
+});
+
 describe('DataTable', () => {
   const rows = [
     { id: '1', name: 'Kofi', fare: 300 },
@@ -102,24 +161,28 @@ describe('DataTable', () => {
     { header: 'Fare', cell: (r: (typeof rows)[0]) => r.fare, sortValue: (r: (typeof rows)[0]) => r.fare },
   ];
   const names = () =>
-    within(screen.getByRole('table'))
-      .getAllByRole('row')
-      .slice(1)
-      .map((r) => r.querySelector('td')?.textContent);
+    within(screen.getByRole('list', { name: 'People' }))
+      .getAllByRole('listitem')
+      .map((r) => r.querySelector('div > div')?.textContent);
+  const sortBy = (key: string) => {
+    fireEvent.click(screen.getByRole('combobox', { name: /Sort by/ }));
+    fireEvent.click(screen.getByRole('option', { name: key }));
+  };
 
-  it('sorts by a column and reports it with aria-sort', () => {
+  it('sorts by a column chosen in "Sort by" and reverses it', () => {
     render(<DataTable label="People" rows={rows} rowKey={(r) => r.id} columns={columns} empty={{ title: 'None' }} />);
     expect(names()).toEqual(['Kofi', 'Ama', 'Efua']);
-    fireEvent.click(screen.getByRole('button', { name: /Fare/ }));
+    sortBy('Fare');
     expect(names()).toEqual(['Ama', 'Efua', 'Kofi']);
-    expect(screen.getByRole('columnheader', { name: /Fare/ }).getAttribute('aria-sort')).toBe('ascending');
-    fireEvent.click(screen.getByRole('button', { name: /Fare/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Reverse the order/ }));
     expect(names()).toEqual(['Kofi', 'Efua', 'Ama']);
   });
 
-  it('labels each cell for the phone card layout', () => {
+  it('makes the first column the card title and labels the other values', () => {
     render(<DataTable label="People" rows={rows} rowKey={(r) => r.id} columns={columns} empty={{ title: 'None' }} />);
-    expect(screen.getAllByRole('cell')[0]!.getAttribute('data-label')).toBe('Name');
+    const card = screen.getAllByRole('listitem')[0]!;
+    expect(card.querySelector('div > div')?.textContent).toBe('Kofi');
+    expect(within(card).getByText('Fare').tagName).toBe('DT');
   });
 
   it('shows the empty state', () => {

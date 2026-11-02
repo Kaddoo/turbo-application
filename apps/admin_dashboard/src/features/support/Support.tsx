@@ -94,7 +94,11 @@ export function Support() {
         columns={[
           { header: 'Subject', cell: (r) => r.subject },
           { header: 'Category', cell: (r) => humanize(r.category) },
-          { header: 'Status', cell: (r) => <Chip tone={ticketTone[r.status]}>{humanize(r.status)}</Chip> },
+          {
+            header: 'Status',
+            slot: 'badge',
+            cell: (r) => <Chip tone={ticketTone[r.status]}>{humanize(r.status)}</Chip>,
+          },
           { header: 'Age', cell: (r) => formatRelative(r.createdAt) },
           { header: 'Updated', cell: (r) => <When iso={r.updatedAt} /> },
           {

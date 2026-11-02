@@ -87,7 +87,11 @@ export function Vehicles() {
           { header: 'Vehicle', cell: (r) => `${r.make} ${r.model}` },
           { header: 'Colour', cell: (r) => r.colour },
           { header: 'Seats', align: 'right', cell: (r) => r.seats ?? '—' },
-          { header: 'Status', cell: (r) => <Chip tone={vehicleTone[r.status]}>{humanize(r.status)}</Chip> },
+          {
+            header: 'Status',
+            slot: 'badge',
+            cell: (r) => <Chip tone={vehicleTone[r.status]}>{humanize(r.status)}</Chip>,
+          },
         ]}
       />
       <Dialog open={!!editing} onClose={() => setEditing(null)} title={editing?.id ? 'Edit vehicle' : 'Add vehicle'}>

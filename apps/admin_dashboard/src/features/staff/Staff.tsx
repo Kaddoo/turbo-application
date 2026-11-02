@@ -76,6 +76,7 @@ export function Staff() {
           { header: 'Role', cell: (r) => roleLabels[r.staffRole] },
           {
             header: 'Status',
+            slot: 'badge',
             cell: (r) => (
               <span className={ui.row}>
                 {!r.isActive ? (

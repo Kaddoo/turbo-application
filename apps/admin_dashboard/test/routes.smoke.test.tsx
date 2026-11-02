@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
  * screens that call an endpoint the demo lacks or crash on real-shaped data.
  */
 
-// Leaflet needs a real layout engine; the map itself is not under test here.
+// Google Maps needs a real browser and a key; the map itself is not under test here.
 vi.mock('@/components/MapView', () => ({ MapView: () => <div aria-label="Map" /> }));
 
 // Node's Request rejects relative URLs, so give the client an absolute base.

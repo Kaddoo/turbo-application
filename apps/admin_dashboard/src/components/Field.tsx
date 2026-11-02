@@ -1,10 +1,4 @@
-import {
-  useId,
-  type InputHTMLAttributes,
-  type ReactNode,
-  type SelectHTMLAttributes,
-  type TextareaHTMLAttributes,
-} from 'react';
+import { useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react';
 import { cx } from './cx';
 import s from './ui.module.css';
 
@@ -15,7 +9,7 @@ interface FieldProps {
 }
 
 /** Label, control, then the error (or hint). The control points at both with aria-describedby. */
-function Field({ label, hint, error, id, children }: FieldProps & { id: string; children: ReactNode }) {
+export function Field({ label, hint, error, id, children }: FieldProps & { id: string; children: ReactNode }) {
   return (
     <div className={s.field}>
       <label className={s.label} htmlFor={id}>
@@ -35,7 +29,7 @@ function Field({ label, hint, error, id, children }: FieldProps & { id: string; 
   );
 }
 
-const describedBy = (id: string, hint?: string, error?: string) =>
+export const describedBy = (id: string, hint?: string, error?: string) =>
   error ? `${id}-err` : hint ? `${id}-hint` : undefined;
 
 export function TextField({ label, hint, error, ...rest }: FieldProps & InputHTMLAttributes<HTMLInputElement>) {
@@ -64,33 +58,6 @@ export function TextArea({ label, hint, error, ...rest }: FieldProps & TextareaH
         aria-describedby={describedBy(id, hint, error)}
         {...rest}
       />
-    </Field>
-  );
-}
-
-export function Select({
-  label,
-  hint,
-  error,
-  options,
-  ...rest
-}: FieldProps & SelectHTMLAttributes<HTMLSelectElement> & { options: { value: string; label: string }[] }) {
-  const id = useId();
-  return (
-    <Field id={id} label={label} hint={hint} error={error}>
-      <select
-        id={id}
-        className={cx(s.input, s.select)}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, hint, error)}
-        {...rest}
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
     </Field>
   );
 }

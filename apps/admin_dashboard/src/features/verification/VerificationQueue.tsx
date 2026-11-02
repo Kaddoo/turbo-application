@@ -78,7 +78,11 @@ export function VerificationQueue() {
               </>
             ),
           },
-          { header: 'Status', cell: (r) => <Chip tone={verificationTone[r.status]}>{humanize(r.status)}</Chip> },
+          {
+            header: 'Status',
+            slot: 'badge',
+            cell: (r) => <Chip tone={verificationTone[r.status]}>{humanize(r.status)}</Chip>,
+          },
           { header: 'Submitted', cell: (r) => <When iso={r.submittedAt} exact /> },
           {
             header: 'Waiting',

@@ -102,6 +102,7 @@ export function LiveMap() {
           lat: d.location!.point.lat,
           lng: d.location!.point.lng,
           tone: 'success' as const,
+          kind: 'car' as const,
           label: `${d.fullName} · idle`,
         })),
       ...q.data.rides
@@ -111,6 +112,7 @@ export function LiveMap() {
           lat: r.driverLocation!.point.lat,
           lng: r.driverLocation!.point.lng,
           tone: (r.ride.flags?.length ? 'danger' : 'accent') as MapMarker['tone'],
+          kind: 'car' as const,
           label: `${r.ride.driverName ?? 'Driver'} · ${humanize(r.ride.status)}${r.ride.flags?.length ? ' · flagged' : ''}`,
           onClick: () => navigate(`/rides/${r.ride.id}`),
         })),
@@ -245,6 +247,7 @@ export function Rides() {
           { header: 'Requested', cell: (r) => <When iso={r.requestedAt} exact /> },
           {
             header: 'Status',
+            slot: 'badge',
             cell: (r) => (
               <span className={ui.row}>
                 <Chip tone={rideTone[r.status]}>{humanize(r.status)}</Chip>
@@ -326,6 +329,7 @@ export function RideDetail() {
             lat: driver.lastLocation.point.lat,
             lng: driver.lastLocation.point.lng,
             tone: 'accent' as const,
+            kind: 'car' as const,
             label: `${driver.fullName}, last seen ${formatRelative(driver.lastLocation.recordedAt)}`,
           },
         ]

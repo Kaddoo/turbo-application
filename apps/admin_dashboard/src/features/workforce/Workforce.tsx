@@ -97,7 +97,11 @@ export function Shifts() {
                 columns={[
                   { header: 'Driver', cell: (r) => name(r.driverId) },
                   { header: 'Time', cell: (r) => `${formatTime(r.startsAt)} – ${formatTime(r.endsAt)}` },
-                  { header: 'Status', cell: (r) => <Chip tone={shiftTone[r.status]}>{humanize(r.status)}</Chip> },
+                  {
+                    header: 'Status',
+                    slot: 'badge',
+                    cell: (r) => <Chip tone={shiftTone[r.status]}>{humanize(r.status)}</Chip>,
+                  },
                   {
                     header: '',
                     cell: (r) =>
@@ -288,7 +292,7 @@ export function Attendance() {
           { header: 'In', cell: (r) => formatTime(r.clockInAt) },
           { header: 'Out', cell: (r) => formatTime(r.clockOutAt) },
           { header: 'Worked', align: 'right', cell: (r) => formatMinutes(r.minutesWorked) },
-          { header: 'Status', cell: (r) => <Chip tone={attTone[r.status]}>{humanize(r.status)}</Chip> },
+          { header: 'Status', slot: 'badge', cell: (r) => <Chip tone={attTone[r.status]}>{humanize(r.status)}</Chip> },
         ]}
       />
       <Dialog open={!!editing} onClose={() => setEditing(null)} title="Correct attendance">

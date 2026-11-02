@@ -1,4 +1,4 @@
-/** Shared UI. MapView is imported directly from '@/components/MapView' so Leaflet stays out of the main bundle. */
+/** Shared UI. MapView is imported directly from '@/components/MapView' so Google Maps stays out of the main bundle. */
 import s from './ui.module.css';
 
 export { Avatar, initials } from './Avatar';
@@ -13,7 +13,8 @@ export { Details } from './Details';
 export { Dialog, DialogActions, Drawer } from './Dialog';
 export { EmptyState } from './EmptyState';
 export { ErrorState } from './ErrorState';
-export { Checkbox, Select, Slider, Switch, TextArea, TextField } from './Field';
+export { Select } from './Select';
+export { Checkbox, Slider, Switch, TextArea, TextField } from './Field';
 export { Icon, type IconName } from './Icon';
 export { IconButton } from './IconButton';
 export { FilterChip, Menu, type MenuItem } from './Menu';
@@ -49,3 +50,15 @@ export { cx } from './cx';
 
 /** The shared CSS module, for layout helpers such as `ui.stack` and `ui.muted`. */
 export const ui = s;
+export {
+  CardFoot,
+  CardTop,
+  Callout,
+  Dots,
+  Facts,
+  Fact,
+  Figure,
+  Muted,
+  Person,
+  Plate,
+} from './Cards';
