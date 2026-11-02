@@ -37,7 +37,7 @@ void main() {
       await settle(tester);
     });
     expect(find.text('Call supervisor'), findsNothing);
-    expect(find.text('Documents checked when you go on duty'), findsOneWidget);
+    expect(find.text('Checked on duty'), findsOneWidget);
     // The shift tile uses the real shifts endpoint.
     expect(find.text('07:00 – 15:00'), findsOneWidget);
   });

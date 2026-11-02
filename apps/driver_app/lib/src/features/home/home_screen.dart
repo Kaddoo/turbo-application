@@ -118,7 +118,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final sharing = ref.watch(locationSharingProvider);
     final online = ref.watch(onlineProvider).value ?? true;
     ref.listen(onlineProvider, (prev, next) {
-      if (prev?.value != false && next.value == false) DriverFeedback.wentOffline();
+      if (prev?.value != false && next.value == false) {
+        DriverFeedback.wentOffline();
+      }
     });
     final now = clock.now();
 
@@ -145,7 +147,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     final vehicle = profile.vehicle;
     final docs = ref.watch(driverDocsProvider).value;
-    final expired = [for (final d in docs ?? const <DriverDoc>[]) if (d.status == DocStatus.expired) d];
+    final expired = [
+      for (final d in docs ?? const <DriverDoc>[])
+        if (d.status == DocStatus.expired) d,
+    ];
     // Today's shift, by the Accra date (UTC).
     final shifts = ref.watch(shiftsProvider).value;
     String? shiftText;
@@ -153,7 +158,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       final today = clock.now().toUtc();
       final mine = shifts.where((x) {
         final d = x.startsAt.toUtc();
-        return d.year == today.year && d.month == today.month && d.day == today.day;
+        return d.year == today.year &&
+            d.month == today.month &&
+            d.day == today.day;
       });
       shiftText = mine.isEmpty
           ? l10n.shiftNoneToday
@@ -168,103 +175,148 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           child: Column(
             children: [
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(TurboSpacing.screen),
+                child: Stack(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ListView(
+                      padding: const EdgeInsets.all(TurboSpacing.screen),
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(l10n.homeOffDuty, style: text.bodySmall),
-                              Semantics(
-                                header: true,
-                                child: Text(
-                                  l10n.homeGreeting(firstName),
-                                  style: text.headlineMedium,
-                                ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(l10n.homeOffDuty, style: text.bodySmall),
+                                  Semantics(
+                                    header: true,
+                                    child: Text(
+                                      l10n.homeGreeting(firstName),
+                                      style: text.headlineMedium,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            TurboAvatar(name: firstName),
+                          ],
                         ),
-                        TurboAvatar(name: firstName),
-                      ],
-                    ),
-                    const SizedBox(height: TurboSpacing.lg),
-                    TurboCard(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(l10n.homeYourVehicle, style: text.bodySmall),
-                                const SizedBox(height: TurboSpacing.xs),
-                                Text(
-                                  vehicle == null
-                                      ? l10n.homeNoVehicle
-                                      : l10n.homeVehicle(
+                        const SizedBox(height: TurboSpacing.lg),
+                        TurboCard(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.homeYourVehicle,
+                                      style: text.bodySmall,
+                                    ),
+                                    const SizedBox(height: TurboSpacing.xs),
+                                    if (vehicle == null)
+                                      Text(
+                                        l10n.homeNoVehicle,
+                                        style: text.titleLarge,
+                                      )
+                                    else ...[
+                                      Text(
+                                        vehicle.plateNumber,
+                                        style: text.titleLarge,
+                                      ),
+                                      Text(
+                                        l10n.homeVehicle(
                                           vehicle.colour,
                                           vehicle.make,
                                           vehicle.model,
-                                          vehicle.plateNumber,
                                         ),
-                                  style: text.titleLarge,
+                                        style: text.bodyMedium,
+                                      ),
+                                    ],
+                                  ],
                                 ),
+                              ),
+                              // No car picture: the one we have is a silver saloon, not every driver's car.
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: TurboSpacing.lg),
+                        if (expired.isNotEmpty) ...[
+                          banner(
+                            l10n.docBanner(
+                              docName(l10n, expired.first.type),
+                              DateFormat('d MMM')
+                                  .format(expired.first.expiresOn!),
+                            ),
+                          ),
+                          const CallSupervisorButton(),
+                          const SizedBox(height: TurboSpacing.lg),
+                        ],
+                        readiness.when(
+                          loading: () => const LoadingState(rows: 2),
+                          error: (_, _) => ErrorState(
+                            onRetry: () => ref.invalidate(readinessProvider),
+                          ),
+                          data: (r) {
+                            final source = ref.read(readinessSourceProvider);
+                            return ReadinessBoard(
+                              readiness: r,
+                              documents: docs,
+                              shift: shiftText,
+                              onOpenDocuments: () =>
+                                  context.go('/me/documents'),
+                              onFixLocation: () async {
+                                final viaSettings =
+                                    r.location ==
+                                        DriverLocationAccess.whileInUse ||
+                                    r.location ==
+                                        DriverLocationAccess.deniedForever;
+                                if (!await showLocationPriming(
+                                  context,
+                                  viaSettings: viaSettings,
+                                )) {
+                                  return;
+                                }
+                                if (viaSettings) {
+                                  await source.openSettings();
+                                } else {
+                                  await source.requestLocation();
+                                }
+                                ref.invalidate(readinessProvider);
+                              },
+                              onFixNotifications: () async {
+                                if (!await source.requestNotifications()) {
+                                  await source.openSettings();
+                                }
+                                ref.invalidate(readinessProvider);
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    // A soft edge, so it is clear the tiles go on under the button.
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: IgnorePointer(
+                        child: Container(
+                          height: TurboSpacing.xl,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                context.turbo.colors.background.withValues(
+                                  alpha: 0,
+                                ),
+                                context.turbo.colors.background,
                               ],
                             ),
                           ),
-                          if (vehicle != null) ...[
-                            const SizedBox(width: TurboSpacing.md),
-                            const VehicleImage(height: TurboSizes.primaryAction),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: TurboSpacing.xl),
-                    if (expired.isNotEmpty) ...[
-                      banner(
-                        l10n.docBanner(
-                          docName(l10n, expired.first.type),
-                          DateFormat('d MMM').format(expired.first.expiresOn!),
                         ),
                       ),
-                      const CallSupervisorButton(),
-                      const SizedBox(height: TurboSpacing.lg),
-                    ],
-                    readiness.when(
-                      loading: () => const LoadingState(rows: 2),
-                      error: (_, _) => ErrorState(
-                        onRetry: () => ref.invalidate(readinessProvider),
-                      ),
-                      data: (r) {
-                        final source = ref.read(readinessSourceProvider);
-                        return ReadinessBoard(
-                          readiness: r,
-                          documents: docs,
-                          shift: shiftText,
-                          onOpenDocuments: () => context.go('/me/documents'),
-                          onFixLocation: () async {
-                            final viaSettings = r.location == DriverLocationAccess.whileInUse ||
-                                r.location == DriverLocationAccess.deniedForever;
-                            if (!await showLocationPriming(context, viaSettings: viaSettings)) return;
-                            if (viaSettings) {
-                              await source.openSettings();
-                            } else {
-                              await source.requestLocation();
-                            }
-                            ref.invalidate(readinessProvider);
-                          },
-                          onFixNotifications: () async {
-                            if (!await source.requestNotifications()) {
-                              await source.openSettings();
-                            }
-                            ref.invalidate(readinessProvider);
-                          },
-                        );
-                      },
                     ),
                   ],
                 ),

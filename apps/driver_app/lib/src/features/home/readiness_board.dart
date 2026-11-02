@@ -45,7 +45,9 @@ class ReadinessBoard extends StatelessWidget {
     final docs = documents;
     DriverDoc? worstDoc;
     for (final d in docs ?? const <DriverDoc>[]) {
-      if (worstDoc == null || d.status.index > worstDoc.status.index) worstDoc = d;
+      if (worstDoc == null || d.status.index > worstDoc.status.index) {
+        worstDoc = d;
+      }
     }
     final docsExpired = worstDoc?.status == DocStatus.expired;
 
@@ -72,29 +74,23 @@ class ReadinessBoard extends StatelessWidget {
     }) {
       final tag = ok ? l10n.readinessOk : (fixLabel ?? l10n.readinessProblem);
       return BentoTile(
+        stretch: true,
         label: label,
         title: value,
         semanticLabel: '$label, $value, $tag',
         onTap: ok ? null : onFix,
-        // A wrap, so at large text the picture drops below the tag instead of squeezing it.
-        trailing: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          runSpacing: TurboSpacing.sm,
-          children: [
-            StatusChip(
-              label: tag,
-              icon: ok ? Icons.check : Icons.error_outline,
-              tone: ok ? StatusTone.success : StatusTone.danger,
-            ),
-            art,
-          ],
+        tag: StatusChip(
+          label: tag,
+          icon: ok ? Icons.check : Icons.error_outline,
+          tone: ok ? StatusTone.success : StatusTone.danger,
         ),
+        trailing: art,
       );
     }
 
     final Widget docsTile = worstDoc == null
         ? BentoTile(
+            stretch: true,
             label: l10n.readinessTileDocuments,
             title: l10n.readinessDocuments,
             trailing: const Align(
@@ -103,13 +99,28 @@ class ReadinessBoard extends StatelessWidget {
             ),
           )
         : tile(
-            label: worstDoc.status == DocStatus.valid ? l10n.readinessTileDocuments : docName(l10n, worstDoc.type),
+            label: worstDoc.status == DocStatus.valid
+                ? l10n.readinessTileDocuments
+                : docName(l10n, worstDoc.type),
             value: docStatusWord(l10n, worstDoc.status),
             ok: !docsExpired,
             art: const TurboArtImage(TurboArt.identificationCard),
             fixLabel: l10n.readinessFix,
             onFix: onOpenDocuments,
           );
+
+    Widget tick(String label) => Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check, size: TurboSizes.iconSm, color: t.colors.success),
+          const SizedBox(width: TurboSpacing.xs),
+          Flexible(child: Text(label, style: text.bodyMedium)),
+        ],
+      ),
+    );
 
     Widget pair(Widget a, Widget b) => IntrinsicHeight(
       child: Row(
@@ -139,6 +150,7 @@ class ReadinessBoard extends StatelessWidget {
         const SizedBox(height: TurboSpacing.md),
         pair(
           BentoTile(
+            stretch: true,
             label: l10n.readinessTileShift,
             title: shift ?? '–',
             trailing: const TurboArtImage(TurboArt.calendar),
@@ -165,31 +177,45 @@ class ReadinessBoard extends StatelessWidget {
             label: l10n.readinessTileBattery,
             value: l10n.readinessBatteryPercent(r.batteryPercent),
             ok: r.batteryOk,
-            art: Icon(
-              r.charging ? Icons.battery_charging_full : Icons.battery_std,
-              size: TurboSizes.iconLg,
-              color: r.batteryOk ? t.colors.textSecondary : t.colors.danger,
-            ),
+            art: const TurboArtImage(TurboArt.mobilePhone),
           ),
           docsTile,
         ),
         const SizedBox(height: TurboSpacing.md),
-        pair(
-          tile(
-            label: l10n.readinessTileNotifications,
-            value: r.notifications ? l10n.readinessOn : l10n.readinessOff,
-            ok: r.notifications,
-            art: const TurboArtImage(TurboArt.bell),
-            fixLabel: l10n.readinessFix,
-            onFix: onFixNotifications,
+        // Fine things are a tick line; a tile appears only when it needs fixing.
+        if (!r.notifications || !r.online)
+          pair(
+            !r.notifications
+                ? tile(
+                    label: l10n.readinessTileNotifications,
+                    value: l10n.readinessOff,
+                    ok: false,
+                    art: const TurboArtImage(TurboArt.bell),
+                    fixLabel: l10n.readinessFix,
+                    onFix: onFixNotifications,
+                  )
+                : const SizedBox.shrink(),
+            !r.online
+                ? tile(
+                    label: l10n.readinessTileInternet,
+                    value: l10n.readinessOffline,
+                    ok: false,
+                    art: const TurboArtImage(TurboArt.warning),
+                  )
+                : const SizedBox.shrink(),
           ),
-          tile(
-            label: l10n.readinessTileInternet,
-            value: r.online ? l10n.readinessConnected : l10n.readinessOffline,
-            ok: r.online,
-            art: const TurboArtImage(TurboArt.mobilePhone),
+        if (r.notifications || r.online)
+          Padding(
+            padding: const EdgeInsets.only(top: TurboSpacing.md),
+            child: Wrap(
+              spacing: TurboSpacing.lg,
+              runSpacing: TurboSpacing.sm,
+              children: [
+                if (r.notifications) tick(l10n.readinessNotifications),
+                if (r.online) tick(l10n.readinessInternet),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

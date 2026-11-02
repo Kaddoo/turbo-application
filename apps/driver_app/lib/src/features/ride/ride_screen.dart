@@ -255,6 +255,7 @@ class _OfferState extends ConsumerState<_Offer> {
                       if (i > 0) const SizedBox(width: TurboSpacing.md),
                       Expanded(
                         child: BentoTile(
+                          stretch: true,
                           label: '',
                           title: label,
                           trailing: TurboArtImage(art),
@@ -294,7 +295,9 @@ class _OfferState extends ConsumerState<_Offer> {
       String? footer,
       BentoTone tone = BentoTone.surface,
       bool money = false,
+      Widget? picture,
     }) => BentoTile(
+      stretch: true,
       label: label,
       title: title,
       tone: tone,
@@ -303,7 +306,7 @@ class _OfferState extends ConsumerState<_Offer> {
           ? '$label, $title'
           : '$label, $title, $footer',
       footer: footer == null ? null : Text(footer, style: text.bodyMedium),
-      trailing: TurboArtImage(art),
+      trailing: picture ?? TurboArtImage(art),
     );
     Widget pair(Widget a, Widget? b) => IntrinsicHeight(
       child: Row(
@@ -393,6 +396,7 @@ class _OfferState extends ConsumerState<_Offer> {
                   l10n.assignTileStudent,
                   r.student.firstName,
                   TurboArt.bustsInSilhouette,
+                  picture: TurboAvatar(name: r.student.firstName),
                 ),
                 r.farePesewas == null
                     ? null

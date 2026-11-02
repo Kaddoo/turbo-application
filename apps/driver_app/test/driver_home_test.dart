@@ -77,12 +77,15 @@ void main() {
       await bootDriver(tester, driverServer());
       await settle(tester);
       expect(find.text('Hello, Kofi'), findsOneWidget);
-      expect(find.text('Silver Toyota Corolla · GR-4821-24'), findsOneWidget);
-      expect(find.byType(VehicleImage), findsOneWidget);
+      expect(find.text('Silver Toyota Corolla'), findsOneWidget);
+      expect(find.text('GR-4821-24'), findsOneWidget);
+      expect(find.byType(VehicleImage), findsNothing);
       expect(find.text('Before you go on duty'), findsOneWidget);
       expect(find.text('Ready to go'), findsOneWidget);
-      expect(find.text('Ready'), findsNWidgets(4));
-      expect(find.text('Documents checked when you go on duty'), findsOneWidget);
+      expect(find.text('Ready'), findsNWidgets(2));
+      expect(find.text('Notifications on'), findsOneWidget);
+      expect(find.text('Internet connected'), findsOneWidget);
+      expect(find.text('Checked on duty'), findsOneWidget);
     });
 
     for (final (name, ok) in [('ready', true), ('blocked', false)]) {
@@ -145,7 +148,9 @@ void main() {
     testWidgets('charging counts even when the battery is low', (tester) async {
       await bootDriver(tester, driverServer(), readiness: FakeReadiness(percent: 8, charging: true));
       await settle(tester);
-      expect(find.text('Ready'), findsNWidgets(4));
+      expect(find.text('Ready'), findsNWidgets(2));
+      expect(find.text('Notifications on'), findsOneWidget);
+      expect(find.text('Internet connected'), findsOneWidget);
     });
 
     testWidgets('going on duty sends the request, starts sharing and shows the waiting screen', (tester) async {

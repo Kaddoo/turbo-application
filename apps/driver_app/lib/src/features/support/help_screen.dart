@@ -41,6 +41,7 @@ class HelpScreen extends StatelessWidget {
                         if (i > 0) const SizedBox(width: TurboSpacing.md),
                         Expanded(
                           child: BentoTile(
+                            stretch: true,
                             label: '',
                             title: label,
                             trailing: TurboArtImage(art),

@@ -541,8 +541,8 @@ abstract class AppLocalizations {
   /// No description provided for @homeVehicle.
   ///
   /// In en, this message translates to:
-  /// **'{colour} {make} {model} · {plate}'**
-  String homeVehicle(String colour, String make, String model, String plate);
+  /// **'{colour} {make} {model}'**
+  String homeVehicle(String colour, String make, String model);
 
   /// No description provided for @homeNoVehicle.
   ///
@@ -643,7 +643,7 @@ abstract class AppLocalizations {
   /// No description provided for @readinessDocuments.
   ///
   /// In en, this message translates to:
-  /// **'Documents checked when you go on duty'**
+  /// **'Checked on duty'**
   String get readinessDocuments;
 
   /// No description provided for @readinessReadyToGo.
@@ -1159,7 +1159,7 @@ abstract class AppLocalizations {
   /// No description provided for @tripCancelledBy.
   ///
   /// In en, this message translates to:
-  /// **'{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by Turbo} admin{Cancelled by Turbo} other{Cancelled}}'**
+  /// **'{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by the system} admin{Cancelled by staff} other{Cancelled}}'**
   String tripCancelledBy(String who);
 
   /// No description provided for @rideStatusSearching.

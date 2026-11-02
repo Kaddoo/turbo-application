@@ -30,6 +30,31 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 - **What changed:** the filter row is the app's own chips (as on Activity) labelled All, Top-ups, Rides, Refunds, in place of Material choice chips that read "Transactions", "Top-up", "Ride", "Refund", "Adjustment". Adjustments and reversals now show only under All, as in the design. Each row's picture is a kit 3D picture (coin, padlock, key, taxi, money bag, credit card, warning) instead of a Material icon, so Held shows the lock as in the design.
 - **Checks:** analyze clean, 174 student tests pass (each chip sends its type to the server, in dark mode at 200% text). Not run on a phone.
 
+## 2026-11-02, Claude, code: driver tile alignment, plate-first vehicle card, 3D icon on Me (branch `driver-screenshot-fixes`)
+
+- **Files:** `packages/turbo_ui/.../bento_tile.dart`, `apps/driver_app` `home/readiness_board.dart`, `home/home_screen.dart`, `me/me_screen.dart`, `l10n/app_en.arb` (+ generated).
+- **Tiles:** `BentoTile` has a `tag` (chip, bottom left) and `stretch` (in a row of equal height, the chip and picture go to the bottom, so pictures line up across the row). The readiness tiles use both; the Battery tile uses the 3D phone instead of a Flutter battery icon; the Internet problem tile uses the 3D warning. Student tiles are unchanged (`stretch` is off by default).
+- **Vehicle card:** the plate is the title and the colour, make and model sit under it, as in `design/new` screen 17.
+- **Me:** the signed-in device row uses the 3D phone. Terms and Privacy keep the small open-link arrow, and the bottom bar keeps outline icons, as in the design.
+- **Fix:** the "Cancelled by Turbo" string in the trip timeline broke the no-product-name test (the scan reads the generated l10n); now "Cancelled by the system" and "Cancelled by staff". `main` carries the old wording until this branch is merged.
+- **Checks:** analyze clean; driver 89, turbo_ui 96 pass. A scratch render showed only blocks (test font, no pictures), so the alignment is NOT confirmed by eye; check it in the next TestFlight build.
+- **Same alignment on the other tile rows:** the Help topics, the decline reasons, the offer tiles and the trip detail tiles also use `stretch`, so their pictures sit at the bottom and line up across each row (Kevin saw the same uneven pictures on Help). Not yet seen on a phone; goes in the next build.
+- **The grey speech-bubble button** in the screenshots is not drawn by the apps (nothing in `apps/*/lib` or `turbo_ui` does); it is almost certainly the TestFlight feedback button.
+
+## 2026-11-02, Claude, code: driver app fixes from the build 7 screenshots
+
+**Branch:** `driver-screenshot-fixes`, from main. **Files:** `apps/driver_app` `home/home_screen.dart`, `home/readiness_board.dart`, `me/me_screen.dart`, `ride/ride_screen.dart`, `l10n/app_en.arb` (+ generated), tests `driver_home_test.dart`, `driver_gaps_test.dart`.
+
+- **Vehicle card:** name and plate on separate lines; the car picture is no longer drawn (it was a silver saloon for every driver). `VehicleImage` stays in `turbo_ui` for when there is a matching picture.
+- **Documents tile with no data:** titled "Checked on duty".
+- **Readiness:** Notifications and Internet are a tick line when fine and tiles only when something is wrong (decision: `design/new` wins). The tile list ends in a soft fade above the Go on duty button so it reads as scrolling, and the gap under the vehicle card is tighter.
+- **Offer, Student tile:** an initials avatar instead of the silhouette picture (no student photo in the contract).
+- **Me:** Vehicle, Shifts, Attendance, Salary and Help use kit pictures; the plate is title-sized, not 26 pt mono.
+- **Floating speech-bubble button:** nothing in `apps/*/lib` or `turbo_ui` draws one (only list art and a status-chip icon), so it is almost certainly the TestFlight or system overlay. Not confirmed on a device.
+
+**Checks:** `flutter analyze` clean, 89 driver tests pass. Not run on a phone; spacing and the bottom fade are unchecked by eye.
+**Not done:** the rest of the driver comparison against `design/new` (map screens, dark map style, other screens); more screenshots are still to come.
+
 ## 2026-11-02, Claude, code: student home tiles and pickup tabs (branch `student-home-tiles`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/home/home_screen.dart`, `features/ride/ride_providers.dart`, `lib/l10n/app_en.arb` (+ generated), `test/home_flow_test.dart`.
