@@ -133,20 +133,42 @@ class _HoldToSosState extends ConsumerState<HoldToSos> with SingleTickerProvider
                     ),
                     Padding(
                       padding: const EdgeInsets.all(TurboSpacing.lg),
-                      child: Column(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _sending ? l10n.sosAlerted : (holding ? l10n.sosSecondsLeft(left) : l10n.sosHold),
-                            style: (widget.tall ? text.titleLarge : text.labelLarge)?.copyWith(color: t.colors.onSos),
-                            textAlign: TextAlign.center,
-                          ),
-                          if (widget.tall && !holding && !_sending)
-                            Text(
-                              l10n.sosHoldSeconds,
-                              style: text.bodySmall?.copyWith(color: t.colors.onSos),
-                              textAlign: TextAlign.center,
+                          // While held, a ring fills round the seconds left, so the hold is seen as well as counted.
+                          if (holding) ...[
+                            SizedBox.square(
+                              dimension: widget.tall ? TurboSizes.iconLg : TurboSizes.iconMd,
+                              child: ExcludeSemantics(
+                                child: CircularProgressIndicator(
+                                  value: _hold.value,
+                                  strokeWidth: TurboSpacing.xs,
+                                  color: t.colors.onSos,
+                                  backgroundColor: t.colors.onSos.withValues(alpha: 0.3),
+                                ),
+                              ),
                             ),
+                            const SizedBox(width: TurboSpacing.md),
+                          ],
+                          Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _sending ? l10n.sosAlerted : (holding ? l10n.sosSecondsLeft(left) : l10n.sosHold),
+                                  style: (widget.tall ? text.titleLarge : text.labelLarge)?.copyWith(color: t.colors.onSos),
+                                  textAlign: TextAlign.center,
+                                ),
+                                if (widget.tall && !holding && !_sending)
+                                  Text(
+                                    l10n.sosHoldSeconds,
+                                    style: text.bodySmall?.copyWith(color: t.colors.onSos),
+                                    textAlign: TextAlign.center,
+                                  ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -177,7 +199,7 @@ class _SosResult extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(child: BadgeIcon(icon: ok ? Icons.check : Icons.priority_high)),
+        Center(child: HeroIcon(art: ok ? TurboArt.shield : TurboArt.warning)),
         const SizedBox(height: TurboSpacing.lg),
         Semantics(
           liveRegion: true,

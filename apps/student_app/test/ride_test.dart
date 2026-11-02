@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:student_app/src/features/safety/sos.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import 'support/fake_server.dart';
 import 'support/home_harness.dart';
@@ -246,9 +247,17 @@ void main() {
             'createdAt': DateTime.now().toUtc().toIso8601String(),
           });
       await inTrip(tester, server);
+      final ring = find.descendant(of: find.byType(HoldToSos), matching: find.byType(CircularProgressIndicator));
+      expect(ring, findsNothing);
       final gesture = await tester.startGesture(tester.getCenter(find.text('Hold for SOS')));
+      await tester.pump(); // the animation clock starts on the first frame
       await tester.pump(const Duration(seconds: 1));
+      // While held, a ring and the seconds left show; letting go clears them.
+      expect(ring, findsOneWidget);
+      expect(find.text('2 seconds'), findsOneWidget);
       await gesture.up();
+      await tester.pump();
+      expect(ring, findsNothing);
       await tester.pump(const Duration(seconds: 3));
       expect(server.calls('POST /safety/sos'), isEmpty);
 
@@ -261,6 +270,7 @@ void main() {
       expect(body['rideId'], rideId);
       expect(body['location']['lat'], 5.7405);
       expect(find.text('Help has been alerted'), findsOneWidget);
+      expect(find.descendant(of: find.byType(BottomSheet), matching: find.byType(HeroIcon)), findsOneWidget);
     });
 
     testWidgets('if SOS cannot be sent, the emergency number is offered at once', (tester) async {
