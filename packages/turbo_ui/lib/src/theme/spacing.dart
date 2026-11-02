@@ -48,4 +48,7 @@ abstract final class TurboSizes {
 
   /// The big picture on sign-in and system screens.
   static const double heroIcon = 88;
+
+  /// Height of one label and one big number, for a bar pinned above a list.
+  static const double pinnedBar = 56;
 }

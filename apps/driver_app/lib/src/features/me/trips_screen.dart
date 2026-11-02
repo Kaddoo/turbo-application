@@ -44,14 +44,16 @@ class TripsScreen extends ConsumerWidget {
           loading: () => const LoadingState(),
           error: (_, _) => ErrorState(message: l10n.tripsLoadFailed, onRetry: () => ref.invalidate(tripsProvider)),
           data: (list) => list.isEmpty
-              ? EmptyState(icon: Icons.route_outlined, message: l10n.tripsEmpty)
+              ? EmptyState(art: TurboArt.oncomingTaxi, message: l10n.tripsEmpty)
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(tripsProvider),
                   child: ListView(
                     padding: const EdgeInsets.all(TurboSpacing.lg),
                     children: [
-                      for (final r in list)
-                        Padding(
+                      for (final (i, r) in list.indexed)
+                        TurboStagger(
+                          index: i,
+                          child: Padding(
                           padding: const EdgeInsets.only(bottom: TurboSpacing.md),
                           child: TurboCard(
                             child: Column(
@@ -68,6 +70,7 @@ class TripsScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
+                        ),
                         ),
                     ],
                   ),

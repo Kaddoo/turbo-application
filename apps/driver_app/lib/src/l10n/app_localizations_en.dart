@@ -850,7 +850,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceTitle => 'Attendance';
 
   @override
-  String get attendanceEmpty => 'No attendance records yet.';
+  String get attendanceEmpty =>
+      'No attendance records yet. Your hours show up here once you have been on duty.';
+
+  @override
+  String get hoursWeekLabel => 'This week';
+
+  @override
+  String hoursWeekTotal(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
 
   @override
   String attendanceIn(String time) {
@@ -891,7 +900,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get salaryTitle => 'Salary history';
 
   @override
-  String get salaryEmpty => 'No payments recorded yet.';
+  String get salaryEmpty =>
+      'No payments recorded yet. Your pay history shows up here.';
+
+  @override
+  String salaryYearLabel(int year) {
+    return 'Paid in $year';
+  }
 
   @override
   String get salaryNote =>

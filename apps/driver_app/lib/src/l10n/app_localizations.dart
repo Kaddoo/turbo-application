@@ -1573,8 +1573,20 @@ abstract class AppLocalizations {
   /// No description provided for @attendanceEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No attendance records yet.'**
+  /// **'No attendance records yet. Your hours show up here once you have been on duty.'**
   String get attendanceEmpty;
+
+  /// No description provided for @hoursWeekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get hoursWeekLabel;
+
+  /// No description provided for @hoursWeekTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String hoursWeekTotal(int hours, int minutes);
 
   /// No description provided for @attendanceIn.
   ///
@@ -1639,8 +1651,14 @@ abstract class AppLocalizations {
   /// No description provided for @salaryEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No payments recorded yet.'**
+  /// **'No payments recorded yet. Your pay history shows up here.'**
   String get salaryEmpty;
+
+  /// No description provided for @salaryYearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in {year}'**
+  String salaryYearLabel(int year);
 
   /// No description provided for @salaryNote.
   ///
