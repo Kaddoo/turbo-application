@@ -56,9 +56,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
     setState(() => _searching = true);
     _debounce = Timer(const Duration(milliseconds: 350), () async {
       try {
-        final found = await ref
-            .read(placeSearchProvider)
-            .search(q, bounds: searchBounds(boundary));
+        final found = await ref.read(placeSearchProvider).search(q);
         if (mounted && _query.text.trim() == q) {
           setState(() {
             _results = found;
@@ -274,7 +272,10 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                       card: true,
                       title: r.title,
                       subtitle: r.subtitle,
-                      leading: const Icon(Icons.place_outlined),
+                      // Official pickup points get the pushpin; other places the plain marker.
+                      leading: r.isPickupPoint
+                          ? const TurboArtImage(TurboArt.roundPushpin, size: TurboSizes.iconMd)
+                          : const Icon(Icons.place_outlined),
                       onTap: () => _choose(r),
                     ),
                   const SizedBox(height: TurboSpacing.xl),

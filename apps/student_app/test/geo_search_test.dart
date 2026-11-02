@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:student_app/src/features/home/geo.dart';
@@ -48,50 +46,57 @@ void main() {
     });
   });
 
-  group('Google place search', () {
-    test('sends the key and the service-area box, and reads suggestions', () async {
+  group('API place search', () {
+    ApiPlaceSearch searchOver(FakeServer server) => ApiPlaceSearch(TurboClient(
+          baseUrl: 'http://test',
+          appVersion: 'ios/1.0.0',
+          accessToken: () => null,
+          dio: Dio(BaseOptions(baseUrl: 'http://test'))..httpClientAdapter = server,
+        ));
+
+    test('asks the server, with one session token, and reads the matches (pickup points first)', () async {
       final server = FakeServer()
-        ..on('POST https://places.googleapis.com/v1/places:autocomplete', body: {
-          'suggestions': [
-            {
-              'placePrediction': {
-                'placeId': 'abc',
-                'text': {'text': 'Ashaiman China Mall, Ashaiman'},
-                'structuredFormat': {
-                  'mainText': {'text': 'Ashaiman China Mall'},
-                  'secondaryText': {'text': 'Ashaiman'},
-                },
-              },
-            },
-            {'queryPrediction': {}},
+        ..on('GET /places/autocomplete', body: {
+          'items': [
+            {'placeId': 'pp-1', 'label': 'Main gate', 'landmark': 'By the security post', 'isPickupPoint': true},
+            {'placeId': 'g-2', 'label': 'Ashaiman China Mall', 'landmark': null, 'isPickupPoint': false},
           ],
         });
-      final search = GooglePlaceSearch(apiKey: 'k', bundleId: 'gh.turbo.student', dio: Dio()..httpClientAdapter = server);
-      final found = await search.search('Ashaiman', bounds: [5.7, 0.05, 5.8, 0.1]);
-      expect(found.single.title, 'Ashaiman China Mall');
-      expect(found.single.subtitle, 'Ashaiman');
+      final search = searchOver(server);
+      final found = await search.search('Ash');
+      expect(found.map((f) => f.title), ['Main gate', 'Ashaiman China Mall']);
+      expect(found.first.isPickupPoint, isTrue);
+      expect(found.first.subtitle, 'By the security post');
+      expect(found.last.isPickupPoint, isFalse);
       final request = server.requests.single;
-      expect(request.headers['X-Goog-Api-Key'], 'k');
-      expect(request.headers['X-Ios-Bundle-Identifier'], 'gh.turbo.student');
-      final body = jsonDecode(request.data is String ? request.data as String : jsonEncode(request.data)) as Map;
-      expect(body['locationRestriction']['rectangle']['low'], {'latitude': 5.7, 'longitude': 0.05});
-      expect(body['regionCode'], 'GH');
+      expect(request.queryParameters['q'], 'Ash');
+      expect(request.queryParameters['sessionToken'], isNotEmpty);
+      // No map provider key and no box leave the phone: the server limits the results.
+      expect(request.headers.containsKey('X-Goog-Api-Key'), isFalse);
     });
 
-    test('resolving a suggestion returns its point and label', () async {
+    test('resolving a match returns its point and label, then starts a new session', () async {
       final server = FakeServer()
-        ..on('GET https://places.googleapis.com/v1/places/abc', body: {
-          'location': {'latitude': 5.79, 'longitude': 0.07},
-        });
-      final search = GooglePlaceSearch(apiKey: 'k', bundleId: 'gh.turbo.student', dio: Dio()..httpClientAdapter = server);
-      final place = await search.resolve(const PlaceSuggestion(id: 'abc', title: 'Ashaiman China Mall'));
+        ..on('GET /places/g-2', body: {'point': {'lat': 5.79, 'lng': 0.07}, 'label': 'Ashaiman China Mall'})
+        ..on('GET /places/autocomplete', body: {'items': []});
+      final search = searchOver(server);
+      await search.search('Ash');
+      final token = server.requests.last.queryParameters['sessionToken'];
+      final place = await search.resolve(const PlaceSuggestion(id: 'g-2', title: 'Ashaiman China Mall'));
       expect(place.label, 'Ashaiman China Mall');
       expect(place.point.lat, 5.79);
-      expect(server.requests.single.headers['X-Goog-FieldMask'], 'location,displayName');
+      expect(server.requests.last.queryParameters['sessionToken'], token, reason: 'the pick uses the typing session');
+      await search.search('Lib');
+      expect(server.requests.last.queryParameters['sessionToken'], isNot(token), reason: 'the next search is a new session');
     });
 
-    test('without a key, search is off', () {
-      expect(GooglePlaceSearch(apiKey: '', bundleId: 'x').available, isFalse);
+    test('a failure is a problem the screen can show', () async {
+      final server = FakeServer()..on('GET /places/autocomplete', status: 503, body: problem('internal', 503));
+      expect(searchOver(server).search('Ash'), throwsA(isA<ApiProblem>()));
+    });
+
+    test('search is always offered; only the disabled stand-in says no', () {
+      expect(searchOver(FakeServer()).available, isTrue);
       expect(const DisabledPlaceSearch().available, isFalse);
     });
   });

@@ -163,6 +163,29 @@ void main() {
     });
   });
 
+  group('place search results', () {
+    testWidgets('official pickup points show the pushpin and their landmark, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final search = FakeSearch(suggestions: const [
+        PlaceSuggestion(id: 'pp', title: 'Library', subtitle: 'Ground floor entrance', isPickupPoint: true),
+        PlaceSuggestion(id: 'g', title: 'Ashaiman China Mall'),
+      ]);
+      await bootHome(tester, homeServer(), search: search, size: const Size(390, 2400));
+      await tester.tap(find.widgetWithText(FilledButton, 'Where to?'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'Lib');
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      expect(find.text('Ground floor entrance'), findsOneWidget);
+      expect(find.text('Ashaiman China Mall'), findsOneWidget);
+      // One result is an official point (pushpin); the other is a plain place.
+      expect(find.descendant(of: find.byType(TurboListRow), matching: find.byType(TurboArtImage)), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('quote', () {
     Future<void> toQuote(WidgetTester tester, FakeServer server) async {
       await bootHome(tester, server);

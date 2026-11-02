@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: place search through the API (branch `student-place-search`, from `main` at contract 0.6.0)
+
+- **Files:** `apps/student_app/lib/src/features/home/place_search.dart`, `destination_screen.dart`, `test/geo_search_test.dart`, `test/home_flow_test.dart`.
+- **What changed:** drop-off search now calls `GET /places/autocomplete` and `GET /places/{placeId}` with one session token per search (a new one after a place is chosen). Official pickup points come back first and show the pushpin with their landmark; other places show the plain marker. The app no longer calls Google Places itself, so the `PLACES_API_KEY` build setting and `GooglePlaceSearch` are gone and no map key beyond the map SDK's is needed for search. Search is always offered; a failure shows the existing "We couldn't search just now" message.
+- **Until Places API (New) is enabled for staging's key:** the server returns official pickup points only, so a search for something that is not a pickup point finds nothing there. That is a server setting, not an app change.
+- **Not changed:** results still start at three typed letters (the server accepts two); the pickup-point list under the search box.
+- **Checks:** analyze clean, 189 student tests pass (the session token flow, the failure case, pickup-point rows in dark mode at 200% text). Not run on a phone, and not tried against the live API.
+
 ## 2026-11-02, Claude, code: contract 0.6.0 (CR-2/CR-4, CR-3, CR-11) (branch `contract-0-6-0`, from main)
 
 Done on Kevin's instruction (the contract is normally planning's). All additive.

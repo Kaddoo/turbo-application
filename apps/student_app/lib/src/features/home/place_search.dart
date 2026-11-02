@@ -1,21 +1,22 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/providers.dart';
 import 'geo.dart';
 
 class PlaceSuggestion {
-  const PlaceSuggestion({required this.id, required this.title, this.subtitle});
+  const PlaceSuggestion({required this.id, required this.title, this.subtitle, this.isPickupPoint = false});
 
   final String id;
   final String title;
   final String? subtitle;
+
+  /// An official campus pickup point, which the server lists before other places.
+  final bool isPickupPoint;
 }
 
-/// Finds drop-off places. Until the contract has a search endpoint (see
-/// CONTRACT_REQUESTS.md, CR-2) this talks to Google Places directly with a
-/// restricted key supplied at build time.
+/// Finds drop-off places.
 abstract class PlaceSearch {
   bool get available;
 
@@ -45,83 +46,49 @@ class DisabledPlaceSearch implements PlaceSearch {
   void newSession() {}
 }
 
-class GooglePlaceSearch implements PlaceSearch {
-  GooglePlaceSearch({required this.apiKey, required this.bundleId, Dio? dio})
-      : _dio = dio ?? Dio(BaseOptions(connectTimeout: const Duration(seconds: 8)));
+/// Place search through the API (`GET /places/autocomplete`, `GET /places/{id}`).
+/// Official pickup points come first, then places inside the service area; the
+/// map provider's key stays on the server, so the app carries none.
+class ApiPlaceSearch implements PlaceSearch {
+  ApiPlaceSearch(this._client);
 
-  final String apiKey;
-  final String bundleId;
-  final Dio _dio;
+  final TurboClient _client;
   String _session = const Uuid().v4();
 
+  /// The server decides what to return, so search is always offered.
   @override
-  bool get available => apiKey.isNotEmpty;
+  bool get available => true;
 
   @override
   void newSession() => _session = const Uuid().v4();
 
-  Options get _options => Options(headers: {
-        'X-Goog-Api-Key': apiKey,
-        'X-Ios-Bundle-Identifier': bundleId,
-      });
-
   @override
   Future<List<PlaceSuggestion>> search(String query, {List<double>? bounds}) async {
-    final response = await _dio.post<Map<String, dynamic>>(
-      'https://places.googleapis.com/v1/places:autocomplete',
-      options: _options,
-      data: {
-        'input': query,
-        'sessionToken': _session,
-        'languageCode': 'en',
-        'regionCode': 'GH',
-        if (bounds != null)
-          'locationRestriction': {
-            'rectangle': {
-              'low': {'latitude': bounds[0], 'longitude': bounds[1]},
-              'high': {'latitude': bounds[2], 'longitude': bounds[3]},
-            },
-          },
-      },
-    );
-    final suggestions = (response.data?['suggestions'] as List?) ?? const [];
-    return [
-      for (final s in suggestions)
-        if ((s as Map)['placePrediction'] is Map)
-          PlaceSuggestion(
-            id: s['placePrediction']['placeId'] as String,
-            title: (s['placePrediction']['structuredFormat']?['mainText']?['text'] ??
-                s['placePrediction']['text']?['text'] ??
-                '') as String,
-            subtitle: s['placePrediction']['structuredFormat']?['secondaryText']?['text'] as String?,
-          ),
-    ];
+    // The server already limits results to the service area, so [bounds] is not sent.
+    try {
+      final response = await _client.api.getStudentApi().autocompletePlaces(q: query, sessionToken: _session);
+      return [
+        for (final m in response.data!.items)
+          PlaceSuggestion(id: m.placeId, title: m.label, subtitle: m.landmark, isPickupPoint: m.isPickupPoint),
+      ];
+    } catch (e) {
+      throw problemOf(e);
+    }
   }
 
   @override
   Future<Location> resolve(PlaceSuggestion suggestion) async {
-    final response = await _dio.get<Map<String, dynamic>>(
-      'https://places.googleapis.com/v1/places/${suggestion.id}',
-      queryParameters: {'sessionToken': _session},
-      options: _options.copyWith(headers: {
-        ..._options.headers!,
-        'X-Goog-FieldMask': 'location,displayName',
-      }),
-    );
-    final loc = response.data!['location'] as Map;
-    newSession(); // a details call ends the billing session
-    return Location(
-      point: GeoPoint(lat: (loc['latitude'] as num).toDouble(), lng: (loc['longitude'] as num).toDouble()),
-      label: suggestion.title,
-    );
+    try {
+      final response = await _client.api.getStudentApi().getPlace(placeId: suggestion.id, sessionToken: _session);
+      newSession(); // choosing a place ends the search session
+      return response.data!;
+    } catch (e) {
+      throw problemOf(e);
+    }
   }
 }
 
-/// Wired from `--dart-define=PLACES_API_KEY=...`. Empty means search is off.
-final placeSearchProvider = Provider<PlaceSearch>((_) {
-  const key = String.fromEnvironment('PLACES_API_KEY');
-  return key.isEmpty ? const DisabledPlaceSearch() : GooglePlaceSearch(apiKey: key, bundleId: 'gh.turbo.student');
-});
+final placeSearchProvider = Provider<PlaceSearch>((ref) => ApiPlaceSearch(ref.watch(clientProvider)));
 
 /// Re-export so screens can bound searches without importing geo.dart.
 List<double>? searchBounds(GeoJsonPolygon? boundary) => boundingBox(boundary);
