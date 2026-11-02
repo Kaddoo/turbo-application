@@ -1,0 +1,60 @@
+name: deploy-api
+# Staging API and worker. Runs when api/ changes on main, or by hand from the Actions tab.
+# Needs the secrets listed in docs/11-ops-runbook.md ("Deploys from GitHub").
+on:
+  push:
+    branches: [main]
+    paths: ['api/**', '.github/workflows/deploy-api.yml']
+  workflow_dispatch:
+concurrency: { group: deploy-api, cancel-in-progress: false }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      # Stop early if the contract copy or a generated client is out of step.
+      - run: node tools/check-contract.mjs
+      - name: Did this push change the migrations?
+        id: mig
+        run: |
+          before="${{ github.event.before }}"
+          if [ -n "$before" ] && [ "$before" != "0000000000000000000000000000000000000000" ] && ! git diff --quiet "$before" HEAD -- api/migrations; then echo "changed=true" >> "$GITHUB_OUTPUT"; else echo "changed=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Set up SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Back up the database before a migration
+        if: steps.mig.outputs.changed == 'true'
+        run: ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" 'runuser -u postgres -- pgbackrest --stanza=main --type=diff backup'
+      - name: Keep a copy of what is running
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
+            ts=$(date +%Y%m%d-%H%M); cd /opt/turbo
+            cp -a turbo-api/src src.pre-$ts && cp -a turbo-api/contract contract.pre-$ts
+            ls -dt src.pre-* | tail -n +6 | xargs -r rm -rf; ls -dt contract.pre-* | tail -n +6 | xargs -r rm -rf'
+      - name: Copy the code
+        run: |
+          cd api
+          for p in src contract migrations scripts; do
+            rsync -a --delete -e "ssh -i ~/.ssh/deploy_key" "$p/" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/turbo/turbo-api/$p/"
+          done
+          rsync -a -e "ssh -i ~/.ssh/deploy_key" package.json package-lock.json "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/turbo/turbo-api/"
+      - name: Install, migrate, restart, check
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
+            set -e; cd /opt/turbo/turbo-api
+            chown -R turbo:turbo src contract migrations scripts package.json package-lock.json
+            runuser -u turbo -- npm ci --no-audit --no-fund
+            runuser -u turbo -- node --env-file=/etc/turbo/api.env scripts/migrate.js
+            grep -q "^STAFF_MFA=required" /etc/turbo/api.env || { echo "STAFF_MFA=required is missing from api.env"; exit 1; }
+            systemctl restart turbo-worker turbo-api
+            sleep 8
+            systemctl is-active turbo-api turbo-worker
+            curl -fsS http://127.0.0.1:3000/health'
+      - name: Check it from outside
+        run: curl -fsS https://api.turbogh.app/health
