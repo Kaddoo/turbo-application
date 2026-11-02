@@ -25,7 +25,7 @@ class BootErrorScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return SystemMessage(
-      icon: Icons.warning_amber_rounded,
+      art: TurboArt.warning,
       title: l10n.bootErrorTitle,
       message: l10n.bootErrorBody,
       action: TurboButton(
@@ -48,7 +48,7 @@ class UpdateRequiredScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return SystemMessage(
-      icon: Icons.system_update_outlined,
+      art: TurboArt.mobilePhone,
       title: l10n.updateRequiredTitle,
       message: l10n.updateRequiredBody(context.turbo.brand.appName),
     );
@@ -63,7 +63,7 @@ class MaintenanceScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final message = ref.watch(gateProvider).value?.maintenanceMessage;
     return SystemMessage(
-      icon: Icons.construction_outlined,
+      art: TurboArt.wrench,
       title: l10n.maintenanceTitle,
       message: message ?? l10n.maintenanceBody(context.turbo.brand.appName),
       action: TurboButton(
@@ -82,7 +82,7 @@ class SuspendedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return SystemMessage(
-      icon: Icons.lock_outline,
+      art: TurboArt.locked,
       title: l10n.suspendedTitle,
       message: l10n.suspendedBody,
     );

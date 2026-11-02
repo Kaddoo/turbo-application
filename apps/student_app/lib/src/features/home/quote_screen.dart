@@ -185,9 +185,7 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                             children: [
                               const Align(
                                 alignment: Alignment.centerLeft,
-                                child: HeroIcon(
-                                  icon: Icons.location_off_outlined,
-                                ),
+                                child: HeroIcon(art: TurboArt.oncomingTaxi),
                               ),
                               const SizedBox(height: TurboSpacing.lg),
                               Semantics(

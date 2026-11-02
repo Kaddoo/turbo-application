@@ -63,7 +63,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
     return AuthLayout(
       title: l10n.phoneTitle,
       accent: l10n.phoneTitleAccent,
-      icon: Icons.smartphone,
+      art: TurboArt.mobilePhone,
       onBack: () => context.go('/welcome'),
       action: TurboButton(label: l10n.phoneSendCode, driver: true, loading: _busy, onPressed: _send),
       children: [

@@ -31,6 +31,7 @@ flutter:
   # Stock photos from Pexels, credited in assets/photos/CREDITS.md. Apps reach them as packages/turbo_ui/assets/photos/<name>.
   assets:
     - assets/photos/
+    - assets/icons3d/
 
   # Fonts: Geist and Geist Mono (SIL Open Font License, see fonts/OFL-LICENSE.txt). Apps reach them as packages/turbo_ui/<family>.
   fonts:

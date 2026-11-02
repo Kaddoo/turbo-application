@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/spacing.dart';
 import '../theme/turbo_theme.dart';
 import 'hero_icon.dart';
+import 'turbo_art.dart';
 import 'status_chip.dart';
 
 /// A full-screen message with one way forward: update required, maintenance, couldn't start, account suspended.
@@ -10,16 +11,18 @@ import 'status_chip.dart';
 class SystemMessage extends StatelessWidget {
   const SystemMessage({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     this.message,
     this.action,
     this.footer,
     this.tag,
     this.image,
+    this.art,
   });
 
-  final IconData icon;
+  final IconData? icon;
+  final TurboArt? art;
   final ImageProvider? image;
   final String title;
   final String? message;
@@ -49,7 +52,7 @@ class SystemMessage extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          HeroIcon(icon: icon, image: image),
+                          HeroIcon(icon: icon, image: image, art: art),
                           const SizedBox(height: TurboSpacing.xl),
                           if (tag != null) ...[
                             tag!,

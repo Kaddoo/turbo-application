@@ -45,7 +45,7 @@ class SafetyScreen extends ConsumerWidget {
             BentoTile(
               label: l10n.safetyShareTrip,
               title: rideId == null ? l10n.safetyShareNoRide : l10n.safetyShareTrip,
-              trailing: const Icon(Icons.ios_share),
+              trailing: const TurboArtImage(TurboArt.speechBalloon),
               onTap: rideId == null ? null : () => context.push('/ride/$rideId/share'),
             ),
             const SizedBox(height: TurboSpacing.xl),

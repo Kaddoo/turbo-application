@@ -54,13 +54,11 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final state = ref.watch(verificationStateProvider);
 
     Widget view({
-      required IconData icon,
-      required Color color,
+      required TurboArt art,
       Widget? hero,
       required String title,
       String? body,
@@ -73,7 +71,7 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
               const SizedBox(height: TurboSpacing.xxl),
-              hero ?? Icon(icon, size: TurboSizes.iconLg + TurboSpacing.xl, color: color),
+              hero ?? Center(child: HeroIcon(art: art)),
               const SizedBox(height: TurboSpacing.xl),
               Semantics(header: true, liveRegion: true, child: Text(title, style: text.headlineMedium, textAlign: TextAlign.center)),
               if (body != null) ...[
@@ -97,8 +95,7 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
           error: (_, _) => ErrorState(message: l10n.statusRefreshFailed, onRetry: _refresh),
           data: (v) => switch (v.status) {
             VerificationStatus.approved => view(
-                icon: Icons.check_circle_outline,
-                color: t.colors.success,
+                art: TurboArt.checkMarkButton,
                 hero: const PhotoCard(asset: 'student-campus.jpg', height: 280),
                 title: l10n.statusApprovedTitle,
                 body: l10n.statusApprovedBody,
@@ -112,8 +109,7 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
                 ),
               ),
             VerificationStatus.needsAttention => view(
-                icon: Icons.info_outline,
-                color: t.colors.warning,
+                art: TurboArt.warning,
                 title: l10n.statusNeedsAttentionTitle,
                 body: v.message ?? l10n.statusNeedsAttentionFallback,
                 action: TurboButton(
@@ -124,15 +120,13 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
                 ),
               ),
             VerificationStatus.rejected => view(
-                icon: Icons.block,
-                color: t.colors.danger,
+                art: TurboArt.identificationCard,
                 title: l10n.statusRejectedTitle,
                 body: v.message ?? l10n.statusRejectedFallback,
                 note: l10n.statusRejectedContact,
               ),
             _ => view(
-                icon: Icons.schedule,
-                color: t.colors.textSecondary,
+                art: TurboArt.hourglassNotDone,
                 title: l10n.statusPendingTitle,
                 body: l10n.statusPendingBody,
               ),
