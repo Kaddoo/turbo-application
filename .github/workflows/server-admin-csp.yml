@@ -45,13 +45,13 @@ jobs:
           open('Caddyfile','w').write(s)
           print('Policy updated.')
           PY
-          docker compose up -d caddy
+          docker compose restart caddy
           sleep 8
           if curl -fsS -o /dev/null https://api.turbogh.app/health && curl -fsS -o /dev/null https://admin.turbogh.app/; then
             echo "Caddy restarted; API and dashboard answer."
           else
             echo "API or dashboard stopped answering; restoring the previous Caddyfile."
-            cp "Caddyfile.bak-$ts" Caddyfile; docker compose up -d caddy
+            cp "Caddyfile.bak-$ts" Caddyfile; docker compose restart caddy
             exit 1
           fi
           REMOTE
