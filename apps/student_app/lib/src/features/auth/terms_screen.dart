@@ -99,14 +99,14 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
             ),
           );
 
-      Widget why(IconData icon, String title, String line) => Padding(
+      Widget why(TurboArt art, String title, String line) => Padding(
             padding: const EdgeInsets.only(bottom: TurboSpacing.md),
             child: TurboCard(
               color: t.colors.surfaceRaised,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(icon, size: TurboSizes.iconMd),
+                  TurboArtImage(art),
                   const SizedBox(width: TurboSpacing.md),
                   Expanded(
                     child: Column(
@@ -141,8 +141,8 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
             check(l10n.termsBulletRules(appName)),
             check(l10n.termsBulletData),
             const SizedBox(height: TurboSpacing.sm),
-            why(Icons.place_outlined, l10n.termsWhyLocationTitle, l10n.termsWhyLocation),
-            why(Icons.photo_camera_outlined, l10n.termsWhyCameraTitle, l10n.termsWhyCamera),
+            why(TurboArt.roundPushpin, l10n.termsWhyLocationTitle, l10n.termsWhyLocation),
+            why(TurboArt.camera, l10n.termsWhyCameraTitle, l10n.termsWhyCamera),
             Wrap(
               spacing: TurboSpacing.lg,
               children: [link(l10n.termsReadTerms, v.termsUrl), link(l10n.termsReadPrivacy, v.privacyUrl)],
