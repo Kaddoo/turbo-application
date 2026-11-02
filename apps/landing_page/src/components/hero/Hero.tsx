@@ -60,7 +60,7 @@ export function Hero() {
         </a>
       </p>
 
-      <div className="absolute inset-x-0 bottom-0 overflow-hidden border-y border-white/10 bg-ink py-4">
+      <div className="absolute inset-x-0 bottom-0 overflow-hidden bg-ink py-4">
         <p className="sr-only">{ticker.map((t) => t.text).join(". ")}.</p>
         <div aria-hidden className="flex w-max animate-marquee gap-12 whitespace-nowrap pl-12 text-sm text-paper/70 hover:[animation-play-state:paused]">
           {[...ticker, ...ticker].map(({ text, icon: Icon }, i) => (
