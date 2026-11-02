@@ -259,7 +259,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                       padding: const EdgeInsets.only(top: TurboSpacing.md),
                       child: Column(
                         children: [
-                          const HeroIcon(icon: Icons.wrong_location_outlined),
+                          const HeroIcon(art: TurboArt.motorway),
                           const SizedBox(height: TurboSpacing.md),
                           Text(
                             l10n.destSearchNoResults,

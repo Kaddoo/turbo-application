@@ -155,7 +155,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
     return AuthLayout(
       title: l10n.termsTitle,
       centered: true,
-      icon: Icons.lock_outline,
+      art: TurboArt.shield,
       onBack: null,
       action: Column(
         mainAxisSize: MainAxisSize.min,

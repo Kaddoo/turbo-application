@@ -74,7 +74,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
     }
 
     Widget result({
-      required IconData icon,
+      required TurboArt art,
       required String title,
       required String body,
       required List<Widget> actions,
@@ -82,7 +82,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
       padding: const EdgeInsets.all(TurboSpacing.xl),
       children: [
         const SizedBox(height: TurboSpacing.xxl),
-        Center(child: BadgeIcon(icon: icon)),
+        Center(child: HeroIcon(art: art)),
         const SizedBox(height: TurboSpacing.xl),
         Semantics(
           header: true,
@@ -104,18 +104,18 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
     switch (flow.topup.status) {
       case TopupStatusEnum.succeeded:
         body = result(
-          icon: Icons.check,
+          art: TurboArt.checkMarkButton,
           title: l10n.topupSuccessTitle,
           body: wallet == null
               ? ''
               : l10n.topupSuccessBody(formatPesewas(wallet.availablePesewas)),
           actions: [
-            TurboButton(label: l10n.topupDone, large: true, onPressed: _leave),
+            TurboButton(label: l10n.topupDone, onPressed: _leave),
           ],
         );
       case TopupStatusEnum.failed:
         body = result(
-          icon: Icons.close,
+          art: TurboArt.warning,
           title: l10n.topupFailedTitle,
           body: l10n.topupFailedBody,
           actions: [
@@ -137,7 +137,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
       default:
         if (flow.timedOut) {
           body = result(
-            icon: Icons.schedule,
+            art: TurboArt.hourglassNotDone,
             title: l10n.topupSlowTitle,
             body: l10n.topupSlowBody,
             actions: [
