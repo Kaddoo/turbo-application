@@ -1,0 +1,59 @@
+name: server-admin-csp
+# One-off, by hand only: lets the admin dashboard load the Google Maps JavaScript API by adding the Google hosts to the dashboard's
+# Content-Security-Policy in the server's Caddyfile. Backs the file up first, changes only that policy line, restarts Caddy,
+# and restores the backup if the API or dashboard stop answering. Safe to run twice. Prints no file contents.
+on: workflow_dispatch
+concurrency: { group: server-admin-csp, cancel-in-progress: false }
+jobs:
+  csp:
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+    steps:
+      - name: Set up SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Allow Google Maps in the dashboard policy
+        run: |
+          ssh -i ~/.ssh/deploy_key "$TARGET" 'bash -s' <<'REMOTE'
+          set -eu
+          cd /opt/turbo/deploy
+          ts=$(date +%Y%m%d-%H%M%S)
+          cp Caddyfile "Caddyfile.bak-$ts"
+          python3 - <<'PY'
+          import re,sys
+          s=open('Caddyfile').read()
+          if 'maps.googleapis.com' in s:
+              print('Already allowed; nothing changed.'); sys.exit(0)
+          pairs=[("script-src 'self'","script-src 'self' https://maps.googleapis.com https://maps.gstatic.com"),
+                 ("connect-src 'self' https://api.turbogh.app","connect-src 'self' https://api.turbogh.app https://maps.googleapis.com"),
+                 ("img-src 'self' data: blob:","img-src 'self' data: blob: https://maps.gstatic.com https://maps.googleapis.com https://*.ggpht.com"),
+                 ("style-src 'self' 'unsafe-inline'","style-src 'self' 'unsafe-inline' https://fonts.googleapis.com")]
+          for a,b in pairs:
+              if a not in s:
+                  print('Could not find',a,'; nothing changed.'); sys.exit(1)
+              s=s.replace(a,b,1)
+          extra="; font-src 'self' https://fonts.gstatic.com; worker-src 'self' blob:"
+          if "base-uri 'self'" not in s:
+              print("Could not find base-uri; nothing changed."); sys.exit(1)
+          s=s.replace("base-uri 'self'","base-uri 'self'"+extra,1)
+          open('Caddyfile','w').write(s)
+          print('Policy updated.')
+          PY
+          docker compose up -d caddy
+          sleep 8
+          if curl -fsS -o /dev/null https://api.turbogh.app/health && curl -fsS -o /dev/null https://admin.turbogh.app/; then
+            echo "Caddy restarted; API and dashboard answer."
+          else
+            echo "API or dashboard stopped answering; restoring the previous Caddyfile."
+            cp "Caddyfile.bak-$ts" Caddyfile; docker compose up -d caddy
+            exit 1
+          fi
+          REMOTE
+      - name: Show the new policy hosts
+        run: curl -sI https://admin.turbogh.app/ | grep -i content-security-policy | tr ';' '\n' | grep -c "maps.googleapis.com"
