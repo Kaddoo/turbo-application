@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: code screen resend line (branch `student-code-layout`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/auth/code_screen.dart`, `test/flow_widget_test.dart`.
+- **What changed:** "Send a new code in 24 s" is on the left and "Wrong number?" on the right of one line, as in the design. They were stacked: the two buttons used 17 pt text and the default padding, so together they were wider than the screen. They now use the smaller body text and tighter padding, and at 200% text they wrap onto two lines. The order is also resend first, then Wrong number.
+- **Checks:** analyze clean, 187 student tests pass (the order of the two). Exact positions are checked in the render (dark, light, 200%), not the test, because test builds do not load the app font. Not run on a phone.
+- **Not changed:** the six boxes, the timer, resend and verify behaviour.
+
 ## 2026-11-02, Claude, code: verification photo rows with 3D pictures (branch `student-verification-art`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/verification/verification_capture_screen.dart`, `test/verification_flow_test.dart`.

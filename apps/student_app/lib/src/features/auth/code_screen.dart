@@ -143,27 +143,37 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
           }),
           onCompleted: _verify,
         ),
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
+        // Resend on the left, Wrong number? on the right, as in the design; at large text they wrap.
+        SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
+                  // Tighter than the default, so both fit on one line on a phone.
+                  padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.md),
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onPressed: _wait > 0 || _busy ? null : _resend,
+                child: Text(
+                  _wait > 0 ? l10n.codeResendIn(_wait) : l10n.codeResend,
+                ),
               ),
-              onPressed: _busy ? null : () => context.go('/phone'),
-              child: Text(l10n.codeWrongNumber),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
+              TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(TurboSizes.minTap, TurboSizes.minTap),
+                  // Tighter than the default, so both fit on one line on a phone.
+                  padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.md),
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+                onPressed: _busy ? null : () => context.go('/phone'),
+                child: Text(l10n.codeWrongNumber),
               ),
-              onPressed: _wait > 0 || _busy ? null : _resend,
-              child: Text(
-                _wait > 0 ? l10n.codeResendIn(_wait) : l10n.codeResend,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

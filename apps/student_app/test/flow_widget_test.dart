@@ -78,6 +78,11 @@ void main() {
     expect(find.text('Enter the code', findRichText: true), findsOneWidget);
     expect(find.textContaining('+233 24 123 4567'), findsOneWidget);
     expect(find.textContaining('Send a new code in'), findsOneWidget);
+    // The resend line comes first (left) and "Wrong number?" after it (right, or below when large text wraps).
+    // Exact positions depend on the font, which tests do not load, so only the order is checked.
+    final resend = tester.getTopLeft(find.textContaining('Send a new code in'));
+    final wrong = tester.getTopLeft(find.text('Wrong number?'));
+    expect(wrong.dy >= resend.dy, isTrue);
   });
 
   testWidgets('a short number is explained, not sent', (tester) async {
