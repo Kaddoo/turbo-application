@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: verification photo rows with 3D pictures (branch `student-verification-art`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/verification/verification_capture_screen.dart`, `test/verification_flow_test.dart`.
+- **What changed:** until the real photo is taken, each photo row shows a kit picture for what it is: the ID card for both Ghana Card sides, the graduation cap for the student ID and the camera for the selfie. The privacy note has the 3D padlock instead of a plain lock. A taken photo still replaces the picture with its own preview.
+- **Already in place:** the status screen (pending, needs attention, rejected, approved) already used the 3D picture for each state, so it was not changed. The "Your details" fields are unchanged.
+- **Not checked visually:** the verification form needs more fake server data than my render harness has, so I checked it in a widget test (five kit pictures on the new form) and not in a render. The camera screen and photo review were not touched.
+- **Checks:** analyze clean, 187 student tests pass. Not run on a phone.
+
 ## 2026-11-02, Claude, code: New ticket form restyle (branch `student-ticket-form`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/support/support_screens.dart`, `test/safety_support_profile_test.dart`, `packages/turbo_ui/lib/src/components/turbo_text_field.dart`.

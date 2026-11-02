@@ -108,6 +108,8 @@ void main() {
     expect(find.text("Confirm you're a student"), findsOneWidget);
     expect(find.text('Only our verification team sees these. They are deleted after review.'), findsOneWidget);
     expect(find.text('Not taken yet'), findsNWidgets(4));
+    // Each photo row stands for itself with a kit picture until the real photo is taken, and the privacy note has the lock.
+    expect(find.byType(TurboArtImage), findsNWidgets(5));
 
     await fillDetails(tester);
     expect(find.text('GHA-123456789-0'), findsOneWidget, reason: 'the number is formatted as typed');
