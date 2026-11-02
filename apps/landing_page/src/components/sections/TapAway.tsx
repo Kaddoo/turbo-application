@@ -1,6 +1,7 @@
 import { Bell, CarFront, MapPin, Play, Wallet } from "lucide-react";
 import { links } from "@/config/links";
 import { Phone } from "../ui/Phone";
+import { Photo } from "../ui/Photo";
 import { ScrubHeading } from "../ui/ScrubHeading";
 
 function HomeScreen() {
@@ -12,7 +13,7 @@ function HomeScreen() {
           <br />
           <span className="font-medium">Ama</span>
         </p>
-        <img src="/photos/avatar-ama.jpg" alt="" className="size-11 rounded-full object-cover ring-2 ring-white/10" />
+        <Photo name="avatar-ama" sizes="44px" className="size-11 rounded-full object-cover ring-2 ring-white/10" />
       </div>
       <div className="relative mt-6 flex-1 overflow-hidden rounded-t-[1.75rem] bg-turbo p-4 text-ink">
         <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-ink px-3 text-[11px] font-medium text-paper">
@@ -28,13 +29,13 @@ function HomeScreen() {
 function DriverScreen() {
   return (
     <div className="relative flex-1">
-      <img src="/photos/road.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <Photo name="road" sizes="(min-width: 1024px) 19rem, 12rem" className="absolute inset-0 h-full w-full object-cover" />
       <svg viewBox="0 0 272 568" className="absolute inset-0 h-full w-full" fill="none" preserveAspectRatio="none">
         <path d="M150 568 C 150 470, 140 400, 136 330" stroke="#d4ff3a" strokeOpacity=".35" strokeWidth="46" strokeLinecap="round" />
         <path d="M150 568 C 150 470, 140 400, 136 330" stroke="#d4ff3a" strokeWidth="5" strokeLinecap="round" />
       </svg>
       <div className="absolute inset-x-3 top-12 flex items-center gap-2.5 rounded-2xl bg-black/60 p-2.5">
-        <img src="/photos/avatar-kofi.jpg" alt="" className="size-9 rounded-full object-cover" />
+        <Photo name="avatar-kofi" sizes="36px" className="size-9 rounded-full object-cover" />
         <div className="text-[11px] leading-tight">
           <p className="font-medium">Kofi · your driver</p>
           <p className="text-paper/60">Vetted, salaried</p>
@@ -73,13 +74,15 @@ function ArrivingScreen() {
 
 /**
  * Second hero: a centred statement with three devices that rise into a lime
- * glow. On large screens the section pins and the rise is scroll-driven
- * (data-tapaway in Motion.tsx); elsewhere it renders in its final state.
+ * glow. On large screens the content sticks while the section scrolls past and
+ * the rise is scroll-driven (data-tapaway in Motion.tsx). Sticky, not a GSAP pin:
+ * a pin switches to position: fixed and back, which Chrome counts as a full-screen
+ * layout shift. Elsewhere it renders in its final state.
  */
 export function TapAway() {
   return (
-    <section id="tap-away" data-bg="ink" aria-labelledby="tapaway-title" data-tapaway className="relative overflow-hidden bg-ink">
-      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 [mask-image:linear-gradient(to_bottom,black_80%,transparent)] sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28">
+    <section id="tap-away" data-bg="ink" aria-labelledby="tapaway-title" data-tapaway className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,46rem)_+_110svh)]">
+      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 [mask-image:linear-gradient(to_bottom,black_80%,transparent)] sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28 lg:motion-safe:sticky lg:motion-safe:top-0">
         <div
           data-tapaway-glow
           aria-hidden
@@ -88,7 +91,7 @@ export function TapAway() {
 
         <ScrubHeading
           id="tapaway-title"
-          className="relative max-w-[11ch] text-center text-[3.25rem] font-medium leading-[0.95] tracking-[-0.05em] text-paper sm:text-7xl lg:text-[6.75rem]"
+          className="relative max-w-[11ch] text-center text-display font-medium leading-[0.95] tracking-[-0.05em] text-paper sm:text-7xl lg:text-[6.75rem]"
         >
           Smart, safe, and fast rides just a tap away
         </ScrubHeading>
@@ -110,7 +113,7 @@ export function TapAway() {
             </Phone>
             <a
               href={links.playStoreUrl}
-              className="absolute left-1/2 top-[44%] z-20 inline-flex h-10 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-paper px-4 text-sm font-medium text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-white"
+              className="absolute left-1/2 top-[44%] z-20 inline-flex h-11 -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-paper px-4 text-sm font-medium text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-white"
             >
               <Play aria-hidden className="size-3.5 fill-ink" /> Google Play
             </a>

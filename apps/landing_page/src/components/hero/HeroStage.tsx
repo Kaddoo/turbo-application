@@ -43,7 +43,8 @@ type Scene = { play(): void; dispose(): void };
  * screens get the 3D map, which picks up behind the same car at street level
  * and rises into the overview; phones get the flat map (passed in as
  * `flatMap`). Reduced motion and data-saver skip the video and show the map
- * at once.
+ * at once. Phones (under 768 px) skip the video too: the copy is the page's
+ * largest paint and should not wait for a download.
  */
 export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -61,10 +62,13 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     let handedOver = false;
     const timers: number[] = [];
 
+    // Phones skip the video (about 1 MB) and show the flat map with the copy at once.
+    const phone = !window.matchMedia("(min-width: 768px)").matches;
+
     const startFlat = () => {
       setMode("flat");
       flatRef.current?.querySelector<SVGAnimationElement>("[data-flat-drive]")?.beginElement?.();
-      timers.push(window.setTimeout(revealHero, reduced ? 0 : 900));
+      timers.push(window.setTimeout(revealHero, reduced || phone ? 0 : 900));
     };
 
     // The map takes over from the video (or straight away when there is none).
@@ -108,8 +112,8 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
       });
     }
 
-    if (reduced || saveData) {
-      if (!use3D || saveData) startFlat();
+    if (reduced || saveData || phone) {
+      if (!use3D || saveData || phone) startFlat();
       else timers.push(window.setTimeout(() => !scene && startFlat(), 2500));
       return () => {
         cancelled = true;

@@ -69,6 +69,7 @@ export function Motion() {
 
         const animateIn = root.classList.contains("motion");
         let onHeroReveal = () => {};
+        let veil: HTMLDivElement | undefined;
         const ctx = gsap.context(() => {
           if (animateIn) {
             gsap.utils.toArray<HTMLElement>("[data-split]").forEach((el) => {
@@ -157,19 +158,25 @@ export function Motion() {
 
           // Page background blends between section colours instead of switching at hard edges.
           // The footer takes part too, so the body (not #main) carries the colour.
+          // The body stays ink; a fixed paper layer behind the content fades in and out.
+          // Opacity runs on the compositor, where a background-color tween repaints the page every frame.
           const bgSections = gsap.utils.toArray<HTMLElement>("[data-bg]");
-          const page = document.body;
           if (bgSections.length) {
-            const colour = (el: HTMLElement) => (el.dataset.bg === "paper" ? "#f3f1ea" : "#0b0c0a");
+            const paper = (el: HTMLElement) => (el.dataset.bg === "paper" ? 1 : 0);
+            const layer = document.createElement("div");
+            layer.setAttribute("aria-hidden", "true");
+            layer.className = "pointer-events-none fixed inset-0 -z-10 bg-paper will-change-[opacity]";
+            document.body.prepend(layer);
+            veil = layer;
             root.classList.add("bg-scroll");
-            gsap.set(page, { backgroundColor: colour(bgSections[0]) });
+            gsap.set(layer, { opacity: paper(bgSections[0]) });
             bgSections.forEach((el, i) => {
-              if (i === 0 || colour(el) === colour(bgSections[i - 1])) return;
+              if (i === 0 || paper(el) === paper(bgSections[i - 1])) return;
               gsap.fromTo(
-                page,
-                { backgroundColor: colour(bgSections[i - 1]) },
+                layer,
+                { opacity: paper(bgSections[i - 1]) },
                 {
-                  backgroundColor: colour(el),
+                  opacity: paper(el),
                   ease: "none",
                   immediateRender: false,
                   // The footer never scrolls far up the viewport, so its fade runs as it enters.
@@ -195,9 +202,11 @@ export function Motion() {
 
           const mm = gsap.matchMedia();
           mm.add("(min-width: 1024px)", () => {
+            // The section is taller than the screen and its content is sticky (TapAway.tsx); no pin.
             gsap.utils.toArray<HTMLElement>("[data-tapaway]").forEach((section) => {
+              if (!animateIn) return;
               const tl = gsap.timeline({
-                scrollTrigger: { trigger: section, start: "top top", end: "+=110%", pin: true, scrub: 0.8 },
+                scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.8 },
               });
               tl.from(section.querySelector("[data-tapaway-phones]"), { yPercent: 55, ease: "none" }, 0)
                 .from(section.querySelector("[data-tapaway-glow]"), { opacity: 0, scale: 0.5, ease: "none" }, 0)
@@ -272,6 +281,7 @@ export function Motion() {
 
         cleanup = () => {
           root.classList.remove("bg-scroll");
+          veil?.remove();
           window.removeEventListener("turbo:hero-reveal", onHeroReveal);
           mo.disconnect();
           document.removeEventListener("click", onClick);
