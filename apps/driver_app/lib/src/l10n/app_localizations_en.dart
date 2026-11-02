@@ -620,6 +620,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tripStepCancelled => 'Ride cancelled';
 
   @override
+  String tripCancelledBy(String who) {
+    String _temp0 = intl.Intl.selectLogic(who, {
+      'student': 'Cancelled by the student',
+      'driver': 'Cancelled by you',
+      'system': 'Cancelled by Turbo',
+      'admin': 'Cancelled by Turbo',
+      'other': 'Cancelled',
+    });
+    return '$_temp0';
+  }
+
+  @override
   String get rideStatusSearching => 'Finding a driver';
 
   @override

@@ -49,5 +49,11 @@ void main() {
       // TODO
     });
 
+    // The documents that decide whether the driver may go on duty, one per type (the one that expires last). A type with no document uploaded is left out. The driver never needs the file, so no upload id or URL is sent.
+    // List<DriverDocumentStatus> documents
+    test('to test the property `documents`', () async {
+      // TODO
+    });
+
   });
 }

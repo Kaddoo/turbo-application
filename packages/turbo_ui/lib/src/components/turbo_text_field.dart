@@ -13,6 +13,7 @@ class TurboTextField extends StatelessWidget {
     this.helper,
     this.errorText,
     this.prefixText,
+    this.hint,
     this.keyboardType,
     this.inputFormatters,
     this.onChanged,
@@ -27,6 +28,9 @@ class TurboTextField extends StatelessWidget {
   final String? helper;
   final String? errorText;
   final String? prefixText;
+
+  /// Placeholder. A field with [prefixText] needs one, or Flutter hides the prefix until the field has focus.
+  final String? hint;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final ValueChanged<String>? onChanged;
@@ -69,6 +73,9 @@ class TurboTextField extends StatelessWidget {
               errorText: errorText,
               errorMaxLines: 3,
               prefixText: prefixText,
+              hintText: hint,
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+              hintStyle: t.styles.input.copyWith(color: c.textSecondary),
               filled: true,
               fillColor: c.surface,
               prefixStyle: t.styles.monoPhone.copyWith(color: c.textSecondary),

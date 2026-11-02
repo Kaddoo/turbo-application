@@ -9,8 +9,10 @@ declare global {
 }
 
 /**
- * Loads GSAP, ScrollTrigger and Lenis (smooth scrolling) after hydration (kept out of the
- * critical bundle) and wires declarative data-attributes:
+ * Loads GSAP and ScrollTrigger after hydration (kept out of the critical bundle) and
+ * wires declarative data-attributes. Scrolling is the browser's own: it runs on the
+ * compositor and answers the wheel on the next frame. (Lenis was removed: its easing
+ * took about 0.4 s to follow each wheel notch and stuttered whenever a frame ran long.)
  *   data-split     headline words rise in (the hero's wait for "turbo:hero-reveal")
  *   data-reveal    fade up on enter (batched + staggered)
  *   data-draw      SVG path draws as it scrolls through the viewport
@@ -18,11 +20,14 @@ declare global {
  *   data-parallax  translateY by factor × scroll
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
  *   data-scrub     headline words brighten as it scrolls through
- *   data-words     words rise, unblur and fade in one by one; [data-pop] tags pop in
+ *   data-words     words rise out of masks one by one; [data-pop] pills inside open out of a thin line
+ *   data-chars     section header: letters rise out of word masks, then its [data-pop] pills open
+ *   (big h2s)      headline words start dim and brighten one by one as they scroll in
+ *   data-pop       pills elsewhere (section eyebrows) open out of a thin line on enter
  *   data-bg        "ink" | "paper": the page background fades between section colours
- *   data-tilt      device swings up into its resting tilt (value: ±1 direction)
+ *   data-tilt      device slides in from its side into its resting tilt (value: ±1 direction)
  *   data-tapaway   pinned scene: phones rise into the glow (≥1024px)
- *   data-drift / data-drift-track   card strip slides sideways with scroll (≥1024px)
+ *   data-drift / data-drift-track   sticky scene: cards arrive one by one while the strip slides sideways (≥1024px)
  * Everything is skipped when the visitor prefers reduced motion.
  */
 export function Motion() {
@@ -38,17 +43,13 @@ export function Motion() {
     let cleanup = () => {};
     let cancelled = false;
 
-    Promise.all([import("gsap"), import("gsap/ScrollTrigger"), import("lenis")])
-      .then(([{ gsap }, { ScrollTrigger }, { default: Lenis }]) => {
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
+      .then(([{ gsap }, { ScrollTrigger }]) => {
         if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
 
-        // Lenis smooths the wheel; GSAP's ticker drives it so ScrollTrigger sees every frame.
-        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
-        lenis.on("scroll", ScrollTrigger.update);
-        const tick = (t: number) => lenis.raf(t * 1000);
-        gsap.ticker.add(tick);
-        gsap.ticker.lagSmoothing(0);
+        // Scroll to a section; html's scroll-padding-top keeps it clear of the fixed header.
+        const scrollToEl = (el: HTMLElement, smooth: boolean) => el.scrollIntoView({ behavior: smooth ? "smooth" : "instant", block: "start" });
 
         // Same-page anchor links scroll smoothly and move focus to the target.
         const onClick = (e: MouseEvent) => {
@@ -59,7 +60,7 @@ export function Motion() {
           const target = document.querySelector<HTMLElement>(hash);
           if (!target) return;
           e.preventDefault();
-          lenis.scrollTo(target, { offset: hash === "#main" ? 0 : -24, duration: 1.4 });
+          scrollToEl(target, true);
           // Keep the section in the address bar so it can be shared and Back works.
           if (hash !== "#main" && window.location.hash !== hash) history.pushState(null, "", hash);
           if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
@@ -68,6 +69,12 @@ export function Motion() {
         document.addEventListener("click", onClick);
 
         const animateIn = root.classList.contains("motion");
+        // A pill opens out of a thin line, then its label fades in.
+        const openPills = (pills: ArrayLike<HTMLElement>) =>
+          gsap
+            .timeline()
+            .to(pills, { clipPath: "inset(0px 0px 0px 0px round 9999px)", duration: 0.7, ease: "expo.out", stagger: 0.15 })
+            .to(Array.from(pills).flatMap((p) => Array.from(p.children)), { opacity: 1, duration: 0.4, ease: "power2.out", stagger: 0.05 }, 0.3);
         let onHeroReveal = () => {};
         let veil: HTMLDivElement | undefined;
         const ctx = gsap.context(() => {
@@ -98,16 +105,41 @@ export function Motion() {
 
             gsap.utils.toArray<HTMLElement>("[data-words]").forEach((el) => {
               const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 85%", once: true } });
-              tl.to(el.querySelectorAll(".rw"), {
-                opacity: 1,
-                y: 0,
-                duration: 0.9,
-                ease: "power3.out",
-                stagger: 0.09,
-              });
+              tl.to(el.querySelectorAll(".rw > span"), { yPercent: 0, y: 0, duration: 1, ease: "expo.out", stagger: 0.08 });
               // Only headings with tags have [data-pop]; an empty target makes GSAP warn in the console.
-              const pops = el.querySelectorAll("[data-pop]");
-              if (pops.length) tl.to(pops, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)", stagger: 0.12 }, 0.35);
+              const pops = el.querySelectorAll<HTMLElement>("[data-pop]");
+              if (pops.length) tl.add(openPills(pops), 0.45);
+            });
+
+            gsap.utils.toArray<HTMLElement>("[data-chars]").forEach((el) => {
+              const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 85%", once: true } });
+              tl.to(el.querySelectorAll(".c"), { yPercent: 0, y: 0, rotate: 0, duration: 1.1, ease: "expo.out", stagger: 0.018 });
+              const pops = el.querySelectorAll<HTMLElement>("[data-pop]");
+              if (pops.length) tl.add(openPills(pops), 0.5);
+            });
+
+            // Big headlines brighten word by word with scroll. In a sticky section the headline stands still,
+            // so it follows the section's own progress instead of its position on screen.
+            gsap.utils.toArray<HTMLElement>("[data-chars] h2, h2[data-words]").forEach((h) => {
+              const words = h.querySelectorAll(h.matches("[data-words]") ? ".rw" : ".w");
+              if (!words.length) return;
+              const sticky = h.closest<HTMLElement>("[data-tapaway], #safety");
+              gsap.to(words, {
+                opacity: 1,
+                ease: "none",
+                stagger: 0.12,
+                scrollTrigger: sticky
+                  ? { trigger: sticky, start: "top 70%", end: "top -35%", scrub: 0.6 }
+                  : { trigger: h, start: "top 85%", end: "bottom 45%", scrub: 0.6 },
+              });
+            });
+
+            // Pills outside a heading open on their own as they arrive.
+            gsap.utils.toArray<HTMLElement>("[data-pop]").forEach((pill) => {
+              if (pill.closest("[data-words], [data-chars]")) return;
+              const tl = openPills([pill]);
+              tl.pause();
+              ScrollTrigger.create({ trigger: pill, start: "top 90%", once: true, onEnter: () => void tl.play() });
             });
 
             gsap.utils.toArray<HTMLElement>("[data-scrub]").forEach((el) => {
@@ -129,7 +161,6 @@ export function Motion() {
                   duration: 1,
                   ease: "expo.out",
                   stagger: 0.08,
-                  clearProps: "transform",
                 }),
             });
           }
@@ -192,9 +223,10 @@ export function Motion() {
           gsap.utils.toArray<HTMLElement>("[data-tilt]").forEach((el) => {
             const dir = parseFloat(el.dataset.tilt || "1");
             gsap.from(el, {
-              y: 140,
-              rotation: 6 * dir,
-              opacity: 0.4,
+              xPercent: 55 * dir,
+              y: 80,
+              rotation: 8 * dir,
+              opacity: 0,
               ease: "none",
               scrollTrigger: { trigger: el.closest("section") ?? el, start: "top bottom", end: "center 60%", scrub: 0.8 },
             });
@@ -217,14 +249,29 @@ export function Motion() {
                 );
             });
 
+            // The section is tall and its content sticky (Safety.tsx): while it holds, the cards
+            // arrive one by one and the strip slides so the last one ends in view; then it lets go.
             gsap.utils.toArray<HTMLElement>("[data-drift]").forEach((wrap) => {
               const track = wrap.querySelector<HTMLElement>("[data-drift-track]");
-              if (!track) return;
+              const section = wrap.closest("section");
+              if (!track || !section) return;
+              const cards = Array.from(track.children) as HTMLElement[];
+              const span = { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.6 };
+              // Slide until the last card's right edge sits 48 px inside the screen (the strip's left padding counts).
+              // Only this distance is re-measured on refresh.
               gsap.to(track, {
-                x: () => -Math.max(0, track.scrollWidth - wrap.clientWidth + 48),
+                x: () => -Math.max(0, track.offsetLeft + track.scrollWidth - wrap.clientWidth + 48),
                 ease: "none",
-                scrollTrigger: { trigger: wrap, start: "top bottom", end: "bottom top", scrub: 0.8, invalidateOnRefresh: true },
+                scrollTrigger: { ...span, invalidateOnRefresh: true },
               });
+              // Cards arrive one by one. Their own timeline with explicit start and end values: a refresh
+              // used to re-record a from() and show waiting cards at full opacity until their turn (a blink).
+              if (animateIn) {
+                gsap
+                  .timeline({ scrollTrigger: span })
+                  .fromTo(cards, { y: 80, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out", duration: 0.8, stagger: 1, immediateRender: true }, 0)
+                  .to({}, { duration: 0.6 });
+              }
             });
 
             gsap.utils.toArray<HTMLElement>("[data-hscroll]").forEach((wrap) => {
@@ -253,7 +300,7 @@ export function Motion() {
         ScrollTrigger.refresh();
         // Arriving on a shared /#section link: jump there now that pin spacing is known.
         const landing = window.location.hash && document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
-        if (landing) lenis.scrollTo(landing, { offset: -24, immediate: true });
+        if (landing) scrollToEl(landing, false);
 
         // Bars are rendered after data arrives; observe them as they appear.
         const animateBars = () => {
@@ -276,7 +323,10 @@ export function Motion() {
           clearTimeout(refreshTimer);
           refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
         });
-        mo.observe(document.body, { childList: true, subtree: true });
+        // Watch <main> only, where API data renders. ScrollTrigger's own refresh adds and
+        // removes a helper <div> on <body>; watching <body> turned every refresh into the
+        // next one, five times a second, re-measuring the page and resetting the scroll.
+        mo.observe(document.getElementById("main") ?? document.body, { childList: true, subtree: true });
         window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
 
         cleanup = () => {
@@ -286,8 +336,6 @@ export function Motion() {
           mo.disconnect();
           document.removeEventListener("click", onClick);
           ctx.revert();
-          gsap.ticker.remove(tick);
-          lenis.destroy();
         };
       })
       .catch(() => root.classList.remove("motion"));

@@ -27,6 +27,19 @@ final activeRideProvider = FutureProvider.autoDispose<Ride?>((ref) async {
   return null;
 });
 
+/// The most recent finished ride among the latest few, or null. Shown on Home.
+final lastRideProvider = FutureProvider.autoDispose<Ride?>((ref) async {
+  try {
+    final response = await ref.read(clientProvider).api.getRidesApi().listMyRides(limit: 5);
+    for (final r in response.data!.data) {
+      if (r.status == RideStatus.completed) return r;
+    }
+  } catch (_) {
+    // A tile that cannot load simply does not show.
+  }
+  return null;
+});
+
 /// One ride, kept fresh every few seconds while it is active.
 final rideProvider = FutureProvider.autoDispose.family<Ride, String>((ref, id) async {
   try {

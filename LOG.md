@@ -16,6 +16,181 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 **Checks:** `flutter analyze` clean, 89 driver tests pass. Not run on a phone; spacing and the bottom fade are unchecked by eye.
 **Not done:** the rest of the driver comparison against `design/new` (map screens, dark map style, other screens); more screenshots are still to come.
 
+## 2026-11-02, Claude, code: student home tiles and pickup tabs (branch `student-home-tiles`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/home/home_screen.dart`, `features/ride/ride_providers.dart`, `lib/l10n/app_en.arb` (+ generated), `test/home_flow_test.dart`.
+- **What changed:**
+  - Under Wallet and Safety, three tiles that each show only when they have something to say: **Closest to you** (nearest pickup point and the straight-line distance, taps into booking), **Ride hours** (today's window from the service area, or "Closed today"; hidden while the API sends no hours) and **Last ride** (drop-off and fare of the latest finished ride, taps to its receipt).
+  - The Book a ride panel has **Nearest point / Choose point** tabs. Choose point lists the pickup points as chips; the chosen one becomes the pickup. The tabs only show when there is more than one point. The design's swap button is not built (there is no drop-off yet on Home).
+- **Checks:** analyze clean, 170 student tests pass (tiles, tabs, dark mode at 200% text). Not run on a phone.
+- **Not done:** "Ride hours" shows the same hours every day until the API sends real ones; the design's Home hero text and offline banner are unchanged.
+
+## 2026-11-02, Claude, code: student campus security call tile (branch `student-security-call`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/core/gate.dart`, `features/safety/safety_screen.dart`, `features/safety/sos.dart`, `lib/l10n/app_en.arb` (+ generated), `test/safety_support_profile_test.dart`, `test/support/fake_server.dart`.
+- **What changed:** contract 0.5.0 adds nullable `campusSecurityPhone` to `AppConfig`. The gate check now keeps it; the Safety screen shows a "Campus security" tile (3D telephone, the number) next to an "Emergency 112" tile when it is set, and 112 alone as before when it is not. The SOS failure sheet gains a "Call campus security" button.
+- **Notes:** the number comes from the same app-config check as the gate (on start and resume); if that check cannot reach the server the app shows 112 only.
+- **Checks:** analyze clean, 167 student tests pass (the new tile in dark mode at 200% text, and 112 only without a number). Not run on a phone.
+
+## 2026-11-02, Claude, code: contract 0.5.0 (CR-5, CR-6, CR-10)
+
+**Branch:** `contract-0-5-0`, from main. Done on Kevin's instruction (the contract is normally planning's).
+- **Contract:** `DriverProfile.documents` (`DriverDocumentStatus`: type, expiresOn, daysLeft, status valid/expiring/expired, computed on the Accra date, one per type, the one that expires last); `documentType` and `expiredOn` on the `document_expired` problem; `supervisorPhone` and `campusSecurityPhone` in `AppConfig`; `arrivedAt`, `startedAt`, `completedAt`, `cancelledAt`, `cancelledBy`, `cancelReasonCode` on `DriverRide`. All additive and optional.
+- **API:** `routes/driver.js`, `routes/auth.js`, `lib/errors.js`, `config.js` (env `SUPERVISOR_PHONE`, `CAMPUS_SECURITY_PHONE`, in `.env.example`), `test/contract-050.test.js`. Also fixed an existing bug: `GET /driver/profile` returned 500 for a driver with no vehicle (the vehicle join overwrote `id` and `status`).
+- **Clients:** Dart client, dashboard and landing schemas regenerated; `contract:check` passes.
+- **Driver app:** `driver_gaps.dart` now reads the profile's documents and the app config's supervisor number (sample data still behind `SAMPLE_DRIVER_DATA`); the trip timeline shows the real arrived, started, completed and cancelled times and who cancelled.
+- **Checks:** 36 API tests pass on a scratch Postgres (walks 1-4, driver, reduced views, route polyline, new); driver 89, student 132 pass; analyze clean.
+- **Not done:** approach-road line (`driverToPickupPolyline`) and `dutySince` are not in 0.5.0; CR-2/CR-3 (places, announcements, notification settings), CR-7/CR-8 (legal dates and publishing) and CR-11 (top-up network) are untouched. The two phone numbers are empty on staging until set in the server env. Deploying needs no migration (no schema change).
+
+## 2026-11-02 · landing page: phone ride on top; canonical Tailwind classes
+
+- **Branch:** main.
+- **Files:** `apps/landing_page/src/components/Journey.tsx`; `hero/Hero.tsx`, `Button.tsx`, `sections/TapAway.tsx`, `sections/Safety.tsx` (class names only).
+- **What changed:**
+  - **Phone ride:** at Kevin's request, the route and taxi now sit on top of the content on phones too. To stay clear of the text they hug the screen edge (18 px in), with a smaller taxi and objects.
+  - **Tailwind classes:** renamed to their v4 canonical names, as flagged by the editor: `min-h-[100svh]` / `h-[100svh]` became `min-h-svh` / `h-svh`, and `bg-gradient-to-*` became `bg-linear-to-*`. The CSS output is the same.
+- **Acceptance:** tests (8) pass; axe, console and links are clean; no hidden text at 1440 or 390.
+
+## 2026-11-02 · landing page: one-ride journey with 3D objects; intro on visit 1 and every 5th
+
+- **Branch:** main.
+- **Files:**
+  - `apps/landing_page/src/components/`: `Journey.tsx` (new), `SiteShell.tsx` (main is `relative isolate`), `Motion.tsx`, `hero/HeroStage.tsx`.
+  - `app/page.tsx`, `app/layout.tsx` (boot script).
+  - `sections/`: HowItWorks, Fares, Coverage, Safety, Wallet, Faq and Download get `data-journey` anchors.
+  - `ui/Floaters.tsx` removed.
+- **Decisions (Kevin, via questions):**
+  - Follow one ride, with the same story on phones (smaller), using the 3D taxi.
+  - The intro plays on the first visit and every 5th visit after.
+  - Then: "it crosses the screen too much and very fast" and "let it move with the scroll".
+- **What changed:**
+  - **Floaters removed:** the scattered floating 3D objects are gone.
+  - **The ride:** a 3D taxi drives a route down the right-hand page margin (along the screen edge, behind the text, on phones). It stays level with the scroll and gently follows the bends. The route behind it fills in lime.
+  - **Seven stops, each object with a role,** scrubbed by scroll so they run backwards when scrolling up:
+    - ID card taken in, then a check appears (Verified).
+    - Coin spins into the car (Fare fixed).
+    - Pin drops onto the route (At the pickup point).
+    - Key turns in the lock (PIN checked).
+    - Money bag bounces, still full (Balance untouched).
+    - Speech balloon pops (Help on hand).
+    - Party popper (Arrived), at the Download card.
+  - **Intro:** the hero loader and video play on visit 1, 5, 10, 15… (a `turbo-visits` counter in localStorage); other visits open on the map.
+- **Acceptance:**
+  - Tests (8) pass.
+  - axe, console and links are clean.
+  - No hidden text at 1440 or 390.
+  - The car holds its screen position to within a few px at every scroll step.
+  - Desktop scrolling at 4× CPU slowdown: 60 fps, no frames over 50 ms.
+  - CLS is 0; mobile LCP is about 1.6 s.
+- **Known:** on phones the route runs behind the content, so the taxi is hidden while it passes the Safety card strip.
+
+## 2026-11-02 · landing page: dim-to-bright headlines, floating 3D objects, intro once, halftone map, fixes
+
+- **Branch:** main.
+- **Files:**
+  - `apps/landing_page/src/components/`: `Motion.tsx`, `Header.tsx`, `hero/HeroStage.tsx`, `ui/Floaters.tsx` (new).
+  - `sections/`: HowItWorks, Features, Coverage, Safety, Wallet, Faq, Download.
+  - `app/layout.tsx`, `app/globals.css`, `package.json` (dev script), `README.md`.
+- **What changed:**
+  - **Headlines:** big headlines start dim and brighten word by word as they scroll in, as in the reference. Sticky sections follow their own progress.
+  - **Floating 3D objects:** silver-and-lime 3D objects float at the edges of six sections, behind the text. They drift and turn with scroll and pop in on arrival; phones get one small one in some sections.
+  - **Hero intro:** the car-door loader and ride video play on the first visit only, on every device, now including phones (video, then the 3D map). Later visits open straight on the map. This is remembered in localStorage (`turbo-hero-seen`).
+  - **Download card map:** a halftone dot map in the reference's style, built from the real road dots and drawn in a darker lime. A dashed arc draws itself between the two pins.
+  - **Nav:** it no longer hides on scroll; it stays in view.
+  - **Safety cards:** they blinked because a ScrollTrigger refresh re-recorded their `from()` start state, so cards waiting their turn showed at full opacity, then dropped to 0. The cards now have their own timeline with explicit start and end values. A per-frame recording shows 0 opacity drops.
+  - **Fares:** the list was missing only under `npm run dev`, which had no API address, so the fallback text showed. The live site was fine. `npm run dev` now writes and uses the mock API by default.
+- **Acceptance:**
+  - Tests (8) pass.
+  - axe, console and links are clean.
+  - No animated text is left hidden at 1440 or 390.
+  - CLS is 0.
+  - Mobile LCP is about 1.6 s.
+- **Cost:** with 3D on phones, home-page blocking time on a 4×-slowed phone rose from about 10 ms to about 200 ms, and the slowest tap from about 64 ms to about 120 ms.
+
+## 2026-11-02 · landing page: matched to the inspiration video (animations, pills, 3D icons, nav)
+
+- **Branch:** main. **Reference:** Kevin's screen recording of the inspiration site (Desktop, 2026-10-31 11.44.42).
+- **Files:**
+  - `apps/landing_page/src/components/`: `Motion.tsx`, `Header.tsx`, `Footer.tsx`, `ui/Tag.tsx`, `ui/ScrubHeading.tsx`.
+  - New: `ui/SectionHead.tsx`, `ui/Icon3d.tsx`, `ui/icons3d.json`.
+  - `sections/`: TapAway, HowItWorks, Features, Fares, Coverage, PickupChips, Safety, Wallet, Faq.
+  - `app/globals.css`, `app/support/page.tsx`, `scripts/images.mjs`, `public/icons3d/` (new).
+- **What changed:**
+  - **Smart section:**
+    - It stays solid black (`data-bg-solid`), so the paper fading in behind How it works no longer shows at the sides.
+    - The bottom fade is full width.
+    - The headline is bigger and its words rise out of masks.
+    - The phones are bigger and sit tucked behind the centre phone, as in the video.
+    - The 3D money bag replaces the outline wallet icon.
+  - **Section headers:** big and centred (Fares and Where we go stay left in their columns). Letters rise out of word masks on scroll (`data-chars`).
+  - **Pills:** video style, a dark pill with a small 3D icon. Headline pills (Features, Safety) open out of a thin line after the letters. Eyebrow and footer pills open on their own.
+  - **3D icons:** silver-and-lime 3D icons from `packages/turbo_ui/assets/icons3d`, exported to WebP by `npm run images`. They replace the lucide icons outside the hero marquee, the store logos and the controls.
+  - **Fixed fares and Where we go:** the phones are bigger and slide in from their side. The price list and its bar animation are unchanged.
+  - **Safety:** the video's card design and photos are kept. On large screens the section is sticky: it holds while the cards arrive one by one and the strip slides until the last card is in view, then the page moves on.
+  - **Nav:** floating, with no bar.
+    - A lime round logo.
+    - Solid separate pills, with the section on screen highlighted.
+    - "Get the app" has a play icon.
+    - It hides while scrolling down and returns on scroll up.
+  - **Fixed:** revealed blocks used to end 28 px low because the animation cleared its transform at the end.
+- **Acceptance:**
+  - lint and `npm test` (8) pass.
+  - `npm run check`: axe, console and links are clean on 6 pages at 1440 and 390.
+  - After scrolling the whole page, no animated text is left hidden at 1440 or 390.
+  - CLS is 0 on mobile and desktop.
+  - Mobile LCP is about 1.6 s on the local build.
+- **Not changed:** on desktop the hero copy still waits for the hero video to hand over to the map (about 10–15 s on first load). That is the existing hero design. Say if it should appear sooner.
+
+## 2026-11-02 · landing page: scroll lag
+
+- **Branch:** main. **Files:** `apps/landing_page/src/components/Motion.tsx`, `hero/Hero.tsx`, `sections/TapAway.tsx`, `app/globals.css`, `package.json` and lock (lenis removed).
+- **Cause, measured:** Lenis eased every wheel notch, taking about 390 ms to cover 90% of the distance and about 900 ms to settle. Because it moved the page from JavaScript every frame, any slow frame showed as a stutter. Slow frames (76–128 ms, all paint and GPU work) clustered in the hero and the tap-away section.
+- **What changed:**
+  - Lenis is removed; scrolling is native, and section links use `scrollIntoView`, which honours `scroll-padding-top`.
+  - The marquee edge fades no longer use a backdrop blur.
+  - The tap-away fade is a gradient overlay instead of a mask over the moving phones.
+  - The MutationObserver watches `<main>` instead of `<body>`. ScrollTrigger's refresh adds a helper `<div>` to `<body>`, which had started an endless refresh loop every 200 ms once Lenis was gone (it reset the scroll and cancelled smooth scrolling).
+- **Result (local build, M4, CPU at 1x and 4x):** wheel response 390 ms → about 25 ms; 60 fps with no frames over 50 ms; section links land at 96 px; the tap-away animation, page colour fades and reveals all still work.
+- **Not changed:** the 3D hero still renders every frame while it is on screen; it stops when scrolled away.
+
+## 2026-11-02, Claude, code: student app design check against `design/new`
+
+**Method (read this first):** there is no usable iOS simulator on this Mac (every runtime shows "unavailable"), so I could not run the app. I rendered each screen in a widget test with the real Geist fonts, fake data, a placeholder where the map goes, at 390x844, dark and light at 100% text and dark at 200%, and compared the images with the 60 screens in `design/new`. This shows layout, type, colour, pictures and clipping, not the real map, animation, haptics or the phone's safe areas. The cedi sign shows as a box in these renders only because the test font lacks it; the phone falls back to a system font. The render script was scratch and is not committed.
+
+| Screen | Design shows | App showed | Result |
+| --- | --- | --- | --- |
+| Welcome | silver car on the lime grid, "Fixed fares" tag | a plain black car glyph | **Fixed** (`student-welcome-hero`) |
+| Phone | "+233" always in the field, placeholder number | prefix hidden until typing, no placeholder | **Fixed** (`student-phone-prefix`; also fixes the driver phone field once it passes a `hint:`) |
+| Code | six boxes, "Wrong number?" | not rendered | Not checked |
+| Terms | 3D pushpin and camera on the two "why" rows | plain Material icons | **Fixed** (`student-terms-art`) |
+| Home | pickup header, Book a ride panel, map, Wallet and Safety tiles | same parts, order matches; tiles scroll under the bar | Leave |
+| Destination | pickup row, results, saved places | matches in structure | Leave |
+| Quote | map with the route behind a bottom sheet, fare, "It won't change" chip, Wallet and Short-by tiles, Top up button | no map; a list on a plain page | **Question 1** |
+| Finding a driver | countdown, "Fare is held" lime tile and a drop-off tile | text rows | **Question 2** |
+| Driver on the way, arrived, on your way | countdown, PIN, plate, quick chips, photo card | matches in parts; no clipping at 100% | Leave |
+| Trip complete | 3D check-mark, Fare charged on a lime tile, distance tile with receipt link, rating | plain white tick, rows in a card | **Fixed** (`student-ride-complete`) |
+| Cancelled by system | 3D car, "You haven't been charged" | 3D taxi, matches | Leave |
+| Wallet | lime card, Balance and Held tiles with a 3D lock, Top up, recent | held was one line in the card, no tiles | **Fixed** (`student-wallet-tiles`) |
+| Top-up | amount tiles, other amount, number with a network chip, "Pay GH₵50.00" | amount tiles, other amount, a sentence with the number, "Top up" | **Question 3** |
+| Transactions, Activity | chips, list, empty state with 3D taxi | matches | Leave |
+| Safety | SOS first, share tile, contacts, 112 | matches | Leave |
+| Support, New ticket | not in the 60 screens | renders cleanly | Leave |
+| Profile, Receipt, Share | partly in the designs | the fake server had no data for them, so they showed error states | Not checked |
+
+**200% text:** no overflow on any rendered screen. The home sheet, the trip sheet and Terms need scrolling to reach their last items (Cancel ride, I agree text); I did not check that those scroll on a phone.
+
+**Branches (one per fix, each from `main`, not merged):** `student-terms-art`, `student-welcome-hero`, `student-phone-prefix`, `student-ride-complete`, `student-wallet-tiles`. `student-welcome-hero` and `student-phone-prefix` touch `packages/turbo_ui` (a `width` on `VehicleImage`; a `hint` on `TurboTextField`, with the two form goldens updated). Analyze is clean and tests pass in turbo_ui, the student app and the driver app on each.
+
+**Kevin's answers, done (each its own branch off `main`, not merged):**
+- Quote as map plus sheet: `student-quote-map`. The route on the map, then "Fixed fare" with an "It won't change" chip, the pickup and drop-off, and Wallet and After-this-ride tiles (Short-by tile with the 3D warning when the wallet is short). The shortfall banner became the tile; the pinned button is unchanged.
+- Finding a driver as tiles: `student-finding-tiles`. "Fare is held" on a lime tile with the 3D lock, "To <drop-off>" with the pushpin, and a "Pickup:" line.
+- Top-up: `student-topup-pay`. The number is a "Mobile money number" tile. The "Pay GH₵X" button already existed once an amount is chosen. **The network chip and the "Pay with" choice are not built:** the contract has no network or number on a top-up, so they would do nothing; that is CR-11. Also fixed: the amount tiles clipped their text at 200%.
+- The welcome monogram stays "To", as Kevin said.
+
+**Also checked later (code, Profile, Receipt, Share, with proper fake data):** Code matches except the design puts "Send a new code in 24 s" and "Wrong number?" on one line at opposite ends, where ours stacks them (left as is, minor). Receipt and Share are plain but fine. Profile in light mode had a pale lime "Sign out" on white (plain text buttons used the lime accent); **fixed** in `student-profile-contrast` by giving text buttons the readable accent in `turbo_ui`, which also helps the driver app. Heads up: `packages/turbo_ui/test/hardcoded_style_test.dart` fails on `main` right now because `apps/driver_app/lib/src/l10n/app_localizations_en.dart` lines 627 and 628 spell "Turbo" in "Cancelled by Turbo" (from the contract 0.5.0 commit); the driver ARB should use the app-name placeholder. I did not touch the driver app.
+
+**Not done:** nothing was run on a phone; light mode was rendered but only dark was compared closely.
+
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.

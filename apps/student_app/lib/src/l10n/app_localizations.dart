@@ -250,6 +250,12 @@ abstract class AppLocalizations {
   /// **'Send code'**
   String get phoneSendCode;
 
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'24 123 4567'**
+  String get phoneHint;
+
   /// No description provided for @phoneInvalid.
   ///
   /// In en, this message translates to:
@@ -838,6 +844,48 @@ abstract class AppLocalizations {
   /// **'Book a ride'**
   String get homeBookRide;
 
+  /// No description provided for @homeTabNearest.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest point'**
+  String get homeTabNearest;
+
+  /// No description provided for @homeTabChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose point'**
+  String get homeTabChoose;
+
+  /// No description provided for @homeTileClosest.
+  ///
+  /// In en, this message translates to:
+  /// **'Closest to you'**
+  String get homeTileClosest;
+
+  /// No description provided for @homeAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} away'**
+  String homeAway(String distance);
+
+  /// No description provided for @homeTileHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride hours'**
+  String get homeTileHours;
+
+  /// No description provided for @homeHoursClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed today'**
+  String get homeHoursClosed;
+
+  /// No description provided for @homeTileLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last ride'**
+  String get homeTileLast;
+
   /// No description provided for @homeSafetyLabel.
   ///
   /// In en, this message translates to:
@@ -1036,6 +1084,42 @@ abstract class AppLocalizations {
   /// **'Cancel for free until you\'re in the car.'**
   String get quoteCancelRule;
 
+  /// No description provided for @quoteFareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed fare'**
+  String get quoteFareLabel;
+
+  /// No description provided for @quoteWontChange.
+  ///
+  /// In en, this message translates to:
+  /// **'It won\'t change'**
+  String get quoteWontChange;
+
+  /// No description provided for @quoteTileWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get quoteTileWallet;
+
+  /// No description provided for @quoteTileAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After this ride'**
+  String get quoteTileAfter;
+
+  /// No description provided for @quoteTileShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short by'**
+  String get quoteTileShort;
+
+  /// No description provided for @quoteTopUpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up with mobile money, then book this ride.'**
+  String get quoteTopUpHint;
+
   /// No description provided for @quoteBook.
   ///
   /// In en, this message translates to:
@@ -1137,6 +1221,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{amount} held for your ride'**
   String walletHeld(Object amount);
+
+  /// No description provided for @walletTileBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get walletTileBalance;
+
+  /// No description provided for @walletTileHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Held for your ride'**
+  String get walletTileHeld;
 
   /// No description provided for @walletOwed.
   ///
@@ -1275,6 +1371,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay {amount}'**
   String topupPay(Object amount);
+
+  /// No description provided for @topupNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile money number'**
+  String get topupNumberLabel;
 
   /// No description provided for @topupPhoneNote.
   ///
@@ -1491,6 +1593,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get rideStatusCancelled;
+
+  /// No description provided for @rideTileFareHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare is held'**
+  String get rideTileFareHeld;
+
+  /// No description provided for @rideTileTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get rideTileTo;
+
+  /// No description provided for @rideSearchingFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup: {place}'**
+  String rideSearchingFrom(String place);
 
   /// No description provided for @rideSearchingTitle.
   ///
@@ -1977,6 +2097,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call the emergency number now.'**
   String get sosFailedBody;
+
+  /// No description provided for @sosCallSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Call campus security'**
+  String get sosCallSecurity;
+
+  /// No description provided for @safetyTileSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus security'**
+  String get safetyTileSecurity;
+
+  /// No description provided for @safetyTileEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get safetyTileEmergency;
 
   /// No description provided for @sosCall.
   ///

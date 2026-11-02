@@ -22,6 +22,12 @@ Name | Type | Description | Notes
 **assignedAt** | [**DateTime**](DateTime.md) |  | 
 **acknowledgedAt** | [**DateTime**](DateTime.md) |  | [optional] 
 **noShowAvailableAt** | [**DateTime**](DateTime.md) | Time after which \"student not here\" can be used. Null until the driver has arrived. | [optional] 
+**arrivedAt** | [**DateTime**](DateTime.md) |  | [optional] 
+**startedAt** | [**DateTime**](DateTime.md) |  | [optional] 
+**completedAt** | [**DateTime**](DateTime.md) |  | [optional] 
+**cancelledAt** | [**DateTime**](DateTime.md) |  | [optional] 
+**cancelledBy** | **String** | Who cancelled (as `Cancellation.by`). Null unless the ride is cancelled. | [optional] 
+**cancelReasonCode** | **String** | Why (as `Cancellation.reasonCode`). Null unless the ride is cancelled. The free-text note is not sent to drivers. | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

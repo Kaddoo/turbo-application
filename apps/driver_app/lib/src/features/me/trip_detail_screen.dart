@@ -50,19 +50,23 @@ class _Detail extends StatelessWidget {
       if (ride.status == RideStatus.cancelled) ...[
         if (accepted)
           TimelineEntry(title: l10n.tripStepAccepted, status: TimelineStatus.done, detail: time(ride.acknowledgedAt!)),
-        TimelineEntry(title: l10n.tripStepCancelled, status: TimelineStatus.done),
+        TimelineEntry(
+          title: ride.cancelledBy == null ? l10n.tripStepCancelled : l10n.tripCancelledBy(ride.cancelledBy!.value),
+          status: TimelineStatus.done,
+          detail: ride.cancelledAt == null ? null : time(ride.cancelledAt!),
+        ),
       ] else ...[
         // How many steps are finished: assigned, accepted, arrived, started, completed.
-        for (final (i, title) in [
-          l10n.tripStepAccepted,
-          l10n.tripStepArrived,
-          l10n.tripStepStarted,
-          l10n.tripStepCompleted,
+        for (final (i, (title, at)) in [
+          (l10n.tripStepAccepted, ride.acknowledgedAt),
+          (l10n.tripStepArrived, ride.arrivedAt),
+          (l10n.tripStepStarted, ride.startedAt),
+          (l10n.tripStepCompleted, ride.completedAt),
         ].indexed)
           TimelineEntry(
             title: title,
             status: _stepStatus(i + 1, _reached(ride)),
-            detail: i == 0 && accepted ? time(ride.acknowledgedAt!) : null,
+            detail: at == null ? null : time(at),
           ),
       ],
     ];

@@ -13,6 +13,7 @@ class GateState {
     this.pauseMessage,
     this.maintenanceMessage,
     this.offline = false,
+    this.campusSecurityPhone,
   });
 
   final GateStatus status;
@@ -22,6 +23,9 @@ class GateState {
 
   /// The last check could not reach the server. The app carries on.
   final bool offline;
+
+  /// Campus security, E.164, from the app config. Null until staff set it: then only 112 is offered.
+  final String? campusSecurityPhone;
 }
 
 GateState gateFrom(AppConfig config, String platform, String version) {
@@ -40,6 +44,7 @@ GateState gateFrom(AppConfig config, String platform, String version) {
     bookingsPaused: config.bookingsPaused,
     pauseMessage: config.pauseMessage,
     maintenanceMessage: config.maintenance.message,
+    campusSecurityPhone: config.campusSecurityPhone,
   );
 }
 
@@ -67,3 +72,6 @@ class GateController extends AsyncNotifier<GateState> {
 }
 
 final gateProvider = AsyncNotifierProvider<GateController, GateState>(GateController.new);
+
+/// The campus security number, or null when none is set (or the config could not be read).
+final campusSecurityPhoneProvider = Provider<String?>((ref) => ref.watch(gateProvider).value?.campusSecurityPhone);

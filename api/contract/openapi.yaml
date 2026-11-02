@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.4.0
+  version: 0.5.0
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -1671,7 +1671,7 @@ paths:
 
 
         Going on duty returns 409 `document_expired` when the driver''s licence, the vehicle insurance or the roadworthy certificate
-        has expired.'
+        has expired. The problem carries `documentType` and `expiredOn`.'
       requestBody:
         required: true
         content:
@@ -5538,6 +5538,13 @@ components:
             - message
         retryAfterSeconds:
           type: integer
+        documentType:
+          $ref: '#/components/schemas/DriverDocumentKind'
+          description: Only on 409 `document_expired`. Which of the driver's documents has expired.
+        expiredOn:
+          type: string
+          format: date
+          description: Only on 409 `document_expired`. The day it expired.
       required:
       - type
       - title
@@ -6957,12 +6964,49 @@ components:
           oneOf:
           - $ref: '#/components/schemas/Id'
           - type: 'null'
+        documents:
+          type: array
+          description: The documents that decide whether the driver may go on duty, one per type (the one that expires last). A type with no document uploaded is left out. The driver never needs the file, so no upload id or URL is sent.
+          items:
+            $ref: '#/components/schemas/DriverDocumentStatus'
       required:
       - id
       - fullName
       - phone
       - status
       - dutyStatus
+    DriverDocumentKind:
+      type: string
+      enum:
+      - drivers_licence
+      - vehicle_registration
+      - insurance
+      - roadworthy
+    DriverDocumentStatus:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/DriverDocumentKind'
+        expiresOn:
+          type:
+          - string
+          - 'null'
+          format: date
+        daysLeft:
+          type:
+          - integer
+          - 'null'
+          description: Whole days from today (Africa/Accra) to `expiresOn`, negative once expired. Null when the document has no expiry.
+        status:
+          type: string
+          enum:
+          - valid
+          - expiring
+          - expired
+          description: '`expiring` is under 30 days left; `expired` is past `expiresOn`. Computed by the server so the phone clock does not matter.'
+      required:
+      - type
+      - status
     DutyUpdate:
       type: object
       properties:
@@ -7062,6 +7106,52 @@ components:
           - 'null'
           format: date-time
           description: Time after which "student not here" can be used. Null until the driver has arrived.
+        arrivedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        startedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        completedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        cancelledAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        cancelledBy:
+          type:
+          - string
+          - 'null'
+          enum:
+          - student
+          - driver
+          - system
+          - admin
+          - null
+          description: Who cancelled (as `Cancellation.by`). Null unless the ride is cancelled.
+        cancelReasonCode:
+          type:
+          - string
+          - 'null'
+          enum:
+          - student_changed_mind
+          - driver_unavailable
+          - vehicle_issue
+          - no_driver_available
+          - service_issue
+          - admin_decision
+          - other
+          - rider_no_show
+          - null
+          description: Why (as `Cancellation.reasonCode`). Null unless the ride is cancelled. The free-text note is not sent to drivers.
       required:
       - id
       - status
@@ -8703,6 +8793,16 @@ components:
           type:
           - string
           - 'null'
+        supervisorPhone:
+          type:
+          - string
+          - 'null'
+          description: The drivers' supervisor, E.164. Null until staff set it; the apps then draw no call button.
+        campusSecurityPhone:
+          type:
+          - string
+          - 'null'
+          description: Campus security, E.164. Null until staff set it; the apps then show 112 only.
       required:
       - minVersion
       - maintenance

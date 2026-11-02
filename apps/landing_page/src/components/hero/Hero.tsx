@@ -17,18 +17,18 @@ const ticker: { text: string; icon: LucideIcon }[] = [
 
 export function Hero() {
   return (
-    <section data-hero aria-labelledby="hero-title" className="relative isolate min-h-[100svh] overflow-hidden bg-ink">
+    <section data-hero aria-labelledby="hero-title" className="relative isolate min-h-svh overflow-hidden bg-ink">
       {/* Video, then the map of the real streets around campus (3D on large screens, flat on phones). */}
       <HeroStage flatMap={<FlatMap />} />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-ink to-transparent" />
       {/* Shade behind the copy; fades in with it once the map has taken over. */}
       <div
         aria-hidden
         data-hero-shade
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-transparent transition-opacity duration-1000 md:bg-gradient-to-r md:from-ink md:via-ink/75 md:via-35% md:to-transparent md:to-65%"
+        className="pointer-events-none absolute inset-0 bg-linear-to-t from-ink via-ink/70 to-transparent transition-opacity duration-1000 md:bg-linear-to-r md:from-ink md:via-ink/75 md:via-35% md:to-transparent md:to-65%"
       />
 
-      <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24">
+      <div className="relative mx-auto flex min-h-svh max-w-6xl flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24">
         <div data-hero-copy className="max-w-xl lg:max-w-2xl">
           <p data-reveal className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-ink/60 px-3 py-1.5 text-xs text-paper/80">
             <MapPin className="size-3.5 text-turbo" aria-hidden />
@@ -70,14 +70,14 @@ export function Hero() {
             </span>
           ))}
         </div>
-        {/* Blur and fade the items as they enter and leave at each end. */}
+        {/* Fade the items as they enter and leave at each end (a plain gradient: a backdrop blur over moving text repaints every frame). */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-ink to-transparent backdrop-blur-[3px] [mask-image:linear-gradient(to_right,black_30%,transparent)] sm:w-40"
+          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-linear-to-r from-ink to-transparent sm:w-40"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-ink to-transparent backdrop-blur-[3px] [mask-image:linear-gradient(to_left,black_30%,transparent)] sm:w-40"
+          className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-linear-to-l from-ink to-transparent sm:w-40"
         />
       </div>
     </section>

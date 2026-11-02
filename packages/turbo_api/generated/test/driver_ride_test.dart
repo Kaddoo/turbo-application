@@ -84,5 +84,37 @@ void main() {
       // TODO
     });
 
+    // DateTime arrivedAt
+    test('to test the property `arrivedAt`', () async {
+      // TODO
+    });
+
+    // DateTime startedAt
+    test('to test the property `startedAt`', () async {
+      // TODO
+    });
+
+    // DateTime completedAt
+    test('to test the property `completedAt`', () async {
+      // TODO
+    });
+
+    // DateTime cancelledAt
+    test('to test the property `cancelledAt`', () async {
+      // TODO
+    });
+
+    // Who cancelled (as `Cancellation.by`). Null unless the ride is cancelled.
+    // String cancelledBy
+    test('to test the property `cancelledBy`', () async {
+      // TODO
+    });
+
+    // Why (as `Cancellation.reasonCode`). Null unless the ride is cancelled. The free-text note is not sent to drivers.
+    // String cancelReasonCode
+    test('to test the property `cancelReasonCode`', () async {
+      // TODO
+    });
+
   });
 }

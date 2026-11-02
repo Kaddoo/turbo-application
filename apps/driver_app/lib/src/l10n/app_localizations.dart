@@ -1156,6 +1156,12 @@ abstract class AppLocalizations {
   /// **'Ride cancelled'**
   String get tripStepCancelled;
 
+  /// No description provided for @tripCancelledBy.
+  ///
+  /// In en, this message translates to:
+  /// **'{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by Turbo} admin{Cancelled by Turbo} other{Cancelled}}'**
+  String tripCancelledBy(String who);
+
   /// No description provided for @rideStatusSearching.
   ///
   /// In en, this message translates to:

@@ -37,10 +37,14 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 
 ### CR-5. The driver app cannot show document expiry or time on duty
 
+**Applied in 0.5.0 (documents and the `document_expired` details; `dutySince` is still not provided).** `DriverProfile.documents` carries `type`, `expiresOn`, `daysLeft` and a server-computed `status`; the problem carries `documentType` and `expiredOn`.
+
 **What:** The driver screens call for (1) a documents list with expiry dates (valid, expiring in under 30 days, expired) on "Me" and in the readiness checklist, (2) which document blocked going on duty and when it expired, and (3) how long the driver has been on duty. `GET /driver/profile` has none of these, and `document_expired` carries only a sentence.
 **Suggested:** add `documents: [{type, expiresOn}]` and `dutySince` to `DriverProfile`, and put `documentType` and `expiredOn` extension fields on the `document_expired` problem. Until then the checklist says documents are checked when going on duty, and time on duty counts from when the app started sharing.
 
 ### CR-6. Supervisor and campus security phone numbers (drivers and students)
+
+**Applied in 0.5.0.** `supervisorPhone` and `campusSecurityPhone` (nullable) in `AppConfig`, set by the API's `SUPERVISOR_PHONE` and `CAMPUS_SECURITY_PHONE`; null until set.
 
 **What:** "Too many tries. Call your supervisor." (PIN locked), the Safety screens and the help screens need real phone numbers. The apps show 112 only.
 **Suggested:** `supervisorPhone` and `campusSecurityPhone` in `GET /app-config` (see CR-3).
@@ -68,6 +72,15 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 
 ### CR-10. A driver ride has no arrived, started, completed or cancelled times
 
+**Applied in 0.5.0.** `arrivedAt`, `startedAt`, `completedAt`, `cancelledAt`, `cancelledBy` and `cancelReasonCode` (all nullable) on `DriverRide`.
+
 **What:** The trip detail timeline can only show times for "assigned" and "accepted" (`assignedAt`, `acknowledgedAt`). The steps after that (arrived, trip started, completed, cancelled) show a state but no time, and a cancelled ride does not say who cancelled or why.
 **Suggested:** add nullable `arrivedAt`, `startedAt`, `completedAt`, `cancelledAt` to `DriverRide` (the server already records them for the state machine), and optionally `cancelReasonCode`.
 **Until then:** the timeline shows states only for those steps.
+
+
+### CR-11. Top-up cannot name the mobile money network or number
+
+**What:** The design's top-up screen shows the mobile money number with a network chip ("MTN MoMo"), and a "Pay with" choice (MTN MoMo, Telecel Cash, AT Money) when the number's network cannot be told. `TopupCreate` has only `amountPesewas` and `channel`, so the app cannot send a network or a number different from the account phone, and it cannot say which network will be asked to approve.
+**Suggested:** nullable `network` (`mtn | telecel | at`) and `msisdn` on `TopupCreate`; the server detects the network from the number when `network` is omitted and answers `422 network_unknown` when it cannot, so the app can show the "Pay with" choice.
+**Until then:** the top-up screen shows the account phone as the number the prompt goes to, with no network chip.

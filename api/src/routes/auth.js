@@ -143,7 +143,8 @@ auth.get('/app-config', async (_req, res) => {
   const s = await getSettings();
   res.set('cache-control', 'public, max-age=60').json({
     minVersion: config.minVersion, maintenance: { active: config.maintenance, message: config.maintenance ? config.maintenanceMessage || null : null },
-    bookingsPaused: !!s.bookingsPaused, pauseMessage: s.pauseMessage ?? null });
+    bookingsPaused: !!s.bookingsPaused, pauseMessage: s.pauseMessage ?? null,
+    supervisorPhone: config.supervisorPhone || null, campusSecurityPhone: config.campusSecurityPhone || null });
 });
 auth.get('/legal', (_req, res) => res.set('cache-control', 'public, max-age=300').json({
   termsVersion: config.termsVersion, privacyVersion: config.privacyVersion, termsUrl: config.termsUrl, privacyUrl: config.privacyUrl,

@@ -63,10 +63,11 @@ class FakeServer implements HttpClientAdapter {
       ];
 }
 
-Map<String, Object?> appConfig({String ios = '1.0.0', bool maintenance = false, bool paused = false}) => {
+Map<String, Object?> appConfig({String ios = '1.0.0', bool maintenance = false, bool paused = false, String? securityPhone}) => {
       'minVersion': {'ios': ios, 'android': ios, 'web': ios},
       'maintenance': {'active': maintenance, if (maintenance) 'message': 'Back at noon.'},
       'bookingsPaused': paused,
+      'campusSecurityPhone': ?securityPhone,
     };
 
 Map<String, Object?> problem(String code, int status, {String title = 'Problem'}) =>

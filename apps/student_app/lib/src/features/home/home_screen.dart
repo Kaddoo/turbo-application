@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,10 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
   bool _openedActive = false;
+
+  /// 0 = the nearest point is used; 1 = the student picks one from the list.
+  int _pickupTab = 0;
+  PickupPoint? _chosen;
 
   @override
   void initState() {
@@ -139,9 +144,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
             // Where the student stands, in the words of the nearest official point.
             final here = loc?.point;
-            final nearest = here == null
+            final closest = here == null
                 ? null
                 : nearestPickupPoint(points, here.lat.toDouble(), here.lng.toDouble());
+            // A point the student chose from the list wins over the nearest one.
+            final nearest = _chosen ?? closest;
 
             Widget header() {
               final name = (me?.fullName ?? '').trim();
@@ -303,7 +310,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (points.length > 1) ...[
+                        TurboSegmented(
+                          labels: [l10n.homeTabNearest, l10n.homeTabChoose],
+                          selectedIndex: _pickupTab,
+                          onSelected: (i) => setState(() {
+                            _pickupTab = i;
+                            if (i == 0) _chosen = null;
+                          }),
+                        ),
+                        const SizedBox(height: TurboSpacing.md),
+                      ],
                       _Stop(icon: Icons.trip_origin, label: l10n.destPickupLabel, value: nearest?.name ?? l10n.homeChoosePickup),
+                      if (_pickupTab == 1 && points.length > 1) ...[
+                        const SizedBox(height: TurboSpacing.md),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for (final p in points)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: TurboSpacing.sm),
+                                  child: TurboChip(
+                                    label: p.name,
+                                    selected: _chosen?.id == p.id,
+                                    onTap: () => setState(() => _chosen = p),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: TurboSpacing.md),
                       walletChip(),
                       const SizedBox(height: TurboSpacing.md),
@@ -354,12 +391,83 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                   ],
                 ),
+                ..._moreTiles(
+                  context,
+                  closest: closest,
+                  here: here,
+                  hours: data.area.operatingHours,
+                  onClosest: () => _start(context, points, loc),
+                ),
               ],
             );
           },
         ),
       ),
     );
+  }
+
+  /// More tiles under Wallet and Safety, each only when it has something to say:
+  /// the closest pickup point, today's ride hours and the last finished ride.
+  List<Widget> _moreTiles(
+    BuildContext context, {
+    required PickupPoint? closest,
+    required GeoPoint? here,
+    required List<OperatingWindow>? hours,
+    required VoidCallback onClosest,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    final text = Theme.of(context).textTheme;
+    final last = ref.watch(lastRideProvider).value;
+    final tiles = <Widget>[];
+
+    if (closest != null && here != null) {
+      final m = distanceMeters(here.lat.toDouble(), here.lng.toDouble(), closest.point.lat.toDouble(), closest.point.lng.toDouble()).round();
+      final away = m < 1000 ? '$m m' : '${(m / 1000).toStringAsFixed(1)} km';
+      tiles.add(BentoTile(
+        label: l10n.homeTileClosest,
+        title: closest.name,
+        semanticLabel: '${l10n.homeTileClosest}, ${closest.name}, ${l10n.homeAway(away)}',
+        footer: Text(l10n.homeAway(away), style: text.bodyMedium),
+        trailing: const TurboArtImage(TurboArt.roundPushpin),
+        onTap: onClosest,
+      ));
+    }
+    if (hours != null) {
+      // Accra is UTC+0. Dart's weekday is 1 = Monday to 7 = Sunday; the contract's is 0 = Sunday.
+      final day = clock.now().toUtc().weekday % 7;
+      final today = hours.where((w) => w.dayOfWeek == day).toList();
+      tiles.add(BentoTile(
+        label: l10n.homeTileHours,
+        title: today.isEmpty ? l10n.homeHoursClosed : '${today.first.opensAt} – ${today.first.closesAt}',
+        trailing: const TurboArtImage(TurboArt.alarmClock),
+      ));
+    }
+    if (last != null) {
+      tiles.add(BentoTile(
+        label: l10n.homeTileLast,
+        title: last.dropoff.label ?? '',
+        semanticLabel: '${l10n.homeTileLast}, ${last.dropoff.label ?? ''}, ${formatPesewas(last.farePesewas)}',
+        footer: Text(formatPesewas(last.farePesewas), style: text.bodyMedium),
+        trailing: const TurboArtImage(TurboArt.oncomingTaxi),
+        onTap: () => context.push('/ride/${last.id}/receipt'),
+      ));
+    }
+
+    return [
+      for (var i = 0; i < tiles.length; i += 2) ...[
+        const SizedBox(height: TurboSpacing.md),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: tiles[i]),
+              const SizedBox(width: TurboSpacing.md),
+              Expanded(child: i + 1 < tiles.length ? tiles[i + 1] : const SizedBox.shrink()),
+            ],
+          ),
+        ),
+      ],
+    ];
   }
 
   /// Opens the destination screen with the pickup already guessed: the nearest
@@ -369,6 +477,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     List<PickupPoint> points,
     UserLocation? loc,
   ) {
+    final chosen = _chosen;
+    if (chosen != null) {
+      ref.read(tripDraftProvider.notifier).setPickup(locationOfPickup(chosen));
+      context.go('/home/destination');
+      return;
+    }
     final here = loc?.point;
     if (here != null && ref.read(tripDraftProvider).pickup == null) {
       final nearest = nearestPickupPoint(

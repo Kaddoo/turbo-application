@@ -51,6 +51,8 @@ doc/DriverDocument.md
 doc/DriverDocumentCreate.md
 doc/DriverDocumentExpiry.md
 doc/DriverDocumentExpiryList.md
+doc/DriverDocumentKind.md
+doc/DriverDocumentStatus.md
 doc/DriverLocation.md
 doc/DriverLocationPoint.md
 doc/DriverProfile.md
@@ -261,6 +263,8 @@ lib/src/model/driver_document.dart
 lib/src/model/driver_document_create.dart
 lib/src/model/driver_document_expiry.dart
 lib/src/model/driver_document_expiry_list.dart
+lib/src/model/driver_document_kind.dart
+lib/src/model/driver_document_status.dart
 lib/src/model/driver_location.dart
 lib/src/model/driver_location_point.dart
 lib/src/model/driver_profile.dart
@@ -447,6 +451,8 @@ test/driver_detail_test.dart
 test/driver_document_create_test.dart
 test/driver_document_expiry_list_test.dart
 test/driver_document_expiry_test.dart
+test/driver_document_kind_test.dart
+test/driver_document_status_test.dart
 test/driver_document_test.dart
 test/driver_location_point_test.dart
 test/driver_location_test.dart

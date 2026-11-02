@@ -95,6 +95,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneSendCode => 'Send code';
 
   @override
+  String get phoneHint => '24 123 4567';
+
+  @override
   String get phoneInvalid =>
       'Enter your 9-digit number, for example 24 123 4567.';
 
@@ -445,6 +448,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBookRide => 'Book a ride';
 
   @override
+  String get homeTabNearest => 'Nearest point';
+
+  @override
+  String get homeTabChoose => 'Choose point';
+
+  @override
+  String get homeTileClosest => 'Closest to you';
+
+  @override
+  String homeAway(String distance) {
+    return '$distance away';
+  }
+
+  @override
+  String get homeTileHours => 'Ride hours';
+
+  @override
+  String get homeHoursClosed => 'Closed today';
+
+  @override
+  String get homeTileLast => 'Last ride';
+
+  @override
   String get homeSafetyLabel => 'Safety';
 
   @override
@@ -561,6 +587,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quoteCancelRule => 'Cancel for free until you\'re in the car.';
 
   @override
+  String get quoteFareLabel => 'Fixed fare';
+
+  @override
+  String get quoteWontChange => 'It won\'t change';
+
+  @override
+  String get quoteTileWallet => 'Wallet';
+
+  @override
+  String get quoteTileAfter => 'After this ride';
+
+  @override
+  String get quoteTileShort => 'Short by';
+
+  @override
+  String get quoteTopUpHint => 'Top up with mobile money, then book this ride.';
+
+  @override
   String quoteBook(Object fare) {
     return 'Book for $fare';
   }
@@ -619,6 +663,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String walletHeld(Object amount) {
     return '$amount held for your ride';
   }
+
+  @override
+  String get walletTileBalance => 'Balance';
+
+  @override
+  String get walletTileHeld => 'Held for your ride';
 
   @override
   String walletOwed(Object amount) {
@@ -695,6 +745,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String topupPay(Object amount) {
     return 'Pay $amount';
   }
+
+  @override
+  String get topupNumberLabel => 'Mobile money number';
 
   @override
   String topupPhoneNote(Object phone) {
@@ -817,6 +870,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideStatusCancelled => 'Cancelled';
+
+  @override
+  String get rideTileFareHeld => 'Fare is held';
+
+  @override
+  String get rideTileTo => 'To';
+
+  @override
+  String rideSearchingFrom(String place) {
+    return 'Pickup: $place';
+  }
 
   @override
   String get rideSearchingTitle => 'Finding your driver';
@@ -1101,6 +1165,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sosFailedBody => 'Call the emergency number now.';
+
+  @override
+  String get sosCallSecurity => 'Call campus security';
+
+  @override
+  String get safetyTileSecurity => 'Campus security';
+
+  @override
+  String get safetyTileEmergency => 'Emergency';
 
   @override
   String sosCall(Object number) {

@@ -168,6 +168,12 @@ class _TopupScreenState extends ConsumerState<TopupScreen> {
                   ),
                   if (phone != null) ...[
                     const SizedBox(height: TurboSpacing.lg),
+                    BentoTile(
+                      label: l10n.topupNumberLabel,
+                      title: phone,
+                      trailing: const TurboArtImage(TurboArt.mobilePhone),
+                    ),
+                    const SizedBox(height: TurboSpacing.sm),
                     Text(l10n.topupPhoneNote(phone), style: text.bodyMedium),
                   ],
                   if (_error != null) ...[
@@ -220,9 +226,17 @@ class _AmountTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(t.radiusListCard),
             border: Border.all(color: selected ? t.colors.textPrimary : t.colors.border),
           ),
-          child: Text(
-            label,
-            style: t.styles.monoMoneyLarge.copyWith(color: selected ? t.colors.background : t.colors.textPrimary),
+          // Large text shrinks the amount to fit the tile instead of wrapping out of it.
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.sm),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                style: t.styles.monoMoneyLarge.copyWith(color: selected ? t.colors.background : t.colors.textPrimary),
+              ),
+            ),
           ),
         ),
       ),

@@ -40,13 +40,10 @@ class WelcomeScreen extends StatelessWidget {
                               t.colors.onAccent.withValues(alpha: 0.08),
                             ),
                           ),
-                          Center(
-                            child: ExcludeSemantics(
-                              child: Icon(
-                                Icons.directions_car_filled_outlined,
-                                size: TurboSizes.iconLg * 3,
-                                color: t.colors.onAccent,
-                              ),
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: TurboSpacing.xl),
+                              child: VehicleImage(height: null, width: double.infinity),
                             ),
                           ),
                           Positioned(
