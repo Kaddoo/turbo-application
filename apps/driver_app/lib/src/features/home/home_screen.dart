@@ -16,6 +16,7 @@ import '../duty/connectivity.dart';
 import '../duty/location_sharing.dart';
 import '../duty/readiness.dart';
 import '../map/map_view.dart';
+import 'readiness_board.dart';
 
 /// The home tab: off duty (readiness and the big button) or on duty (waiting).
 class HomeScreen extends ConsumerStatefulWidget {
@@ -191,100 +192,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       ),
                     ),
                     const SizedBox(height: TurboSpacing.xl),
-                    Semantics(
-                      header: true,
-                      child: Text(l10n.readinessTitle, style: text.titleLarge),
-                    ),
-                    const SizedBox(height: TurboSpacing.sm),
                     readiness.when(
-                      loading: () => const LoadingState(rows: 1),
+                      loading: () => const LoadingState(rows: 2),
                       error: (_, _) => ErrorState(
                         onRetry: () => ref.invalidate(readinessProvider),
                       ),
                       data: (r) {
                         final source = ref.read(readinessSourceProvider);
-                        Widget row(
-                          String label,
-                          bool ok, {
-                          VoidCallback? fix,
-                          String? fixLabel,
-                        }) => TurboListRow(
-                          card: true,
-                          title: label,
-                          leading: Icon(
-                            ok ? Icons.check : Icons.close,
-                            color: ok ? t.colors.success : t.colors.danger,
-                          ),
-                          trailing: ok
-                              ? Text(
-                                  l10n.readinessOk,
-                                  style: text.bodyMedium?.copyWith(
-                                    color: t.colors.success,
-                                  ),
-                                )
-                              : OutlinedButton(
-                                  onPressed: fix,
-                                  style: OutlinedButton.styleFrom(
-                                    minimumSize: const Size(
-                                      TurboSizes.minTap,
-                                      TurboSizes.minTap,
-                                    ),
-                                    foregroundColor: t.colors.danger,
-                                    side: BorderSide(color: t.colors.danger),
-                                  ),
-                                  child: Text(
-                                    fixLabel ?? l10n.readinessFix,
-                                    style: text.bodyMedium?.copyWith(
-                                      color: t.colors.danger,
-                                    ),
-                                  ),
-                                ),
-                        );
-                        return Column(
-                          children: [
-                            row(
-                              l10n.readinessLocation,
-                              r.locationOk,
-                              fixLabel:
-                                  r.location ==
-                                          DriverLocationAccess.whileInUse ||
-                                      r.location ==
-                                          DriverLocationAccess.deniedForever
-                                  ? l10n.readinessOpenSettings
-                                  : l10n.readinessLocationFix,
-                              fix: () async {
-                                if (r.location ==
-                                        DriverLocationAccess.whileInUse ||
-                                    r.location ==
-                                        DriverLocationAccess.deniedForever) {
-                                  await source.openSettings();
-                                } else {
-                                  await source.requestLocation();
-                                }
-                                ref.invalidate(readinessProvider);
-                              },
-                            ),
-                            row(l10n.readinessBattery, r.batteryOk),
-                            row(l10n.readinessInternet, r.online),
-                            row(
-                              l10n.readinessNotifications,
-                              r.notifications,
-                              fix: () async {
-                                if (!await source.requestNotifications()) {
-                                  await source.openSettings();
-                                }
-                                ref.invalidate(readinessProvider);
-                              },
-                            ),
-                            TurboListRow(
-                              card: true,
-                              title: l10n.readinessDocuments,
-                              leading: Icon(
-                                Icons.description_outlined,
-                                color: t.colors.textSecondary,
-                              ),
-                            ),
-                          ],
+                        return ReadinessBoard(
+                          readiness: r,
+                          onFixLocation: () async {
+                            if (r.location == DriverLocationAccess.whileInUse ||
+                                r.location == DriverLocationAccess.deniedForever) {
+                              await source.openSettings();
+                            } else {
+                              await source.requestLocation();
+                            }
+                            ref.invalidate(readinessProvider);
+                          },
+                          onFixNotifications: () async {
+                            if (!await source.requestNotifications()) {
+                              await source.openSettings();
+                            }
+                            ref.invalidate(readinessProvider);
+                          },
                         );
                       },
                     ),

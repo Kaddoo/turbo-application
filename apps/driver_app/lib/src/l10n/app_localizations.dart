@@ -646,6 +646,90 @@ abstract class AppLocalizations {
   /// **'Documents checked when you go on duty'**
   String get readinessDocuments;
 
+  /// No description provided for @readinessReadyToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to go'**
+  String get readinessReadyToGo;
+
+  /// No description provided for @readinessTileLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get readinessTileLocation;
+
+  /// No description provided for @readinessLocationAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get readinessLocationAlways;
+
+  /// No description provided for @readinessLocationWhileUsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Only while using'**
+  String get readinessLocationWhileUsing;
+
+  /// No description provided for @readinessLocationOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get readinessLocationOff;
+
+  /// No description provided for @readinessTileBattery.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery'**
+  String get readinessTileBattery;
+
+  /// No description provided for @readinessBatteryPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String readinessBatteryPercent(int percent);
+
+  /// No description provided for @readinessTileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get readinessTileNotifications;
+
+  /// No description provided for @readinessTileInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet'**
+  String get readinessTileInternet;
+
+  /// No description provided for @readinessOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get readinessOn;
+
+  /// No description provided for @readinessOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get readinessOff;
+
+  /// No description provided for @readinessConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get readinessConnected;
+
+  /// No description provided for @readinessOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get readinessOffline;
+
+  /// No description provided for @readinessTileDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get readinessTileDocuments;
+
   /// No description provided for @readinessFix.
   ///
   /// In en, this message translates to:

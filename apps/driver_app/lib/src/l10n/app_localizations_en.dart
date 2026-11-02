@@ -341,6 +341,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readinessDocuments => 'Documents checked when you go on duty';
 
   @override
+  String get readinessReadyToGo => 'Ready to go';
+
+  @override
+  String get readinessTileLocation => 'Location';
+
+  @override
+  String get readinessLocationAlways => 'Always';
+
+  @override
+  String get readinessLocationWhileUsing => 'Only while using';
+
+  @override
+  String get readinessLocationOff => 'Off';
+
+  @override
+  String get readinessTileBattery => 'Battery';
+
+  @override
+  String readinessBatteryPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get readinessTileNotifications => 'Notifications';
+
+  @override
+  String get readinessTileInternet => 'Internet';
+
+  @override
+  String get readinessOn => 'On';
+
+  @override
+  String get readinessOff => 'Off';
+
+  @override
+  String get readinessConnected => 'Connected';
+
+  @override
+  String get readinessOffline => 'Offline';
+
+  @override
+  String get readinessTileDocuments => 'Documents';
+
+  @override
   String get readinessFix => 'Fix';
 
   @override

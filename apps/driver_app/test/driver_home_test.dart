@@ -78,9 +78,22 @@ void main() {
       expect(find.text('Hello, Kofi'), findsOneWidget);
       expect(find.text('Silver Toyota Corolla · GR-4821-24'), findsOneWidget);
       expect(find.text('Before you go on duty'), findsOneWidget);
+      expect(find.text('Ready to go'), findsOneWidget);
       expect(find.text('Ready'), findsNWidgets(4));
       expect(find.text('Documents checked when you go on duty'), findsOneWidget);
     });
+
+    for (final (name, ok) in [('ready', true), ('blocked', false)]) {
+      testWidgets('the readiness tiles lay out in dark mode at 200% text when $name', (tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+        tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+        addTearDown(tester.platformDispatcher.clearAllTestValues);
+        final readiness = ok ? FakeReadiness() : FakeReadiness(access: DriverLocationAccess.whileInUse, percent: 12, notificationsOn: false, isOnline: false);
+        await bootDriver(tester, driverServer(), readiness: readiness, size: const Size(360, 800));
+        await settle(tester);
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('failures say what is wrong, with a fix where one exists', (tester) async {
       final readiness = FakeReadiness(access: DriverLocationAccess.whileInUse, percent: 12, notificationsOn: false, isOnline: false);
@@ -91,8 +104,14 @@ void main() {
       await tester.tap(find.text('Open Settings'));
       await settle(tester);
       expect(readiness.settingsOpened, 1);
-      // Battery has no fix button: the driver must charge the phone.
-      expect(find.text('Battery above 20% or charging'), findsOneWidget);
+      // The headline names the one thing in the way.
+      expect(find.text('Location set to Always'), findsOneWidget);
+      expect(find.text('Ready to go'), findsNothing);
+      // Battery has no fix: the driver must charge the phone. It says so with a word, not only a colour.
+      expect(find.text('Battery'), findsOneWidget);
+      expect(find.text('12%'), findsOneWidget);
+      expect(find.text('Needs attention'), findsNWidgets(2));
+      expect(find.text('Offline'), findsOneWidget);
     });
 
     testWidgets('charging counts even when the battery is low', (tester) async {
