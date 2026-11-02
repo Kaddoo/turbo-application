@@ -62,6 +62,23 @@ void main() {
       }
     });
 
+    testWidgets('help tiles lay out in dark mode at 200% text and open the report form', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()..on('GET /support/tickets', body: page([]));
+      await bootDriver(tester, server);
+      tester.view.physicalSize = const Size(360, 2400);
+      addTearDown(tester.view.reset);
+      await settle(tester);
+      await tester.tap(find.bySemanticsLabel('Help'));
+      await settle(tester);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Safety'));
+      await settle(tester);
+      expect(find.byType(TextField), findsWidgets);
+    });
+
     testWidgets('records: the four views are one control, in dark mode and at 200% text', (tester) async {
       tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
       tester.platformDispatcher.textScaleFactorTestValue = 2.0;

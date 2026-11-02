@@ -189,6 +189,13 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: Help topics as tiles, D11 (branch `driver-help-tiles`, cut from `driver-trip-detail`)
+
+- **Files:** `apps/driver_app/lib/src/features/support/help_screen.dart`, `test/driver_misc_test.dart`.
+- **What changed:** the four report topics (Vehicle, Student behaviour, App problem, Safety) are a 2x2 grid of tiles with the wrench, busts, phone and shield pictures. The Hold for SOS block, the topic taps and "My help requests" are unchanged.
+- **Checks:** analyze clean, 83 driver tests pass (dark mode, 200% text, a tap opens the report form). Not run on a phone.
+- **Not done:** supervisor and security call tiles (CR-6), vehicle image on home, D12 documents (CR-5).
+
 ## 2026-11-02, Claude, code: trip detail with a timeline, D10 (branch `driver-trip-detail`, cut from `driver-decline-tiles`)
 
 - **Files:** `apps/driver_app/lib/src/features/me/trip_detail_screen.dart` (new), `trips_screen.dart`, `lib/src/router.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_misc_test.dart`, `CONTRACT_REQUESTS.md` (CR-10).
