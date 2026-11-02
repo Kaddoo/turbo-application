@@ -62,6 +62,30 @@ class WalletScreen extends ConsumerWidget {
                       tone: StatusTone.danger,
                     ),
                   ],
+                  const SizedBox(height: TurboSpacing.md),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: BentoTile(
+                            label: l10n.walletTileBalance,
+                            title: formatPesewas(w.balancePesewas),
+                            money: true,
+                          ),
+                        ),
+                        const SizedBox(width: TurboSpacing.md),
+                        Expanded(
+                          child: BentoTile(
+                            label: l10n.walletTileHeld,
+                            title: formatPesewas(w.reservedPesewas),
+                            money: true,
+                            trailing: const TurboArtImage(TurboArt.locked),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: TurboSpacing.lg),
                   TurboButton(
                     label: l10n.walletTopUp,
@@ -162,10 +186,6 @@ class _BalanceCard extends StatelessWidget {
               child: Text(formatPesewas(wallet.availablePesewas), style: text.displayLarge?.copyWith(color: fore)),
             ),
           ),
-          if (wallet.reservedPesewas > 0) ...[
-            const SizedBox(height: TurboSpacing.xs),
-            Text(l10n.walletHeld(formatPesewas(wallet.reservedPesewas)), style: text.bodyLarge?.copyWith(color: fore)),
-          ],
           if (name.isNotEmpty) ...[
             const SizedBox(height: TurboSpacing.lg),
             Text(name.toUpperCase(), style: t.styles.monoCardName.copyWith(color: sub), maxLines: 1, overflow: TextOverflow.ellipsis),

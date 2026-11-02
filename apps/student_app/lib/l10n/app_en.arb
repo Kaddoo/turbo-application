@@ -197,6 +197,8 @@
   "walletTitle": "Wallet",
   "walletAvailable": "Available",
   "walletHeld": "{amount} held for your ride",
+  "walletTileBalance": "Balance",
+  "walletTileHeld": "Held for your ride",
   "walletOwed": "You owe {amount}. Top up to book again.",
   "walletTopUp": "Top up",
   "walletRecent": "Recent activity",

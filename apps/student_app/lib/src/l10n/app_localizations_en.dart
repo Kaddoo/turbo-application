@@ -624,6 +624,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get walletTileBalance => 'Balance';
+
+  @override
+  String get walletTileHeld => 'Held for your ride';
+
+  @override
   String walletOwed(Object amount) {
     return 'You owe $amount. Top up to book again.';
   }

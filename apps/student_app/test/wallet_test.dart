@@ -59,7 +59,11 @@ void main() {
       await bootHome(tester, server);
       await openWallet(tester);
       expect(find.text('GH₵25.00'), findsOneWidget);
-      expect(find.text('GH₵35.00 held for your ride'), findsOneWidget);
+      // Balance and held are tiles under the card.
+      expect(find.text('Held for your ride'), findsOneWidget);
+      // The held amount shows in its tile and on the "Ride held" row.
+      expect(find.text('GH₵35.00'), findsNWidgets(2));
+      expect(find.text('GH₵60.00'), findsOneWidget);
       expect(find.textContaining('Held ·'), findsOneWidget);
       expect(find.textContaining('Top-up ·'), findsOneWidget);
     });
@@ -102,7 +106,7 @@ void main() {
       server.on('GET /wallet', body: wallet());
       await tester.tap(find.text('Try again'));
       await tester.pumpAndSettle();
-      expect(find.text('GH₵60.00'), findsOneWidget);
+      expect(find.text('GH₵60.00'), findsNWidgets(2));
     });
 
     testWidgets('the wallet chip on home opens the wallet', (tester) async {
