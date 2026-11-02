@@ -99,7 +99,7 @@ export function Phone({
         </div>
       </div>
       {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-sized render */}
-      <img src={`/mockups/${pose}.webp`} alt="" decoding="async" loading="lazy" className="pointer-events-none absolute inset-0 h-full w-full select-none" />
+      <img src={`/mockups/${pose}.webp`} width={pose === "front" ? 900 : 1000} height={1800} alt="" decoding="async" loading="lazy" className="pointer-events-none absolute inset-0 h-full w-full select-none" />
     </div>
   );
 }

@@ -1,27 +1,28 @@
 import { BadgeCheck, KeyRound, LifeBuoy, Share2, ShieldAlert, UserCheck } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Words } from "../ui/ScrubHeading";
+import { Photo } from "../ui/Photo";
 import { Tag } from "../ui/Tag";
 
 const items = [
-  { icon: BadgeCheck, title: "Verified students only", body: "Every rider is verified with a Ghana Card and student ID.", photo: "/photos/student-phone.jpg" },
+  { icon: BadgeCheck, title: "Verified students only", body: "Every rider is verified with a Ghana Card and student ID.", photo: "student-phone" as const },
   { icon: KeyRound, title: "PIN check before every trip", body: "Your driver can only start the trip with your 4-digit PIN." },
-  { icon: UserCheck, title: "Salaried, vetted drivers", body: "Drivers are vetted and paid a salary, not chasing fares.", photo: "/photos/driver.jpg" },
+  { icon: UserCheck, title: "Salaried, vetted drivers", body: "Drivers are vetted and paid a salary, not chasing fares.", photo: "driver" as const },
   { icon: LifeBuoy, title: "SOS, watched by staff", body: "The SOS button in the app goes straight to Turbo staff." },
-  { icon: Share2, title: "Share your trip", body: "Send your live trip to trusted contacts in a tap.", photo: "/photos/student-bench.jpg" },
+  { icon: Share2, title: "Share your trip", body: "Send your live trip to trusted contacts in a tap.", photo: "student-bench" as const },
 ];
 
 /** Card strip that drifts sideways as you scroll on large screens and swipes on small ones. */
 export function Safety() {
   return (
-    <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-hidden bg-ink py-20 sm:py-28">
+    <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-hidden bg-ink py-section">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <Tag tone="dot">Safety</Tag>
         <h2
           id="safety-title"
           data-words
           aria-label="Know who you’re riding with."
-          className="mt-6 text-[2.5rem] font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+          className="mt-6 text-display font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
           <span className="flex flex-wrap items-center justify-center gap-x-4">
             <Tag icon={BadgeCheck} className="hidden sm:inline-flex">
               Verified riders
@@ -59,12 +60,9 @@ export function Safety() {
             >
               {photo ? (
                 <>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- static export */}
-                  <img
-                    src={photo}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
+                  <Photo
+                    name={photo}
+                    sizes="(min-width: 640px) 17rem, 15rem"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
@@ -72,7 +70,7 @@ export function Safety() {
                     <Icon aria-hidden className="size-4" />
                   </span>
                   <h3 className="relative text-base font-medium tracking-tight">{title}</h3>
-                  <p className="relative mt-1.5 text-[13px] leading-relaxed text-paper/80">{body}</p>
+                  <p className="relative mt-1.5 text-base leading-relaxed lg:text-[13px] text-paper/80">{body}</p>
                 </>
               ) : (
                 <>
@@ -81,7 +79,7 @@ export function Safety() {
                   </span>
                   <div>
                     <h3 className="text-base font-medium tracking-tight">{title}</h3>
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-paper/60">{body}</p>
+                    <p className="mt-1.5 text-base leading-relaxed lg:text-[13px] text-paper/60">{body}</p>
                   </div>
                 </>
               )}
@@ -91,7 +89,7 @@ export function Safety() {
             <ShieldAlert className="size-6" aria-hidden />
             <div>
               <p className="text-base font-semibold leading-snug tracking-tight">We never ask you for your wallet PIN.</p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-ink/70">Not by call, text or WhatsApp. If someone asks, it isn’t us.</p>
+              <p className="mt-1.5 text-base leading-relaxed lg:text-[13px] text-ink/70">Not by call, text or WhatsApp. If someone asks, it isn’t us.</p>
             </div>
           </li>
         </ul>

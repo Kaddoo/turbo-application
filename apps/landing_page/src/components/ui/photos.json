@@ -1,0 +1,50 @@
+{
+  "avatar-ama": {
+    "width": 160,
+    "height": 160,
+    "widths": [
+      80,
+      160
+    ]
+  },
+  "avatar-kofi": {
+    "width": 160,
+    "height": 160,
+    "widths": [
+      80,
+      160
+    ]
+  },
+  "driver": {
+    "width": 600,
+    "height": 800,
+    "widths": [
+      300,
+      600
+    ]
+  },
+  "road": {
+    "width": 600,
+    "height": 1200,
+    "widths": [
+      300,
+      600
+    ]
+  },
+  "student-bench": {
+    "width": 600,
+    "height": 800,
+    "widths": [
+      300,
+      600
+    ]
+  },
+  "student-phone": {
+    "width": 600,
+    "height": 800,
+    "widths": [
+      300,
+      600
+    ]
+  }
+}

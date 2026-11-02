@@ -11,7 +11,8 @@
     "build:mock": "npm run mock:write && PUBLIC_API_BASE_URL=/mock-api next build",
     "gen:api": "openapi-typescript ../../api/contract/openapi.yaml -o src/api/schema.d.ts && node -e \"require('fs').writeFileSync('src/api/.contract-sha256', require('crypto').createHash('sha256').update(require('fs').readFileSync('../../api/contract/openapi.yaml')).digest('hex')+'\\n')\"",
     "test": "node --test test/*.test.ts",
-    "mock:write": "node scripts/write-mock.ts"
+    "mock:write": "node scripts/write-mock.ts",
+    "images": "node scripts/images.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
