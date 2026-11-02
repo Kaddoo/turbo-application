@@ -819,6 +819,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rideStatusCancelled => 'Cancelled';
 
   @override
+  String get rideTileFareHeld => 'Fare is held';
+
+  @override
+  String get rideTileTo => 'To';
+
+  @override
+  String rideSearchingFrom(String place) {
+    return 'Pickup: $place';
+  }
+
+  @override
   String get rideSearchingTitle => 'Finding your driver';
 
   @override
