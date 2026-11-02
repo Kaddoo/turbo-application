@@ -62,7 +62,7 @@ class BentoTile extends StatelessWidget {
                           alignment: WrapAlignment.spaceBetween,
                           crossAxisAlignment: WrapCrossAlignment.end,
                           runSpacing: TurboSpacing.sm,
-                          children: [tag!, if (trailing != null) trailing!],
+                          children: [tag!, ?trailing],
                         ),
                       )
                     : trailing == null
