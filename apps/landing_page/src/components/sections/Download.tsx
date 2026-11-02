@@ -112,7 +112,7 @@ export async function Download() {
           </div>
           <figure data-reveal className="flex items-center gap-4 justify-self-start rounded-xl bg-paper p-3 pr-5 md:justify-self-end">
             <div className="size-20" role="img" aria-label="QR code that opens the Turbo web app" dangerouslySetInnerHTML={{ __html: svg }} />
-            <figcaption className="max-w-[8rem] text-xs leading-snug text-ink/70">Scan to open the web app on your phone.</figcaption>
+            <figcaption className="max-w-32 text-xs leading-snug text-ink/70">Scan to open the web app on your phone.</figcaption>
           </figure>
         </div>
         <p className="relative mt-8 hidden text-[10px] text-ink/60 md:block">

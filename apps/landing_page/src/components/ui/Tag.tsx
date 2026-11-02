@@ -26,7 +26,7 @@ export function Tag({
         icon && "pl-1.5",
         tone === "dot"
           ? "bg-turbo/15 text-turbo in-[.on-light]:bg-ink in-[.on-light]:text-turbo"
-          : "bg-ink-3 text-paper/80 in-[.on-light]:bg-ink/[0.06] in-[.on-light]:text-ink/75",
+          : "bg-ink-3 text-paper/80 in-[.on-light]:bg-ink/6 in-[.on-light]:text-ink/75",
         className,
       )}
     >

@@ -37,7 +37,7 @@ export function PickupChips() {
         {points.map((p) => (
           <li
             key={p.id}
-            className="inline-flex h-10 items-center gap-1.5 rounded-full bg-ink/[0.06] pl-2 pr-3.5 text-sm text-ink transition-colors hover:bg-turbo hover:text-ink"
+            className="inline-flex h-10 items-center gap-1.5 rounded-full bg-ink/6 pl-2 pr-3.5 text-sm text-ink transition-colors hover:bg-turbo hover:text-ink"
           >
             <Icon3d name="round-pushpin" className="size-6" />
             {p.name}

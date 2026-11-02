@@ -274,7 +274,7 @@ export function Journey() {
                 {STOPS[i].label}
               </span>
             )}
-            <div className={`relative ${objSize} [perspective:400px]`}>
+            <div className={`relative ${objSize} perspective-[400px]`}>
               <div data-obj className="size-full">
                 <Icon3d name={STOPS[i].icon} className="size-full drop-shadow-[0_12px_16px_rgba(0,0,0,0.35)]" />
               </div>

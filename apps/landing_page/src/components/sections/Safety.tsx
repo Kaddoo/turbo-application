@@ -18,8 +18,8 @@ const items: { icon: Icon3dName; title: string; body: string; photo?: "student-p
  */
 export function Safety() {
   return (
-    <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,50rem)_+_150svh)]">
-      <div className="flex flex-col justify-center py-section lg:min-h-[50rem] lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-svh lg:motion-safe:py-0 lg:motion-safe:pt-16">
+    <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,50rem)+150svh)]">
+      <div className="flex flex-col justify-center py-section lg:min-h-200 lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-svh lg:motion-safe:py-0 lg:motion-safe:pt-16">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <SectionHead
           id="safety-title"
@@ -37,15 +37,15 @@ export function Safety() {
         role="region"
         aria-label="Safety features"
         tabIndex={0}
-        className="mt-14 overflow-x-auto px-4 pb-4 lg:mt-12 [scrollbar-width:none] sm:mt-20 sm:px-6 lg:overflow-visible lg:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]"
+        className="mt-14 overflow-x-auto px-4 pb-4 lg:mt-12 scrollbar-none sm:mt-20 sm:px-6 lg:overflow-visible lg:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]"
       >
         <ul data-drift-track className="flex w-max items-start gap-4">
           {items.map(({ icon, title, body, photo }) => (
             <li
               key={title}
               className={cn(
-                "group relative flex w-[15rem] shrink-0 flex-col overflow-hidden rounded-xl p-5 text-paper sm:w-[17rem]",
-                photo ? "h-[22rem] justify-end bg-ink-2 sm:h-[24rem]" : "h-[13rem] justify-between bg-[#1c1d1f]",
+                "group relative flex w-60 shrink-0 flex-col overflow-hidden rounded-xl p-5 text-paper sm:w-68",
+                photo ? "h-88 justify-end bg-ink-2 sm:h-96" : "h-52 justify-between bg-[#1c1d1f]",
               )}
             >
               {photo ? (
@@ -75,7 +75,7 @@ export function Safety() {
               )}
             </li>
           ))}
-          <li className="flex h-[13rem] w-[15rem] shrink-0 flex-col justify-between rounded-xl bg-turbo p-5 text-ink sm:w-[17rem]">
+          <li className="flex h-52 w-60 shrink-0 flex-col justify-between rounded-xl bg-turbo p-5 text-ink sm:w-68">
             <Icon3d name="warning" className="size-12" />
             <div>
               <p className="text-base font-semibold leading-snug tracking-tight">We never ask you for your wallet PIN.</p>

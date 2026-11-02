@@ -70,7 +70,7 @@ export function Header() {
                 <a
                   href={n.href}
                   aria-current={active === n.href.split("#")[1] ? "true" : undefined}
-                  className="inline-flex h-9 items-center rounded-full bg-ink-3/95 px-4 pointer-coarse:h-11 text-[13px] text-paper/60 shadow-[0_6px_20px_-10px_rgba(0,0,0,0.7)] transition-colors hover:bg-line hover:text-paper aria-[current=true]:bg-line aria-[current=true]:text-paper"
+                  className="inline-flex h-9 items-center rounded-full bg-ink-3/95 px-4 pointer-coarse:h-11 text-[13px] text-paper/60 shadow-[0_6px_20px_-10px_rgba(0,0,0,0.7)] transition-colors hover:bg-line hover:text-paper aria-current:bg-line aria-current:text-paper"
                 >
                   {n.label}
                 </a>

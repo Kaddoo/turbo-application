@@ -32,7 +32,7 @@ function FareScreen() {
           <span className="text-paper/50">Your driver</span>
         </p>
       </div>
-      <div className="mt-3 rounded-[1.5rem] bg-turbo p-4 text-ink">
+      <div className="mt-3 rounded-3xl bg-turbo p-4 text-ink">
         <p className="rounded-full bg-ink/90 px-3 py-2 text-[11px] text-paper">Pickup · Miotso campus</p>
         <div className="mt-5 flex items-end justify-between">
           <div>
@@ -65,7 +65,7 @@ export function Fares() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="-my-8 flex justify-center lg:-my-12 lg:justify-start lg:pl-10">
           <div data-tilt="-1">
-            <Phone pose="tiltLeft" className="w-[17rem] sm:w-[21rem] lg:w-[27rem]">
+            <Phone pose="tiltLeft" className="w-68 sm:w-84 lg:w-108">
               <FareScreen />
             </Phone>
           </div>

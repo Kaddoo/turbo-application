@@ -62,7 +62,7 @@ export function FlatMap() {
       <path d={route} stroke="#d4ff3a" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx={sx} cy={sz} r="16" fill="#f3f1ea" />
       <circle cx={sx} cy={sz} r="8" fill="#0b0c0a" />
-      <circle cx={ex} cy={ez} r="34" stroke="#d4ff3a" strokeWidth="4" className="origin-center animate-pulse-ring [transform-box:fill-box]" />
+      <circle cx={ex} cy={ez} r="34" stroke="#d4ff3a" strokeWidth="4" className="origin-center animate-pulse-ring transform-fill" />
       <circle cx={ex} cy={ez} r="18" fill="#d4ff3a" />
       <circle cx={ex} cy={ez} r="8" fill="#0b0c0a" />
 

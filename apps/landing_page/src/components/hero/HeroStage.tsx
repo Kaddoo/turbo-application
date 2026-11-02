@@ -171,14 +171,14 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
       </div>
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 size-full transition-opacity duration-[1600ms] ease-in-out ${mode === "3d" ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 size-full transition-opacity duration-1600 ease-in-out ${mode === "3d" ? "opacity-100" : "opacity-0"}`}
       />
       <video
         ref={videoRef}
         muted
         playsInline
         preload="auto"
-        className={`absolute inset-0 size-full object-cover transition-[opacity,transform,filter] duration-[1600ms] ease-in-out ${mode === "video" ? "opacity-100" : "scale-[1.08] opacity-0 brightness-50"}`}
+        className={`absolute inset-0 size-full object-cover transition-[opacity,transform,filter] duration-1600 ease-in-out ${mode === "video" ? "opacity-100" : "scale-[1.08] opacity-0 brightness-50"}`}
       />
     </div>
   );

@@ -47,7 +47,7 @@ export function Coverage() {
 
         <div className="-my-8 flex justify-center lg:order-2 lg:-my-12 lg:justify-end lg:pr-10">
           <div data-tilt="1">
-            <Phone pose="tiltRight" className="w-[17rem] sm:w-[21rem] lg:w-[27rem]">
+            <Phone pose="tiltRight" className="w-68 sm:w-84 lg:w-108">
               <RouteScreen />
             </Phone>
           </div>

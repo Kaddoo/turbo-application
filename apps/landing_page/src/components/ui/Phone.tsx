@@ -75,7 +75,7 @@ export function Phone({
     <div
       ref={ref}
       aria-hidden
-      className={cn("relative w-[15rem] shrink-0 sm:w-[17rem]", className)}
+      className={cn("relative w-60 shrink-0 sm:w-68", className)}
       style={{ aspectRatio: `${p.width} / ${p.height}` }}
     >
       <div
@@ -86,7 +86,7 @@ export function Phone({
           className={cn("absolute left-0 top-0 flex flex-col overflow-hidden rounded-[15%/7.2%] bg-black text-paper", screenClassName)}
           style={{ width: SW, height: SH, transformOrigin: "0 0", transform: matrices[pose] }}
         >
-          <div className="relative z-10 flex h-[46px] items-center justify-between px-[30px] pt-[6px] text-[12px] font-semibold">
+          <div className="relative z-10 flex h-11.5 items-center justify-between px-7.5 pt-1.5 text-[12px] font-semibold">
             <span>9:41</span>
             <span className="flex items-center gap-1">
               <Signal className="size-3" />
