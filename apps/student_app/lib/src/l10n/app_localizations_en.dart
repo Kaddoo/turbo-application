@@ -95,6 +95,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneSendCode => 'Send code';
 
   @override
+  String get phoneHint => '24 123 4567';
+
+  @override
   String get phoneInvalid =>
       'Enter your 9-digit number, for example 24 123 4567.';
 

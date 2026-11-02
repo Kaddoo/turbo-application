@@ -250,6 +250,12 @@ abstract class AppLocalizations {
   /// **'Send code'**
   String get phoneSendCode;
 
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'24 123 4567'**
+  String get phoneHint;
+
   /// No description provided for @phoneInvalid.
   ///
   /// In en, this message translates to:

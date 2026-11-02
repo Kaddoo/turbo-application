@@ -79,6 +79,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
           label: l10n.phoneFieldLabel,
           controller: _controller,
           prefixText: '+233 ',
+          hint: l10n.phoneHint,
           helper: l10n.phoneHelper,
           errorText: _error,
           keyboardType: TextInputType.phone,

@@ -26,6 +26,7 @@
   "phoneFieldLabel": "Phone number",
   "phoneHelper": "We'll text you a 6-digit code",
   "phoneSendCode": "Send code",
+  "phoneHint": "24 123 4567",
   "phoneInvalid": "Enter your 9-digit number, for example 24 123 4567.",
   "codeTitle": "Enter the code",
   "codeTitleAccent": "code",
