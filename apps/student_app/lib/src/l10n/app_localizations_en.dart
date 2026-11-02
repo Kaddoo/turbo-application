@@ -707,6 +707,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionsLoadMore => 'Show more';
 
   @override
+  String get txFilterAll => 'All';
+
+  @override
+  String get txFilterTopups => 'Top-ups';
+
+  @override
+  String get txFilterRides => 'Rides';
+
+  @override
+  String get txFilterRefunds => 'Refunds';
+
+  @override
   String get txTopUp => 'Top-up';
 
   @override

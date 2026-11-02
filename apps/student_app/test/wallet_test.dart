@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:student_app/src/features/wallet/amount.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 import 'package:student_app/src/features/wallet/topup_screen.dart';
 
 import 'support/fake_server.dart';
@@ -114,6 +116,30 @@ void main() {
       await tester.tap(find.textContaining('Wallet GH₵'));
       await tester.pumpAndSettle();
       expect(find.text('Available'), findsOneWidget);
+    });
+
+    testWidgets('the four filter chips ask the server for that type, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = walletServer();
+      final types = <String?>[];
+      server.onCall('GET /wallet/transactions', (r) {
+        types.add(r.queryParameters['type']?.toString());
+        return (status: 200, body: page([tx(1, 'topup', 5000)]), headers: <String, String>{});
+      });
+      await bootHome(tester, server);
+      GoRouter.of(tester.element(find.byType(Scaffold).first)).go('/wallet/transactions');
+      await tester.pumpAndSettle();
+      for (final name in ['Rides', 'Refunds', 'Top-ups', 'All']) {
+        await tester.ensureVisible(find.widgetWithText(TurboChip, name));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(TurboChip, name));
+        await tester.pumpAndSettle();
+      }
+      // First load, then one request per chip (the All chip asks with no type).
+      expect(types, [null, 'ride_charge', 'refund', 'topup', null]);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('See all lists more and loads the next page', (tester) async {

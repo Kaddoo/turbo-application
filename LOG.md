@@ -2,6 +2,12 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: transaction filter chips and 3D row pictures (branch `student-transaction-chips`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/wallet/transactions_screen.dart`, `transaction_row.dart`, `lib/l10n/app_en.arb` (+ generated), `test/wallet_test.dart`.
+- **What changed:** the filter row is the app's own chips (as on Activity) labelled All, Top-ups, Rides, Refunds, in place of Material choice chips that read "Transactions", "Top-up", "Ride", "Refund", "Adjustment". Adjustments and reversals now show only under All, as in the design. Each row's picture is a kit 3D picture (coin, padlock, key, taxi, money bag, credit card, warning) instead of a Material icon, so Held shows the lock as in the design.
+- **Checks:** analyze clean, 174 student tests pass (each chip sends its type to the server, in dark mode at 200% text). Not run on a phone.
+
 ## 2026-11-02, Claude, code: student home tiles and pickup tabs (branch `student-home-tiles`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/home/home_screen.dart`, `features/ride/ride_providers.dart`, `lib/l10n/app_en.arb` (+ generated), `test/home_flow_test.dart`.

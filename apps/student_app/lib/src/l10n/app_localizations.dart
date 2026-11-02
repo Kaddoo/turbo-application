@@ -1300,6 +1300,30 @@ abstract class AppLocalizations {
   /// **'Show more'**
   String get transactionsLoadMore;
 
+  /// No description provided for @txFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get txFilterAll;
+
+  /// No description provided for @txFilterTopups.
+  ///
+  /// In en, this message translates to:
+  /// **'Top-ups'**
+  String get txFilterTopups;
+
+  /// No description provided for @txFilterRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides'**
+  String get txFilterRides;
+
+  /// No description provided for @txFilterRefunds.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunds'**
+  String get txFilterRefunds;
+
   /// No description provided for @txTopUp.
   ///
   /// In en, this message translates to:

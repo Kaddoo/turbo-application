@@ -15,20 +15,14 @@ class TransactionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.turbo;
-    final (String label, IconData icon) = switch (tx.type) {
-      TransactionType.topup => (l10n.txTopUp, Icons.add_circle_outline),
-      TransactionType.rideHold => (l10n.txHeld, Icons.lock_clock_outlined),
-      TransactionType.rideRelease => (
-        l10n.txReleased,
-        Icons.lock_open_outlined,
-      ),
-      TransactionType.rideCharge => (
-        l10n.txRide,
-        Icons.directions_car_outlined,
-      ),
-      TransactionType.refund => (l10n.txRefund, Icons.undo),
-      TransactionType.adjustment => (l10n.txAdjustment, Icons.tune),
-      TransactionType.providerReversal => (l10n.txReversal, Icons.replay),
+    final (String label, TurboArt art) = switch (tx.type) {
+      TransactionType.topup => (l10n.txTopUp, TurboArt.coin),
+      TransactionType.rideHold => (l10n.txHeld, TurboArt.locked),
+      TransactionType.rideRelease => (l10n.txReleased, TurboArt.key),
+      TransactionType.rideCharge => (l10n.txRide, TurboArt.oncomingTaxi),
+      TransactionType.refund => (l10n.txRefund, TurboArt.moneyBag),
+      TransactionType.adjustment => (l10n.txAdjustment, TurboArt.creditCard),
+      TransactionType.providerReversal => (l10n.txReversal, TurboArt.warning),
     };
     // Accra is UTC+0 all year, so no zone conversion is needed.
     final when = DateFormat('d MMM, HH:mm').format(tx.createdAt.toUtc());
@@ -43,8 +37,9 @@ class TransactionRow extends StatelessWidget {
       leading: Container(
         width: TurboSizes.minTap,
         height: TurboSizes.minTap,
+        alignment: Alignment.center,
         decoration: BoxDecoration(color: t.colors.surface, borderRadius: BorderRadius.circular(t.radiusInput)),
-        child: Icon(icon, color: t.colors.textPrimary),
+        child: TurboArtImage(art, size: TurboSizes.iconLg - TurboSpacing.sm),
       ),
       trailing: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.35),

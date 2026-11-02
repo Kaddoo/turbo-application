@@ -19,21 +19,12 @@ class TransactionsScreen extends ConsumerWidget {
     final state = ref.watch(transactionsProvider);
     final controller = ref.read(transactionsProvider.notifier);
 
-    String label(TransactionType? type) => switch (type) {
-      null => l10n.navWallet,
-      TransactionType.topup => l10n.txTopUp,
-      TransactionType.rideCharge => l10n.txRide,
-      TransactionType.refund => l10n.txRefund,
-      TransactionType.adjustment => l10n.txAdjustment,
-      _ => l10n.txHeld,
-    };
-
-    const filters = <TransactionType?>[
-      null,
-      TransactionType.topup,
-      TransactionType.rideCharge,
-      TransactionType.refund,
-      TransactionType.adjustment,
+    // The four filters of the design. Adjustments and reversals show under All.
+    final filters = <(TransactionType?, String)>[
+      (null, l10n.txFilterAll),
+      (TransactionType.topup, l10n.txFilterTopups),
+      (TransactionType.rideCharge, l10n.txFilterRides),
+      (TransactionType.refund, l10n.txFilterRefunds),
     ];
 
     return Scaffold(
@@ -41,24 +32,21 @@ class TransactionsScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(
-              height: TurboSizes.primaryAction,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: TurboSpacing.lg,
-                  vertical: TurboSpacing.sm,
-                ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(
+                horizontal: TurboSpacing.lg,
+                vertical: TurboSpacing.sm,
+              ),
+              child: Row(
                 children: [
-                  for (final f in filters)
+                  for (final (f, name) in filters)
                     Padding(
                       padding: const EdgeInsets.only(right: TurboSpacing.sm),
-                      child: ChoiceChip(
-                        label: Text(
-                          f == null ? l10n.transactionsTitle : label(f),
-                        ),
+                      child: TurboChip(
+                        label: name,
                         selected: controller.filter == f,
-                        onSelected: (_) => controller.setFilter(f),
+                        onTap: () => controller.setFilter(f),
                       ),
                     ),
                 ],
