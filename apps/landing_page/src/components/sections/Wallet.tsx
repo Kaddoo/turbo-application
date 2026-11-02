@@ -8,7 +8,7 @@ const facts = [
 
 export function Wallet() {
   return (
-    <section aria-labelledby="wallet-title" data-bg="ink" className="relative bg-ink py-20 sm:py-28">
+    <section aria-labelledby="wallet-title" data-bg="ink" className="relative bg-ink py-section">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 id="wallet-title" className="sr-only">
           Your money, your wallet
@@ -20,7 +20,7 @@ export function Wallet() {
                 <Tag>{label}</Tag>
               </dt>
               <dd className="order-2 mt-5 text-5xl font-medium tracking-[-0.045em] sm:text-[3.5rem]">{value}</dd>
-              <dd className="order-3 mt-3 max-w-[16rem] text-sm leading-relaxed text-paper/60">{body}</dd>
+              <dd className="order-3 mt-3 max-w-[16rem] text-base leading-relaxed lg:text-sm text-paper/60">{body}</dd>
             </div>
           ))}
         </dl>

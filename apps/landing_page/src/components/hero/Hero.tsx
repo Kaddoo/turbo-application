@@ -28,7 +28,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-transparent transition-opacity duration-1000 md:bg-gradient-to-r md:from-ink md:via-ink/75 md:via-35% md:to-transparent md:to-65%"
       />
 
-      <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-28 sm:px-6 md:justify-center md:pb-24">
+      <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-4 pb-28 pt-24 sm:px-6 md:justify-center md:pb-24">
         <div data-hero-copy className="max-w-xl lg:max-w-2xl">
           <p data-reveal className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-ink/60 px-3 py-1.5 text-xs text-paper/80">
             <MapPin className="size-3.5 text-turbo" aria-hidden />
@@ -37,7 +37,7 @@ export function Hero() {
           <SplitHeading
             as="h1"
             id="hero-title"
-            className="text-[2.75rem] font-semibold leading-[0.98] tracking-[-0.04em] text-balance sm:text-6xl lg:text-[5.25rem]"
+            className="text-hero font-semibold leading-[0.98] tracking-[-0.04em] text-balance sm:text-6xl lg:text-[5.25rem]"
           >
             Rides around campus, paid from your wallet.
           </SplitHeading>

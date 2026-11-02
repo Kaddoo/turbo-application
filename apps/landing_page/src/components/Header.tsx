@@ -50,7 +50,7 @@ export function Header() {
         )}
       >
         <a href="/" className="inline-flex items-center gap-2.5 justify-self-start text-lg text-paper" aria-label="Turbo home">
-          <span aria-hidden className="inline-flex size-10 items-center justify-center rounded-xl bg-turbo">
+          <span aria-hidden className="inline-flex size-11 items-center justify-center rounded-xl bg-turbo">
             <span className="size-3 rounded-full bg-ink" />
           </span>
           <span className="hidden font-semibold tracking-tight sm:inline">Turbo</span>
@@ -62,7 +62,7 @@ export function Header() {
               <li key={n.href}>
                 <a
                   href={n.href}
-                  className="inline-flex h-9 items-center rounded-full bg-white/[0.07] px-4 text-[13px] text-paper/75 transition-colors hover:bg-white/15 hover:text-paper"
+                  className="inline-flex h-9 items-center rounded-full bg-white/[0.07] px-4 pointer-coarse:h-11 text-[13px] text-paper/75 transition-colors hover:bg-white/15 hover:text-paper"
                 >
                   {n.label}
                 </a>
@@ -74,13 +74,13 @@ export function Header() {
         <div className="flex items-center gap-2 justify-self-end">
           <a
             href="/#download"
-            className="inline-flex h-10 items-center gap-2 rounded-full bg-turbo px-5 text-sm font-medium text-ink transition-colors hover:bg-white"
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-turbo px-5 text-sm font-medium text-ink transition-colors hover:bg-white"
           >
             Get the app
           </a>
           <button
             type="button"
-            className="inline-flex size-10 items-center justify-center rounded-full text-paper hover:bg-white/10 md:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-full text-paper hover:bg-white/10 md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((o) => !o)}

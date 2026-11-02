@@ -2,6 +2,27 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
+
+- **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.
+- **Performance:**
+  - R1: phones (under 768 px) skip the hero video and show the flat map with the copy straight away (`HeroStage.tsx`).
+  - R2: the tap-away section uses CSS sticky instead of a GSAP pin, which cut desktop and iPad CLS from 1.3–2.0 to 0 (`TapAway.tsx`, `Motion.tsx`).
+  - R11: the scroll colour change fades a fixed paper layer's opacity instead of repainting the body colour (`Motion.tsx`).
+- **Layout and type:**
+  - R3: the hero copy clears the fixed header at 320 px and in phone landscape.
+  - R4: fluid `text-hero`, `text-display` and `text-title` tokens; on phones every section heading is now smaller than the H1.
+  - R5: body text is 16 px on phones.
+  - R6: header controls and the phone mock-up's Google Play button are 44 px; the nav pills are 44 px on touch screens.
+  - R8: doc text is about 70 characters a line.
+  - R9: the maintenance banner is clamped to 2 lines.
+  - R10: the ticker stops after 3 passes.
+  - R13: `py-section` and `py-section-tight` spacing tokens.
+  - R12: nothing to change beyond R5; the phone mock-ups keep their fixed sizes.
+- **Images (R7):** `npm run images` makes AVIF and WebP variants in `public/img/` and writes `photos.json`. `<Photo>` serves them with `srcset`/`sizes`, width/height and lazy loading. The mock-ups now have width and height. The originals are only 600 px wide, so 3x phones still get 600 px; sharper photos need larger originals from Turbo.
+- **Checks:** lint, 8 tests, `npm run check` (axe 0, links), and the responsive audit re-run at 12 sizes: no overflow, CLS 0 everywhere, no lines over 75 characters, no header overlap.
+- **Not changed:** section headings above 640 px keep their design sizes (some are larger than the H1 by design). The footer text and the captions stay under 16 px.
+
 ## 2026-11-02 · landing page: legal links until an admin publishes them
 
 - **Branch:** `landing-api`. **Files:** `apps/landing_page/src/lib/legal.ts` (new), `LegalLinks.tsx`, `legal/VersionLabel.tsx`, `test/api-rules.test.ts`, `CONTRACT_REQUESTS.md` (CR-8).

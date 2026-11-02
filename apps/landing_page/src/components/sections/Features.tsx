@@ -12,7 +12,7 @@ export function Features() {
           id="features-title"
           data-words
           aria-label="Know your fare before you move."
-          className="mt-6 text-[2.6rem] font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl lg:text-7xl"
+          className="mt-6 text-display font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl lg:text-7xl"
         >
           <span className="block sm:pl-[1.5em]">
             <Words>Know your fare</Words>

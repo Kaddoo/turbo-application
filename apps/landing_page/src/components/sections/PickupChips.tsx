@@ -45,7 +45,7 @@ export function PickupChips() {
         ))}
       </ul>
       {hours && (
-        <p className="mt-4 flex items-center gap-2 text-sm text-ink/70">
+        <p className="mt-4 flex items-center gap-2 text-base text-ink/70 lg:text-sm">
           <Clock className="size-4" aria-hidden /> Operating hours: {hours}
         </p>
       )}

@@ -17,7 +17,18 @@
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --animate-marquee: marquee 32s linear infinite;
+  /* Fluid sizes below the sm breakpoint; sm/lg classes take over above it.
+     The section headline never outgrows the page H1 on phones. */
+  --text-hero: clamp(2.5rem, 1.6rem + 3.6vw, 3.75rem);
+  --text-display: clamp(2.25rem, 1.5rem + 3vw, 2.75rem);
+  --text-title: clamp(1.75rem, 1.5rem + 1vw, 1.875rem);
+
+  /* Vertical rhythm between sections. */
+  --spacing-section: clamp(5rem, 3.5rem + 5vw, 7rem);
+  --spacing-section-tight: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+
+  /* Three passes, then it rests (WCAG 2.2.2: moving content stops on its own). */
+  --animate-marquee: marquee 32s linear 3;
   --animate-pulse-ring: pulse-ring 2.4s var(--ease-out-expo) infinite;
 
   @keyframes marquee {
@@ -155,6 +166,8 @@ details[open]::details-content { block-size: auto; }
 
 /* Long-form copy on policy pages */
 .prose-turbo { font-size: 1.0625rem; line-height: 1.75; color: rgb(11 12 10 / 0.8); }
+/* About 70 characters a line; ch measures the wide "0", so em is the closer fit. */
+.prose-turbo p, .prose-turbo li { max-width: 34em; }
 .prose-turbo > * + * { margin-top: 1.1em; }
 .prose-turbo h2 { margin-top: 2.6em; font-size: 1.6rem; line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-ink); }
 .prose-turbo h3 { margin-top: 1.8em; font-size: 1.15rem; font-weight: 600; color: var(--color-ink); }

@@ -5,6 +5,7 @@ import { serviceArea, formatCedis, formatKm } from "@/lib/api";
 import { useApi } from "@/lib/useApi";
 import { LoadProblem } from "../ui/LoadProblem";
 import { Phone } from "../ui/Phone";
+import { Photo } from "../ui/Photo";
 import { RiseHeading } from "../ui/ScrubHeading";
 import { Tag } from "../ui/Tag";
 
@@ -24,7 +25,7 @@ function FareScreen() {
       <p className="text-[1.45rem] leading-[1.1] tracking-tight">See your fare before you book</p>
       <p className="mt-2 text-[11px] text-paper/50">Fixed. It never changes after.</p>
       <div className="mt-6 flex items-center gap-2.5 rounded-2xl bg-white/[0.07] p-2.5">
-        <img src="/photos/avatar-kofi.jpg" alt="" className="size-8 rounded-full object-cover" />
+        <Photo name="avatar-kofi" sizes="32px" className="size-8 rounded-full object-cover" />
         <p className="text-[11px] leading-tight">
           Kofi
           <br />
@@ -60,7 +61,7 @@ export function Fares() {
   const fallback = state.status === "error" || (state.status === "ok" && bands.length === 0);
 
   return (
-    <section id="fares" data-bg="paper" aria-labelledby="fares-title" className="on-light relative overflow-hidden bg-paper py-10 text-ink sm:py-14">
+    <section id="fares" data-bg="paper" aria-labelledby="fares-title" className="on-light relative overflow-hidden bg-paper py-section-tight text-ink">
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="-my-8 flex justify-center lg:-my-12 lg:justify-start lg:pl-10">
           <div data-tilt="-1">
@@ -72,11 +73,11 @@ export function Fares() {
 
         <div className="max-w-md">
           <Tag icon={ReceiptText}>Fixed fares</Tag>
-          <RiseHeading id="fares-title" className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+          <RiseHeading id="fares-title" className="mt-5 text-title font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
             One price per distance band.
           </RiseHeading>
           {!fallback && (
-            <p data-reveal className="mt-5 flex gap-2.5 text-[15px] leading-relaxed text-ink/70">
+            <p data-reveal className="mt-5 flex gap-2.5 text-base leading-relaxed lg:text-[15px] text-ink/70">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden />
               You see the exact fare before you confirm. It never changes after.
             </p>
@@ -87,7 +88,7 @@ export function Fares() {
 
             {fallback && (
               <>
-                <p data-reveal className="text-[15px] leading-relaxed text-ink/70">
+                <p data-reveal className="text-base leading-relaxed text-ink/70 lg:text-[15px]">
                   Fares are shown in the app before you book. You see the exact price before you confirm, and it never
                   changes after.
                 </p>
@@ -128,7 +129,7 @@ export function Fares() {
                     })}
                   </tbody>
                 </table>
-                <p className="mt-4 flex items-center gap-2 text-sm text-ink/60">
+                <p className="mt-4 flex items-center gap-2 text-base text-ink/60 lg:text-sm">
                   <Info className="size-4" aria-hidden />
                   Trips over {formatKm(state.data.maxTripDistanceMeters)} are not available.
                 </p>

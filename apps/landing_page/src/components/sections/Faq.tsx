@@ -61,11 +61,11 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 export function Faq() {
   return (
-    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-20 sm:py-28">
+    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-section">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
         <div>
           <Tag tone="dot">FAQ</Tag>
-          <RiseHeading id="faq-title" className="mt-6 text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+          <RiseHeading id="faq-title" className="mt-6 text-display font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
             Questions, answered.
           </RiseHeading>
           <p data-reveal className="mt-6 text-paper/60">
@@ -85,7 +85,7 @@ export function Faq() {
                   <Plus className="faq-icon size-4 transition-transform duration-300" aria-hidden />
                 </span>
               </summary>
-              <div className="max-w-2xl pb-7 pr-12 text-[15px] leading-relaxed text-paper/60">{a}</div>
+              <div className="max-w-2xl pb-7 pr-12 text-base leading-relaxed lg:text-[15px] text-paper/60">{a}</div>
             </details>
           ))}
         </div>

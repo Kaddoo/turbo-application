@@ -31,14 +31,14 @@ function RouteScreen() {
 
 export function Coverage() {
   return (
-    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-10 text-ink sm:py-14">
+    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-section-tight text-ink">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="max-w-md lg:order-1">
           <Tag icon={MapPin}>Where we go</Tag>
-          <RiseHeading id="where-title" className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
+          <RiseHeading id="where-title" className="mt-5 text-title font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
             Miotso toward Ashaiman China Mall.
           </RiseHeading>
-          <ScrubHeading as="p" className="mt-5 text-[15px] leading-relaxed text-ink/80">
+          <ScrubHeading as="p" className="mt-5 text-base leading-relaxed text-ink/80 lg:text-[15px]">
             One corridor, served well. Pick up from the points below; the app shows exactly where to stand.
           </ScrubHeading>
 

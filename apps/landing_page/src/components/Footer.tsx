@@ -29,7 +29,7 @@ export function Footer() {
     <footer data-bg="ink" className="bg-ink pt-16 sm:pt-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1fr_minmax(0,22rem)]">
-          <a href="/" className="self-start text-2xl text-paper" aria-label="Turbo home">
+          <a href="/" className="inline-flex min-h-11 items-center self-start text-2xl text-paper" aria-label="Turbo home">
             <Wordmark />
           </a>
           <div>
