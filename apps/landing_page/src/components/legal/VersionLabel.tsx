@@ -2,6 +2,7 @@
 
 import { ExternalLink } from "lucide-react";
 import { legal } from "@/lib/api";
+import { publishedUrl } from "@/lib/legal";
 import { useApi } from "@/lib/useApi";
 import { legalFallback } from "@/config/legal";
 
@@ -20,7 +21,7 @@ export function VersionLabel({ doc }: { doc: "privacy" | "terms" }) {
   const fallback = legalFallback[doc];
   const live = state.status === "ok" ? state.data : null;
   const version = live ? (doc === "terms" ? live.termsVersion : live.privacyVersion) : fallback.version;
-  const url = live ? (doc === "terms" ? live.termsUrl : live.privacyUrl) : null;
+  const url = live ? publishedUrl(doc === "terms" ? live.termsUrl : live.privacyUrl) : null;
   const updated = version === fallback.version ? fallback.updatedAt : null;
   return (
     <div className="flex flex-wrap items-center gap-3 text-sm">

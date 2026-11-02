@@ -4,6 +4,7 @@ import { test } from "node:test";
 import { mockAppConfig, mockLegal, mockServiceArea } from "../src/api/mock.ts";
 import { appConfigIssues, legalIssues, serviceAreaIssues } from "../src/lib/guards.ts";
 import { formatHours } from "../src/lib/hours.ts";
+import { publishedUrl } from "../src/lib/legal.ts";
 import { fromResponse, fromThrown, isRetryable, problemText } from "../src/lib/problems.ts";
 
 test("the mock answers match the contract checks", () => {
@@ -80,4 +81,12 @@ test("only problems a retry can fix offer Try again", () => {
   for (const kind of ["forbidden", "not_found", "bad_request", "contract_mismatch", "upgrade", "cancelled"] as const) assert.ok(!isRetryable({ kind }), kind);
   assert.equal(problemText({ kind: "rate_limited", retryAfterSeconds: 54 }, "x"), "Too many requests right now. Try again in 54 seconds.");
   assert.equal(problemText({ kind: "network" }, "the current fares"), "We couldn't reach Turbo to load the current fares.");
+});
+
+test("legal links: placeholders until an admin publishes the documents", () => {
+  assert.equal(publishedUrl("https://turbo.example/terms"), null, "staging's placeholder");
+  assert.equal(publishedUrl("http://turbogh.app/terms"), null, "not https");
+  assert.equal(publishedUrl("not a url"), null);
+  assert.equal(publishedUrl(null), null);
+  assert.equal(publishedUrl("https://turbogh.app/terms/"), "https://turbogh.app/terms/");
 });

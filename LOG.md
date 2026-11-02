@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: legal links until an admin publishes them
+
+- **Branch:** `landing-api`. **Files:** `apps/landing_page/src/lib/legal.ts` (new), `LegalLinks.tsx`, `legal/VersionLabel.tsx`, `test/api-rules.test.ts`, `CONTRACT_REQUESTS.md` (CR-8).
+- **What changed:** terms and privacy are not supplied yet; an admin will publish them from the dashboard, not the backend. The contract has no admin operation for that, so CR-8 asks for `PUT /admin/legal`. Meanwhile staging's `/legal` returns `turbo.example` placeholders: the footer and the version label now treat `.example` or non-https URLs as unpublished and link to the hosted drafts (`/terms/`, `/privacy/`).
+- **Checks:** lint, 8 tests, `build:mock` pass.
+- **Vercel (not done):** linking project `turbo` to `KosherKev/turbo` fails: the Vercel GitHub app has no access to that repo. Its owner must grant it at https://github.com/apps/vercel; then set Root Directory `apps/landing_page` and env `PUBLIC_API_BASE_URL`, `PUBLIC_SITE_URL`. Production from main also needs `add-landing-page` and `landing-api` merged.
+- **Next:** dashboard screen for legal once CR-8 lands.
+
 ## 2026-11-02, Claude, code: landing page public reads wired to the contract
 
 **Task:** Module 1 of the landing page integration: `GET /service-area`, `/legal` and `/app-config`, through a service layer, typed from the contract, with every failure handled.
