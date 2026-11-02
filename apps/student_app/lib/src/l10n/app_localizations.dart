@@ -1042,6 +1042,42 @@ abstract class AppLocalizations {
   /// **'Cancel for free until you\'re in the car.'**
   String get quoteCancelRule;
 
+  /// No description provided for @quoteFareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed fare'**
+  String get quoteFareLabel;
+
+  /// No description provided for @quoteWontChange.
+  ///
+  /// In en, this message translates to:
+  /// **'It won\'t change'**
+  String get quoteWontChange;
+
+  /// No description provided for @quoteTileWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get quoteTileWallet;
+
+  /// No description provided for @quoteTileAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After this ride'**
+  String get quoteTileAfter;
+
+  /// No description provided for @quoteTileShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short by'**
+  String get quoteTileShort;
+
+  /// No description provided for @quoteTopUpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up with mobile money, then book this ride.'**
+  String get quoteTopUpHint;
+
   /// No description provided for @quoteBook.
   ///
   /// In en, this message translates to:
