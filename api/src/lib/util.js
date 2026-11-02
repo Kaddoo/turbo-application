@@ -13,6 +13,21 @@ export function haversineM(lat1, lng1, lat2, lng2) {
 }
 
 // GeoJSON polygon, outer ring only. Ray casting. ring = [[lng,lat],...]
+// Google encoded polyline (precision 5) of [lat, lng] pairs.
+export function encodePolyline(points) {
+  let out = '', pl = 0, pg = 0;
+  const put = (v) => {
+    let n = v < 0 ? ~(v << 1) : v << 1;
+    while (n >= 0x20) { out += String.fromCharCode((0x20 | (n & 0x1f)) + 63); n >>= 5; }
+    out += String.fromCharCode(n + 63);
+  };
+  for (const [lat, lng] of points) {
+    const la = Math.round(lat * 1e5), lo = Math.round(lng * 1e5);
+    put(la - pl); put(lo - pg); pl = la; pg = lo;
+  }
+  return out;
+}
+
 export function inPolygon(lat, lng, polygon) {
   const ring = polygon?.coordinates?.[0];
   if (!ring) return false;

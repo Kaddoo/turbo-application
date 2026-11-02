@@ -22,6 +22,7 @@ Map<String, Object?> ride(
       'pickup': {'point': {'lat': 5.74, 'lng': 0.066}, 'label': 'Main gate', 'pickupPointId': pickupA['id']},
       'dropoff': {'point': {'lat': 5.75, 'lng': 0.07}, 'label': 'Hostel block', 'pickupPointId': pickupB['id']},
       'routeDistanceMeters': 9400,
+      'routePolyline': '_p~iF~ps|U_ulLnnqC_mqNvxq`@',
       'farePesewas': 3500,
       'pin': pin,
       'pickupEtaSeconds': 240,
@@ -117,6 +118,13 @@ void main() {
       )]));
       await bootHome(tester, server);
     }
+
+    testWidgets('the road from the server is handed to the map', (tester) async {
+      final server = rideServer();
+      server.on('GET /rides', body: rideList([ride('searching')]));
+      final specs = await bootHome(tester, server);
+      expect(specs.last.route, '_p~iF~ps|U_ulLnnqC_mqNvxq`@');
+    });
 
     testWidgets('driver assigned: PIN digit by digit, plate, driver and the pickup', (tester) async {
       final server = rideServer(status: 'assigned')

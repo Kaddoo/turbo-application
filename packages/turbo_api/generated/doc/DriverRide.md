@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **pickup** | [**Location**](Location.md) |  | 
 **dropoff** | [**Location**](Location.md) |  | 
 **routeDistanceMeters** | **int** |  | 
+**routePolyline** | **String** | The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app. | [optional] 
 **farePesewas** | **int** | What the student pays for this trip. Shown so the driver can see the price before acknowledging. | [optional] 
 **pickupDistanceMeters** | **int** | Estimated road distance from the driver's last known position to the pickup. Null once the trip has started or if the driver has no recent position. | [optional] 
 **pickupEtaSeconds** | **int** | Estimated time to reach the pickup. 0 once arrived, null once the trip has started. | [optional] 

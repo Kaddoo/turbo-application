@@ -13,6 +13,7 @@ class MapSpec {
     this.driver,
     this.pickup,
     this.dropoff,
+    this.route,
   });
 
   final GeoPoint? center;
@@ -21,6 +22,9 @@ class MapSpec {
   final GeoPoint? driver;
   final GeoPoint? pickup;
   final GeoPoint? dropoff;
+
+  /// The road from pickup to drop-off as the API's encoded polyline (`routePolyline`); null draws no line.
+  final String? route;
   final List<PickupPoint> pickupPoints;
   final bool showMyLocation;
 }
@@ -37,12 +41,19 @@ Widget _googleMap(BuildContext context, MapSpec spec) {
       : spec.pickupPoints.isNotEmpty
           ? LatLng(spec.pickupPoints.first.point.lat.toDouble(), spec.pickupPoints.first.point.lng.toDouble())
           : const LatLng(5.7, 0.1);
+  final line = [for (final p in decodePolyline(spec.route)) LatLng(p.lat, p.lng)];
   return GoogleMap(
     initialCameraPosition: CameraPosition(target: target, zoom: focus != null ? 15 : 12),
     myLocationEnabled: spec.showMyLocation,
     myLocationButtonEnabled: false,
     zoomControlsEnabled: false,
     mapToolbarEnabled: false,
+    polylines: {
+      if (line.length > 1) ...[
+        Polyline(polylineId: const PolylineId('route-casing'), points: line, width: 9, color: context.turbo.colors.accent, zIndex: 1),
+        Polyline(polylineId: const PolylineId('route'), points: line, width: 5, color: context.turbo.colors.onAccent, zIndex: 2),
+      ],
+    },
     markers: {
       if (spec.pickup != null) Marker(markerId: const MarkerId('pickup'), position: ll(spec.pickup!)),
       if (spec.dropoff != null)

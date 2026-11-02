@@ -68,7 +68,7 @@ const etaTo = (r) => {
 export const rideView = (r, { includePin = false } = {}) => ({
   id: r.id, status: r.status,
   pickup: location(r.pickup_lat, r.pickup_lng, r.pickup_label), dropoff: location(r.drop_lat, r.drop_lng, r.drop_label),
-  routeDistanceMeters: r.distance_m, farePesewas: r.fare_pesewas,
+  routeDistanceMeters: r.distance_m, routePolyline: r.route_polyline ?? null, farePesewas: r.fare_pesewas,
   pin: includePin && ['assigned', 'driver_arrived'].includes(r.status) ? r.pin : null,
   pickupEtaSeconds: etaTo(r),
   driver: r.d_id ? { id: r.d_id, firstName: r.d_first ?? 'Driver' } : null,

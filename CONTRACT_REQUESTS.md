@@ -57,3 +57,10 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 **What:** Turbo has not supplied the terms and privacy yet; an admin will publish them from the dashboard. The contract only has `GET /legal`: no admin operation sets `termsUrl`, `privacyUrl` or the versions, so the dashboard cannot build that screen. Until an admin sets them, staging returns `https://turbo.example/...`, so the landing page footer links to a dead site.
 **Suggested:** `PUT /admin/legal` (`admin:super_admin`, audited) taking `LegalVersions` plus the dates from CR-7. Until the first one is set, `GET /legal` returns the landing page's own hosted drafts (`<PUBLIC_SITE_URL>/terms/` and `/privacy/`), not placeholders. Note: a new terms version makes every student accept again (`acceptedTermsVersion`), so the screen must say so before saving.
 
+
+### CR-7. The ride has no route line, so the in-app trip map cannot draw the road
+
+**What:** The trip map (student and driver) should show the road from pickup to drop-off and the car moving along it, like other ride apps. Markers and the live driver position already work (`GET /rides/{id}` driver position). The contract gives only `routeDistanceMeters` and `routeDurationSeconds`, no geometry.
+**Suggested:** add `routePolyline` (Google encoded polyline string) to `Ride` and to the quote, computed by the server from the Routes call it already makes, so no Maps key with Directions access ships in the apps. Optional later: `driverToPickupPolyline` for the approach leg.
+**Until then:** the apps draw markers and the driver position only.
+**Applied:** contract 0.4.0 adds nullable `routePolyline` to `Quote`, `Ride` and `DriverRide` (migration 016, API fills it from the Routes call; without a Maps key it is the straight line). The approach leg (`driverToPickupPolyline`) is still not provided.

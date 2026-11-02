@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -27,6 +29,14 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // The Maps key is never committed: android/secrets.properties (git-ignored)
+        // or the MAPS_API_KEY environment variable. Empty means the map stays blank.
+        val secrets = Properties().apply {
+            val f = rootProject.file("secrets.properties")
+            if (f.exists()) f.inputStream().use { load(it) }
+        }
+        manifestPlaceholders["mapsApiKey"] =
+            secrets.getProperty("MAPS_API_KEY") ?: System.getenv("MAPS_API_KEY") ?: ""
     }
 
     buildTypes {

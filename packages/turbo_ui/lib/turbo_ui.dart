@@ -9,6 +9,7 @@ export 'src/components/confirm_dialog.dart';
 export 'src/components/floating_nav_bar.dart';
 export 'src/components/hero_icon.dart';
 export 'src/components/photo_card.dart';
+export 'src/maps/polyline.dart';
 export 'src/components/turbo_art.dart';
 export 'src/components/list_row.dart';
 export 'src/components/map_container.dart';

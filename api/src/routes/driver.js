@@ -76,7 +76,7 @@ const driverRide = (r, cfg) => {
     eta = r.status === 'assigned' ? Math.round(dist / (25000 / 3600)) : 0;
   }
   return {
-    id: r.id, status: r.status, pickup: base.pickup, dropoff: base.dropoff, routeDistanceMeters: r.distance_m, farePesewas: r.fare_pesewas,
+    id: r.id, status: r.status, pickup: base.pickup, dropoff: base.dropoff, routeDistanceMeters: r.distance_m, routePolyline: r.route_polyline ?? null, farePesewas: r.fare_pesewas,
     pickupDistanceMeters: dist, pickupEtaSeconds: eta, routeDurationSeconds: r.duration_s, student: { firstName: r.s_first ?? 'Student' },
     assignedAt: iso(r.assigned_at ?? r.requested_at), acknowledgedAt: iso(r.acked_at),
     noShowAvailableAt: r.status === 'driver_arrived' && r.arrived_at ? new Date(new Date(r.arrived_at).getTime() + cfg.noShowWaitSeconds * 1000).toISOString() : null,

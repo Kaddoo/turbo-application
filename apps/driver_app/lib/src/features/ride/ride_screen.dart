@@ -447,15 +447,18 @@ class _Sheet extends StatelessWidget {
 }
 
 class _Map extends StatelessWidget {
-  const _Map({required this.to});
+  const _Map({required this.to, this.route});
 
   final GeoPoint to;
+
+  /// The trip's road, shown once the trip has started.
+  final String? route;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, c) => HomeMap(
       height: c.maxHeight,
-      spec: MapSpec(dropoff: to, showMyLocation: true),
+      spec: MapSpec(dropoff: to, showMyLocation: true, route: route),
     ),
   );
 }
@@ -918,7 +921,7 @@ class _TripState extends ConsumerState<_Trip> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
-            child: _Map(to: r.dropoff.point),
+            child: _Map(to: r.dropoff.point, route: r.routePolyline),
           ),
         ),
         _Sheet(

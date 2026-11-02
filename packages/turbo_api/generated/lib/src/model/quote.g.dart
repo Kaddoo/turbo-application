@@ -17,6 +17,8 @@ abstract class _$QuoteCWProxy {
 
   Quote routeDurationSeconds(int? routeDurationSeconds);
 
+  Quote routePolyline(String? routePolyline);
+
   Quote farePesewas(int? farePesewas);
 
   Quote pickupEtaSeconds(int? pickupEtaSeconds);
@@ -37,6 +39,7 @@ abstract class _$QuoteCWProxy {
     List<IneligibilityReason> reasons,
     int? routeDistanceMeters,
     int? routeDurationSeconds,
+    String? routePolyline,
     int? farePesewas,
     int? pickupEtaSeconds,
     DateTime? expiresAt,
@@ -68,6 +71,10 @@ class _$QuoteCWProxyImpl implements _$QuoteCWProxy {
       this(routeDurationSeconds: routeDurationSeconds);
 
   @override
+  Quote routePolyline(String? routePolyline) =>
+      this(routePolyline: routePolyline);
+
+  @override
   Quote farePesewas(int? farePesewas) => this(farePesewas: farePesewas);
 
   @override
@@ -93,6 +100,7 @@ class _$QuoteCWProxyImpl implements _$QuoteCWProxy {
     Object? reasons = const $CopyWithPlaceholder(),
     Object? routeDistanceMeters = const $CopyWithPlaceholder(),
     Object? routeDurationSeconds = const $CopyWithPlaceholder(),
+    Object? routePolyline = const $CopyWithPlaceholder(),
     Object? farePesewas = const $CopyWithPlaceholder(),
     Object? pickupEtaSeconds = const $CopyWithPlaceholder(),
     Object? expiresAt = const $CopyWithPlaceholder(),
@@ -119,6 +127,10 @@ class _$QuoteCWProxyImpl implements _$QuoteCWProxy {
           ? _value.routeDurationSeconds
           // ignore: cast_nullable_to_non_nullable
           : routeDurationSeconds as int?,
+      routePolyline: routePolyline == const $CopyWithPlaceholder()
+          ? _value.routePolyline
+          // ignore: cast_nullable_to_non_nullable
+          : routePolyline as String?,
       farePesewas: farePesewas == const $CopyWithPlaceholder()
           ? _value.farePesewas
           // ignore: cast_nullable_to_non_nullable
@@ -171,6 +183,7 @@ Quote _$QuoteFromJson(Map<String, dynamic> json) => $checkedCreate(
         'routeDurationSeconds',
         (v) => (v as num?)?.toInt(),
       ),
+      routePolyline: $checkedConvert('routePolyline', (v) => v as String?),
       farePesewas: $checkedConvert('farePesewas', (v) => (v as num?)?.toInt()),
       pickupEtaSeconds: $checkedConvert(
         'pickupEtaSeconds',
@@ -195,6 +208,7 @@ Map<String, dynamic> _$QuoteToJson(Quote instance) => <String, dynamic>{
   'reasons': instance.reasons.map((e) => e.toJson()).toList(),
   'routeDistanceMeters': ?instance.routeDistanceMeters,
   'routeDurationSeconds': ?instance.routeDurationSeconds,
+  'routePolyline': ?instance.routePolyline,
   'farePesewas': ?instance.farePesewas,
   'pickupEtaSeconds': ?instance.pickupEtaSeconds,
   'expiresAt': ?instance.expiresAt?.toIso8601String(),

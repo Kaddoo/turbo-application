@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.3.2
+  version: 0.4.0
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -6232,6 +6232,11 @@ components:
           type:
           - integer
           - 'null'
+        routePolyline:
+          type:
+          - string
+          - 'null'
+          description: The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app.
         farePesewas:
           oneOf:
           - $ref: '#/components/schemas/Pesewas'
@@ -6385,6 +6390,11 @@ components:
           $ref: '#/components/schemas/Location'
         routeDistanceMeters:
           type: integer
+        routePolyline:
+          type:
+          - string
+          - 'null'
+          description: The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app.
         farePesewas:
           $ref: '#/components/schemas/Pesewas'
         pin:
@@ -7010,6 +7020,11 @@ components:
           $ref: '#/components/schemas/Location'
         routeDistanceMeters:
           type: integer
+        routePolyline:
+          type:
+          - string
+          - 'null'
+          description: The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app.
         farePesewas:
           $ref: '#/components/schemas/Pesewas'
           description: What the student pays for this trip. Shown so the driver can see the price before acknowledging.

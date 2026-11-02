@@ -89,6 +89,7 @@ MapSpec _specFor(Ride ride, Tracking? tracking) => MapSpec(
       pickup: ride.pickup.point,
       dropoff: ride.dropoff.point,
       driver: tracking?.driverLocation?.point,
+      route: ride.routePolyline,
     );
 
 class _Panel extends StatelessWidget {

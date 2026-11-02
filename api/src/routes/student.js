@@ -182,16 +182,16 @@ student.post('/rides/quote', ...S, async (req, res) => {
   }
   if (duty.n === 0) reasons.push(reason('no_drivers_on_duty', 'No drivers are available right now'));
 
-  const avail = w.avail, base = { routeDistanceMeters: r?.distanceM ?? null, routeDurationSeconds: r?.durationS ?? null };
+  const avail = w.avail, base = { routeDistanceMeters: r?.distanceM ?? null, routeDurationSeconds: r?.durationS ?? null, routePolyline: r?.polyline ?? null };
   const fare = r ? fareFor(bands, r.distanceM) : null;
   if (!reasons.length && fare == null) reasons.push(reason('route_too_long', 'No fare is defined for this distance'));
   if (reasons.length) return res.json({ eligible: false, quoteId: null, reasons, ...base, farePesewas: null, pickupEtaSeconds: null, expiresAt: null,
     wallet: { availablePesewas: avail, sufficient: false, shortfallPesewas: 0 } });
 
   const { rows: [qt] } = await q(
-    `INSERT INTO quotes (student_id,pickup_lat,pickup_lng,pickup_label,drop_lat,drop_lng,drop_label,distance_m,duration_s,fare_pesewas,expires_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, now() + make_interval(secs => $11)) RETURNING id, expires_at`,
-    [req.user.id, pickup.lat, pickup.lng, pickup.label, dropoff.lat, dropoff.lng, dropoff.label, r.distanceM, r.durationS, fare, cfg.quoteTtlSeconds]);
+    `INSERT INTO quotes (student_id,pickup_lat,pickup_lng,pickup_label,drop_lat,drop_lng,drop_label,distance_m,duration_s,fare_pesewas,expires_at,route_polyline)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, now() + make_interval(secs => $11), $12) RETURNING id, expires_at`,
+    [req.user.id, pickup.lat, pickup.lng, pickup.label, dropoff.lat, dropoff.lng, dropoff.label, r.distanceM, r.durationS, fare, cfg.quoteTtlSeconds, r.polyline ?? null]);
   res.json({ eligible: true, quoteId: qt.id, reasons: [], ...base, farePesewas: fare, pickupEtaSeconds: null, expiresAt: iso(qt.expires_at),
     wallet: { availablePesewas: avail, sufficient: avail >= fare, shortfallPesewas: Math.max(0, fare - avail) } });
 });
@@ -216,9 +216,9 @@ student.post('/rides', ...S, async (req, res) => idempotent(req, res, 'ride', as
     let ride;
     try {
       ({ rows: [ride] } = await c.query(
-        `INSERT INTO rides (student_id,status,pickup_lat,pickup_lng,pickup_label,drop_lat,drop_lng,drop_label,distance_m,duration_s,fare_pesewas,pin)
-         VALUES ($1,'searching',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
-        [req.user.id, qt.pickup_lat, qt.pickup_lng, qt.pickup_label, qt.drop_lat, qt.drop_lng, qt.drop_label, qt.distance_m, qt.duration_s, qt.fare_pesewas, randomPin()]));
+        `INSERT INTO rides (student_id,status,pickup_lat,pickup_lng,pickup_label,drop_lat,drop_lng,drop_label,distance_m,duration_s,fare_pesewas,pin,route_polyline)
+         VALUES ($1,'searching',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id`,
+        [req.user.id, qt.pickup_lat, qt.pickup_lng, qt.pickup_label, qt.drop_lat, qt.drop_lng, qt.drop_label, qt.distance_m, qt.duration_s, qt.fare_pesewas, randomPin(), qt.route_polyline]));
     } catch (e) {
       if (e.code === '23505') throw conflict('active_ride_exists', 'You already have a ride in progress');
       throw e;

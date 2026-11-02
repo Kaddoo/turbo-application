@@ -32,6 +32,8 @@ class Quote {
 
      this.routeDurationSeconds,
 
+     this.routePolyline,
+
      this.farePesewas,
 
      this.pickupEtaSeconds,
@@ -102,6 +104,19 @@ class Quote {
 
 
 
+      /// The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app.
+  @JsonKey(
+    
+    name: r'routePolyline',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? routePolyline;
+
+
+
       /// Money as an integer number of pesewas (GH₵1 = 100 pesewas). Never a float. GH₵35.00 = 3500.
           // minimum: 0
   @JsonKey(
@@ -161,6 +176,7 @@ class Quote {
       other.reasons == reasons &&
       other.routeDistanceMeters == routeDistanceMeters &&
       other.routeDurationSeconds == routeDurationSeconds &&
+      other.routePolyline == routePolyline &&
       other.farePesewas == farePesewas &&
       other.pickupEtaSeconds == pickupEtaSeconds &&
       other.expiresAt == expiresAt &&
@@ -173,6 +189,7 @@ class Quote {
         reasons.hashCode +
         (routeDistanceMeters == null ? 0 : routeDistanceMeters.hashCode) +
         (routeDurationSeconds == null ? 0 : routeDurationSeconds.hashCode) +
+        (routePolyline == null ? 0 : routePolyline.hashCode) +
         (farePesewas == null ? 0 : farePesewas.hashCode) +
         (pickupEtaSeconds == null ? 0 : pickupEtaSeconds.hashCode) +
         (expiresAt == null ? 0 : expiresAt.hashCode) +
