@@ -6,6 +6,8 @@ declare global {
   interface Window {
     __heroRevealed?: boolean;
     __doorEnd?: number;
+    /** Set by the boot script in layout.tsx: this browser has watched the intro video before. */
+    __heroSeen?: boolean;
   }
 }
 
@@ -24,7 +26,6 @@ type NavigatorWithHints = Navigator & { connection?: { saveData?: boolean }; dev
 
 function canRun3D() {
   const nav = navigator as NavigatorWithHints;
-  if (!window.matchMedia("(min-width: 768px)").matches) return false;
   if (nav.connection?.saveData) return false;
   if (nav.deviceMemory !== undefined && nav.deviceMemory < 4) return false;
   try {
@@ -38,13 +39,12 @@ function canRun3D() {
 type Scene = { play(): void; dispose(): void };
 
 /**
- * Hero sequence: the ride video (a student hails the Turbo car, gets in and
- * it pulls away), handing over to the map as the car moves off. Large
- * screens get the 3D map, which picks up behind the same car at street level
- * and rises into the overview; phones get the flat map (passed in as
- * `flatMap`). Reduced motion and data-saver skip the video and show the map
- * at once. Phones (under 768 px) skip the video too: the copy is the page's
- * largest paint and should not wait for a download.
+ * Hero sequence. First visit (any device): the car-door loader, then the ride
+ * video (a student hails the Turbo car, gets in and it pulls away), handing
+ * over to the 3D map, which picks up behind the same car at street level and
+ * rises into the overview. Later visits skip the loader and video and open on
+ * the map. Devices without WebGL, low memory or Save-Data get the flat map
+ * (`flatMap`); reduced motion skips the video and shows the map at once.
  */
 export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -62,8 +62,15 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     let handedOver = false;
     const timers: number[] = [];
 
-    // Phones skip the video (about 1 MB) and show the flat map with the copy at once.
     const phone = !window.matchMedia("(min-width: 768px)").matches;
+    // The intro (car-door loader and ride video) plays on the first visit only, on every device;
+    // after that the page opens straight on the map. Remembered in localStorage.
+    const seen = !!window.__heroSeen;
+    const markSeen = () => {
+      try {
+        localStorage.setItem("turbo-hero-seen", "1");
+      } catch {}
+    };
 
     const startFlat = () => {
       setMode("flat");
@@ -75,6 +82,7 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     const handOver = () => {
       if (handedOver) return;
       handedOver = true;
+      markSeen();
       // Let the video play out under the cross-fade, then stop it.
       timers.push(window.setTimeout(() => video.pause(), 1800));
       if (scene) {
@@ -89,10 +97,11 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
             scene.play();
           }
         }, 100);
+        // A returning visitor has no video to cover the load, so allow the 3D scene longer to arrive.
         timers.push(wait, window.setTimeout(() => {
           window.clearInterval(wait);
           if (!scene) startFlat();
-        }, 2500));
+        }, seen ? 8000 : 2500));
       } else startFlat();
     };
 
@@ -112,9 +121,19 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
       });
     }
 
-    if (reduced || saveData || phone) {
-      if (!use3D || saveData || phone) startFlat();
+    if (reduced || saveData) {
+      if (!use3D || saveData) startFlat();
       else timers.push(window.setTimeout(() => !scene && startFlat(), 2500));
+      return () => {
+        cancelled = true;
+        timers.forEach((t) => window.clearTimeout(t));
+        scene?.dispose();
+      };
+    }
+
+    // Returning visitor: no video, the map takes over at once (3D when it loads, else the flat map).
+    if (seen) {
+      handOver();
       return () => {
         cancelled = true;
         timers.forEach((t) => window.clearTimeout(t));

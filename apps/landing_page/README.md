@@ -14,13 +14,13 @@ The public landing site for Turbo, the campus ride service for verified Central 
 
 ```bash
 npm install
-npm run dev            # http://localhost:3000, no API, so static fallbacks show
+npm run dev            # http://localhost:3000, reads the mock API (public/mock-api), so fares and pickup points show
 npm run build:mock     # static build against the bundled mock API (public/mock-api)
 npm run build          # static build; API from PUBLIC_API_BASE_URL
 npm run check          # after a build: axe WCAG 2.1 AA scan, link check, console errors
 ```
 
-For local dev against the mock, run `PUBLIC_API_BASE_URL=/mock-api npm run dev`.
+`npm run dev` uses the mock by default. To try another API, set it: `PUBLIC_API_BASE_URL=https://api.example/v1 npm run dev`. To see the no-API fallbacks, use `PUBLIC_API_BASE_URL= npx next dev`.
 
 ## Configuration
 

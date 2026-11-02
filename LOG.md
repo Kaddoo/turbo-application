@@ -2,6 +2,29 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: dim-to-bright headlines, floating 3D objects, intro once, halftone map, fixes
+
+- **Branch:** main.
+- **Files:**
+  - `apps/landing_page/src/components/`: `Motion.tsx`, `Header.tsx`, `hero/HeroStage.tsx`, `ui/Floaters.tsx` (new).
+  - `sections/`: HowItWorks, Features, Coverage, Safety, Wallet, Faq, Download.
+  - `app/layout.tsx`, `app/globals.css`, `package.json` (dev script), `README.md`.
+- **What changed:**
+  - **Headlines:** big headlines start dim and brighten word by word as they scroll in, as in the reference. Sticky sections follow their own progress.
+  - **Floating 3D objects:** silver-and-lime 3D objects float at the edges of six sections, behind the text. They drift and turn with scroll and pop in on arrival; phones get one small one in some sections.
+  - **Hero intro:** the car-door loader and ride video play on the first visit only, on every device, now including phones (video, then the 3D map). Later visits open straight on the map. This is remembered in localStorage (`turbo-hero-seen`).
+  - **Download card map:** a halftone dot map in the reference's style, built from the real road dots and drawn in a darker lime. A dashed arc draws itself between the two pins.
+  - **Nav:** it no longer hides on scroll; it stays in view.
+  - **Safety cards:** they blinked because a ScrollTrigger refresh re-recorded their `from()` start state, so cards waiting their turn showed at full opacity, then dropped to 0. The cards now have their own timeline with explicit start and end values. A per-frame recording shows 0 opacity drops.
+  - **Fares:** the list was missing only under `npm run dev`, which had no API address, so the fallback text showed. The live site was fine. `npm run dev` now writes and uses the mock API by default.
+- **Acceptance:**
+  - Tests (8) pass.
+  - axe, console and links are clean.
+  - No animated text is left hidden at 1440 or 390.
+  - CLS is 0.
+  - Mobile LCP is about 1.6 s.
+- **Cost:** with 3D on phones, home-page blocking time on a 4×-slowed phone rose from about 10 ms to about 200 ms, and the slowest tap from about 64 ms to about 120 ms.
+
 ## 2026-11-02 · landing page: matched to the inspiration video (animations, pills, 3D icons, nav)
 
 - **Branch:** main. **Reference:** Kevin's screen recording of the inspiration site (Desktop, 2026-10-31 11.44.42).

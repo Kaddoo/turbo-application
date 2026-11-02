@@ -3,6 +3,7 @@ import { MapScreen, Phone } from "../ui/Phone";
 import { ScrubHeading } from "../ui/ScrubHeading";
 import { SectionHead } from "../ui/SectionHead";
 import { PickupChips } from "./PickupChips";
+import { Floaters } from "../ui/Floaters";
 
 /** Schematic route screen only: not to scale, not a map (open decision D1). */
 function RouteScreen() {
@@ -31,7 +32,13 @@ function RouteScreen() {
 
 export function Coverage() {
   return (
-    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative overflow-hidden bg-paper py-section-tight text-ink">
+    <section id="where-we-go" data-bg="paper" aria-labelledby="where-title" className="on-light relative isolate overflow-hidden bg-paper py-section-tight text-ink">
+      <Floaters
+        items={[
+          { icon: "automobile", className: "hidden lg:block left-[3%] bottom-10 size-24", speed: 1, spin: 10 },
+          { icon: "round-pushpin", className: "right-3 top-2 size-10 lg:hidden", speed: 0.8, spin: 18 },
+        ]}
+      />
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
         <div className="max-w-md lg:order-1">
           <SectionHead id="where-title" label="Where we go" title="Miotso toward Ashaiman China Mall." align="start" size="title" />

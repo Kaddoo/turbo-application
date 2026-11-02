@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { SectionHead } from "../ui/SectionHead";
 import { links } from "@/config/links";
+import { Floaters } from "../ui/Floaters";
 
 const faqs: { q: string; a: React.ReactNode }[] = [
   {
@@ -60,7 +61,13 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 export function Faq() {
   return (
-    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-section">
+    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="relative isolate overflow-clip bg-ink py-section">
+      <Floaters
+        items={[
+          { icon: "speech-balloon", className: "right-3 top-6 size-12 lg:left-[4%] lg:right-auto lg:top-24 lg:size-20", speed: 1, spin: -18 },
+          { icon: "check-mark-button", className: "hidden lg:block right-[4%] bottom-24 size-16", speed: 1.3, spin: 20 },
+        ]}
+      />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionHead id="faq-title" label="FAQ" title="Questions, answered." />

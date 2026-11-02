@@ -14,22 +14,8 @@ const nav = [
 ];
 
 export function Header() {
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
-
-  // Floating nav: slides away while scrolling down the page, comes back on any scroll up.
-  useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (Math.abs(y - last) < 6) return;
-      setHidden(y > last && y > 120);
-      last = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Highlights the pill for the section in the middle of the screen (home page only).
   useEffect(() => {
@@ -64,7 +50,7 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className={cn("fixed inset-x-0 top-0 z-50 px-4 pt-3 transition-transform duration-500 ease-out sm:px-6 sm:pt-4", hidden && !open && "-translate-y-[130%]")}>
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4">
       <div className="-mx-4 -mt-3 mb-3 sm:-mx-6 sm:-mt-4">
         <MaintenanceBanner />
       </div>

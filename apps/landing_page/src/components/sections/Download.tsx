@@ -10,45 +10,58 @@ async function qrSvg(url: string) {
 }
 
 /**
- * The real road network between the two pins as a dot grid (built by
- * scripts/map/corridor.mjs from OpenStreetMap), with the trip drawn on scroll.
+ * Halftone map in the style of the reference: an even grid of dots in a darker
+ * lime wherever the real road network is (dotMap.json, built by
+ * scripts/map/corridor.mjs from OpenStreetMap), spread a little so towns read as
+ * soft shapes. Computed once at build time; ships as static SVG.
  */
+const PITCH = 11; // halftone grid pitch, in viewBox units
+const REACH = 14; // a halftone dot is drawn when a road dot lies this close
+const halftone = (() => {
+  const pts = [...`${dotMap.minor}${dotMap.major}`.matchAll(/M([\d.]+) ([\d.]+)h0/g)].map((m) => [+m[1], +m[2]]);
+  const near = new Set(pts.map(([x, y]) => `${Math.round(x / REACH)},${Math.round(y / REACH)}`));
+  let d = "";
+  for (let y = PITCH / 2; y < dotMap.h; y += PITCH)
+    for (let x = PITCH / 2; x < dotMap.w; x += PITCH) {
+      const cx = Math.round(x / REACH);
+      const cy = Math.round(y / REACH);
+      let hit = false;
+      for (let dx = -1; dx <= 1 && !hit; dx++) for (let dy = -1; dy <= 1 && !hit; dy++) hit = near.has(`${cx + dx},${cy + dy}`);
+      if (hit) d += `M${x} ${y}h0`;
+    }
+  return d;
+})();
+
+/** The trip between the two pins: a dashed arc that draws itself on scroll, over the halftone map. */
 function RouteDots() {
   const [fx, fy] = dotMap.from;
   const [tx, ty] = dotMap.to;
+  const arc = `M${tx} ${ty} Q ${(tx + fx) / 2 - 20} ${Math.min(ty, fy) - 90}, ${fx} ${fy}`;
   return (
     <svg viewBox={`0 0 ${dotMap.w} ${dotMap.h}`} className="h-full w-full" aria-hidden fill="none">
       <defs>
         <radialGradient id="cta-fade" cx="58%" cy="50%" r="62%">
-          <stop offset="0.55" stopColor="#fff" />
+          <stop offset="0.5" stopColor="#fff" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
         <mask id="cta-mask">
           <rect width={dotMap.w} height={dotMap.h} fill="url(#cta-fade)" />
         </mask>
+        {/* The solid stroke draws on scroll (data-draw) and reveals the dashed arc beneath it. */}
+        <mask id="cta-arc" maskUnits="userSpaceOnUse">
+          <path data-draw d={arc} stroke="#fff" strokeWidth="6" strokeLinecap="round" />
+        </mask>
       </defs>
-      <g mask="url(#cta-mask)" strokeLinecap="round" stroke="#0b0c0a">
-        <path d={dotMap.minor} strokeOpacity=".16" strokeWidth="2.4" />
-        <path d={dotMap.major} strokeOpacity=".55" strokeWidth="3.2" />
-      </g>
-      <path
-        data-draw
-        d={`M${tx} ${ty} C ${tx + 40} ${ty - 120}, ${fx - 150} ${fy + 40}, ${fx} ${fy}`}
-        stroke="#0b0c0a"
-        strokeWidth="2"
-        strokeDasharray="6 8"
-        strokeLinecap="round"
-      />
+      <path d={halftone} mask="url(#cta-mask)" stroke="#0b0c0a" strokeOpacity=".13" strokeWidth="5.5" strokeLinecap="round" />
+      <path d={arc} mask="url(#cta-arc)" stroke="#0b0c0a" strokeWidth="1.6" strokeDasharray="5 6" strokeLinecap="round" />
       {[
-        [tx, ty, "Miotso Junction"],
-        [fx, fy, "Central University"],
-      ].map(([x, y, label]) => (
-        <g key={label} transform={`translate(${x} ${y})`}>
-          <path d="M0 0 C -9 -12, -12 -18, -12 -24 A 12 12 0 1 1 12 -24 C 12 -18, 9 -12, 0 0 Z" fill="#0b0c0a" />
-          <circle cy="-24" r="4.5" fill="#d4ff3a" />
-          <text x="18" y="-20" fill="#0b0c0a" fontSize="12" fontWeight="600">
-            {label}
-          </text>
+        [tx, ty],
+        [fx, fy],
+      ].map(([x, y]) => (
+        <g key={`${x}-${y}`} transform={`translate(${x} ${y})`}>
+          <ellipse cy="1" rx="6" ry="2" fill="#0b0c0a" fillOpacity=".18" />
+          <path d="M0 0 C -7 -10, -10 -15, -10 -20 A 10 10 0 1 1 10 -20 C 10 -15, 7 -10, 0 0 Z" fill="#0b0c0a" />
+          <circle cy="-20" r="3.6" fill="#d4ff3a" />
         </g>
       ))}
     </svg>

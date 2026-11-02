@@ -18,10 +18,12 @@ declare global {
  *   data-draw      SVG path draws as it scrolls through the viewport
  *   data-bar       horizontal bar grows from 0
  *   data-parallax  translateY by factor × scroll
+ *   data-float     3D object drifts and turns as its section passes; pops in when it first arrives
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
  *   data-scrub     headline words brighten as it scrolls through
  *   data-words     words rise out of masks one by one; [data-pop] pills inside open out of a thin line
  *   data-chars     section header: letters rise out of word masks, then its [data-pop] pills open
+ *   (big h2s)      headline words start dim and brighten one by one as they scroll in
  *   data-pop       pills elsewhere (section eyebrows) open out of a thin line on enter
  *   data-bg        "ink" | "paper": the page background fades between section colours
  *   data-tilt      device slides in from its side into its resting tilt (value: ±1 direction)
@@ -115,6 +117,46 @@ export function Motion() {
               tl.to(el.querySelectorAll(".c"), { yPercent: 0, y: 0, rotate: 0, duration: 1.1, ease: "expo.out", stagger: 0.018 });
               const pops = el.querySelectorAll<HTMLElement>("[data-pop]");
               if (pops.length) tl.add(openPills(pops), 0.5);
+            });
+
+            // Big headlines brighten word by word with scroll. In a sticky section the headline stands still,
+            // so it follows the section's own progress instead of its position on screen.
+            gsap.utils.toArray<HTMLElement>("[data-chars] h2, h2[data-words]").forEach((h) => {
+              const words = h.querySelectorAll(h.matches("[data-words]") ? ".rw" : ".w");
+              if (!words.length) return;
+              const sticky = h.closest<HTMLElement>("[data-tapaway], #safety");
+              gsap.to(words, {
+                opacity: 1,
+                ease: "none",
+                stagger: 0.12,
+                scrollTrigger: sticky
+                  ? { trigger: sticky, start: "top 70%", end: "top -35%", scrub: 0.6 }
+                  : { trigger: h, start: "top 85%", end: "bottom 45%", scrub: 0.6 },
+              });
+            });
+
+            // Floating 3D objects (Floaters.tsx): a scrubbed drift and turn across the section,
+            // plus a one-off pop when they first come into view.
+            gsap.utils.toArray<HTMLElement>("[data-float]").forEach((el) => {
+              const speed = parseFloat(el.dataset.float || "1");
+              const spin = parseFloat(el.dataset.spin || "18");
+              gsap.fromTo(
+                el,
+                { y: 140 * speed, rotation: -spin },
+                {
+                  y: -140 * speed,
+                  rotation: spin,
+                  ease: "none",
+                  scrollTrigger: { trigger: el.closest("section") ?? el, start: "top bottom", end: "bottom top", scrub: 1 },
+                },
+              );
+              gsap.from(el.firstElementChild, {
+                scale: 0.3,
+                opacity: 0,
+                duration: 1.1,
+                ease: "back.out(1.7)",
+                scrollTrigger: { trigger: el, start: "top 95%", once: true },
+              });
             });
 
             // Pills outside a heading open on their own as they arrive.
@@ -239,12 +281,22 @@ export function Motion() {
               const section = wrap.closest("section");
               if (!track || !section) return;
               const cards = Array.from(track.children) as HTMLElement[];
-              const tl = gsap.timeline({
-                scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.6, invalidateOnRefresh: true },
-              });
+              const span = { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.6 };
               // Slide until the last card's right edge sits 48 px inside the screen (the strip's left padding counts).
-              tl.to(track, { x: () => -Math.max(0, track.offsetLeft + track.scrollWidth - wrap.clientWidth + 48), ease: "none", duration: cards.length }, 0);
-              if (animateIn) tl.from(cards, { y: 80, opacity: 0, ease: "power2.out", duration: 0.8, stagger: 1 }, 0);
+              // Only this distance is re-measured on refresh.
+              gsap.to(track, {
+                x: () => -Math.max(0, track.offsetLeft + track.scrollWidth - wrap.clientWidth + 48),
+                ease: "none",
+                scrollTrigger: { ...span, invalidateOnRefresh: true },
+              });
+              // Cards arrive one by one. Their own timeline with explicit start and end values: a refresh
+              // used to re-record a from() and show waiting cards at full opacity until their turn (a blink).
+              if (animateIn) {
+                gsap
+                  .timeline({ scrollTrigger: span })
+                  .fromTo(cards, { y: 80, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out", duration: 0.8, stagger: 1, immediateRender: true }, 0)
+                  .to({}, { duration: 0.6 });
+              }
             });
 
             gsap.utils.toArray<HTMLElement>("[data-hscroll]").forEach((wrap) => {

@@ -78,6 +78,8 @@
   .motion [data-scrub] .sw { opacity: 0.18; }
   .motion [data-words] .rw > span { transform: translateY(110%); }
   .motion [data-chars] .c { transform: translateY(105%) rotate(6deg); }
+  /* Big headlines start dim, like the reference, and brighten word by word as they scroll in. */
+  .motion [data-chars] h2 .w, .motion h2[data-words] .rw { opacity: 0.22; }
   .motion [data-pop] { clip-path: inset(calc(50% - 1px) 0 calc(50% - 1px) 0 round 9999px); }
   .motion [data-pop] > * { opacity: 0; }
 }

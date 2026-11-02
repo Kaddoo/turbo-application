@@ -1,4 +1,5 @@
 import { Icon3d, type Icon3dName } from "../ui/Icon3d";
+import { Floaters } from "../ui/Floaters";
 
 const facts: { icon: Icon3dName; label: string; value: string; body: string }[] = [
   { icon: "coin", label: "Cancellation fee", value: "GH₵0", body: "Changed your mind? Cancel any time. No fee, no penalty." },
@@ -8,7 +9,13 @@ const facts: { icon: Icon3dName; label: string; value: string; body: string }[] 
 
 export function Wallet() {
   return (
-    <section aria-labelledby="wallet-title" data-bg="ink" className="relative bg-ink py-section">
+    <section aria-labelledby="wallet-title" data-bg="ink" className="relative isolate overflow-clip bg-ink py-section">
+      <Floaters
+        items={[
+          { icon: "coin", className: "right-3 top-4 size-12 lg:right-[4%] lg:top-10 lg:size-20", speed: 1.3, spin: 30 },
+          { icon: "money-bag", className: "hidden lg:block left-[3%] bottom-6 size-20", speed: 0.9, spin: -14 },
+        ]}
+      />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 id="wallet-title" className="sr-only">
           Your money, your wallet

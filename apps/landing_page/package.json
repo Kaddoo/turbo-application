@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run mock:write && PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL:-/mock-api} next dev",
     "build": "next build",
     "start": "npx serve out",
     "lint": "tsc --noEmit",
