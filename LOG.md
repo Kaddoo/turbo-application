@@ -189,6 +189,28 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: driver app patterns 1 to 4, 7, 8, 9, 11
+
+**Task:** Build the driver patterns from the pasted work list, in order, with the design kit's 3D pictures instead of Material icons where the kit has one. Branches are stacked (each cut from the one before): `driver-haptics`, `driver-pin-shake`, `driver-keep-awake`, `driver-readiness-bento`, `driver-records`. Merge them in that order.
+
+**What changed:**
+- **Haptics and sounds (1, 2):** `core/driver_feedback.dart` names each event: accept medium, arrived light, PIN right light plus click, PIN wrong heavy, trip complete heavy once, offline medium, a second alert sound at 10 seconds left on an offer. The offer's alert sound used to be tied to a listener that never fires when the app arrives on the ride screen from home; it now plays when the offer shows. The offer also counts down every second now.
+- **PIN shake (3):** `TurboShake` in `turbo_ui` (200 ms, none with Reduce Motion), used on the PIN boxes.
+- **Screen awake (4):** `wakelock_plus`; on while going to pickup, waiting and on the trip, off when the ride ends.
+- **Readiness (7):** `home/readiness_board.dart`: "Ready to go" or the one blocker, then tiles for Location, Battery, Notifications, Internet and Documents, each with a word tag; a tile that needs fixing opens the fix.
+- **Records (8, 9, 11):** `EmptyState` takes a 3D `art` (taxi, calendar, alarm clock, money bag, speech balloon) with a teaching sentence; Hours pins "This week" and Salary pins "Paid in <year>"; `TurboStagger` (30 ms steps, first 10 rows, none with Reduce Motion).
+
+**Acceptance:** `flutter analyze` clean and `flutter test` passing in `turbo_ui`, the driver app (78) and the student app (132) on the last branch.
+
+**Not done:**
+- Pattern 5 (the "Always location" priming sheet), 12 (needs CR-5), 13, 15; 6 stays parked with Android; 10 and 14 skipped as the list says.
+- Screen work from the list: D04 offer as four tiles and the 2x2 decline tiles with 3D icons, D10 trip detail timeline, D11 and D12 tiles, vehicle photo on home.
+- Nothing has been seen on a phone. Patterns 4 needs a real phone in a mount; the next iOS build needs `pod install` for the new `wakelock_plus`.
+- The Documents tile has no status, and the readiness tiles omit "Today's shift", until CR-5. Internet uses the phone picture and Battery a Material icon, as the kit has no better match.
+- The dark map style, supervisor numbers (CR-6) and the approach-road line are still open.
+
+**Next step:** Build pattern 5, then the screen work above, and ship one TestFlight build with all of it.
+
 ## 2026-11-01, Claude, code: Maps keys (branch `maps-wiring`)
 
 **Task:** Get real Google Maps working: Routes quota, server key on staging, app keys.
