@@ -4,17 +4,19 @@ import type { Schemas } from '@/types';
 import { canDo } from '@/utils/permissions';
 import { useSession } from '@/state/session';
 import {
+  ActionList,
+  ActionRow,
   Banner,
+  ProfileHero,
+  WalletCard,
   Button,
   Card,
   Chip,
   ConfirmDialog,
   DataTable,
-  Details,
   Dialog,
   DialogActions,
   ErrorState,
-  Money,
   PageHeader,
   Select,
   Skeleton,
@@ -145,58 +147,73 @@ export function StudentDetail() {
 
   return (
     <>
-      <PageHeader
-        title={s.fullName ?? 'Student'}
-        description={`Joined ${formatDate(s.createdAt)}.`}
-        actions={
+      <PageHeader title="Student" description="Their profile, wallet and what you can do on their account." />
+      <ProfileHero
+        label="Student profile"
+        name={s.fullName ?? 'Name not given'}
+        lines={[formatPhone(s.phone), s.email, s.studentIdNumber ? `Student ID ${s.studentIdNumber}` : null].filter(
+          (l): l is string => !!l,
+        )}
+        chips={
           <>
             <Chip tone={verificationTone[s.verificationStatus]}>{humanize(s.verificationStatus)}</Chip>
             <Chip tone={accountTone[s.accountStatus]}>{humanize(s.accountStatus)}</Chip>
           </>
         }
+        stats={[
+          { label: 'Completed rides', value: s.completedRides },
+          { label: 'Joined', value: formatDate(s.createdAt) },
+        ]}
       />
-      <div className={ui.grid2}>
-        <Card title="Details">
-          <Details
-            items={[
-              ['Phone', formatPhone(s.phone)],
-              ['Email', s.email ?? '—'],
-              ['Student ID number', s.studentIdNumber ?? '—'],
-              ['Completed rides', String(s.completedRides)],
-            ]}
-          />
-        </Card>
-        <Card title="Wallet">
-          <Details
-            items={[
-              ['Balance', <Money pesewas={s.wallet.balancePesewas} />],
-              ['Held for rides', <Money pesewas={s.wallet.reservedPesewas} />],
-              ['Available', <Money pesewas={s.wallet.availablePesewas} />],
-              ...(s.wallet.owedPesewas
-                ? [['Owes after a reversal', <Money pesewas={s.wallet.owedPesewas} />] as [string, React.ReactNode]]
-                : []),
-            ]}
-          />
-          {canDo(me?.staffRole, 'student.adjustWallet') && (
-            <p className={ui.muted}>Adjust this wallet from Finance, Adjustments.</p>
-          )}
+      {suspended && (
+        <Banner tone="danger">This account is suspended. They cannot book rides until it is reactivated.</Banner>
+      )}
+      <div className={`${ui.grid2} ${ui.gridStart}`}>
+        <WalletCard
+          wallet={s.wallet}
+          holder={s.fullName ?? 'Student'}
+          reference={s.id.slice(-4)}
+          footer={
+            canDo(me?.staffRole, 'student.adjustWallet') ? (
+              <span>Adjust this wallet from Finance, Adjustments.</span>
+            ) : undefined
+          }
+        />
+        <Card title="Account actions">
+          <ActionList label="Account actions">
+            {canDo(me?.staffRole, 'student.edit') && (
+              <ActionRow
+                icon={suspended ? 'check' : 'lock'}
+                tone={suspended ? 'success' : 'danger'}
+                title={suspended ? 'Reactivate account' : 'Suspend account'}
+                description={
+                  suspended
+                    ? 'They can sign in and book rides again.'
+                    : 'They cannot book rides until you reactivate them. Rides already under way continue.'
+                }
+                onClick={() => setSuspendOpen(true)}
+              />
+            )}
+            {canDo(me?.staffRole, 'student.changePhone') && (
+              <ActionRow
+                icon="account"
+                tone="warning"
+                title="Change phone number"
+                description="Signs them out on every device. Only after re-checking their Ghana Card through a support ticket."
+                onClick={() => setPhoneOpen(true)}
+              />
+            )}
+            {canDo(me?.staffRole, 'student.signOutEverywhere') && (
+              <ActionRow
+                icon="signOut"
+                title="Sign out everywhere"
+                description="Ends their sessions on every device. They have to sign in again."
+                onClick={() => setSignOutOpen(true)}
+              />
+            )}
+          </ActionList>
         </Card>
       </div>
-      <Card title="Account actions">
-        <div className={ui.actions}>
-          {canDo(me?.staffRole, 'student.edit') && (
-            <Button variant={suspended ? 'primary' : 'danger'} onClick={() => setSuspendOpen(true)}>
-              {suspended ? 'Reactivate' : 'Suspend'}
-            </Button>
-          )}
-          {canDo(me?.staffRole, 'student.changePhone') && (
-            <Button onClick={() => setPhoneOpen(true)}>Change phone number</Button>
-          )}
-          {canDo(me?.staffRole, 'student.signOutEverywhere') && (
-            <Button onClick={() => setSignOutOpen(true)}>Sign out everywhere</Button>
-          )}
-        </div>
-      </Card>
 
       <Dialog
         open={suspendOpen}

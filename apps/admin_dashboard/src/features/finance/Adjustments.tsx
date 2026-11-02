@@ -9,7 +9,7 @@ import {
   Card,
   Chip,
   DataTable,
-  Details,
+  WalletCard,
   Dialog,
   DialogActions,
   Money,
@@ -122,35 +122,36 @@ function WalletTab() {
       </form>
       {studentId && (
         <>
-          <Card
-            title="Wallet"
-            actions={
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setKey(newIdempotencyKey());
-                  setForm({ direction: 'credit', amount: '', reasonCode: 'goodwill', note: '' });
-                  setOpen(true);
-                }}
-              >
-                New adjustment
-              </Button>
-            }
-          >
-            {wallet.isPending ? (
+          {wallet.isPending ? (
+            <Card title="Wallet">
               <Skeleton />
-            ) : wallet.error ? (
+            </Card>
+          ) : wallet.error ? (
+            <Card title="Wallet">
               <p className={ui.muted}>{problemMessage(wallet.error)}</p>
-            ) : (
-              <Details
-                items={[
-                  ['Balance', <Money pesewas={wallet.data.balancePesewas} />],
-                  ['Held for rides', <Money pesewas={wallet.data.reservedPesewas} />],
-                  ['Available', <Money pesewas={wallet.data.availablePesewas} />],
-                ]}
-              />
-            )}
-          </Card>
+            </Card>
+          ) : (
+            <WalletCard
+              wallet={wallet.data}
+              holder="Student"
+              reference={studentId.slice(-4)}
+              footer={
+                <>
+                  <span>Credits and debits are recorded with a reason.</span>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      setKey(newIdempotencyKey());
+                      setForm({ direction: 'credit', amount: '', reasonCode: 'goodwill', note: '' });
+                      setOpen(true);
+                    }}
+                  >
+                    New adjustment
+                  </Button>
+                </>
+              }
+            />
+          )}
           <DataTable
             label="Wallet history"
             rows={tx.rows}

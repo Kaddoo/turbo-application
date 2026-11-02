@@ -2,7 +2,17 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
-import { Badge, DataTable, FilterChip, SegmentedControl, Select, Sparkline } from '@/components';
+import {
+  ActionList,
+  ActionRow,
+  Badge,
+  DataTable,
+  FilterChip,
+  SegmentedControl,
+  Select,
+  Sparkline,
+  WalletCard,
+} from '@/components';
 import { compare, nextSort } from '@/hooks/useSort';
 import { bucketCounts, countInPeriod } from '@/utils/series';
 import { GlobalSearch } from '@/app/shell/GlobalSearch';
@@ -88,6 +98,62 @@ describe('FilterChip', () => {
     fireEvent.click(screen.getByRole('menuitemradio', { name: '7D' }));
     expect(onChange).toHaveBeenCalledWith('7d');
     expect(screen.queryByRole('menu')).toBeNull();
+  });
+});
+
+describe('ActionRow', () => {
+  it('is one button naming the action and what it does, and runs on click', () => {
+    const onClick = vi.fn();
+    render(
+      <ActionList label="Account actions">
+        <ActionRow
+          icon="lock"
+          tone="danger"
+          title="Suspend account"
+          description="They cannot book rides."
+          onClick={onClick}
+        />
+      </ActionList>,
+    );
+    const button = screen.getByRole('button', { name: /Suspend account/ });
+    expect(button.textContent).toContain('They cannot book rides.');
+    fireEvent.click(button);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('does nothing when disabled', () => {
+    const onClick = vi.fn();
+    render(
+      <ActionList label="Actions">
+        <ActionRow icon="signOut" title="Sign out" description="Ends sessions." onClick={onClick} disabled />
+      </ActionList>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Sign out/ }));
+    expect(onClick).not.toHaveBeenCalled();
+  });
+});
+
+describe('WalletCard', () => {
+  const wallet = { balancePesewas: 6000, reservedPesewas: 3500, availablePesewas: 2500, currency: 'GHS' as const };
+
+  it('shows what can be spent on the card, and the balance and held money in the pocket', () => {
+    render(<WalletCard wallet={wallet} holder="Ama Serwaa" reference="0009" />);
+    expect(screen.getByText('GH₵25.00')).toBeTruthy();
+    expect(screen.getByText('GH₵60.00')).toBeTruthy();
+    expect(screen.getByText('GH₵35.00')).toBeTruthy();
+    expect(screen.getByText('Ama Serwaa')).toBeTruthy();
+    expect(screen.getByRole('img', { name: '58% of the balance is held for rides' })).toBeTruthy();
+  });
+
+  it('says so when the wallet is empty, and warns when the student owes money', () => {
+    render(
+      <WalletCard
+        wallet={{ ...wallet, balancePesewas: 0, reservedPesewas: 0, availablePesewas: 0, owedPesewas: 1500 }}
+        holder="Kofi"
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'The wallet is empty' })).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toContain('Owes GH₵15.00');
   });
 });
 
@@ -183,6 +249,30 @@ describe('DataTable', () => {
     const card = screen.getAllByRole('listitem')[0]!;
     expect(card.querySelector('div > div')?.textContent).toBe('Kofi');
     expect(within(card).getByText('Fare').tagName).toBe('DT');
+  });
+
+  it('draws a screen-specific card when given one, keeps the actions and sets the tone stripe', () => {
+    const withActions = [
+      ...columns,
+      { header: '', cell: (r: (typeof rows)[0]) => <button type="button">Open {r.name}</button> },
+    ];
+    render(
+      <DataTable
+        label="People"
+        rows={rows}
+        rowKey={(r) => r.id}
+        columns={withActions}
+        empty={{ title: 'None' }}
+        card={(r) => <p>Card for {r.name}</p>}
+        cardTone={(r) => (r.fare > 250 ? 'danger' : undefined)}
+      />,
+    );
+    const first = screen.getAllByRole('listitem')[0]!;
+    expect(within(first).getByText('Card for Kofi')).toBeTruthy();
+    expect(within(first).getByRole('button', { name: 'Open Kofi' })).toBeTruthy();
+    expect(first.getAttribute('data-tone')).toBe('danger');
+    expect(screen.getAllByRole('listitem')[1]!.getAttribute('data-tone')).toBeNull();
+    expect(screen.queryByText('Fare')).toBeNull();
   });
 
   it('shows the empty state', () => {

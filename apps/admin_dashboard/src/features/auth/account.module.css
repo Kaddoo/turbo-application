@@ -1,0 +1,118 @@
+/* Your account. Theme variables only. */
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.checks {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-background);
+}
+.checkIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--tone) 16%, transparent);
+  color: var(--tone);
+}
+.check[data-tone='success'] {
+  --tone: var(--color-success);
+}
+.check[data-tone='warning'] {
+  --tone: var(--color-warning);
+}
+.check[data-tone='neutral'] {
+  --tone: var(--color-text-secondary);
+}
+.checkText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.checkTitle {
+  font-weight: 600;
+}
+.checkBody {
+  color: var(--color-text-secondary);
+  font-size: var(--text-caption);
+}
+
+.areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.area {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-background);
+  font-size: var(--text-caption);
+}
+.area svg {
+  color: var(--color-accent-text);
+}
+
+.rules {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+}
+.rules li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.rules li[data-met='true'] {
+  color: var(--color-success);
+}
+.strength {
+  display: flex;
+  gap: var(--space-1);
+}
+.strengthBar {
+  flex: 1;
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  transition: background-color var(--motion-fast);
+}
+.strengthBar[data-on='true'] {
+  background: var(--color-warning);
+}
+.strength[data-ok='true'] .strengthBar[data-on='true'] {
+  background: var(--color-success);
+}
+
+@media (max-width: 900px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

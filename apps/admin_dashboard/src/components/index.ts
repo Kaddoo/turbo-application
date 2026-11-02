@@ -65,3 +65,6 @@ export {
   Row,
   Title,
 } from './Cards';
+export { ProfileHero } from './ProfileHero';
+export { WalletCard } from './WalletCard';
+export { ActionList, ActionRow } from './ActionList';
