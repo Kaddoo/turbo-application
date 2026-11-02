@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **amountPesewas** | **int** | Money as an integer number of pesewas (GH₵1 = 100 pesewas). Never a float. GH₵35.00 = 3500. | 
 **channel** | **String** |  | 
 **reference** | **String** |  | 
+**network** | [**MomoNetwork**](MomoNetwork.md) | The network the payment prompt went to. Null on top-ups made before 0.6.0. | [optional] 
 **checkout** | [**TopupCheckout**](TopupCheckout.md) |  | [optional] 
 **createdAt** | [**DateTime**](DateTime.md) |  | 
 **completedAt** | [**DateTime**](DateTime.md) |  | [optional] 

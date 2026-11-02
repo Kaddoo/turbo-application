@@ -18,8 +18,10 @@ const S = [authenticate, requireRole('student'), terms];
 
 // The contract does not ask the app for a mobile money network, so we infer it from the number's prefix (Ghana's allocation).
 // Number portability can make this wrong for a few people; Payaza's check-status will fail the prompt and the student can retry.
-const NETWORK_PREFIX = { MTN: ['24', '25', '53', '54', '55', '59'], VODAFONE: ['20', '50'], AIRTELTIGO: ['26', '27', '56', '57'] };
-const networkOf = (phone) => Object.entries(NETWORK_PREFIX).find(([, p]) => p.some((x) => phone.slice(4, 6) === x))?.[0] ?? 'MTN';
+const NETWORK_PREFIX = { mtn: ['24', '25', '53', '54', '55', '59'], telecel: ['20', '50'], at: ['26', '27', '56', '57'] };
+const networkOf = (phone) => Object.entries(NETWORK_PREFIX).find(([, p]) => p.some((x) => phone.slice(4, 6) === x))?.[0];
+// The contract names the networks mtn, telecel and at; the provider (and the topups.network column) use MTN, VODAFONE and AIRTELTIGO.
+export const PROVIDER_NETWORK = { mtn: 'MTN', telecel: 'VODAFONE', at: 'AIRTELTIGO' };
 
 walletRoutes.get('/wallet', ...S, async (req, res) => {
   const { rows: [w] } = await q('SELECT * FROM wallets WHERE student_id=$1', [req.user.id]);
@@ -37,7 +39,7 @@ walletRoutes.get('/wallet/transactions', ...S, async (req, res) => {
 });
 
 walletRoutes.post('/wallet/topups', ...S, async (req, res) => idempotent(req, res, 'topup', async () => {
-  const { amountPesewas, channel } = req.body;
+  const { amountPesewas, channel, msisdn } = req.body;
   const cfg = await getSettings();
   if (amountPesewas < cfg.minTopupPesewas || amountPesewas > cfg.maxTopupPesewas)
     throw new ApiError(422, 'topup_amount_out_of_range', `Top-up must be between ${cfg.minTopupPesewas} and ${cfg.maxTopupPesewas} pesewas`);
@@ -47,9 +49,12 @@ walletRoutes.post('/wallet/topups', ...S, async (req, res) => idempotent(req, re
   if (r.n >= 10 || r.open >= 3) throw new ApiError(429, 'rate_limited', 'Too many top-ups in a short time', { retryAfterSeconds: 300 });
   const reference = 'TU' + crypto.randomBytes(9).toString('hex');
   const { rows: [u] } = await q('SELECT phone FROM users WHERE id=$1', [req.user.id]);
-  const network = networkOf(u.phone);
+  const payer = msisdn ?? u.phone;
+  const chosen = req.body.network ?? networkOf(payer);
+  if (!chosen) throw new ApiError(422, 'network_unknown', 'We could not tell which network this number is on. Choose one.');
+  const network = PROVIDER_NETWORK[chosen];
   const { rows: [t] } = await q(`INSERT INTO topups (student_id,amount_pesewas,reference,network,channel) VALUES ($1,$2,$3,$4,$5) RETURNING *`, [req.user.id, amountPesewas, reference, network, channel]);
-  try { await provider().createCollection({ reference, amountPesewas, phone: u.phone, network }); }
+  try { await provider().createCollection({ reference, amountPesewas, phone: payer, network }); }
   catch { await q(`UPDATE topups SET status='failed', completed_at=now() WHERE id=$1`, [t.id]); throw new ApiError(502, 'payment_provider_error', 'Payment provider unavailable'); }
   return { status: 201, body: topupView(t) };
 }));

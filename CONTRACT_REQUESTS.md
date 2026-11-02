@@ -16,6 +16,8 @@ Things the apps need that the contract lacks or leaves unclear. Code sessions wr
 
 ### CR-2. Destination search needs a place-search source
 
+**Applied in 0.6.0.** `GET /places/autocomplete?q=&sessionToken=` returns `{items: [{placeId, label, landmark, isPickupPoint}]}` (official pickup points first, then the map provider's places, limited to the service area; the key stays on the server) and `GET /places/{placeId}` returns a `Location`. If the provider refuses (it currently does for staging's key: Places is blocked), the answer is the pickup points alone.
+
 **What:** The destination screen needs "Places autocomplete limited to the service area" (prompt 04). The contract has no search endpoint, so the app would call Google Places directly with a restricted client key.
 
 **Why it matters:** That puts a Google key and billing in the client, and the contract's service area can only be enforced after the quote. A backend `GET /places/autocomplete?q=&sessionToken=` would keep the key on the server and let staff bias results to the boundary.
@@ -23,6 +25,8 @@ Things the apps need that the contract lacks or leaves unclear. Code sessions wr
 **Suggested shape:** `GET /places/autocomplete?q=string&sessionToken=uuid` returning `[{placeId, label, landmark?, point?}]`, and `GET /places/{placeId}` returning a `Location`.
 
 ### CR-3. Campus security number, announcements and notification settings have no home in the contract
+
+**Applied in 0.5.0 and 0.6.0.** Phones: `campusSecurityPhone` (0.5.0). Announcement: `announcement` `{id, message, severity: info|warning|critical}` or null in `AppConfig` (0.6.0), set by staff through `PUT /admin/settings` (`announcement: {message, severity}` or null). Notification choices: `GET`/`PUT /me/notification-settings` with `{newsAndOffers, tips}`; until chosen news is off and tips on.
 
 **What:** Three things the student screens call for and the contract cannot supply.
 1. **Campus security phone number** (Safety screen "Call for help", and what SOS tells staff). The app shows the national emergency number 112 only. Suggested: add `campusSecurityPhone` and `supportPhone` to `GET /app-config` (or `GET /service-area`).
@@ -32,6 +36,8 @@ Things the apps need that the contract lacks or leaves unclear. Code sessions wr
 **Why:** these are visible in the design and in prompts 04 and 05.
 
 ### CR-4. Place search (CR-2) still open
+
+**Applied in 0.6.0** (see CR-2).
 
 The destination screen offers official pickup points as drop-offs. A real "search for a place" needs the endpoint in CR-2 or a restricted Google key with billing.
 
@@ -79,7 +85,9 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 **Until then:** the timeline shows states only for those steps.
 
 
-### CR-11. Top-up cannot name the mobile money network or number
+### CR-11
+
+**Applied in 0.6.0.** `TopupCreate` takes optional `network` (`mtn|telecel|at`) and `msisdn` (E.164); without a network the server infers it from the number, and answers 422 `network_unknown` when it cannot. `Topup` carries `network`.. Top-up cannot name the mobile money network or number
 
 **What:** The design's top-up screen shows the mobile money number with a network chip ("MTN MoMo"), and a "Pay with" choice (MTN MoMo, Telecel Cash, AT Money) when the number's network cannot be told. `TopupCreate` has only `amountPesewas` and `channel`, so the app cannot send a network or a number different from the account phone, and it cannot say which network will be asked to approve.
 **Suggested:** nullable `network` (`mtn | telecel | at`) and `msisdn` on `TopupCreate`; the server detects the network from the number when `network` is omitted and answers `422 network_unknown` when it cannot, so the app can show the "Pay with" choice.

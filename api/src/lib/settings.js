@@ -5,7 +5,7 @@ export const DEFAULTS = {
   maxTripDistanceMeters: 18000, quoteTtlSeconds: 300, driverAckTimeoutSeconds: 45, noDriverTimeoutSeconds: 300,
   minTopupPesewas: 500, maxTopupPesewas: 50000, driverSilenceSeconds: 180, noShowWaitSeconds: 300,
   quoteLimitPerMinute: 10, adjustmentApprovalThresholdPesewas: 5000, presenceFreshSeconds: 60,
-  bookingsPaused: false, pauseMessage: null, documentRetentionDays: 30, locationRetentionDays: 90, smsDailyLimit: 20000, operatingHours: null,
+  bookingsPaused: false, pauseMessage: null, documentRetentionDays: 30, locationRetentionDays: 90, smsDailyLimit: 20000, operatingHours: null, announcement: null,
 };
 
 export const getSettings = () => cached('settings', 10_000, async () => {

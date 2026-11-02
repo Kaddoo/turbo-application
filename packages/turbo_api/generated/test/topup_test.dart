@@ -40,6 +40,12 @@ void main() {
       // TODO
     });
 
+    // The network the payment prompt went to. Null on top-ups made before 0.6.0.
+    // MomoNetwork network
+    test('to test the property `network`', () async {
+      // TODO
+    });
+
     // TopupCheckout checkout
     test('to test the property `checkout`', () async {
       // TODO

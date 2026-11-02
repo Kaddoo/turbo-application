@@ -67,6 +67,8 @@ doc/FareBandSet.md
 doc/GeoJsonPolygon.md
 doc/GeoPoint.md
 doc/Health.md
+doc/HomeNotice.md
+doc/HomeNoticeInput.md
 doc/Incident.md
 doc/IncidentList.md
 doc/IncidentUpdate.md
@@ -81,6 +83,8 @@ doc/LocationBatch.md
 doc/MetaApi.md
 doc/MfaConfirm.md
 doc/MfaEnrollment.md
+doc/MomoNetwork.md
+doc/NotificationSettings.md
 doc/OperatingWindow.md
 doc/OtpChallenge.md
 doc/OtpRequest.md
@@ -92,6 +96,8 @@ doc/PasswordReset.md
 doc/PhoneChange.md
 doc/PickupPoint.md
 doc/PickupPointWrite.md
+doc/PlaceMatch.md
+doc/PlaceMatchList.md
 doc/Problem.md
 doc/ProblemCode.md
 doc/ProblemErrorsInner.md
@@ -279,6 +285,8 @@ lib/src/model/fare_band_set.dart
 lib/src/model/geo_json_polygon.dart
 lib/src/model/geo_point.dart
 lib/src/model/health.dart
+lib/src/model/home_notice.dart
+lib/src/model/home_notice_input.dart
 lib/src/model/incident.dart
 lib/src/model/incident_list.dart
 lib/src/model/incident_update.dart
@@ -292,6 +300,8 @@ lib/src/model/location.dart
 lib/src/model/location_batch.dart
 lib/src/model/mfa_confirm.dart
 lib/src/model/mfa_enrollment.dart
+lib/src/model/momo_network.dart
+lib/src/model/notification_settings.dart
 lib/src/model/operating_window.dart
 lib/src/model/otp_challenge.dart
 lib/src/model/otp_request.dart
@@ -303,6 +313,8 @@ lib/src/model/password_reset.dart
 lib/src/model/phone_change.dart
 lib/src/model/pickup_point.dart
 lib/src/model/pickup_point_write.dart
+lib/src/model/place_match.dart
+lib/src/model/place_match_list.dart
 lib/src/model/problem.dart
 lib/src/model/problem_code.dart
 lib/src/model/problem_errors_inner.dart
@@ -468,6 +480,8 @@ test/fare_band_test.dart
 test/geo_json_polygon_test.dart
 test/geo_point_test.dart
 test/health_test.dart
+test/home_notice_input_test.dart
+test/home_notice_test.dart
 test/incident_list_test.dart
 test/incident_test.dart
 test/incident_update_test.dart
@@ -482,6 +496,8 @@ test/location_test.dart
 test/meta_api_test.dart
 test/mfa_confirm_test.dart
 test/mfa_enrollment_test.dart
+test/momo_network_test.dart
+test/notification_settings_test.dart
 test/operating_window_test.dart
 test/otp_challenge_test.dart
 test/otp_request_test.dart
@@ -493,6 +509,8 @@ test/password_reset_test.dart
 test/phone_change_test.dart
 test/pickup_point_test.dart
 test/pickup_point_write_test.dart
+test/place_match_list_test.dart
+test/place_match_test.dart
 test/problem_code_test.dart
 test/problem_errors_inner_test.dart
 test/problem_test.dart

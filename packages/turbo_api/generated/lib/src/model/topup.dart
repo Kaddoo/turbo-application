@@ -4,6 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:turbo_api_generated/src/model/topup_checkout.dart';
+import 'package:turbo_api_generated/src/model/momo_network.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -32,6 +33,8 @@ class Topup {
     required  this.channel,
 
     required  this.reference,
+
+     this.network,
 
      this.checkout,
 
@@ -123,6 +126,19 @@ class Topup {
 
 
   final String reference;
+
+
+
+      /// The network the payment prompt went to. Null on top-ups made before 0.6.0.
+  @JsonKey(
+    
+    name: r'network',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final MomoNetwork? network;
 
 
 
@@ -236,6 +252,7 @@ class Topup {
       other.amountPesewas == amountPesewas &&
       other.channel == channel &&
       other.reference == reference &&
+      other.network == network &&
       other.checkout == checkout &&
       other.createdAt == createdAt &&
       other.completedAt == completedAt &&
@@ -253,6 +270,7 @@ class Topup {
         amountPesewas.hashCode +
         channel.hashCode +
         reference.hashCode +
+        (network == null ? 0 : network.hashCode) +
         (checkout == null ? 0 : checkout.hashCode) +
         createdAt.hashCode +
         (completedAt == null ? 0 : completedAt.hashCode) +

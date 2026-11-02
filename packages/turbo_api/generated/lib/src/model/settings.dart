@@ -4,6 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:turbo_api_generated/src/model/operating_window.dart';
+import 'package:turbo_api_generated/src/model/home_notice_input.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -20,6 +21,8 @@ part 'settings.g.dart';
 class Settings {
   /// Returns a new [Settings] instance.
   Settings({
+
+     this.announcement,
 
      this.maxTripDistanceMeters = 18000,
 
@@ -51,6 +54,19 @@ class Settings {
 
      this.pauseMessage,
   });
+
+      /// The home-screen notice (see AppConfig). Null clears it.
+  @JsonKey(
+    
+    name: r'announcement',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final HomeNoticeInput? announcement;
+
+
 
           // minimum: 1000
   @JsonKey(
@@ -251,6 +267,7 @@ class Settings {
 
     @override
     bool operator ==(Object other) => identical(this, other) || other is Settings &&
+      other.announcement == announcement &&
       other.maxTripDistanceMeters == maxTripDistanceMeters &&
       other.quoteTtlSeconds == quoteTtlSeconds &&
       other.driverAckTimeoutSeconds == driverAckTimeoutSeconds &&
@@ -269,6 +286,7 @@ class Settings {
 
     @override
     int get hashCode =>
+        (announcement == null ? 0 : announcement.hashCode) +
         maxTripDistanceMeters.hashCode +
         quoteTtlSeconds.hashCode +
         driverAckTimeoutSeconds.hashCode +

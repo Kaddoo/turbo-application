@@ -7,6 +7,8 @@ part of 'settings.dart';
 // **************************************************************************
 
 abstract class _$SettingsCWProxy {
+  Settings announcement(HomeNoticeInput? announcement);
+
   Settings maxTripDistanceMeters(int maxTripDistanceMeters);
 
   Settings quoteTtlSeconds(int quoteTtlSeconds);
@@ -46,6 +48,7 @@ abstract class _$SettingsCWProxy {
   /// Settings(...).copyWith(id: 12, name: "My name")
   /// ````
   Settings call({
+    HomeNoticeInput? announcement,
     int maxTripDistanceMeters,
     int quoteTtlSeconds,
     int driverAckTimeoutSeconds,
@@ -69,6 +72,10 @@ class _$SettingsCWProxyImpl implements _$SettingsCWProxy {
   const _$SettingsCWProxyImpl(this._value);
 
   final Settings _value;
+
+  @override
+  Settings announcement(HomeNoticeInput? announcement) =>
+      this(announcement: announcement);
 
   @override
   Settings maxTripDistanceMeters(int maxTripDistanceMeters) =>
@@ -141,6 +148,7 @@ class _$SettingsCWProxyImpl implements _$SettingsCWProxy {
   /// Settings(...).copyWith(id: 12, name: "My name")
   /// ````
   Settings call({
+    Object? announcement = const $CopyWithPlaceholder(),
     Object? maxTripDistanceMeters = const $CopyWithPlaceholder(),
     Object? quoteTtlSeconds = const $CopyWithPlaceholder(),
     Object? driverAckTimeoutSeconds = const $CopyWithPlaceholder(),
@@ -158,6 +166,10 @@ class _$SettingsCWProxyImpl implements _$SettingsCWProxy {
     Object? pauseMessage = const $CopyWithPlaceholder(),
   }) {
     return Settings(
+      announcement: announcement == const $CopyWithPlaceholder()
+          ? _value.announcement
+          // ignore: cast_nullable_to_non_nullable
+          : announcement as HomeNoticeInput?,
       maxTripDistanceMeters:
           maxTripDistanceMeters == const $CopyWithPlaceholder()
           ? _value.maxTripDistanceMeters
@@ -251,6 +263,12 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) =>
         ],
       );
       final val = Settings(
+        announcement: $checkedConvert(
+          'announcement',
+          (v) => v == null
+              ? null
+              : HomeNoticeInput.fromJson(v as Map<String, dynamic>),
+        ),
         maxTripDistanceMeters: $checkedConvert(
           'maxTripDistanceMeters',
           (v) => (v as num?)?.toInt() ?? 18000,
@@ -315,6 +333,7 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) =>
     });
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
+  'announcement': ?instance.announcement?.toJson(),
   'maxTripDistanceMeters': instance.maxTripDistanceMeters,
   'quoteTtlSeconds': instance.quoteTtlSeconds,
   'driverAckTimeoutSeconds': instance.driverAckTimeoutSeconds,

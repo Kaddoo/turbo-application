@@ -8,6 +8,7 @@ import 'package:turbo_api_generated/api.dart';
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**announcement** | [**HomeNoticeInput**](HomeNoticeInput.md) | The home-screen notice (see AppConfig). Null clears it. | [optional] 
 **maxTripDistanceMeters** | **int** |  | [default to 18000]
 **quoteTtlSeconds** | **int** |  | [default to 300]
 **driverAckTimeoutSeconds** | **int** |  | [default to 45]

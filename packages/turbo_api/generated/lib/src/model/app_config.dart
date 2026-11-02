@@ -4,6 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:turbo_api_generated/src/model/app_config_maintenance.dart';
+import 'package:turbo_api_generated/src/model/home_notice.dart';
 import 'package:turbo_api_generated/src/model/app_config_min_version.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -33,6 +34,8 @@ class AppConfig {
      this.supervisorPhone,
 
      this.campusSecurityPhone,
+
+     this.announcement,
   });
 
   @JsonKey(
@@ -109,6 +112,19 @@ class AppConfig {
 
 
 
+      /// A notice for the top of the home screen. Null when there is none. Staff set it in settings.
+  @JsonKey(
+    
+    name: r'announcement',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final HomeNotice? announcement;
+
+
+
 
 
     @override
@@ -118,7 +134,8 @@ class AppConfig {
       other.bookingsPaused == bookingsPaused &&
       other.pauseMessage == pauseMessage &&
       other.supervisorPhone == supervisorPhone &&
-      other.campusSecurityPhone == campusSecurityPhone;
+      other.campusSecurityPhone == campusSecurityPhone &&
+      other.announcement == announcement;
 
     @override
     int get hashCode =>
@@ -127,7 +144,8 @@ class AppConfig {
         bookingsPaused.hashCode +
         (pauseMessage == null ? 0 : pauseMessage.hashCode) +
         (supervisorPhone == null ? 0 : supervisorPhone.hashCode) +
-        (campusSecurityPhone == null ? 0 : campusSecurityPhone.hashCode);
+        (campusSecurityPhone == null ? 0 : campusSecurityPhone.hashCode) +
+        (announcement == null ? 0 : announcement.hashCode);
 
   factory AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);
 
