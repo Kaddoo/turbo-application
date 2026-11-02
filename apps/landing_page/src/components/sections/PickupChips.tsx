@@ -1,10 +1,10 @@
 "use client";
 
-import { Clock, MapPin } from "lucide-react";
 import { serviceArea } from "@/lib/api";
 import { formatHours } from "@/lib/hours";
 import { useApi } from "@/lib/useApi";
 import { LoadProblem } from "../ui/LoadProblem";
+import { Icon3d } from "../ui/Icon3d";
 
 export function PickupChips() {
   const state = useApi(serviceArea);
@@ -37,16 +37,16 @@ export function PickupChips() {
         {points.map((p) => (
           <li
             key={p.id}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink/[0.06] px-3.5 text-sm text-ink transition-colors hover:bg-turbo hover:text-ink"
+            className="inline-flex h-10 items-center gap-1.5 rounded-full bg-ink/6 pl-2 pr-3.5 text-sm text-ink transition-colors hover:bg-turbo hover:text-ink"
           >
-            <MapPin className="size-4" aria-hidden />
+            <Icon3d name="round-pushpin" className="size-6" />
             {p.name}
           </li>
         ))}
       </ul>
       {hours && (
-        <p className="mt-4 flex items-center gap-2 text-base text-ink/70 lg:text-sm">
-          <Clock className="size-4" aria-hidden /> Operating hours: {hours}
+        <p className="mt-4 flex items-center gap-3 text-base text-ink/70 lg:text-sm">
+          <Icon3d name="alarm-clock" className="size-9" /> Operating hours: {hours}
         </p>
       )}
     </>

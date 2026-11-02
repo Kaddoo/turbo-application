@@ -1,6 +1,5 @@
 import { Plus } from "lucide-react";
-import { RiseHeading } from "../ui/ScrubHeading";
-import { Tag } from "../ui/Tag";
+import { SectionHead } from "../ui/SectionHead";
 import { links } from "@/config/links";
 
 const faqs: { q: string; a: React.ReactNode }[] = [
@@ -62,12 +61,9 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 export function Faq() {
   return (
     <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-section">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
-        <div>
-          <Tag tone="dot">FAQ</Tag>
-          <RiseHeading id="faq-title" className="mt-6 text-display font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
-            Questions, answered.
-          </RiseHeading>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col items-center text-center">
+          <SectionHead id="faq-title" label="FAQ" title="Questions, answered." />
           <p data-reveal className="mt-6 text-paper/60">
             Still stuck?{" "}
             <a href="/support/" className="text-turbo underline-offset-4 hover:underline">
@@ -76,7 +72,7 @@ export function Faq() {
             .
           </p>
         </div>
-        <div className="divide-y divide-white/10 border-y border-white/10">
+        <div data-journey="help" className="mx-auto mt-12 max-w-3xl divide-y divide-white/10 border-y border-white/10 sm:mt-16">
           {faqs.map(({ q, a }) => (
             <details key={q} data-reveal className="group">
               <summary className="flex cursor-pointer items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight transition-colors hover:text-turbo">

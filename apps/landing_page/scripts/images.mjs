@@ -24,3 +24,19 @@ for (const file of readdirSync(src).filter((f) => f.endsWith(".jpg")).sort()) {
 }
 writeFileSync(new URL("../src/components/ui/photos.json", import.meta.url), JSON.stringify(manifest, null, 2) + "\n");
 console.log("photos:", Object.keys(manifest).join(", "));
+
+// 3D icons (silver and lime, from the design kit in packages/turbo_ui) at 1x/2x of
+// their 64 px display size. <Icon3d> reads them by name.
+const iconSrc = new URL("../../../packages/turbo_ui/assets/icons3d/", import.meta.url);
+const iconOut = new URL("../public/icons3d/", import.meta.url);
+mkdirSync(iconOut, { recursive: true });
+const icons = [];
+for (const file of readdirSync(iconSrc).filter((f) => f.endsWith(".png")).sort()) {
+  const name = file.replace(/^i3d-|\.png$/g, "");
+  for (const w of [64, 128]) {
+    await sharp(new URL(file, iconSrc).pathname).resize({ width: w }).webp({ quality: 82, alphaQuality: 90 }).toFile(new URL(`${name}-${w}.webp`, iconOut).pathname);
+  }
+  icons.push(name);
+}
+writeFileSync(new URL("../src/components/ui/icons3d.json", import.meta.url), JSON.stringify(icons, null, 2) + "\n");
+console.log("icons:", icons.length);

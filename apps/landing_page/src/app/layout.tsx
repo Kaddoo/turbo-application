@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 // visible content if the animation chunk has not started within 3s.
 // A reload starts at the top (or at the linked section): the browser's own scroll
 // restore lands in the wrong place once pinned sections change the page height.
-const motionBoot = `(function(d){try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');d.documentElement.classList.add('hero-intro');d.documentElement.classList.add('door');window.__doorEnd=Date.now()+3400;setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
+const motionBoot = `(function(d){try{if('scrollRestoration' in history)history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;d.documentElement.classList.add('motion');d.documentElement.classList.add('hero-intro');var n=1;try{n=(+localStorage.getItem('turbo-visits')||0)+1;localStorage.setItem('turbo-visits',String(n))}catch(e){}var intro=n===1||n%5===0;window.__heroSeen=!intro;if(intro){d.documentElement.classList.add('door');window.__doorEnd=Date.now()+3400}setTimeout(function(){if(!window.__turboMotion)d.documentElement.classList.remove('motion')},3000)}catch(e){}})(document)`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

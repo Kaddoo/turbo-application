@@ -12,6 +12,117 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 - **Checks:** 36 API tests pass on a scratch Postgres (walks 1-4, driver, reduced views, route polyline, new); driver 89, student 132 pass; analyze clean.
 - **Not done:** approach-road line (`driverToPickupPolyline`) and `dutySince` are not in 0.5.0; CR-2/CR-3 (places, announcements, notification settings), CR-7/CR-8 (legal dates and publishing) and CR-11 (top-up network) are untouched. The two phone numbers are empty on staging until set in the server env. Deploying needs no migration (no schema change).
 
+## 2026-11-02 · landing page: phone ride on top; canonical Tailwind classes
+
+- **Branch:** main.
+- **Files:** `apps/landing_page/src/components/Journey.tsx`; `hero/Hero.tsx`, `Button.tsx`, `sections/TapAway.tsx`, `sections/Safety.tsx` (class names only).
+- **What changed:**
+  - **Phone ride:** at Kevin's request, the route and taxi now sit on top of the content on phones too. To stay clear of the text they hug the screen edge (18 px in), with a smaller taxi and objects.
+  - **Tailwind classes:** renamed to their v4 canonical names, as flagged by the editor: `min-h-[100svh]` / `h-[100svh]` became `min-h-svh` / `h-svh`, and `bg-gradient-to-*` became `bg-linear-to-*`. The CSS output is the same.
+- **Acceptance:** tests (8) pass; axe, console and links are clean; no hidden text at 1440 or 390.
+
+## 2026-11-02 · landing page: one-ride journey with 3D objects; intro on visit 1 and every 5th
+
+- **Branch:** main.
+- **Files:**
+  - `apps/landing_page/src/components/`: `Journey.tsx` (new), `SiteShell.tsx` (main is `relative isolate`), `Motion.tsx`, `hero/HeroStage.tsx`.
+  - `app/page.tsx`, `app/layout.tsx` (boot script).
+  - `sections/`: HowItWorks, Fares, Coverage, Safety, Wallet, Faq and Download get `data-journey` anchors.
+  - `ui/Floaters.tsx` removed.
+- **Decisions (Kevin, via questions):**
+  - Follow one ride, with the same story on phones (smaller), using the 3D taxi.
+  - The intro plays on the first visit and every 5th visit after.
+  - Then: "it crosses the screen too much and very fast" and "let it move with the scroll".
+- **What changed:**
+  - **Floaters removed:** the scattered floating 3D objects are gone.
+  - **The ride:** a 3D taxi drives a route down the right-hand page margin (along the screen edge, behind the text, on phones). It stays level with the scroll and gently follows the bends. The route behind it fills in lime.
+  - **Seven stops, each object with a role,** scrubbed by scroll so they run backwards when scrolling up:
+    - ID card taken in, then a check appears (Verified).
+    - Coin spins into the car (Fare fixed).
+    - Pin drops onto the route (At the pickup point).
+    - Key turns in the lock (PIN checked).
+    - Money bag bounces, still full (Balance untouched).
+    - Speech balloon pops (Help on hand).
+    - Party popper (Arrived), at the Download card.
+  - **Intro:** the hero loader and video play on visit 1, 5, 10, 15… (a `turbo-visits` counter in localStorage); other visits open on the map.
+- **Acceptance:**
+  - Tests (8) pass.
+  - axe, console and links are clean.
+  - No hidden text at 1440 or 390.
+  - The car holds its screen position to within a few px at every scroll step.
+  - Desktop scrolling at 4× CPU slowdown: 60 fps, no frames over 50 ms.
+  - CLS is 0; mobile LCP is about 1.6 s.
+- **Known:** on phones the route runs behind the content, so the taxi is hidden while it passes the Safety card strip.
+
+## 2026-11-02 · landing page: dim-to-bright headlines, floating 3D objects, intro once, halftone map, fixes
+
+- **Branch:** main.
+- **Files:**
+  - `apps/landing_page/src/components/`: `Motion.tsx`, `Header.tsx`, `hero/HeroStage.tsx`, `ui/Floaters.tsx` (new).
+  - `sections/`: HowItWorks, Features, Coverage, Safety, Wallet, Faq, Download.
+  - `app/layout.tsx`, `app/globals.css`, `package.json` (dev script), `README.md`.
+- **What changed:**
+  - **Headlines:** big headlines start dim and brighten word by word as they scroll in, as in the reference. Sticky sections follow their own progress.
+  - **Floating 3D objects:** silver-and-lime 3D objects float at the edges of six sections, behind the text. They drift and turn with scroll and pop in on arrival; phones get one small one in some sections.
+  - **Hero intro:** the car-door loader and ride video play on the first visit only, on every device, now including phones (video, then the 3D map). Later visits open straight on the map. This is remembered in localStorage (`turbo-hero-seen`).
+  - **Download card map:** a halftone dot map in the reference's style, built from the real road dots and drawn in a darker lime. A dashed arc draws itself between the two pins.
+  - **Nav:** it no longer hides on scroll; it stays in view.
+  - **Safety cards:** they blinked because a ScrollTrigger refresh re-recorded their `from()` start state, so cards waiting their turn showed at full opacity, then dropped to 0. The cards now have their own timeline with explicit start and end values. A per-frame recording shows 0 opacity drops.
+  - **Fares:** the list was missing only under `npm run dev`, which had no API address, so the fallback text showed. The live site was fine. `npm run dev` now writes and uses the mock API by default.
+- **Acceptance:**
+  - Tests (8) pass.
+  - axe, console and links are clean.
+  - No animated text is left hidden at 1440 or 390.
+  - CLS is 0.
+  - Mobile LCP is about 1.6 s.
+- **Cost:** with 3D on phones, home-page blocking time on a 4×-slowed phone rose from about 10 ms to about 200 ms, and the slowest tap from about 64 ms to about 120 ms.
+
+## 2026-11-02 · landing page: matched to the inspiration video (animations, pills, 3D icons, nav)
+
+- **Branch:** main. **Reference:** Kevin's screen recording of the inspiration site (Desktop, 2026-10-31 11.44.42).
+- **Files:**
+  - `apps/landing_page/src/components/`: `Motion.tsx`, `Header.tsx`, `Footer.tsx`, `ui/Tag.tsx`, `ui/ScrubHeading.tsx`.
+  - New: `ui/SectionHead.tsx`, `ui/Icon3d.tsx`, `ui/icons3d.json`.
+  - `sections/`: TapAway, HowItWorks, Features, Fares, Coverage, PickupChips, Safety, Wallet, Faq.
+  - `app/globals.css`, `app/support/page.tsx`, `scripts/images.mjs`, `public/icons3d/` (new).
+- **What changed:**
+  - **Smart section:**
+    - It stays solid black (`data-bg-solid`), so the paper fading in behind How it works no longer shows at the sides.
+    - The bottom fade is full width.
+    - The headline is bigger and its words rise out of masks.
+    - The phones are bigger and sit tucked behind the centre phone, as in the video.
+    - The 3D money bag replaces the outline wallet icon.
+  - **Section headers:** big and centred (Fares and Where we go stay left in their columns). Letters rise out of word masks on scroll (`data-chars`).
+  - **Pills:** video style, a dark pill with a small 3D icon. Headline pills (Features, Safety) open out of a thin line after the letters. Eyebrow and footer pills open on their own.
+  - **3D icons:** silver-and-lime 3D icons from `packages/turbo_ui/assets/icons3d`, exported to WebP by `npm run images`. They replace the lucide icons outside the hero marquee, the store logos and the controls.
+  - **Fixed fares and Where we go:** the phones are bigger and slide in from their side. The price list and its bar animation are unchanged.
+  - **Safety:** the video's card design and photos are kept. On large screens the section is sticky: it holds while the cards arrive one by one and the strip slides until the last card is in view, then the page moves on.
+  - **Nav:** floating, with no bar.
+    - A lime round logo.
+    - Solid separate pills, with the section on screen highlighted.
+    - "Get the app" has a play icon.
+    - It hides while scrolling down and returns on scroll up.
+  - **Fixed:** revealed blocks used to end 28 px low because the animation cleared its transform at the end.
+- **Acceptance:**
+  - lint and `npm test` (8) pass.
+  - `npm run check`: axe, console and links are clean on 6 pages at 1440 and 390.
+  - After scrolling the whole page, no animated text is left hidden at 1440 or 390.
+  - CLS is 0 on mobile and desktop.
+  - Mobile LCP is about 1.6 s on the local build.
+- **Not changed:** on desktop the hero copy still waits for the hero video to hand over to the map (about 10–15 s on first load). That is the existing hero design. Say if it should appear sooner.
+
+## 2026-11-02 · landing page: scroll lag
+
+- **Branch:** main. **Files:** `apps/landing_page/src/components/Motion.tsx`, `hero/Hero.tsx`, `sections/TapAway.tsx`, `app/globals.css`, `package.json` and lock (lenis removed).
+- **Cause, measured:** Lenis eased every wheel notch, taking about 390 ms to cover 90% of the distance and about 900 ms to settle. Because it moved the page from JavaScript every frame, any slow frame showed as a stutter. Slow frames (76–128 ms, all paint and GPU work) clustered in the hero and the tap-away section.
+- **What changed:**
+  - Lenis is removed; scrolling is native, and section links use `scrollIntoView`, which honours `scroll-padding-top`.
+  - The marquee edge fades no longer use a backdrop blur.
+  - The tap-away fade is a gradient overlay instead of a mask over the moving phones.
+  - The MutationObserver watches `<main>` instead of `<body>`. ScrollTrigger's refresh adds a helper `<div>` to `<body>`, which had started an endless refresh loop every 200 ms once Lenis was gone (it reset the scroll and cancelled smooth scrolling).
+- **Result (local build, M4, CPU at 1x and 4x):** wheel response 390 ms → about 25 ms; 60 fps with no frames over 50 ms; section links land at 96 px; the tap-away animation, page colour fades and reveals all still work.
+- **Not changed:** the 3D hero still renders every frame while it is on screen; it stops when scrolled away.
+
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.

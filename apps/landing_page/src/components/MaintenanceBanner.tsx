@@ -20,7 +20,7 @@ export function MaintenanceBanner() {
       : null;
   if (!text) return null;
   return (
-    <div role="status" className="relative z-[60] bg-turbo line-clamp-2 px-4 py-2.5 text-center text-xs font-medium text-ink sm:text-sm">
+    <div role="status" className="relative z-60 bg-turbo line-clamp-2 px-4 py-2.5 text-center text-xs font-medium text-ink sm:text-sm">
       <TriangleAlert className="mr-2 inline size-4 align-[-3px]" aria-hidden />
       {text}
     </div>

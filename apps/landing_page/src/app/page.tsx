@@ -9,10 +9,12 @@ import { Safety } from "@/components/sections/Safety";
 import { Wallet } from "@/components/sections/Wallet";
 import { Faq } from "@/components/sections/Faq";
 import { Download } from "@/components/sections/Download";
+import { Journey } from "@/components/Journey";
 
 export default function Home() {
   return (
     <SiteShell>
+      <Journey />
       <Hero />
       <TapAway />
       <HowItWorks />

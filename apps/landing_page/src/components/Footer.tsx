@@ -33,7 +33,7 @@ export function Footer() {
             <Wordmark />
           </a>
           <div>
-            <Tag>About</Tag>
+            <Tag icon="books">About</Tag>
             <p className="mt-4 text-sm leading-relaxed text-paper/60">
               Rides around campus for Central University students at Miotso. No cash, no haggling, a driver assigned for
               you.
