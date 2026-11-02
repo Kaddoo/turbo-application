@@ -44,6 +44,31 @@ rsync -a --delete -e "ssh -i $K" dist/ root@203.161.62.244:/opt/turbo/admin/
 
 The dashboard and the API must go out together when a contract change makes a header or field required.
 
+## Deploys from GitHub
+
+Three workflows in `.github/workflows` publish to the staging server when the matching folder changes on `main`, and can be run by hand from the Actions tab: `deploy-api.yml` (`api/`), `deploy-admin.yml` (`apps/admin_dashboard/`) and `deploy-landing.yml` (`apps/landing_page/`). Each uses the `staging` environment (Settings, Environments: add yourself as a required reviewer if you want to approve each deploy). They do the same steps as the manual commands above: keep a copy of what runs, copy the new files, and check the result. The API one also checks the contract, takes a pgBackRest backup when the push changed `api/migrations`, runs the migrations, restarts both services, refuses to continue if `STAFF_MFA=required` is missing, and calls `/health`.
+
+**One-time setup**
+
+1. Make a key just for deploys (no passphrase): `ssh-keygen -t ed25519 -f ~/.ssh/turbo_deploy -C github-deploy -N ""`. Put `turbo_deploy.pub` in `/root/.ssh/authorized_keys` on the server.
+2. Get the server's host key so the runner can check it: `ssh-keyscan -t ed25519 203.161.62.244`.
+3. In GitHub, Settings, Secrets and variables, Actions, add four secrets: `DEPLOY_HOST` (`203.161.62.244`), `DEPLOY_USER` (`root`), `DEPLOY_SSH_KEY` (the whole private key file), `DEPLOY_KNOWN_HOSTS` (the `ssh-keyscan` line).
+4. Landing site: add DNS A records for `turbogh.app` and `www.turbogh.app` to the server IP, then add this to `/opt/turbo/deploy/Caddyfile` and run `cd /opt/turbo/deploy && docker compose up -d caddy`. The Caddy container must also be able to read `/opt/turbo/landing` (mount it the same way `/opt/turbo/admin` is mounted).
+
+```
+turbogh.app {
+	root * /srv/landing
+	encode zstd gzip
+	try_files {path} {path}/index.html
+	file_server
+}
+www.turbogh.app {
+	redir https://turbogh.app{uri} permanent
+}
+```
+
+Notes: a contract change that makes a header or field required must reach the API and the dashboard in the same merge, so run both. The API's own tests need a Postgres and have two known failures (see below), so they are not a gate here; the contract guard is. Roll back by copying the newest `*.pre-*` folder back and restarting. Do not put the private key anywhere in the repo.
+
 ## Staff accounts (no seed accounts on staging, ever)
 
 - Never run `scripts/seed.js` on a shared host (it now refuses). The old `@turbo.test` staff are deactivated.

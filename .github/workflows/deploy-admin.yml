@@ -1,0 +1,38 @@
+name: deploy-admin
+# Staging admin dashboard (static files served by Caddy). Runs when apps/admin_dashboard changes on main, or by hand.
+# A contract change that makes a header or field required must go out together with deploy-api.
+on:
+  push:
+    branches: [main]
+    paths: ['apps/admin_dashboard/**', '.github/workflows/deploy-admin.yml']
+  workflow_dispatch:
+concurrency: { group: deploy-admin, cancel-in-progress: false }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22.23.4 }
+      - run: node tools/check-contract.mjs
+      - run: npm ci
+        working-directory: apps/admin_dashboard
+      - run: npm run typecheck && npm run lint && npx vitest run
+        working-directory: apps/admin_dashboard
+      - run: npm run build
+        working-directory: apps/admin_dashboard
+        env:
+          VITE_API_BASE_URL: https://api.turbogh.app/v1
+          VITE_APP_ENV: staging
+      - name: Set up SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Keep a copy, then publish
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
+            cp -a /opt/turbo/admin /opt/turbo/admin.pre-$(date +%Y%m%d-%H%M); cd /opt/turbo; ls -dt admin.pre-* | tail -n +6 | xargs -r rm -rf'
+          rsync -a --delete -e "ssh -i ~/.ssh/deploy_key" apps/admin_dashboard/dist/ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/turbo/admin/"
+      - run: curl -fsS -o /dev/null https://admin.turbogh.app/

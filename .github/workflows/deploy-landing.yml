@@ -1,0 +1,36 @@
+name: deploy-landing
+# Public landing site (static export, served by Caddy at turbogh.app). Runs when apps/landing_page changes on main, or by hand.
+on:
+  push:
+    branches: [main]
+    paths: ['apps/landing_page/**', '.github/workflows/deploy-landing.yml']
+  workflow_dispatch:
+concurrency: { group: deploy-landing, cancel-in-progress: false }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci
+        working-directory: apps/landing_page
+      - run: npx tsc --noEmit
+        working-directory: apps/landing_page
+      - run: npm run build
+        working-directory: apps/landing_page
+        env:
+          PUBLIC_API_BASE_URL: https://api.turbogh.app/v1
+          PUBLIC_SITE_URL: https://turbogh.app
+      - name: Set up SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Keep a copy, then publish
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
+            mkdir -p /opt/turbo/landing; cp -a /opt/turbo/landing /opt/turbo/landing.pre-$(date +%Y%m%d-%H%M); cd /opt/turbo; ls -dt landing.pre-* | tail -n +6 | xargs -r rm -rf'
+          rsync -a --delete -e "ssh -i ~/.ssh/deploy_key" apps/landing_page/out/ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/turbo/landing/"
+      - run: curl -fsS -o /dev/null https://turbogh.app/

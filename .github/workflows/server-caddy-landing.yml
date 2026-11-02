@@ -1,0 +1,57 @@
+name: server-caddy-landing
+# One-off, by hand only: lets Caddy serve the landing site at turbogh.app (and redirect www to it).
+# Backs up the Caddy files, adds a mount for /opt/turbo/landing like the dashboard's, adds the site block, restarts Caddy,
+# and puts everything back if the API or dashboard stop answering. Safe to run twice. Prints no file contents.
+on: workflow_dispatch
+concurrency: { group: server-caddy-landing, cancel-in-progress: false }
+jobs:
+  caddy:
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+    steps:
+      - name: Set up SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Add the landing site to Caddy
+        run: |
+          ssh -i ~/.ssh/deploy_key "$TARGET" 'bash -s' <<'REMOTE'
+          set -eu
+          cd /opt/turbo/deploy
+          ts=$(date +%Y%m%d-%H%M%S)
+          cp Caddyfile "Caddyfile.bak-$ts"; cp docker-compose.yml "docker-compose.yml.bak-$ts"
+          mkdir -p /opt/turbo/landing
+          if [ ! -e /opt/turbo/landing/index.html ]; then printf '<!doctype html><title>Turbo</title><p>Coming soon.</p>\n' > /opt/turbo/landing/index.html; fi
+          admin_line=$(grep -m1 '/opt/turbo/admin' docker-compose.yml || true)
+          if [ -z "$admin_line" ]; then echo "Could not find how the dashboard is mounted in docker-compose.yml; nothing changed."; exit 1; fi
+          if ! grep -q '/opt/turbo/landing' docker-compose.yml; then
+            awk '{print} /\/opt\/turbo\/admin/ && !done {l=$0; gsub(/admin/,"landing",l); print l; done=1}' docker-compose.yml > docker-compose.new && mv docker-compose.new docker-compose.yml
+          fi
+          cpath=$(grep -m1 '/opt/turbo/landing' docker-compose.yml | sed -E 's#.*/opt/turbo/landing:([^:" ]+).*#\1#')
+          case "$cpath" in /*) ;; *) echo "Could not read the container path for the landing mount; restoring."; cp "Caddyfile.bak-$ts" Caddyfile; cp "docker-compose.yml.bak-$ts" docker-compose.yml; exit 1;; esac
+          if ! grep -q '^turbogh\.app' Caddyfile; then
+            {
+              printf '\nturbogh.app {\n\troot * %s\n\tencode zstd gzip\n\ttry_files {path} {path}/index.html\n\tfile_server\n}\n' "$cpath"
+              printf '\nwww.turbogh.app {\n\tredir https://turbogh.app{uri} permanent\n}\n'
+            } >> Caddyfile
+          fi
+          docker compose up -d caddy
+          sleep 8
+          if curl -fsS -o /dev/null https://api.turbogh.app/health && curl -fsS -o /dev/null https://admin.turbogh.app/; then
+            echo "Caddy restarted; API and dashboard answer."
+          else
+            echo "API or dashboard stopped answering; restoring the previous Caddy files."
+            cp "Caddyfile.bak-$ts" Caddyfile; cp "docker-compose.yml.bak-$ts" docker-compose.yml; docker compose up -d caddy
+            exit 1
+          fi
+          REMOTE
+      - name: Check the landing address
+        run: |
+          sleep 10
+          curl -fsS -o /dev/null -w "turbogh.app %{http_code}\n" https://turbogh.app/
+          curl -fsS -o /dev/null -w "www redirect %{http_code} -> %{redirect_url}\n" -I --max-redirs 0 https://www.turbogh.app/ || true
