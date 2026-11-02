@@ -86,6 +86,13 @@ class _VerificationCaptureScreenState extends ConsumerState<VerificationCaptureS
         DocKind.selfie => l10n.docSelfie,
       };
 
+  /// The kit picture standing for each photo until the real one is taken.
+  TurboArt _docArt(DocKind k) => switch (k) {
+        DocKind.ghanaCardFront || DocKind.ghanaCardBack => TurboArt.identificationCard,
+        DocKind.studentId => TurboArt.graduationCap,
+        DocKind.selfie => TurboArt.camera,
+      };
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -122,7 +129,7 @@ class _VerificationCaptureScreenState extends ConsumerState<VerificationCaptureS
                           ? Image.memory(doc.preview!, fit: BoxFit.cover, excludeFromSemantics: true)
                           : ColoredBox(
                               color: t.colors.background,
-                              child: Icon(Icons.badge_outlined, color: t.colors.textSecondary),
+                              child: Center(child: TurboArtImage(_docArt(kind), size: TurboSizes.iconLg)),
                             ),
                     ),
                   ),
@@ -184,7 +191,7 @@ class _VerificationCaptureScreenState extends ConsumerState<VerificationCaptureS
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.lock_outline, color: t.colors.textSecondary),
+                        const TurboArtImage(TurboArt.locked, size: TurboSizes.iconMd + TurboSpacing.sm),
                         const SizedBox(width: TurboSpacing.md),
                         Expanded(child: Text(l10n.verifyPrivacyNote, style: text.bodyMedium)),
                       ],
