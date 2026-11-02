@@ -1127,6 +1127,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get receiptDistance => 'Distance';
+
+  @override
+  String get receiptDriver => 'Driver';
+
+  @override
+  String receiptKm(String km) {
+    return '$km km';
+  }
+
+  @override
   String get receiptTotal => 'Total';
 
   @override

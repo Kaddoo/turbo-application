@@ -2032,6 +2032,24 @@ abstract class AppLocalizations {
   /// **'Receipt {number}'**
   String receiptNumber(Object number);
 
+  /// No description provided for @receiptDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get receiptDistance;
+
+  /// No description provided for @receiptDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get receiptDriver;
+
+  /// No description provided for @receiptKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String receiptKm(String km);
+
   /// No description provided for @receiptTotal.
   ///
   /// In en, this message translates to:

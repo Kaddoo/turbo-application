@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:student_app/src/features/safety/sos.dart';
 
 import 'support/fake_server.dart';
@@ -304,6 +305,35 @@ void main() {
       await tester.tap(find.text('View receipt'));
       await tester.pumpAndSettle();
       expect(find.text('Receipt R-0001'), findsOneWidget);
+    });
+
+    testWidgets('a full receipt shows the photo, map, distance, driver and total, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = rideServer(status: 'completed')
+        ..on('GET /rides/$rideId/receipt', body: {
+          'rideId': rideId,
+          'receiptNumber': 'R-0002',
+          'issuedAt': '2026-10-31T10:14:00Z',
+          'pickup': {'point': {'lat': 5.74, 'lng': 0.066}, 'label': 'Main gate'},
+          'dropoff': {'point': {'lat': 5.75, 'lng': 0.07}, 'label': 'Hostel block'},
+          'routeDistanceMeters': 9400,
+          'driverFirstName': 'Kofi',
+          'vehiclePlate': 'GR-4821-24',
+          'lines': [{'label': 'Fare', 'amountPesewas': 3500}],
+          'totalPesewas': 3500,
+        });
+      await bootHome(tester, server, size: const Size(390, 2400));
+      GoRouter.of(tester.element(find.byType(Scaffold).first)).go('/ride/$rideId/receipt');
+      await tester.pumpAndSettle();
+      expect(find.text('Receipt R-0002'), findsOneWidget);
+      expect(find.byKey(const Key('map')), findsOneWidget);
+      expect(find.text('9.4 km'), findsOneWidget);
+      expect(find.text('Kofi'), findsOneWidget);
+      expect(find.text('GR-4821-24'), findsOneWidget);
+      expect(find.text('Total'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     for (final c in [

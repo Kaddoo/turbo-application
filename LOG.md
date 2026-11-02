@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: receipt as a photo card, map and tiles (branch `student-receipt-card`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/ride/ride_screen.dart` (`ReceiptScreen`), `lib/l10n/app_en.arb` (+ generated), `test/ride_test.dart`.
+- **What changed:** the receipt opens with a photo card (`busy-street-accra.jpg`, already in `turbo_ui`) carrying the receipt number, date and route; a map with the pickup and drop-off (and the road, when the ride's `routePolyline` loads); Distance and Driver tiles (the plate fits its tile); and the fare lines and total in a card. Parts the API omits (route, distance, driver, plate) are simply left out, as the old test data does.
+- **Also:** the photo card grows with text size so words stay on the photo, and amounts shrink to fit instead of overflowing at 200% text.
+- **Deviation:** the receipt itself has no route line, so the map takes it from the ride (`GET /rides/{id}`); if that has not loaded, only the two points show.
+- **Checks:** analyze clean, 177 student tests pass (a full receipt in dark mode at 200% text). Not run on a phone.
+
 ## 2026-11-02, Claude, code: Activity row pictures and empty state (branch `student-activity-pictures`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/activity/activity_screen.dart`, `test/activity_test.dart`.

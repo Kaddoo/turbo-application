@@ -773,30 +773,98 @@ class ReceiptScreen extends ConsumerWidget {
         child: receipt.when(
           loading: () => const LoadingState(),
           error: (_, _) => ErrorState(message: l10n.rideLoadFailed, onRetry: () => ref.invalidate(receiptProvider(rideId))),
-          data: (r) => ListView(
-            padding: const EdgeInsets.all(TurboSpacing.xl),
-            children: [
-              Text(l10n.receiptNumber(r.receiptNumber), style: text.titleLarge),
-              Text(DateFormat('d MMM yyyy, HH:mm').format(r.issuedAt.toUtc()), style: text.bodySmall),
-              const SizedBox(height: TurboSpacing.lg),
-              if (r.pickup != null) Text(r.pickup!.label ?? '', style: text.bodyLarge),
-              if (r.dropoff != null) Text(r.dropoff!.label ?? '', style: text.bodyLarge),
-              const SizedBox(height: TurboSpacing.lg),
-              for (final line in r.lines)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
-                  child: Row(children: [
-                    Expanded(child: Text(line.label, style: text.bodyLarge)),
-                    MoneyText(line.amountPesewas),
-                  ]),
+          data: (r) {
+            // The route line comes from the ride itself; without it the map shows the two points.
+            final route = ref.watch(rideProvider(rideId)).value?.routePolyline;
+            final km = r.routeDistanceMeters == null ? null : (r.routeDistanceMeters! / 1000).toStringAsFixed(1);
+            return ListView(
+              padding: const EdgeInsets.all(TurboSpacing.lg),
+              children: [
+                PhotoCard(
+                  asset: 'busy-street-accra.jpg',
+                  // Taller with large text, so the words stay on the photo.
+                  height: 200 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.receiptNumber(r.receiptNumber), style: text.titleLarge),
+                      Text(DateFormat('d MMM yyyy, HH:mm').format(r.issuedAt.toUtc()), style: text.bodySmall),
+                      if (r.pickup != null || r.dropoff != null) ...[
+                        const SizedBox(height: TurboSpacing.sm),
+                        Text('${r.pickup?.label ?? ''} → ${r.dropoff?.label ?? ''}', style: text.bodyLarge),
+                      ],
+                    ],
+                  ),
                 ),
-              const Divider(),
-              Row(children: [
-                Expanded(child: Text(l10n.receiptTotal, style: text.titleLarge)),
-                MoneyText(r.totalPesewas, style: text.titleLarge),
-              ]),
-            ],
-          ),
+                if (r.pickup != null && r.dropoff != null) ...[
+                  const SizedBox(height: TurboSpacing.md),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(context.turbo.radiusCard),
+                    child: HomeMap(
+                      height: 160,
+                      spec: MapSpec(pickup: r.pickup!.point, dropoff: r.dropoff!.point, route: route),
+                    ),
+                  ),
+                ],
+                if (km != null || r.driverFirstName != null) ...[
+                  const SizedBox(height: TurboSpacing.md),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (km != null)
+                          Expanded(
+                            child: BentoTile(
+                              label: l10n.receiptDistance,
+                              title: l10n.receiptKm(km),
+                              trailing: const TurboArtImage(TurboArt.motorway),
+                            ),
+                          ),
+                        if (km != null && r.driverFirstName != null) const SizedBox(width: TurboSpacing.md),
+                        if (r.driverFirstName != null)
+                          Expanded(
+                            child: BentoTile(
+                              label: l10n.receiptDriver,
+                              title: r.driverFirstName!,
+                              footer: r.vehiclePlate == null
+                                  ? null
+                                  : FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: AlignmentDirectional.centerStart,
+                                      child: Text(r.vehiclePlate!, style: context.turbo.styles.monoPlate, maxLines: 1),
+                                    ),
+                              trailing: const TurboArtImage(TurboArt.automobile),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: TurboSpacing.md),
+                TurboCard(
+                  child: Column(
+                    children: [
+                      for (final line in r.lines)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
+                          child: Row(children: [
+                            Expanded(child: Text(line.label, style: text.bodyLarge)),
+                            Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: MoneyText(line.amountPesewas))),
+                          ]),
+                        ),
+                      const Divider(),
+                      const SizedBox(height: TurboSpacing.sm),
+                      Row(children: [
+                        Expanded(child: Text(l10n.receiptTotal, style: text.titleLarge)),
+                        Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: MoneyText(r.totalPesewas, style: text.titleLarge))),
+                      ]),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
