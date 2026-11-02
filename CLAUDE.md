@@ -17,6 +17,7 @@ api/                 the contract (planning owns this; read only here)
 docs/ prompts/       planning docs (read only here, except LOG.md)
 apps/student_app/    Flutter: iOS, Android, web build
 apps/driver_app/     Flutter: iOS, Android
+apps/landing_page/   Next.js landing page (static export to out/)
 packages/turbo_api/  generated Dart client from api/contract/openapi.yaml (never hand-edit)
 packages/turbo_ui/   brand layer, theme, shared components, motion and haptics
 CONTRACT_REQUESTS.md things the apps need that the contract lacks (you write, planning applies)

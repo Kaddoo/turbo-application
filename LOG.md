@@ -2,6 +2,24 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: landing page moved into the repo
+
+**Task:** `apps/landing_page` was committed as a bare pointer to another repo (`97ee0e5` on `staging-checks-032`, no `.gitmodules`), so clones got an empty folder. Bring it in like the other apps.
+
+**Files touched:** `apps/landing_page/` (86 files via `git subtree add`, merge commit `cf4a4c9`), `CLAUDE.md` (layout line).
+
+**What changed:**
+- The landing page's 13 commits from `github.com/Cloudregh/turbo` are now part of this repo's history; that repo becomes read-only history.
+- `node_modules`, `.next` and `out` stay ignored through the landing page's own `.gitignore`.
+- `staging-checks-032` gets a revert of `97ee0e5` (no force-push).
+- `tsc --noEmit` passes.
+
+**Deviations:** The uncommitted change to `src/components/hero/Hero.tsx` was carried over as an uncommitted change, not committed: its owner decides. The old nested repo is kept outside the repo as a backup until Kevin confirms.
+
+**Status:** Branch `add-landing-page` is ready. The landing page has no CI job yet, like the other apps.
+
+**Next step:** Commit or drop the Hero change; archive `Cloudregh/turbo` on GitHub.
+
 ## 2026-11-02, Kevin with Claude, code: driver app finish (branch `design-driver-finish`, on `design-photos`)
 
 **What changed:** driver phone and code screens use `AuthLayout` (accent titles "Your phone number" and "Enter your code", the 80 pt action, resend and wrong-number under the boxes); the new-assignment screen has a lime countdown ring (red in the last 10 seconds) with the mono countdown, the pickup name in the driver title style and a danger banner; driver SOS uses the separate SOS red; Me has the plate in the mono style, the emphasis name and 80 pt sign out.
