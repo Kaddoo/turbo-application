@@ -6,7 +6,7 @@ declare global {
   interface Window {
     __heroRevealed?: boolean;
     __doorEnd?: number;
-    /** Set by the boot script in layout.tsx: this browser has watched the intro video before. */
+    /** Set by the boot script in layout.tsx: true when this visit skips the intro (it plays on visit 1, 5, 10, 15…). */
     __heroSeen?: boolean;
   }
 }
@@ -42,8 +42,8 @@ type Scene = { play(): void; dispose(): void };
  * Hero sequence. First visit (any device): the car-door loader, then the ride
  * video (a student hails the Turbo car, gets in and it pulls away), handing
  * over to the 3D map, which picks up behind the same car at street level and
- * rises into the overview. Later visits skip the loader and video and open on
- * the map. Devices without WebGL, low memory or Save-Data get the flat map
+ * rises into the overview. The intro plays again every fifth visit; other
+ * visits skip the loader and video and open on the map. Devices without WebGL, low memory or Save-Data get the flat map
  * (`flatMap`); reduced motion skips the video and shows the map at once.
  */
 export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
@@ -63,14 +63,10 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     const timers: number[] = [];
 
     const phone = !window.matchMedia("(min-width: 768px)").matches;
-    // The intro (car-door loader and ride video) plays on the first visit only, on every device;
-    // after that the page opens straight on the map. Remembered in localStorage.
+    // The intro (car-door loader and ride video) plays on the first visit and every fifth visit
+    // after (5, 10, 15…), on every device; other visits open straight on the map. The boot script
+    // in layout.tsx counts visits in localStorage.
     const seen = !!window.__heroSeen;
-    const markSeen = () => {
-      try {
-        localStorage.setItem("turbo-hero-seen", "1");
-      } catch {}
-    };
 
     const startFlat = () => {
       setMode("flat");
@@ -82,7 +78,6 @@ export function HeroStage({ flatMap }: { flatMap: React.ReactNode }) {
     const handOver = () => {
       if (handedOver) return;
       handedOver = true;
-      markSeen();
       // Let the video play out under the cross-fade, then stop it.
       timers.push(window.setTimeout(() => video.pause(), 1800));
       if (scene) {

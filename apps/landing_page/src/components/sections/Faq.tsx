@@ -1,7 +1,6 @@
 import { Plus } from "lucide-react";
 import { SectionHead } from "../ui/SectionHead";
 import { links } from "@/config/links";
-import { Floaters } from "../ui/Floaters";
 
 const faqs: { q: string; a: React.ReactNode }[] = [
   {
@@ -61,13 +60,7 @@ const faqs: { q: string; a: React.ReactNode }[] = [
 
 export function Faq() {
   return (
-    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="relative isolate overflow-clip bg-ink py-section">
-      <Floaters
-        items={[
-          { icon: "speech-balloon", className: "right-3 top-6 size-12 lg:left-[4%] lg:right-auto lg:top-24 lg:size-20", speed: 1, spin: -18 },
-          { icon: "check-mark-button", className: "hidden lg:block right-[4%] bottom-24 size-16", speed: 1.3, spin: 20 },
-        ]}
-      />
+    <section id="faq" data-bg="ink" aria-labelledby="faq-title" className="bg-ink py-section">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <SectionHead id="faq-title" label="FAQ" title="Questions, answered." />
@@ -79,7 +72,7 @@ export function Faq() {
             .
           </p>
         </div>
-        <div className="mx-auto mt-12 max-w-3xl divide-y divide-white/10 border-y border-white/10 sm:mt-16">
+        <div data-journey="help" className="mx-auto mt-12 max-w-3xl divide-y divide-white/10 border-y border-white/10 sm:mt-16">
           {faqs.map(({ q, a }) => (
             <details key={q} data-reveal className="group">
               <summary className="flex cursor-pointer items-center justify-between gap-6 py-6 text-lg font-medium tracking-tight transition-colors hover:text-turbo">

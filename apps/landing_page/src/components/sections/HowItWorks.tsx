@@ -1,7 +1,6 @@
 import { Icon3d, type Icon3dName } from "../ui/Icon3d";
 import { ScrubHeading } from "../ui/ScrubHeading";
 import { SectionHead } from "../ui/SectionHead";
-import { Floaters } from "../ui/Floaters";
 
 const steps: { n: string; icon: Icon3dName; title: string; body: string }[] = [
   {
@@ -26,20 +25,14 @@ const steps: { n: string; icon: Icon3dName; title: string; body: string }[] = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" data-bg="paper" aria-labelledby="how-title" className="on-light relative isolate overflow-clip bg-paper py-section text-ink">
-      <Floaters
-        items={[
-          { icon: "coin", className: "right-3 top-4 size-12 lg:right-[4%] lg:top-20 lg:size-24", speed: 1.2, spin: 25 },
-          { icon: "key", className: "hidden lg:block left-[3%] bottom-16 size-20", speed: 0.8, spin: -20 },
-        ]}
-      />
+    <section id="how-it-works" data-bg="paper" aria-labelledby="how-title" className="on-light relative bg-paper py-section text-ink">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHead id="how-title" label="How it works" title="Three steps. No guesswork." />
         <ScrubHeading as="p" className="mx-auto mt-8 max-w-md text-center text-base leading-relaxed text-ink/75 lg:text-[15px]">
           Set up once, then every ride is a destination, a fare you can see, and a PIN. No cash, no haggling, a driver assigned for you.
         </ScrubHeading>
 
-        <ol className="mt-20 grid gap-10 sm:mt-28 md:grid-cols-3 md:gap-8">
+        <ol data-journey="verify" className="mt-20 grid gap-10 sm:mt-28 md:grid-cols-3 md:gap-8">
           {steps.map(({ n, icon, title, body }) => (
             <li key={n} data-reveal className="border-t border-ink/15 pt-6">
               <div className="flex items-center justify-between">

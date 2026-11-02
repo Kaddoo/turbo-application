@@ -18,7 +18,6 @@ declare global {
  *   data-draw      SVG path draws as it scrolls through the viewport
  *   data-bar       horizontal bar grows from 0
  *   data-parallax  translateY by factor × scroll
- *   data-float     3D object drifts and turns as its section passes; pops in when it first arrives
  *   data-hscroll / data-hscroll-track   pinned horizontal scroller (≥1024px)
  *   data-scrub     headline words brighten as it scrolls through
  *   data-words     words rise out of masks one by one; [data-pop] pills inside open out of a thin line
@@ -132,30 +131,6 @@ export function Motion() {
                 scrollTrigger: sticky
                   ? { trigger: sticky, start: "top 70%", end: "top -35%", scrub: 0.6 }
                   : { trigger: h, start: "top 85%", end: "bottom 45%", scrub: 0.6 },
-              });
-            });
-
-            // Floating 3D objects (Floaters.tsx): a scrubbed drift and turn across the section,
-            // plus a one-off pop when they first come into view.
-            gsap.utils.toArray<HTMLElement>("[data-float]").forEach((el) => {
-              const speed = parseFloat(el.dataset.float || "1");
-              const spin = parseFloat(el.dataset.spin || "18");
-              gsap.fromTo(
-                el,
-                { y: 140 * speed, rotation: -spin },
-                {
-                  y: -140 * speed,
-                  rotation: spin,
-                  ease: "none",
-                  scrollTrigger: { trigger: el.closest("section") ?? el, start: "top bottom", end: "bottom top", scrub: 1 },
-                },
-              );
-              gsap.from(el.firstElementChild, {
-                scale: 0.3,
-                opacity: 0,
-                duration: 1.1,
-                ease: "back.out(1.7)",
-                scrollTrigger: { trigger: el, start: "top 95%", once: true },
               });
             });
 

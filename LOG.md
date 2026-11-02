@@ -2,6 +2,39 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: one-ride journey with 3D objects; intro on visit 1 and every 5th
+
+- **Branch:** main.
+- **Files:**
+  - `apps/landing_page/src/components/`: `Journey.tsx` (new), `SiteShell.tsx` (main is `relative isolate`), `Motion.tsx`, `hero/HeroStage.tsx`.
+  - `app/page.tsx`, `app/layout.tsx` (boot script).
+  - `sections/`: HowItWorks, Fares, Coverage, Safety, Wallet, Faq and Download get `data-journey` anchors.
+  - `ui/Floaters.tsx` removed.
+- **Decisions (Kevin, via questions):**
+  - Follow one ride, with the same story on phones (smaller), using the 3D taxi.
+  - The intro plays on the first visit and every 5th visit after.
+  - Then: "it crosses the screen too much and very fast" and "let it move with the scroll".
+- **What changed:**
+  - **Floaters removed:** the scattered floating 3D objects are gone.
+  - **The ride:** a 3D taxi drives a route down the right-hand page margin (along the screen edge, behind the text, on phones). It stays level with the scroll and gently follows the bends. The route behind it fills in lime.
+  - **Seven stops, each object with a role,** scrubbed by scroll so they run backwards when scrolling up:
+    - ID card taken in, then a check appears (Verified).
+    - Coin spins into the car (Fare fixed).
+    - Pin drops onto the route (At the pickup point).
+    - Key turns in the lock (PIN checked).
+    - Money bag bounces, still full (Balance untouched).
+    - Speech balloon pops (Help on hand).
+    - Party popper (Arrived), at the Download card.
+  - **Intro:** the hero loader and video play on visit 1, 5, 10, 15… (a `turbo-visits` counter in localStorage); other visits open on the map.
+- **Acceptance:**
+  - Tests (8) pass.
+  - axe, console and links are clean.
+  - No hidden text at 1440 or 390.
+  - The car holds its screen position to within a few px at every scroll step.
+  - Desktop scrolling at 4× CPU slowdown: 60 fps, no frames over 50 ms.
+  - CLS is 0; mobile LCP is about 1.6 s.
+- **Known:** on phones the route runs behind the content, so the taxi is hidden while it passes the Safety card strip.
+
 ## 2026-11-02 · landing page: dim-to-bright headlines, floating 3D objects, intro once, halftone map, fixes
 
 - **Branch:** main.

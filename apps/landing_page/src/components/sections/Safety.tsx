@@ -2,7 +2,6 @@ import { cn } from "@/lib/cn";
 import { Icon3d, type Icon3dName } from "../ui/Icon3d";
 import { Photo } from "../ui/Photo";
 import { SectionHead } from "../ui/SectionHead";
-import { Floaters } from "../ui/Floaters";
 
 const items: { icon: Icon3dName; title: string; body: string; photo?: "student-phone" | "driver" | "student-bench" }[] = [
   { icon: "identification-card", title: "Verified students only", body: "Every rider is verified with a Ghana Card and student ID.", photo: "student-phone" },
@@ -20,13 +19,7 @@ const items: { icon: Icon3dName; title: string; body: string; photo?: "student-p
 export function Safety() {
   return (
     <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,50rem)_+_150svh)]">
-      <div className="relative isolate flex flex-col justify-center py-section lg:min-h-[50rem] lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-[100svh] lg:motion-safe:py-0 lg:motion-safe:pt-16">
-      <Floaters
-        items={[
-          { icon: "shield", className: "right-3 top-6 size-12 lg:right-[5%] lg:top-28 lg:size-24", speed: 0.7, spin: 16 },
-          { icon: "locked", className: "hidden lg:block left-[5%] top-24 size-16", speed: 1.2, spin: -22 },
-        ]}
-      />
+      <div className="flex flex-col justify-center py-section lg:min-h-[50rem] lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-[100svh] lg:motion-safe:py-0 lg:motion-safe:pt-16">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <SectionHead
           id="safety-title"
@@ -40,6 +33,7 @@ export function Safety() {
 
       <div
         data-drift
+        data-journey="pin"
         role="region"
         aria-label="Safety features"
         tabIndex={0}

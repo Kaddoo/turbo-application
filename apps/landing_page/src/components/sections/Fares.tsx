@@ -80,7 +80,7 @@ export function Fares() {
             </p>
           )}
 
-          <div aria-live="polite" aria-busy={state.status === "loading"} className="mt-8">
+          <div data-journey="fare" aria-live="polite" aria-busy={state.status === "loading"} className="mt-8">
             {state.status === "loading" && <Skeleton />}
 
             {fallback && (
