@@ -60,6 +60,8 @@ export function Motion() {
           if (!target) return;
           e.preventDefault();
           lenis.scrollTo(target, { offset: hash === "#main" ? 0 : -24, duration: 1.4 });
+          // Keep the section in the address bar so it can be shared and Back works.
+          if (hash !== "#main" && window.location.hash !== hash) history.pushState(null, "", hash);
           if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
           target.focus({ preventScroll: true });
         };
@@ -101,7 +103,10 @@ export function Motion() {
                 duration: 0.9,
                 ease: "power3.out",
                 stagger: 0.09,
-              }).to(el.querySelectorAll("[data-pop]"), { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)", stagger: 0.12 }, 0.35);
+              });
+              // Only headings with tags have [data-pop]; an empty target makes GSAP warn in the console.
+              const pops = el.querySelectorAll("[data-pop]");
+              if (pops.length) tl.to(pops, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)", stagger: 0.12 }, 0.35);
             });
 
             gsap.utils.toArray<HTMLElement>("[data-scrub]").forEach((el) => {

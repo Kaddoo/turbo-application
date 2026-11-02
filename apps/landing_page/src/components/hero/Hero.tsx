@@ -55,7 +55,7 @@ export function Hero() {
 
       <p data-hero-shade className="absolute bottom-16 right-4 text-[10px] text-paper/40 transition-opacity duration-1000 sm:right-6">
         Map ©{" "}
-        <a href="https://www.openstreetmap.org/copyright" className="underline underline-offset-2 hover:text-paper/70">
+        <a href="https://www.openstreetmap.org/copyright" className="inline-block py-1.5 underline underline-offset-2 hover:text-paper/70">
           OpenStreetMap contributors
         </a>
       </p>

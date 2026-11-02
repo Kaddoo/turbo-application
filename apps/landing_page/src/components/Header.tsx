@@ -27,8 +27,15 @@ export function Header() {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    // Scrolling the page means the visitor has moved on: close the menu.
+    const start = window.scrollY;
+    const onScroll = () => Math.abs(window.scrollY - start) > 80 && setOpen(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [open]);
 
   return (

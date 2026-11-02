@@ -1,13 +1,9 @@
-import type { Metadata } from "next";
+import { pageMeta } from "@/lib/meta";
 import { DocPage } from "@/components/legal/DocPage";
 import { VersionLabel } from "@/components/legal/VersionLabel";
 import { links } from "@/config/links";
 
-export const metadata: Metadata = {
-  title: "Terms of use",
-  description: "The terms for using Turbo.",
-  alternates: { canonical: "/terms/" },
-};
+export const metadata = pageMeta("/terms/", "Terms of use", "The terms for using Turbo.");
 
 export default function TermsPage() {
   return (

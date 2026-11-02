@@ -1,13 +1,9 @@
-import type { Metadata } from "next";
+import { pageMeta } from "@/lib/meta";
 import { DocPage } from "@/components/legal/DocPage";
 import { VersionLabel } from "@/components/legal/VersionLabel";
 import { links } from "@/config/links";
 
-export const metadata: Metadata = {
-  title: "Privacy policy",
-  description: "How Turbo collects, uses and protects your information.",
-  alternates: { canonical: "/privacy/" },
-};
+export const metadata = pageMeta("/privacy/", "Privacy policy", "How Turbo collects, uses and protects your information.");
 
 export default function PrivacyPage() {
   return (

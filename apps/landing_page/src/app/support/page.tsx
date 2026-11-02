@@ -1,14 +1,10 @@
-import type { Metadata } from "next";
 import { Mail, MessageCircle, Phone } from "lucide-react";
+import { pageMeta } from "@/lib/meta";
 import { DocPage } from "@/components/legal/DocPage";
 import { OperatingHours } from "@/components/legal/OperatingHours";
 import { links } from "@/config/links";
 
-export const metadata: Metadata = {
-  title: "Support",
-  description: "Contact Turbo by email or WhatsApp.",
-  alternates: { canonical: "/support/" },
-};
+export const metadata = pageMeta("/support/", "Support", "Contact Turbo by email or WhatsApp.");
 
 const card = "flex items-center gap-4 rounded-3xl bg-paper-2 p-6 no-underline transition-colors hover:bg-turbo";
 

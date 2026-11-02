@@ -40,7 +40,7 @@ function RouteDots() {
         strokeLinecap="round"
       />
       {[
-        [tx, ty, "Miostso Junction"],
+        [tx, ty, "Miotso Junction"],
         [fx, fy, "Central University"],
       ].map(([x, y, label]) => (
         <g key={label} transform={`translate(${x} ${y})`}>
@@ -104,7 +104,7 @@ export async function Download() {
         </div>
         <p className="relative mt-8 hidden text-[10px] text-ink/60 md:block">
           Roads ©{" "}
-          <a href="https://www.openstreetmap.org/copyright" className="underline underline-offset-2">
+          <a href="https://www.openstreetmap.org/copyright" className="inline-block py-1.5 underline underline-offset-2">
             OpenStreetMap contributors
           </a>
         </p>

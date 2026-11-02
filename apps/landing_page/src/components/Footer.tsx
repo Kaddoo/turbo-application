@@ -3,14 +3,14 @@ import { LegalLinks } from "./LegalLinks";
 import { Wordmark } from "./Wordmark";
 import { Tag } from "./ui/Tag";
 
-const linkCls = "text-paper/80 transition-colors hover:text-turbo";
+const linkCls = "inline-flex min-h-11 items-center text-paper/80 transition-colors hover:text-turbo";
 
 /** Dot-separated inline list, as in the footer rows. */
 function DotList({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <nav aria-label={label}>
       <h2 className="text-xs text-paper/50">{label}</h2>
-      <ul className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm [&>li+li]:before:mr-3 [&>li+li]:before:inline-block [&>li+li]:before:size-1 [&>li+li]:before:rounded-full [&>li+li]:before:bg-paper/40 [&>li+li]:before:align-middle [&>li+li]:before:content-['']">
+      <ul className="mt-1 flex flex-wrap items-center gap-x-3 text-sm [&>li+li]:before:mr-3 [&>li+li]:before:inline-block [&>li+li]:before:size-1 [&>li+li]:before:rounded-full [&>li+li]:before:bg-paper/40 [&>li+li]:before:align-middle [&>li+li]:before:content-['']">
         {children}
       </ul>
     </nav>

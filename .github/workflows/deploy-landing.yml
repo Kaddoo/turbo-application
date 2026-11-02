@@ -23,6 +23,8 @@ jobs:
         env:
           PUBLIC_API_BASE_URL: https://api.turbogh.app/v1
           PUBLIC_SITE_URL: https://turbogh.app
+      - name: Leave the mock API out of production
+        run: rm -rf apps/landing_page/out/mock-api
       - name: Set up SSH
         run: |
           install -m 700 -d ~/.ssh

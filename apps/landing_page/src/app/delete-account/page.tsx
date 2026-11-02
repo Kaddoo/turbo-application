@@ -1,12 +1,8 @@
-import type { Metadata } from "next";
+import { pageMeta } from "@/lib/meta";
 import { DocPage } from "@/components/legal/DocPage";
 import { links } from "@/config/links";
 
-export const metadata: Metadata = {
-  title: "Delete my account",
-  description: "How to delete your Turbo account, what is removed and what is kept.",
-  alternates: { canonical: "/delete-account/" },
-};
+export const metadata = pageMeta("/delete-account/", "Delete my account", "How to delete your Turbo account, what is removed and what is kept.");
 
 export default function DeleteAccountPage() {
   return (
