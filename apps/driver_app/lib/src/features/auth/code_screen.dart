@@ -111,7 +111,7 @@ class _CodeScreenState extends ConsumerState<CodeScreen> {
       title: l10n.codeTitle,
       accent: l10n.codeTitleAccent,
       lead: phone == null ? null : l10n.codeSentTo(displayPhone(phone)),
-      icon: Icons.vpn_key_outlined,
+      art: TurboArt.key,
       onBack: () => context.go('/phone'),
       action: TurboButton(
         label: l10n.codeVerify,

@@ -337,7 +337,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           title: formatPesewas(w.availablePesewas),
                           money: true,
                           tone: BentoTone.lime,
-                          trailing: const Icon(Icons.savings_outlined),
+                          trailing: const TurboArtImage(TurboArt.moneyBag),
                           onTap: () => context.go('/wallet'),
                         ),
                         orElse: () => const SizedBox.shrink(),
@@ -348,7 +348,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       child: BentoTile(
                         label: l10n.homeSafetyLabel,
                         title: l10n.homeSafetyTile,
-                        trailing: const Icon(Icons.shield_outlined),
+                        trailing: const TurboArtImage(TurboArt.shield),
                         onTap: () => context.push('/safety'),
                       ),
                     ),

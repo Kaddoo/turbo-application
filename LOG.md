@@ -2,6 +2,24 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: 3D icons (branch `design-3d-icons`)
+
+**What changed:** the 28 3D icons from the design kit are bundled in `packages/turbo_ui/assets/icons3d` and used through `TurboArt` and `HeroIcon(art: ...)`. Both apps: phone (mobile phone), code (key), boot error (warning), update (mobile phone), maintenance (wrench), suspended (padlock). Student app: terms (shield), verification status (hourglass, warning, ID card, check), top-up result (check, warning, hourglass), quote "can't book" (taxi), no places found (motorway), cancelled ride (taxi), and the Wallet (money bag), Safety (shield) and share (speech balloon) tiles.
+
+**Licence note:** the kit has no licence file. The names and style match Microsoft's Fluent Emoji 3D (MIT); `assets/icons3d/README.md` says to confirm the source with the designer and keep the MIT notice with the app's open-source licences.
+
+**Checks:** analyze clean; turbo_ui 80, student 131, driver 61 pass. Not viewed on a device.
+
+**Not done:** icons for the home saved places, camera-permission and verification checklist, driver decline reasons, 3D marker art on the map; the welcome picture is still the drawn car.
+
+## 2026-11-02, Kevin with Claude, ops: deploy workflows (branch `ci-deploy`)
+
+**What changed:** three GitHub Actions workflows (`deploy-api`, `deploy-admin`, `deploy-landing`) that publish to the staging server from `main`, with a one-time setup section in `docs/11-ops-runbook.md` (deploy key, four secrets, DNS and the Caddy block for `turbogh.app` and `www`).
+
+**Checks:** the workflow files parse as YAML; they have not run. The server rejected the old SSH key during this session, so nothing was deployed or tested against the server.
+
+**Not done:** the secrets, the deploy key on the server, the DNS records and the Caddy block are Kevin's to add (or mine once SSH works). Merging before the secrets exist makes the first deploys fail, harmlessly.
+
 ## 2026-11-02, Kevin with Claude, code: driver app finish (branch `design-driver-finish`, on `design-photos`)
 
 **What changed:** driver phone and code screens use `AuthLayout` (accent titles "Your phone number" and "Enter your code", the 80 pt action, resend and wrong-number under the boxes); the new-assignment screen has a lime countdown ring (red in the last 10 seconds) with the mono countdown, the pickup name in the driver title style and a danger banner; driver SOS uses the separate SOS red; Me has the plate in the mono style, the emphasis name and 80 pt sign out.

@@ -4,6 +4,7 @@ import '../theme/spacing.dart';
 import '../theme/turbo_theme.dart';
 import 'accent_title.dart';
 import 'hero_icon.dart';
+import 'turbo_art.dart';
 import 'turbo_icon_button.dart';
 
 /// Large wordmark for start-up screens, read from the brand layer.
@@ -53,6 +54,7 @@ class AuthLayout extends StatelessWidget {
     this.accent,
     this.lead,
     this.icon,
+    this.art,
     this.onBack,
     this.footer,
     this.centered = false,
@@ -66,6 +68,7 @@ class AuthLayout extends StatelessWidget {
   /// A line under the title.
   final String? lead;
   final IconData? icon;
+  final TurboArt? art;
   final List<Widget> children;
   final Widget action;
   final VoidCallback? onBack;
@@ -130,8 +133,8 @@ class AuthLayout extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: align,
                       children: [
-                        if (icon != null) ...[
-                          HeroIcon(icon: icon),
+                        if (icon != null || art != null) ...[
+                          HeroIcon(icon: icon, art: art),
                           const SizedBox(height: TurboSpacing.lg),
                         ],
                         AccentTitle(

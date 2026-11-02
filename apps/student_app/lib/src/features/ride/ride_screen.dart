@@ -713,7 +713,7 @@ class _Cancelled extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
-              const Center(child: BadgeIcon(icon: Icons.close)),
+              const Center(child: HeroIcon(art: TurboArt.oncomingTaxi)),
               const SizedBox(height: TurboSpacing.lg),
               Semantics(header: true, liveRegion: true, child: Text(title, style: text.headlineMedium, textAlign: TextAlign.center)),
               const SizedBox(height: TurboSpacing.md),
