@@ -2912,6 +2912,8 @@ export interface components {
             reasons: components["schemas"]["IneligibilityReason"][];
             routeDistanceMeters?: number | null;
             routeDurationSeconds?: number | null;
+            /** @description The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app. */
+            routePolyline?: string | null;
             farePesewas?: components["schemas"]["Pesewas"] | null;
             pickupEtaSeconds?: number | null;
             /** Format: date-time */
@@ -2960,6 +2962,8 @@ export interface components {
             pickup: components["schemas"]["Location"];
             dropoff: components["schemas"]["Location"];
             routeDistanceMeters: number;
+            /** @description The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app. */
+            routePolyline?: string | null;
             farePesewas: components["schemas"]["Pesewas"];
             /** @description 4-digit start PIN. Returned only to the student who owns the ride, while status is assigned or driver_arrived. */
             pin?: string | null;
@@ -3191,6 +3195,8 @@ export interface components {
             pickup: components["schemas"]["Location"];
             dropoff: components["schemas"]["Location"];
             routeDistanceMeters: number;
+            /** @description The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app. */
+            routePolyline?: string | null;
             /** @description What the student pays for this trip. Shown so the driver can see the price before acknowledging. */
             farePesewas?: components["schemas"]["Pesewas"];
             /** @description Estimated road distance from the driver's last known position to the pickup. Null once the trip has started or if the driver has no recent position. */
