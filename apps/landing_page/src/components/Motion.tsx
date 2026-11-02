@@ -9,8 +9,10 @@ declare global {
 }
 
 /**
- * Loads GSAP, ScrollTrigger and Lenis (smooth scrolling) after hydration (kept out of the
- * critical bundle) and wires declarative data-attributes:
+ * Loads GSAP and ScrollTrigger after hydration (kept out of the critical bundle) and
+ * wires declarative data-attributes. Scrolling is the browser's own: it runs on the
+ * compositor and answers the wheel on the next frame. (Lenis was removed: its easing
+ * took about 0.4 s to follow each wheel notch and stuttered whenever a frame ran long.)
  *   data-split     headline words rise in (the hero's wait for "turbo:hero-reveal")
  *   data-reveal    fade up on enter (batched + staggered)
  *   data-draw      SVG path draws as it scrolls through the viewport
@@ -38,17 +40,13 @@ export function Motion() {
     let cleanup = () => {};
     let cancelled = false;
 
-    Promise.all([import("gsap"), import("gsap/ScrollTrigger"), import("lenis")])
-      .then(([{ gsap }, { ScrollTrigger }, { default: Lenis }]) => {
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger")])
+      .then(([{ gsap }, { ScrollTrigger }]) => {
         if (cancelled) return;
         gsap.registerPlugin(ScrollTrigger);
 
-        // Lenis smooths the wheel; GSAP's ticker drives it so ScrollTrigger sees every frame.
-        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
-        lenis.on("scroll", ScrollTrigger.update);
-        const tick = (t: number) => lenis.raf(t * 1000);
-        gsap.ticker.add(tick);
-        gsap.ticker.lagSmoothing(0);
+        // Scroll to a section; html's scroll-padding-top keeps it clear of the fixed header.
+        const scrollToEl = (el: HTMLElement, smooth: boolean) => el.scrollIntoView({ behavior: smooth ? "smooth" : "instant", block: "start" });
 
         // Same-page anchor links scroll smoothly and move focus to the target.
         const onClick = (e: MouseEvent) => {
@@ -59,7 +57,7 @@ export function Motion() {
           const target = document.querySelector<HTMLElement>(hash);
           if (!target) return;
           e.preventDefault();
-          lenis.scrollTo(target, { offset: hash === "#main" ? 0 : -24, duration: 1.4 });
+          scrollToEl(target, true);
           // Keep the section in the address bar so it can be shared and Back works.
           if (hash !== "#main" && window.location.hash !== hash) history.pushState(null, "", hash);
           if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
@@ -253,7 +251,7 @@ export function Motion() {
         ScrollTrigger.refresh();
         // Arriving on a shared /#section link: jump there now that pin spacing is known.
         const landing = window.location.hash && document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
-        if (landing) lenis.scrollTo(landing, { offset: -24, immediate: true });
+        if (landing) scrollToEl(landing, false);
 
         // Bars are rendered after data arrives; observe them as they appear.
         const animateBars = () => {
@@ -276,7 +274,10 @@ export function Motion() {
           clearTimeout(refreshTimer);
           refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
         });
-        mo.observe(document.body, { childList: true, subtree: true });
+        // Watch <main> only, where API data renders. ScrollTrigger's own refresh adds and
+        // removes a helper <div> on <body>; watching <body> turned every refresh into the
+        // next one, five times a second, re-measuring the page and resetting the scroll.
+        mo.observe(document.getElementById("main") ?? document.body, { childList: true, subtree: true });
         window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
 
         cleanup = () => {
@@ -286,8 +287,6 @@ export function Motion() {
           mo.disconnect();
           document.removeEventListener("click", onClick);
           ctx.revert();
-          gsap.ticker.remove(tick);
-          lenis.destroy();
         };
       })
       .catch(() => root.classList.remove("motion"));

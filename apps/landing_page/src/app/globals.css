@@ -68,10 +68,6 @@
   }
 }
 
-/* Lenis */
-html.lenis, html.lenis body { height: auto; }
-.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
-.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
 
 /* Motion: content is hidden only once JS has opted in, and only when the
    visitor has not asked for reduced motion. A timeout in the head script

@@ -70,14 +70,14 @@ export function Hero() {
             </span>
           ))}
         </div>
-        {/* Blur and fade the items as they enter and leave at each end. */}
+        {/* Fade the items as they enter and leave at each end (a plain gradient: a backdrop blur over moving text repaints every frame). */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-ink to-transparent backdrop-blur-[3px] [mask-image:linear-gradient(to_right,black_30%,transparent)] sm:w-40"
+          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-ink to-transparent sm:w-40"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-ink to-transparent backdrop-blur-[3px] [mask-image:linear-gradient(to_left,black_30%,transparent)] sm:w-40"
+          className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-ink to-transparent sm:w-40"
         />
       </div>
     </section>

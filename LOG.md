@@ -2,6 +2,18 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: scroll lag
+
+- **Branch:** main. **Files:** `apps/landing_page/src/components/Motion.tsx`, `hero/Hero.tsx`, `sections/TapAway.tsx`, `app/globals.css`, `package.json` and lock (lenis removed).
+- **Cause, measured:** Lenis eased every wheel notch, taking about 390 ms to cover 90% of the distance and about 900 ms to settle. Because it moved the page from JavaScript every frame, any slow frame showed as a stutter. Slow frames (76–128 ms, all paint and GPU work) clustered in the hero and the tap-away section.
+- **What changed:**
+  - Lenis is removed; scrolling is native, and section links use `scrollIntoView`, which honours `scroll-padding-top`.
+  - The marquee edge fades no longer use a backdrop blur.
+  - The tap-away fade is a gradient overlay instead of a mask over the moving phones.
+  - The MutationObserver watches `<main>` instead of `<body>`. ScrollTrigger's refresh adds a helper `<div>` to `<body>`, which had started an endless refresh loop every 200 ms once Lenis was gone (it reset the scroll and cancelled smooth scrolling).
+- **Result (local build, M4, CPU at 1x and 4x):** wheel response 390 ms → about 25 ms; 60 fps with no frames over 50 ms; section links land at 96 px; the tap-away animation, page colour fades and reveals all still work.
+- **Not changed:** the 3D hero still renders every frame while it is on screen; it stops when scrolled away.
+
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.

@@ -82,7 +82,7 @@ function ArrivingScreen() {
 export function TapAway() {
   return (
     <section id="tap-away" data-bg="ink" aria-labelledby="tapaway-title" data-tapaway className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,46rem)_+_110svh)]">
-      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 [mask-image:linear-gradient(to_bottom,black_80%,transparent)] sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28 lg:motion-safe:sticky lg:motion-safe:top-0">
+      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28 lg:motion-safe:sticky lg:motion-safe:top-0">
         <div
           data-tapaway-glow
           aria-hidden
@@ -119,6 +119,8 @@ export function TapAway() {
             </a>
           </div>
         </div>
+        {/* Fade into the next section. An overlay, not a mask: a mask over the moving phones re-renders the whole scene every frame. */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-1/5 bg-gradient-to-b from-transparent to-ink" />
       </div>
     </section>
   );
