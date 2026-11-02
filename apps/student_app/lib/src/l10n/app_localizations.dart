@@ -1138,6 +1138,18 @@ abstract class AppLocalizations {
   /// **'{amount} held for your ride'**
   String walletHeld(Object amount);
 
+  /// No description provided for @walletTileBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get walletTileBalance;
+
+  /// No description provided for @walletTileHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Held for your ride'**
+  String get walletTileHeld;
+
   /// No description provided for @walletOwed.
   ///
   /// In en, this message translates to:
