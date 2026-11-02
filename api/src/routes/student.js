@@ -14,6 +14,7 @@ import * as wallet from '../domain/wallet.js';
 import { ACTIVE, event, lockRide, cancelRide } from '../domain/rides.js';
 import { serviceAreaView } from '../domain/config.js';
 import { notifyUser, quickText } from '../domain/notify.js';
+import * as places from '../lib/places.js';
 import { studentView, location, point, rideView, RIDE_SQL, driverLocationView, iso, opt } from '../views.js';
 
 export const student = Router();
@@ -105,6 +106,27 @@ student.post('/me/verification', ...S, async (req, res) => {
     await c.query('UPDATE users SET full_name=$2, first_name=$3, last_name=$4, updated_at=now() WHERE id=$1', [req.user.id, b.fullName.trim(), first, rest.join(' ') || null]);
   });
   res.status(201).json(await verificationState(req.user.id));
+});
+
+// ---------- notification choices and place search (contract 0.6.0) ----------
+const choicesView = (r) => ({ newsAndOffers: r.notify_news, tips: r.notify_tips });
+student.get('/me/notification-settings', ...S, async (req, res) => {
+  const { rows: [r] } = await q('SELECT notify_news, notify_tips FROM students WHERE user_id=$1', [req.user.id]);
+  res.json(choicesView(r));
+});
+student.put('/me/notification-settings', ...S, async (req, res) => {
+  const { rows: [r] } = await q('UPDATE students SET notify_news=$2, notify_tips=$3 WHERE user_id=$1 RETURNING notify_news, notify_tips', [req.user.id, req.body.newsAndOffers, req.body.tips]);
+  res.json(choicesView(r));
+});
+student.get('/places/autocomplete', ...S, async (req, res) => {
+  const text = typeof req.query.q === 'string' ? req.query.q : '';
+  if (text.length > 80) throw new ApiError(400, 'validation_failed', 'q is too long');
+  res.json({ items: await places.autocomplete(text, typeof req.query.sessionToken === 'string' ? req.query.sessionToken : undefined) });
+});
+student.get('/places/:placeId', ...S, async (req, res) => {
+  const loc = await places.resolve(req.params.placeId, typeof req.query.sessionToken === 'string' ? req.query.sessionToken : undefined);
+  if (!loc) throw notFound('Place');
+  res.json(loc);
 });
 
 // ---------- saved places ----------

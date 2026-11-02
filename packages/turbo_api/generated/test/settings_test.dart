@@ -7,6 +7,12 @@ void main() {
   // TODO add properties to the entity
 
   group(Settings, () {
+    // The home-screen notice (see AppConfig). Null clears it.
+    // HomeNoticeInput announcement
+    test('to test the property `announcement`', () async {
+      // TODO
+    });
+
     // int maxTripDistanceMeters (default value: 18000)
     test('to test the property `maxTripDistanceMeters`', () async {
       // TODO

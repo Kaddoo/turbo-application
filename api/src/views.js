@@ -87,6 +87,7 @@ export const topupView = (t, { staff = false } = {}) => {
     : t.amount_received_pesewas < t.amount_pesewas ? 'underpayment' : 'overpayment';
   return {
     id: t.id, studentId: t.student_id, status: t.status, amountPesewas: t.amount_pesewas, channel: t.channel, reference: t.reference,
+    network: { MTN: 'mtn', VODAFONE: 'telecel', AIRTELTIGO: 'at' }[t.network] ?? null,
     checkout: t.status === 'pending' ? { type: 'prompt', message: 'Approve the payment on your phone' } : null,
     createdAt: iso(t.created_at), completedAt: iso(t.completed_at),
     ...(staff && { amountReceivedPesewas: t.amount_received_pesewas ?? null, validation, flagged: !!t.flagged, flagReason: t.flag_reason ?? (t.flagged ? 'amount_mismatch' : null), resolvedAt: iso(t.resolved_at) }),

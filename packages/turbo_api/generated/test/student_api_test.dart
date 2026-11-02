@@ -16,6 +16,15 @@ void main() {
       // TODO
     });
 
+    // Search for a place inside the service area
+    //
+    // **Access:** student.  Official pickup points that match come first, then places from the map provider, all limited to the service area. The map provider key stays on the server. Pass the same `sessionToken` for one search (typing) and the `GET /places/{placeId}` that follows it, and a new one for the next search. An empty or one-letter `q` returns an empty list.
+    //
+    //Future<PlaceMatchList> autocompletePlaces(String q, { String sessionToken }) async
+    test('test autocompletePlaces', () async {
+      // TODO
+    });
+
     // Save a destination
     //
     // **Access:** student.
@@ -58,6 +67,24 @@ void main() {
     //
     //Future<Student> getMe() async
     test('test getMe', () async {
+      // TODO
+    });
+
+    // My notification choices
+    //
+    // **Access:** student.  Ride and wallet messages are always sent; these are the optional ones. Until the student has chosen, `newsAndOffers` is false and `tips` is true.
+    //
+    //Future<NotificationSettings> getNotificationSettings() async
+    test('test getNotificationSettings', () async {
+      // TODO
+    });
+
+    // The point and label for a chosen suggestion
+    //
+    // **Access:** student.  404 when the id is unknown or the place is outside the service area.
+    //
+    //Future<Location> getPlace(String placeId, { String sessionToken }) async
+    test('test getPlace', () async {
       // TODO
     });
 
@@ -121,6 +148,15 @@ void main() {
     //
     //Future<Student> updateMe(StudentUpdate studentUpdate) async
     test('test updateMe', () async {
+      // TODO
+    });
+
+    // Change my notification choices
+    //
+    // **Access:** student. Replaces both choices.
+    //
+    //Future<NotificationSettings> updateNotificationSettings(NotificationSettings notificationSettings) async
+    test('test updateNotificationSettings', () async {
       // TODO
     });
 

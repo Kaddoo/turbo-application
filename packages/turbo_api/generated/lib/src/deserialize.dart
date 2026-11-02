@@ -48,6 +48,8 @@ import 'package:turbo_api_generated/src/model/fare_band_set.dart';
 import 'package:turbo_api_generated/src/model/geo_json_polygon.dart';
 import 'package:turbo_api_generated/src/model/geo_point.dart';
 import 'package:turbo_api_generated/src/model/health.dart';
+import 'package:turbo_api_generated/src/model/home_notice.dart';
+import 'package:turbo_api_generated/src/model/home_notice_input.dart';
 import 'package:turbo_api_generated/src/model/incident.dart';
 import 'package:turbo_api_generated/src/model/incident_list.dart';
 import 'package:turbo_api_generated/src/model/incident_update.dart';
@@ -61,6 +63,7 @@ import 'package:turbo_api_generated/src/model/location.dart';
 import 'package:turbo_api_generated/src/model/location_batch.dart';
 import 'package:turbo_api_generated/src/model/mfa_confirm.dart';
 import 'package:turbo_api_generated/src/model/mfa_enrollment.dart';
+import 'package:turbo_api_generated/src/model/notification_settings.dart';
 import 'package:turbo_api_generated/src/model/operating_window.dart';
 import 'package:turbo_api_generated/src/model/otp_challenge.dart';
 import 'package:turbo_api_generated/src/model/otp_request.dart';
@@ -72,6 +75,8 @@ import 'package:turbo_api_generated/src/model/password_reset.dart';
 import 'package:turbo_api_generated/src/model/phone_change.dart';
 import 'package:turbo_api_generated/src/model/pickup_point.dart';
 import 'package:turbo_api_generated/src/model/pickup_point_write.dart';
+import 'package:turbo_api_generated/src/model/place_match.dart';
+import 'package:turbo_api_generated/src/model/place_match_list.dart';
 import 'package:turbo_api_generated/src/model/problem.dart';
 import 'package:turbo_api_generated/src/model/problem_errors_inner.dart';
 import 'package:turbo_api_generated/src/model/public_trip_share.dart';
@@ -288,6 +293,10 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return GeoPoint.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Health':
           return Health.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'HomeNotice':
+          return HomeNotice.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'HomeNoticeInput':
+          return HomeNoticeInput.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Incident':
           return Incident.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'IncidentList':
@@ -314,6 +323,11 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return MfaConfirm.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'MfaEnrollment':
           return MfaEnrollment.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'MomoNetwork':
+          
+          
+        case 'NotificationSettings':
+          return NotificationSettings.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'OperatingWindow':
           return OperatingWindow.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'OtpChallenge':
@@ -336,6 +350,10 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return PickupPoint.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'PickupPointWrite':
           return PickupPointWrite.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'PlaceMatch':
+          return PlaceMatch.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'PlaceMatchList':
+          return PlaceMatchList.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'Problem':
           return Problem.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'ProblemCode':

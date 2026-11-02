@@ -19,6 +19,8 @@ abstract class _$AppConfigCWProxy {
 
   AppConfig campusSecurityPhone(String? campusSecurityPhone);
 
+  AppConfig announcement(HomeNotice? announcement);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -32,6 +34,7 @@ abstract class _$AppConfigCWProxy {
     String? pauseMessage,
     String? supervisorPhone,
     String? campusSecurityPhone,
+    HomeNotice? announcement,
   });
 }
 
@@ -66,6 +69,10 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
       this(campusSecurityPhone: campusSecurityPhone);
 
   @override
+  AppConfig announcement(HomeNotice? announcement) =>
+      this(announcement: announcement);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -79,6 +86,7 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
     Object? pauseMessage = const $CopyWithPlaceholder(),
     Object? supervisorPhone = const $CopyWithPlaceholder(),
     Object? campusSecurityPhone = const $CopyWithPlaceholder(),
+    Object? announcement = const $CopyWithPlaceholder(),
   }) {
     return AppConfig(
       minVersion: minVersion == const $CopyWithPlaceholder()
@@ -105,6 +113,10 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
           ? _value.campusSecurityPhone
           // ignore: cast_nullable_to_non_nullable
           : campusSecurityPhone as String?,
+      announcement: announcement == const $CopyWithPlaceholder()
+          ? _value.announcement
+          // ignore: cast_nullable_to_non_nullable
+          : announcement as HomeNotice?,
     );
   }
 }
@@ -143,6 +155,11 @@ AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
         'campusSecurityPhone',
         (v) => v as String?,
       ),
+      announcement: $checkedConvert(
+        'announcement',
+        (v) =>
+            v == null ? null : HomeNotice.fromJson(v as Map<String, dynamic>),
+      ),
     );
     return val;
   },
@@ -155,4 +172,5 @@ Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
   'pauseMessage': ?instance.pauseMessage,
   'supervisorPhone': ?instance.supervisorPhone,
   'campusSecurityPhone': ?instance.campusSecurityPhone,
+  'announcement': ?instance.announcement?.toJson(),
 };

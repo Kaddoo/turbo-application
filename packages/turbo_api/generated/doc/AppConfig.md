@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **pauseMessage** | **String** |  | [optional] 
 **supervisorPhone** | **String** | The drivers' supervisor, E.164. Null until staff set it; the apps then draw no call button. | [optional] 
 **campusSecurityPhone** | **String** | Campus security, E.164. Null until staff set it; the apps then show 112 only. | [optional] 
+**announcement** | [**HomeNotice**](HomeNotice.md) | A notice for the top of the home screen. Null when there is none. Staff set it in settings. | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

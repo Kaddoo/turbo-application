@@ -144,7 +144,8 @@ auth.get('/app-config', async (_req, res) => {
   res.set('cache-control', 'public, max-age=60').json({
     minVersion: config.minVersion, maintenance: { active: config.maintenance, message: config.maintenance ? config.maintenanceMessage || null : null },
     bookingsPaused: !!s.bookingsPaused, pauseMessage: s.pauseMessage ?? null,
-    supervisorPhone: config.supervisorPhone || null, campusSecurityPhone: config.campusSecurityPhone || null });
+    supervisorPhone: config.supervisorPhone || null, campusSecurityPhone: config.campusSecurityPhone || null,
+    announcement: s.announcement ? { id: sha256(`${s.announcement.severity}|${s.announcement.message}`).slice(0, 12), message: s.announcement.message, severity: s.announcement.severity } : null });
 });
 auth.get('/legal', (_req, res) => res.set('cache-control', 'public, max-age=300').json({
   termsVersion: config.termsVersion, privacyVersion: config.privacyVersion, termsUrl: config.termsUrl, privacyUrl: config.privacyUrl,

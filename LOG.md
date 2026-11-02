@@ -2,6 +2,17 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: contract 0.6.0 (CR-2/CR-4, CR-3, CR-11) (branch `contract-0-6-0`, from main)
+
+Done on Kevin's instruction (the contract is normally planning's). All additive.
+- **Top-up network (CR-11):** `TopupCreate` takes optional `network` (`mtn|telecel|at`) and `msisdn` (E.164); without a network the server infers it from the number and answers 422 `network_unknown` (new problem code) when it cannot. `Topup` carries `network`. The provider still gets MTN / VODAFONE / AIRTELTIGO (mapped). Behaviour change: a number with an unrecognised prefix used to default to MTN; now it must be chosen.
+- **Home notice (CR-3):** `AppConfig.announcement` (`{id, message, severity}` or null), set by staff through `PUT /admin/settings` (`announcement: {message, severity}` or null; the PUT still takes the whole Settings document). `id` is a hash of severity and message, so a closed notice stays closed until it changes.
+- **Notification choices (CR-3):** `GET`/`PUT /me/notification-settings` (`newsAndOffers`, `tips`), migration 017 (`students.notify_news` default false, `notify_tips` default true). Staff announcements (`POST /admin/announcements`) are NOT filtered by these choices yet: they are service messages. Nothing sends "news" or "tips" yet.
+- **Place search (CR-2/CR-4):** `GET /places/autocomplete` and `GET /places/{placeId}` (`PlaceMatch`, `PlaceMatchList`). Pickup points first (ids `pp_<uuid>`), then Google Places autocomplete limited to the service area (ids `g_<id>`, resolved by place details and rejected outside the area). The staging key is blocked from Places, so today it answers with pickup points only; allow "Places API (New)" for the key to get provider results.
+- **Files:** `api/contract/openapi.yaml`, `api/migrations/017_notification_choices.sql`, `api/src/lib/places.js` (new), `routes/student.js`, `routes/wallet.js`, `routes/admin.js`, `routes/auth.js`, `lib/settings.js`, `views.js`, `test/contract-060.test.js` (new); Dart client and dashboard and landing schemas regenerated; `CONTRACT_REQUESTS.md` marked.
+- **Checks:** 40 API tests pass on a scratch Postgres (walks 1-4, driver, reduced views, route polyline, 0.5.0, 0.6.0); `contract:check` passes; turbo_ui 99, student 142, driver 90 pass; analyze clean.
+- **Not done:** the apps do not use the new fields yet (the student agent builds the "Pay with" sheet, banner, toggles and search on this); the dashboard has no field for the notice; nothing deployed. Deploying runs migration 017 (the deploy workflow takes a pgBackRest backup first).
+
 ## 2026-11-02, Claude, code: Go on duty is a slide (branch `driver-duty-slider`, from main)
 
 - **Files:** `packages/turbo_ui/lib/src/components/slide_to_continue.dart`, `test/slide_to_continue_test.dart` (new), `apps/driver_app/lib/src/features/home/home_screen.dart`, `test/driver_home_test.dart`.

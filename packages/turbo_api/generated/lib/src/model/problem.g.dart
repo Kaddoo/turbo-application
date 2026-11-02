@@ -212,6 +212,7 @@ const _$ProblemCodeEnumMap = {
   ProblemCode.notFound: 'not_found',
   ProblemCode.conflict: 'conflict',
   ProblemCode.rateLimited: 'rate_limited',
+  ProblemCode.networkUnknown: 'network_unknown',
   ProblemCode.idempotencyKeyReused: 'idempotency_key_reused',
   ProblemCode.otpInvalid: 'otp_invalid',
   ProblemCode.otpExpired: 'otp_expired',

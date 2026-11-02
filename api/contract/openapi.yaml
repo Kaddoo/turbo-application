@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Turbo API
-  version: 0.5.0
+  version: 0.6.0
   description: 'Contract between the Turbo apps, the admin dashboard and the API. **This file is the source of truth. Change
     it first, then code.**
 
@@ -652,6 +652,162 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '422':
           $ref: '#/components/responses/Unprocessable'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+      x-roles:
+      - student
+      x-release: v1
+  /me/notification-settings:
+    get:
+      tags:
+      - Student
+      operationId: getNotificationSettings
+      summary: My notification choices
+      description: '**Access:** student.
+
+
+        Ride and wallet messages are always sent; these are the optional ones. Until the student has chosen, `newsAndOffers` is false and `tips` is true.'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+      x-roles:
+      - student
+      x-release: v1
+    put:
+      tags:
+      - Student
+      operationId: updateNotificationSettings
+      summary: Change my notification choices
+      description: '**Access:** student. Replaces both choices.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSettings'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+      x-roles:
+      - student
+      x-release: v1
+  /places/autocomplete:
+    get:
+      tags:
+      - Student
+      operationId: autocompletePlaces
+      summary: Search for a place inside the service area
+      description: '**Access:** student.
+
+
+        Official pickup points that match come first, then places from the map provider, all limited to the service area. The map
+        provider key stays on the server. Pass the same `sessionToken` for one search (typing) and the `GET /places/{placeId}` that
+        follows it, and a new one for the next search. An empty or one-letter `q` returns an empty list.'
+      parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          maxLength: 80
+      - name: sessionToken
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceMatchList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '426':
+          $ref: '#/components/responses/UpgradeRequired'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+      x-roles:
+      - student
+      x-release: v1
+  /places/{placeId}:
+    get:
+      tags:
+      - Student
+      operationId: getPlace
+      summary: The point and label for a chosen suggestion
+      description: '**Access:** student.
+
+
+        404 when the id is unknown or the place is outside the service area.'
+      parameters:
+      - name: placeId
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 200
+      - name: sessionToken
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '426':
@@ -1523,7 +1679,7 @@ paths:
       description: '**Access:** student.
 
 
-        Amount must sit inside the admin-configured min and max, otherwise 422 `topup_amount_out_of_range`. The wallet is
+        Amount must sit inside the admin-configured min and max, otherwise 422 `topup_amount_out_of_range`. When the server cannot tell which network the number is on and none was sent, 422 `network_unknown`. The wallet is
         only credited by a verified provider webhook, never by the app.'
       parameters:
       - $ref: '#/components/parameters/IdempotencyKey'
@@ -5448,6 +5604,7 @@ components:
       - not_found
       - conflict
       - rate_limited
+      - network_unknown
       - idempotency_key_reused
       - otp_invalid
       - otp_expired
@@ -6118,6 +6275,11 @@ components:
     Settings:
       type: object
       properties:
+        announcement:
+          oneOf:
+          - $ref: '#/components/schemas/HomeNoticeInput'
+          - type: 'null'
+          description: The home-screen notice (see AppConfig). Null clears it.
         maxTripDistanceMeters:
           type: integer
           minimum: 1000
@@ -6783,10 +6945,23 @@ components:
           enum:
           - mobile_money
           - card
+        network:
+          $ref: '#/components/schemas/MomoNetwork'
+          description: The mobile money network. Leave it out to let the server work it out from the number; if it cannot, 422 `network_unknown` and the app asks "Pay with" and sends the choice.
+        msisdn:
+          type: string
+          pattern: ^\+233[0-9]{9}$
+          description: The number that approves the payment, E.164. Defaults to the number the student signed in with.
       required:
       - amountPesewas
       - channel
       additionalProperties: false
+    MomoNetwork:
+      type: string
+      enum:
+      - mtn
+      - telecel
+      - at
     Topup:
       type: object
       description: Provider agnostic. Redirect = open checkout url. Prompt = tell the student to approve on their phone (Payaza
@@ -6812,6 +6987,11 @@ components:
           - card
         reference:
           type: string
+        network:
+          oneOf:
+          - $ref: '#/components/schemas/MomoNetwork'
+          - type: 'null'
+          description: The network the payment prompt went to. Null on top-ups made before 0.6.0.
         checkout:
           type:
           - object
@@ -8196,6 +8376,84 @@ components:
       - status
       - version
       - time
+    NotificationSettings:
+      type: object
+      properties:
+        newsAndOffers:
+          type: boolean
+        tips:
+          type: boolean
+      required:
+      - newsAndOffers
+      - tips
+      additionalProperties: false
+    PlaceMatch:
+      type: object
+      properties:
+        placeId:
+          type: string
+          description: Opaque. Pass to `GET /places/{placeId}`.
+        label:
+          type: string
+          maxLength: 120
+        landmark:
+          type:
+          - string
+          - 'null'
+          maxLength: 120
+        isPickupPoint:
+          type: boolean
+          description: True for an official campus pickup point.
+      required:
+      - placeId
+      - label
+      - isPickupPoint
+    PlaceMatchList:
+      type: object
+      properties:
+        items:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/PlaceMatch'
+      required:
+      - items
+    HomeNotice:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Changes when the message or its severity changes, so an app can remember that a student closed this one.
+        message:
+          type: string
+          maxLength: 200
+        severity:
+          type: string
+          enum:
+          - info
+          - warning
+          - critical
+      required:
+      - id
+      - message
+      - severity
+    HomeNoticeInput:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 200
+        severity:
+          type: string
+          enum:
+          - info
+          - warning
+          - critical
+      required:
+      - message
+      - severity
+      additionalProperties: false
     SavedPlaceCollection:
       type: object
       properties:
@@ -8803,6 +9061,11 @@ components:
           - string
           - 'null'
           description: Campus security, E.164. Null until staff set it; the apps then show 112 only.
+        announcement:
+          oneOf:
+          - $ref: '#/components/schemas/HomeNotice'
+          - type: 'null'
+          description: A notice for the top of the home screen. Null when there is none. Staff set it in settings.
       required:
       - minVersion
       - maintenance

@@ -311,6 +311,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/notification-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My notification choices
+         * @description **Access:** student.
+         *
+         *     Ride and wallet messages are always sent; these are the optional ones. Until the student has chosen, `newsAndOffers` is false and `tips` is true.
+         */
+        get: operations["getNotificationSettings"];
+        /**
+         * Change my notification choices
+         * @description **Access:** student. Replaces both choices.
+         */
+        put: operations["updateNotificationSettings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/places/autocomplete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search for a place inside the service area
+         * @description **Access:** student.
+         *
+         *     Official pickup points that match come first, then places from the map provider, all limited to the service area. The map provider key stays on the server. Pass the same `sessionToken` for one search (typing) and the `GET /places/{placeId}` that follows it, and a new one for the next search. An empty or one-letter `q` returns an empty list.
+         */
+        get: operations["autocompletePlaces"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/places/{placeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The point and label for a chosen suggestion
+         * @description **Access:** student.
+         *
+         *     404 when the id is unknown or the place is outside the service area.
+         */
+        get: operations["getPlace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me/saved-places/{id}": {
         parameters: {
             query?: never;
@@ -748,7 +818,7 @@ export interface paths {
          * Start a top-up
          * @description **Access:** student.
          *
-         *     Amount must sit inside the admin-configured min and max, otherwise 422 `topup_amount_out_of_range`. The wallet is only credited by a verified provider webhook, never by the app.
+         *     Amount must sit inside the admin-configured min and max, otherwise 422 `topup_amount_out_of_range`. When the server cannot tell which network the number is on and none was sent, 422 `network_unknown`. The wallet is only credited by a verified provider webhook, never by the app.
          */
         post: operations["createTopup"];
         delete?: never;
@@ -2566,7 +2636,7 @@ export interface components {
          * @description Stable machine-readable code. Clients switch on this, never on `title` or `detail`.
          * @enum {string}
          */
-        ProblemCode: "validation_failed" | "unauthenticated" | "forbidden" | "not_found" | "conflict" | "rate_limited" | "idempotency_key_reused" | "otp_invalid" | "otp_expired" | "otp_rate_limited" | "account_suspended" | "invalid_credentials" | "mfa_required" | "verification_required" | "verification_not_resubmittable" | "upload_expired" | "outside_service_area" | "route_too_long" | "route_unavailable" | "no_drivers_on_duty" | "quote_expired" | "quote_ineligible" | "insufficient_balance" | "active_ride_exists" | "ride_not_cancellable" | "invalid_ride_state" | "invalid_pin" | "pin_locked" | "driver_has_active_ride" | "driver_not_assigned" | "topup_amount_out_of_range" | "payment_provider_error" | "refund_exceeds_charge" | "shift_overlap" | "sms_budget_exceeded" | "terms_not_accepted" | "duplicate_identity" | "upgrade_required" | "document_expired" | "bookings_paused" | "self_adjustment_forbidden" | "approval_by_requester_forbidden" | "invalid_token" | "account_locked" | "mfa_enrollment_required" | "no_show_too_early" | "account_owes" | "verification_claimed" | "duplicate_phone" | "duplicate_email" | "duplicate_plate" | "vehicle_already_assigned" | "verification_not_pending" | "ticket_state_invalid" | "topup_not_resolvable" | "incident_state_invalid" | "service_busy" | "link_expired" | "link_invalid";
+        ProblemCode: "validation_failed" | "unauthenticated" | "forbidden" | "not_found" | "conflict" | "rate_limited" | "network_unknown" | "idempotency_key_reused" | "otp_invalid" | "otp_expired" | "otp_rate_limited" | "account_suspended" | "invalid_credentials" | "mfa_required" | "verification_required" | "verification_not_resubmittable" | "upload_expired" | "outside_service_area" | "route_too_long" | "route_unavailable" | "no_drivers_on_duty" | "quote_expired" | "quote_ineligible" | "insufficient_balance" | "active_ride_exists" | "ride_not_cancellable" | "invalid_ride_state" | "invalid_pin" | "pin_locked" | "driver_has_active_ride" | "driver_not_assigned" | "topup_amount_out_of_range" | "payment_provider_error" | "refund_exceeds_charge" | "shift_overlap" | "sms_budget_exceeded" | "terms_not_accepted" | "duplicate_identity" | "upgrade_required" | "document_expired" | "bookings_paused" | "self_adjustment_forbidden" | "approval_by_requester_forbidden" | "invalid_token" | "account_locked" | "mfa_enrollment_required" | "no_show_too_early" | "account_owes" | "verification_claimed" | "duplicate_phone" | "duplicate_email" | "duplicate_plate" | "vehicle_already_assigned" | "verification_not_pending" | "ticket_state_invalid" | "topup_not_resolvable" | "incident_state_invalid" | "service_busy" | "link_expired" | "link_invalid";
         /** @description RFC 9457 problem details, served as application/problem+json. */
         Problem: {
             /**
@@ -2853,6 +2923,8 @@ export interface components {
             boundary: components["schemas"]["GeoJsonPolygon"];
         };
         Settings: {
+            /** @description The home-screen notice (see AppConfig). Null clears it. */
+            announcement?: components["schemas"]["HomeNoticeInput"] | null;
             /** @default 18000 */
             maxTripDistanceMeters: number;
             /** @default 300 */
@@ -3115,7 +3187,13 @@ export interface components {
             amountPesewas: components["schemas"]["Pesewas"];
             /** @enum {string} */
             channel: "mobile_money" | "card";
+            /** @description The mobile money network. Leave it out to let the server work it out from the number; if it cannot, 422 `network_unknown` and the app asks "Pay with" and sends the choice. */
+            network?: components["schemas"]["MomoNetwork"];
+            /** @description The number that approves the payment, E.164. Defaults to the number the student signed in with. */
+            msisdn?: string;
         };
+        /** @enum {string} */
+        MomoNetwork: "mtn" | "telecel" | "at";
         /** @description Provider agnostic. Redirect = open checkout url. Prompt = tell the student to approve on their phone (Payaza mobile money works this way). */
         Topup: {
             id: components["schemas"]["Id"];
@@ -3126,6 +3204,8 @@ export interface components {
             /** @enum {string} */
             channel: "mobile_money" | "card";
             reference: string;
+            /** @description The network the payment prompt went to. Null on top-ups made before 0.6.0. */
+            network?: components["schemas"]["MomoNetwork"] | null;
             checkout?: {
                 /** @enum {string} */
                 type?: "redirect" | "prompt";
@@ -3634,6 +3714,33 @@ export interface components {
             /** Format: date-time */
             time: string;
         };
+        NotificationSettings: {
+            newsAndOffers: boolean;
+            tips: boolean;
+        };
+        PlaceMatch: {
+            /** @description Opaque. Pass to `GET /places/{placeId}`. */
+            placeId: string;
+            label: string;
+            landmark?: string | null;
+            /** @description True for an official campus pickup point. */
+            isPickupPoint: boolean;
+        };
+        PlaceMatchList: {
+            items: components["schemas"]["PlaceMatch"][];
+        };
+        HomeNotice: {
+            /** @description Changes when the message or its severity changes, so an app can remember that a student closed this one. */
+            id: string;
+            message: string;
+            /** @enum {string} */
+            severity: "info" | "warning" | "critical";
+        };
+        HomeNoticeInput: {
+            message: string;
+            /** @enum {string} */
+            severity: "info" | "warning" | "critical";
+        };
         SavedPlaceCollection: {
             data: components["schemas"]["SavedPlace"][];
         };
@@ -3854,6 +3961,8 @@ export interface components {
             supervisorPhone?: string | null;
             /** @description Campus security, E.164. Null until staff set it; the apps then show 112 only. */
             campusSecurityPhone?: string | null;
+            /** @description A notice for the top of the home screen. Null when there is none. Staff set it in settings. */
+            announcement?: components["schemas"]["HomeNotice"] | null;
         };
         DriverDocumentExpiry: {
             driverId: components["schemas"]["Id"];
@@ -4452,6 +4561,120 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
+            429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    getNotificationSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationSettings"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
+            429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    updateNotificationSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationSettings"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationSettings"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Unprocessable"];
+            426: components["responses"]["UpgradeRequired"];
+            429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    autocompletePlaces: {
+        parameters: {
+            query: {
+                q: string;
+                sessionToken?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceMatchList"];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            426: components["responses"]["UpgradeRequired"];
+            429: components["responses"]["TooManyRequests"];
+            503: components["responses"]["ServiceUnavailable"];
+        };
+    };
+    getPlace: {
+        parameters: {
+            query?: {
+                sessionToken?: string;
+            };
+            header?: never;
+            path: {
+                placeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Location"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
             426: components["responses"]["UpgradeRequired"];
             429: components["responses"]["TooManyRequests"];
             503: components["responses"]["ServiceUnavailable"];

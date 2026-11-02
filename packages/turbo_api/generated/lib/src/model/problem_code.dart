@@ -19,6 +19,8 @@ enum ProblemCode {
   conflict(r'conflict'),
   @JsonValue(r'rate_limited')
   rateLimited(r'rate_limited'),
+  @JsonValue(r'network_unknown')
+  networkUnknown(r'network_unknown'),
   @JsonValue(r'idempotency_key_reused')
   idempotencyKeyReused(r'idempotency_key_reused'),
   @JsonValue(r'otp_invalid')

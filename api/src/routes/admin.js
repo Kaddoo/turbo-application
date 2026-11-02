@@ -341,6 +341,7 @@ const SETTING_RULES = {
   minTopupPesewas: int(100, 100_000), maxTopupPesewas: int(100, 5_000_000), driverSilenceSeconds: int(30, 3600), noShowWaitSeconds: int(60, 1800),
   quoteLimitPerMinute: int(1, 60), smsDailyLimit: int(100, 1_000_000), adjustmentApprovalThresholdPesewas: int(0, 1_000_000), locationRetentionDays: int(1, 365),
   bookingsPaused: (v) => typeof v === 'boolean', pauseMessage: (v) => v === null || (typeof v === 'string' && v.length <= 200), operatingHours: () => true,
+  announcement: (v) => v === null || (v && typeof v === 'object' && Object.keys(v).length === 2 && typeof v.message === 'string' && v.message.trim().length >= 1 && v.message.length <= 200 && ['info', 'warning', 'critical'].includes(v.severity)),
 };
 admin.put('/admin/settings', ...A('super_admin'), async (req, res) => {
   const body = req.body, errors = [];

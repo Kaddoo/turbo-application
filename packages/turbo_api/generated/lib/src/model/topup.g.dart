@@ -19,6 +19,8 @@ abstract class _$TopupCWProxy {
 
   Topup reference(String reference);
 
+  Topup network(MomoNetwork? network);
+
   Topup checkout(TopupCheckout? checkout);
 
   Topup createdAt(DateTime createdAt);
@@ -48,6 +50,7 @@ abstract class _$TopupCWProxy {
     int amountPesewas,
     TopupChannelEnum channel,
     String reference,
+    MomoNetwork? network,
     TopupCheckout? checkout,
     DateTime createdAt,
     DateTime? completedAt,
@@ -82,6 +85,9 @@ class _$TopupCWProxyImpl implements _$TopupCWProxy {
 
   @override
   Topup reference(String reference) => this(reference: reference);
+
+  @override
+  Topup network(MomoNetwork? network) => this(network: network);
 
   @override
   Topup checkout(TopupCheckout? checkout) => this(checkout: checkout);
@@ -123,6 +129,7 @@ class _$TopupCWProxyImpl implements _$TopupCWProxy {
     Object? amountPesewas = const $CopyWithPlaceholder(),
     Object? channel = const $CopyWithPlaceholder(),
     Object? reference = const $CopyWithPlaceholder(),
+    Object? network = const $CopyWithPlaceholder(),
     Object? checkout = const $CopyWithPlaceholder(),
     Object? createdAt = const $CopyWithPlaceholder(),
     Object? completedAt = const $CopyWithPlaceholder(),
@@ -157,6 +164,10 @@ class _$TopupCWProxyImpl implements _$TopupCWProxy {
           ? _value.reference
           // ignore: cast_nullable_to_non_nullable
           : reference as String,
+      network: network == const $CopyWithPlaceholder()
+          ? _value.network
+          // ignore: cast_nullable_to_non_nullable
+          : network as MomoNetwork?,
       checkout: checkout == const $CopyWithPlaceholder()
           ? _value.checkout
           // ignore: cast_nullable_to_non_nullable
@@ -231,6 +242,10 @@ Topup _$TopupFromJson(
       (v) => $enumDecode(_$TopupChannelEnumEnumMap, v),
     ),
     reference: $checkedConvert('reference', (v) => v as String),
+    network: $checkedConvert(
+      'network',
+      (v) => $enumDecodeNullable(_$MomoNetworkEnumMap, v),
+    ),
     checkout: $checkedConvert(
       'checkout',
       (v) =>
@@ -266,6 +281,7 @@ Map<String, dynamic> _$TopupToJson(Topup instance) => <String, dynamic>{
   'amountPesewas': instance.amountPesewas,
   'channel': _$TopupChannelEnumEnumMap[instance.channel]!,
   'reference': instance.reference,
+  'network': ?_$MomoNetworkEnumMap[instance.network],
   'checkout': ?instance.checkout?.toJson(),
   'createdAt': instance.createdAt.toIso8601String(),
   'completedAt': ?instance.completedAt?.toIso8601String(),
@@ -286,6 +302,12 @@ const _$TopupStatusEnumEnumMap = {
 const _$TopupChannelEnumEnumMap = {
   TopupChannelEnum.mobileMoney: 'mobile_money',
   TopupChannelEnum.card: 'card',
+};
+
+const _$MomoNetworkEnumMap = {
+  MomoNetwork.mtn: 'mtn',
+  MomoNetwork.telecel: 'telecel',
+  MomoNetwork.at: 'at',
 };
 
 const _$TopupValidationEnumEnumMap = {

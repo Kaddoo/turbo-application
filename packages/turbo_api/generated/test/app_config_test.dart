@@ -39,5 +39,11 @@ void main() {
       // TODO
     });
 
+    // A notice for the top of the home screen. Null when there is none. Staff set it in settings.
+    // HomeNotice announcement
+    test('to test the property `announcement`', () async {
+      // TODO
+    });
+
   });
 }

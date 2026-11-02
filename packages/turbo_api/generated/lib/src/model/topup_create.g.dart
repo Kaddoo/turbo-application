@@ -11,13 +11,22 @@ abstract class _$TopupCreateCWProxy {
 
   TopupCreate channel(TopupCreateChannelEnum channel);
 
+  TopupCreate network(MomoNetwork? network);
+
+  TopupCreate msisdn(String? msisdn);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TopupCreate(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
   /// ```dart
   /// TopupCreate(...).copyWith(id: 12, name: "My name")
   /// ````
-  TopupCreate call({int amountPesewas, TopupCreateChannelEnum channel});
+  TopupCreate call({
+    int amountPesewas,
+    TopupCreateChannelEnum channel,
+    MomoNetwork? network,
+    String? msisdn,
+  });
 }
 
 /// Proxy class for `copyWith` functionality. This is a callable class and can be used as follows: `instanceOfTopupCreate.copyWith(...)`. Additionally contains functions for specific fields e.g. `instanceOfTopupCreate.copyWith.fieldName(...)`
@@ -34,6 +43,12 @@ class _$TopupCreateCWProxyImpl implements _$TopupCreateCWProxy {
   TopupCreate channel(TopupCreateChannelEnum channel) => this(channel: channel);
 
   @override
+  TopupCreate network(MomoNetwork? network) => this(network: network);
+
+  @override
+  TopupCreate msisdn(String? msisdn) => this(msisdn: msisdn);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `TopupCreate(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -43,6 +58,8 @@ class _$TopupCreateCWProxyImpl implements _$TopupCreateCWProxy {
   TopupCreate call({
     Object? amountPesewas = const $CopyWithPlaceholder(),
     Object? channel = const $CopyWithPlaceholder(),
+    Object? network = const $CopyWithPlaceholder(),
+    Object? msisdn = const $CopyWithPlaceholder(),
   }) {
     return TopupCreate(
       amountPesewas: amountPesewas == const $CopyWithPlaceholder()
@@ -53,6 +70,14 @@ class _$TopupCreateCWProxyImpl implements _$TopupCreateCWProxy {
           ? _value.channel
           // ignore: cast_nullable_to_non_nullable
           : channel as TopupCreateChannelEnum,
+      network: network == const $CopyWithPlaceholder()
+          ? _value.network
+          // ignore: cast_nullable_to_non_nullable
+          : network as MomoNetwork?,
+      msisdn: msisdn == const $CopyWithPlaceholder()
+          ? _value.msisdn
+          // ignore: cast_nullable_to_non_nullable
+          : msisdn as String?,
     );
   }
 }
@@ -79,6 +104,11 @@ TopupCreate _$TopupCreateFromJson(Map<String, dynamic> json) =>
           'channel',
           (v) => $enumDecode(_$TopupCreateChannelEnumEnumMap, v),
         ),
+        network: $checkedConvert(
+          'network',
+          (v) => $enumDecodeNullable(_$MomoNetworkEnumMap, v),
+        ),
+        msisdn: $checkedConvert('msisdn', (v) => v as String?),
       );
       return val;
     });
@@ -87,9 +117,17 @@ Map<String, dynamic> _$TopupCreateToJson(TopupCreate instance) =>
     <String, dynamic>{
       'amountPesewas': instance.amountPesewas,
       'channel': _$TopupCreateChannelEnumEnumMap[instance.channel]!,
+      'network': ?_$MomoNetworkEnumMap[instance.network],
+      'msisdn': ?instance.msisdn,
     };
 
 const _$TopupCreateChannelEnumEnumMap = {
   TopupCreateChannelEnum.mobileMoney: 'mobile_money',
   TopupCreateChannelEnum.card: 'card',
+};
+
+const _$MomoNetworkEnumMap = {
+  MomoNetwork.mtn: 'mtn',
+  MomoNetwork.telecel: 'telecel',
+  MomoNetwork.at: 'at',
 };

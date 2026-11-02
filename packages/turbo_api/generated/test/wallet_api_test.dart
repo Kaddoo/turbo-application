@@ -9,7 +9,7 @@ void main() {
   group(WalletApi, () {
     // Start a top-up
     //
-    // **Access:** student.  Amount must sit inside the admin-configured min and max, otherwise 422 `topup_amount_out_of_range`. The wallet is only credited by a verified provider webhook, never by the app.
+    // **Access:** student.  Amount must sit inside the admin-configured min and max, otherwise 422 `topup_amount_out_of_range`. When the server cannot tell which network the number is on and none was sent, 422 `network_unknown`. The wallet is only credited by a verified provider webhook, never by the app.
     //
     //Future<Topup> createTopup(String idempotencyKey, TopupCreate topupCreate) async
     test('test createTopup', () async {
