@@ -57,4 +57,6 @@ jobs:
             systemctl is-active turbo-api turbo-worker
             curl -fsS http://127.0.0.1:3000/health'
       - name: Check it from outside
-        run: curl -fsS https://api.turbogh.app/health
+        run: |
+          # Caddy can answer 503 for a few seconds while the API starts, so try again before calling it a failure.
+          for i in 1 2 3 4 5 6; do curl -fsS https://api.turbogh.app/health && exit 0; sleep 5; done; exit 1
