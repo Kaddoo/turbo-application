@@ -334,6 +334,12 @@ abstract class AppLocalizations {
   /// **'Your phone number'**
   String get phoneTitle;
 
+  /// No description provided for @phoneTitleAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'phone number'**
+  String get phoneTitleAccent;
+
   /// No description provided for @phoneFieldLabel.
   ///
   /// In en, this message translates to:
@@ -363,6 +369,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your code'**
   String get codeTitle;
+
+  /// No description provided for @codeTitleAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'code'**
+  String get codeTitleAccent;
 
   /// No description provided for @codeSentTo.
   ///
@@ -433,8 +445,14 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeTagline.
   ///
   /// In en, this message translates to:
-  /// **'Drive for the campus, one ride at a time'**
+  /// **'Drive for campus'**
   String get welcomeTagline;
+
+  /// No description provided for @welcomeTaglineAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'campus'**
+  String get welcomeTaglineAccent;
 
   /// No description provided for @welcomeAudience.
   ///

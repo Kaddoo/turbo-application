@@ -101,7 +101,7 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                             child: ListView(
                               padding: const EdgeInsets.all(TurboSpacing.lg),
                               children: [
-                                Semantics(header: true, child: Text(l10n.shareChoose, style: text.titleLarge)),
+                                Semantics(header: true, child: Text(l10n.shareChoose, style: text.titleSmall)),
                                 const SizedBox(height: TurboSpacing.md),
                                 for (final c in list)
                                   Padding(
@@ -140,7 +140,6 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                             padding: const EdgeInsets.all(TurboSpacing.lg),
                             child: TurboButton(
                               label: _chosen.isEmpty ? l10n.shareSend : l10n.shareSendTo(_chosen.length),
-                              large: true,
                               loading: _busy,
                               onPressed: _chosen.isEmpty ? null : _send,
                             ),
@@ -175,10 +174,7 @@ class _ContactTile extends StatelessWidget {
         onTap: () => onChanged(!selected),
         child: Row(
           children: [
-            CircleAvatar(
-              backgroundColor: t.colors.background,
-              child: Text(name.characters.first, style: text.labelLarge),
-            ),
+            TurboAvatar(name: name, small: true),
             const SizedBox(width: TurboSpacing.md),
             Expanded(
               child: Column(

@@ -119,14 +119,14 @@ class _HoldToSosState extends ConsumerState<HoldToSos> with SingleTickerProvider
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Positioned.fill(child: ColoredBox(color: t.colors.danger)),
+                    Positioned.fill(child: ColoredBox(color: t.colors.sos)),
                     // The hold fills across from the left, so progress is seen and not only counted.
                     Positioned.fill(
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: FractionallySizedBox(
                           widthFactor: _hold.value,
-                          child: ColoredBox(color: t.colors.onDanger.withValues(alpha: 0.28)),
+                          child: ColoredBox(color: t.colors.onSos.withValues(alpha: 0.28)),
                         ),
                       ),
                     ),
@@ -137,13 +137,13 @@ class _HoldToSosState extends ConsumerState<HoldToSos> with SingleTickerProvider
                         children: [
                           Text(
                             _sending ? l10n.sosAlerted : (holding ? l10n.sosSecondsLeft(left) : l10n.sosHold),
-                            style: (widget.tall ? text.titleLarge : text.labelLarge)?.copyWith(color: t.colors.onDanger),
+                            style: (widget.tall ? text.titleLarge : text.labelLarge)?.copyWith(color: t.colors.onSos),
                             textAlign: TextAlign.center,
                           ),
                           if (widget.tall && !holding && !_sending)
                             Text(
                               l10n.sosHoldSeconds,
-                              style: text.bodySmall?.copyWith(color: t.colors.onDanger),
+                              style: text.bodySmall?.copyWith(color: t.colors.onSos),
                               textAlign: TextAlign.center,
                             ),
                         ],
@@ -190,7 +190,7 @@ class _SosResult extends StatelessWidget {
             child: TurboButton(
               label: l10n.sosCall(emergencyNumber),
               variant: TurboButtonVariant.destructive,
-              large: true,
+              driver: true,
               onPressed: () => callNumber(emergencyNumber),
             ),
           ),

@@ -61,6 +61,7 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
     Widget view({
       required IconData icon,
       required Color color,
+      Widget? hero,
       required String title,
       String? body,
       String? note,
@@ -72,7 +73,7 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
               const SizedBox(height: TurboSpacing.xxl),
-              Icon(icon, size: TurboSizes.iconLg + TurboSpacing.xl, color: color),
+              hero ?? Icon(icon, size: TurboSizes.iconLg + TurboSpacing.xl, color: color),
               const SizedBox(height: TurboSpacing.xl),
               Semantics(header: true, liveRegion: true, child: Text(title, style: text.headlineMedium, textAlign: TextAlign.center)),
               if (body != null) ...[
@@ -98,6 +99,7 @@ class _VerificationStatusScreenState extends ConsumerState<VerificationStatusScr
             VerificationStatus.approved => view(
                 icon: Icons.check_circle_outline,
                 color: t.colors.success,
+                hero: const PhotoCard(asset: 'student-campus.jpg', height: 280),
                 title: l10n.statusApprovedTitle,
                 body: l10n.statusApprovedBody,
                 action: TurboButton(

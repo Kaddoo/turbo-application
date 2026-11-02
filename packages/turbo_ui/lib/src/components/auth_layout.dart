@@ -2,19 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../theme/spacing.dart';
 import '../theme/turbo_theme.dart';
-
-/// Always-dark scope for the start-up screens, whatever the system setting.
-class DarkScope extends StatelessWidget {
-  const DarkScope({super.key, required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final brand = context.turbo.brand;
-    return Theme(data: buildTurboTheme(brand, Brightness.dark), child: child);
-  }
-}
+import 'accent_title.dart';
+import 'hero_icon.dart';
+import 'turbo_icon_button.dart';
 
 /// Large wordmark for start-up screens, read from the brand layer.
 class BigWordmark extends StatelessWidget {
@@ -31,9 +21,9 @@ class BigWordmark extends StatelessWidget {
       child: Text(
         t.brand.wordmark,
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontSize: t.brand.typeScale.display * 1.5,
-              color: onAccent ? t.colors.onAccent : t.colors.textPrimary,
-            ),
+          fontSize: t.brand.typeScale.splash,
+          color: onAccent ? t.colors.onAccent : t.colors.textPrimary,
+        ),
       ),
     );
   }
@@ -53,77 +43,137 @@ class SplashView extends StatelessWidget {
   }
 }
 
-/// Dark start-up screen: wordmark on top, a raised sheet with the form, and one
-/// pinned action underneath.
+/// Dark start-up screen: back button and a small wordmark on top, then a picture, an accent title and a lead line, the form, and one pinned action.
 class AuthLayout extends StatelessWidget {
   const AuthLayout({
     super.key,
     required this.title,
     required this.children,
     required this.action,
+    this.accent,
+    this.lead,
+    this.icon,
     this.onBack,
     this.footer,
+    this.centered = false,
   });
 
   final String title;
+
+  /// The end of [title] shown in lime.
+  final String? accent;
+
+  /// A line under the title.
+  final String? lead;
+  final IconData? icon;
   final List<Widget> children;
   final Widget action;
   final VoidCallback? onBack;
   final Widget? footer;
 
+  /// Centre the picture, title and lead (the terms screen).
+  final bool centered;
+
   @override
   Widget build(BuildContext context) {
-    return DarkScope(
-      child: Builder(builder: (context) {
+    return Builder(
+      builder: (context) {
         final t = context.turbo;
         final text = Theme.of(context).textTheme;
+        final align = centered
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start;
         return Scaffold(
           body: SafeArea(
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: onBack == null
-                      ? const SizedBox(height: TurboSizes.minTap)
-                      : Padding(
-                          padding: const EdgeInsets.all(TurboSpacing.sm),
-                          child: BackButton(onPressed: onBack),
-                        ),
-                ),
-                const SizedBox(height: TurboSpacing.xl),
-                const BigWordmark(),
-                const SizedBox(height: TurboSpacing.xxl),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
-                    padding: const EdgeInsets.all(TurboSpacing.xl),
-                    decoration: BoxDecoration(
-                      color: t.colors.surface,
-                      borderRadius: BorderRadius.circular(t.radiusCard),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Semantics(
-                            header: true,
-                            child: Text(title, style: text.titleLarge, textAlign: TextAlign.center),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    TurboSpacing.screen,
+                    TurboSpacing.sm,
+                    TurboSpacing.screen,
+                    0,
+                  ),
+                  child: SizedBox(
+                    height: TurboSizes.iconButton,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (onBack != null)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TurboIconButton(
+                              icon: Icons.chevron_left,
+                              label: MaterialLocalizations.of(context)
+                                  .backButtonTooltip,
+                              onPressed: onBack,
+                            ),
                           ),
+                        Text(
+                          t.brand.wordmark,
+                          style: t.styles.wordmark.copyWith(
+                            fontSize: t.brand.typeScale.emphasis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      TurboSpacing.screen,
+                      TurboSpacing.xl,
+                      TurboSpacing.screen,
+                      TurboSpacing.lg,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: align,
+                      children: [
+                        if (icon != null) ...[
+                          HeroIcon(icon: icon),
                           const SizedBox(height: TurboSpacing.lg),
-                          ...children,
                         ],
-                      ),
+                        AccentTitle(
+                          text: title,
+                          accent: accent,
+                          textAlign: centered
+                              ? TextAlign.center
+                              : TextAlign.start,
+                        ),
+                        if (lead != null) ...[
+                          const SizedBox(height: TurboSpacing.sm),
+                          Text(
+                            lead!,
+                            style: text.bodyMedium?.copyWith(
+                              color: t.colors.textSecondary,
+                            ),
+                            textAlign: centered
+                                ? TextAlign.center
+                                : TextAlign.start,
+                          ),
+                        ],
+                        const SizedBox(height: TurboSpacing.xl),
+                        ...children,
+                      ],
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(TurboSpacing.lg),
+                  padding: const EdgeInsets.fromLTRB(
+                    TurboSpacing.screen,
+                    TurboSpacing.md,
+                    TurboSpacing.screen,
+                    TurboSpacing.lg,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       action,
-                      if (footer != null) ...[const SizedBox(height: TurboSpacing.md), footer!],
+                      if (footer != null) ...[
+                        const SizedBox(height: TurboSpacing.md),
+                        footer!,
+                      ],
                     ],
                   ),
                 ),
@@ -131,7 +181,7 @@ class AuthLayout extends StatelessWidget {
             ),
           ),
         );
-      }),
+      },
     );
   }
 }

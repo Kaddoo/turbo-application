@@ -15,49 +15,15 @@ class RecordsTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
-    final text = Theme.of(context).textTheme;
     final labels = [l10n.recordsTabTrips, l10n.recordsTabShifts, l10n.recordsTabHours, l10n.recordsTabSalary];
     return Padding(
-      padding: const EdgeInsets.fromLTRB(TurboSpacing.lg, TurboSpacing.sm, TurboSpacing.lg, TurboSpacing.sm),
-      child: Container(
-        padding: const EdgeInsets.all(TurboSpacing.xs),
-        decoration: BoxDecoration(
-          color: t.colors.border.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(t.radiusInput),
-        ),
-        child: Row(
-          children: [
-            for (var i = 0; i < labels.length; i++)
-              Expanded(
-                child: Semantics(
-                  button: true,
-                  selected: i == index,
-                  label: labels[i],
-                  child: ExcludeSemantics(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(t.radiusInput),
-                      onTap: i == index ? null : () => context.go(paths[i]),
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: i == index ? t.colors.surface : t.colors.border.withValues(alpha: 0),
-                          borderRadius: BorderRadius.circular(t.radiusInput),
-                        ),
-                        child: Text(
-                          labels[i],
-                          style: i == index ? text.labelMedium : text.bodyMedium,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+      padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.sm, TurboSpacing.screen, TurboSpacing.sm),
+      child: TurboSegmented(
+        labels: labels,
+        selectedIndex: index,
+        onSelected: (i) {
+          if (i != index) context.go(paths[i]);
+        },
       ),
     );
   }

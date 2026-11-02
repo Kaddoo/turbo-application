@@ -26,7 +26,6 @@ class MeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final loaded = ref.watch(profileProvider).value;
     final profile = loaded is ProfileLoaded ? loaded.profile : null;
@@ -40,17 +39,17 @@ class MeScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.meTitle)),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(TurboSpacing.lg),
+          padding: const EdgeInsets.all(TurboSpacing.screen),
           children: [
             Row(
               children: [
-                CircleAvatar(radius: TurboSpacing.xxl, backgroundColor: t.colors.surface, child: Text(profile.fullName.characters.first, style: text.titleLarge)),
+                TurboAvatar(name: profile.fullName),
                 const SizedBox(width: TurboSpacing.lg),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(profile.fullName, style: text.titleLarge),
+                      Text(profile.fullName, style: context.turbo.styles.emphasis),
                       Text(displayPhone(profile.phone), style: text.bodyMedium),
                     ],
                   ),
@@ -59,7 +58,7 @@ class MeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.lg),
             TurboCard(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
               child: Column(
                 children: [
                   if (v != null) ...[
@@ -67,7 +66,7 @@ class MeScreen extends ConsumerWidget {
                       title: l10n.meVehicle,
                       subtitle: '${v.colour} ${v.make} ${v.model}',
                       leading: const Icon(Icons.directions_car_outlined),
-                      trailing: Text(v.plateNumber, style: text.titleLarge),
+                      trailing: Text(v.plateNumber, style: context.turbo.styles.monoPlate),
                     ),
                     const Divider(),
                   ],
@@ -82,7 +81,7 @@ class MeScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: TurboSpacing.xl),
-            Semantics(header: true, child: Text(l10n.meDevices, style: text.titleLarge)),
+            Semantics(header: true, child: Text(l10n.meDevices, style: text.titleSmall)),
             const SizedBox(height: TurboSpacing.sm),
             sessions.when(
               loading: () => const LoadingState(rows: 1),
@@ -121,7 +120,7 @@ class MeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.xl),
             TurboCard(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
               child: Column(
                 children: [
                   if (legal != null) ...[
@@ -144,7 +143,7 @@ class MeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: TurboSpacing.xl),
             // Drivers cannot delete their account here; staff handle it.
-            TurboButton(label: l10n.meSignOut, variant: TurboButtonVariant.secondary, onPressed: () => ref.read(sessionProvider.notifier).signOut()),
+            TurboButton(label: l10n.meSignOut, driver: true, variant: TurboButtonVariant.secondary, onPressed: () => ref.read(sessionProvider.notifier).signOut()),
           ],
         ),
       ),

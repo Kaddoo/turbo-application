@@ -12,6 +12,7 @@ class TurboCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(TurboSpacing.lg),
     this.semanticLabel,
     this.color,
+    this.selected = false,
   });
 
   final Widget child;
@@ -22,6 +23,9 @@ class TurboCard extends StatelessWidget {
   /// Fill when the card sits on a surface of its own; defaults to the surface role.
   final Color? color;
 
+  /// A chosen option in a list: a lime outline instead of the hairline.
+  final bool selected;
+
   @override
   Widget build(BuildContext context) {
     final t = context.turbo;
@@ -29,7 +33,7 @@ class TurboCard extends StatelessWidget {
     final body = Ink(
       decoration: BoxDecoration(
         color: color ?? t.colors.surface,
-        border: Border.all(color: t.colors.border),
+        border: Border.all(color: selected ? t.colors.accentText : t.colors.border, width: selected ? TurboSizes.accentBorderWidth : 1),
         borderRadius: radius,
       ),
       child: Padding(padding: padding, child: child),

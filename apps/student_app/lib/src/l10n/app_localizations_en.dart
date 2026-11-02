@@ -32,6 +32,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateRequiredTitle => 'Please update the app';
 
   @override
+  String get suspendedTitle => 'Your account is suspended';
+
+  @override
+  String get suspendedTag => 'Suspended';
+
+  @override
+  String get suspendedBody =>
+      'You can\'t book rides for now. Contact support to find out why and what happens next.';
+
+  @override
   String updateRequiredBody(Object appName) {
     return 'This version of $appName is too old to keep working. Update it from the store to carry on.';
   }
@@ -51,38 +61,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeTagline => 'Campus rides, paid from your wallet';
 
   @override
+  String get welcomeTaglineAccent => 'wallet';
+
+  @override
+  String get welcomeFixedFares => 'Fixed fares';
+
+  @override
+  String get welcomeContinue => 'Continue';
+
+  @override
   String get welcomeAudience => 'For Central University students at Miotso';
 
   @override
-  String get welcomeSlide2Title => 'A vetted driver, assigned for you';
+  String get phoneTitle => 'Sign in with your phone';
 
   @override
-  String get welcomeSlide2Body =>
-      'Salaried drivers. Your 4-digit PIN starts every trip.';
+  String get phoneTitleAccent => 'phone';
 
   @override
-  String get welcomeSlide3Title => 'Fixed fares. No cash.';
+  String get phoneLead => 'New or returning, it\'s the same step.';
 
   @override
-  String get welcomeSlide3Body =>
-      'See the price before you book. Top up with mobile money.';
-
-  @override
-  String get welcomeNext => 'Next';
-
-  @override
-  String get welcomeSkip => 'Skip';
-
-  @override
-  String get welcomePrevious => 'Previous';
-
-  @override
-  String welcomeSlideOf(int number, int total) {
-    return 'Slide $number of $total';
-  }
-
-  @override
-  String get phoneTitle => 'Your phone number';
+  String get phoneLegal =>
+      'By continuing you agree to the terms and privacy notice.';
 
   @override
   String get phoneFieldLabel => 'Phone number';
@@ -98,11 +99,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter your 9-digit number, for example 24 123 4567.';
 
   @override
-  String get codeTitle => 'Enter your code';
+  String get codeTitle => 'Enter the code';
+
+  @override
+  String get codeTitleAccent => 'code';
 
   @override
   String codeSentTo(Object phone) {
-    return 'We sent a 6-digit code to $phone.';
+    return 'We sent a 6-digit code to $phone';
   }
 
   @override
@@ -435,6 +439,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeWhereTo => 'Where to?';
 
   @override
+  String get homeYourPickup => 'Your pickup point';
+
+  @override
+  String get homeBookRide => 'Book a ride';
+
+  @override
+  String get homeSafetyLabel => 'Safety';
+
+  @override
+  String get homeSafetyTile => 'SOS and trip sharing';
+
+  @override
   String homeWalletChip(Object amount) {
     return 'Wallet $amount';
   }
@@ -764,6 +780,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get problemInsufficient =>
       'Your wallet doesn\'t have enough for this ride. Top up and try again.';
+
+  @override
+  String get activityFilterAll => 'All rides';
 
   @override
   String get activityTitle => 'Activity';

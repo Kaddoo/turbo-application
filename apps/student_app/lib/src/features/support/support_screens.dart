@@ -74,7 +74,7 @@ class SupportListScreen extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(TurboSpacing.lg),
-              child: TurboButton(label: l10n.supportNew, large: true, onPressed: () => context.push('/support/new')),
+              child: TurboButton(label: l10n.supportNew, onPressed: () => context.push('/support/new')),
             ),
           ],
         ),
@@ -199,7 +199,7 @@ class _NewTicketScreenState extends ConsumerState<NewTicketScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(TurboSpacing.lg),
                 children: [
-                  Semantics(header: true, child: Text(l10n.supportAbout, style: text.titleLarge)),
+                  Semantics(header: true, child: Text(l10n.supportAbout, style: text.titleSmall)),
                   const SizedBox(height: TurboSpacing.sm),
                   Wrap(
                     spacing: TurboSpacing.sm,
@@ -252,7 +252,7 @@ class _NewTicketScreenState extends ConsumerState<NewTicketScreen> {
                       padding: const EdgeInsets.only(bottom: TurboSpacing.md),
                       child: Semantics(liveRegion: true, child: Text(_error!, style: text.bodyMedium?.copyWith(color: t.colors.danger))),
                     ),
-                  TurboButton(label: l10n.supportSend, large: true, loading: _busy, onPressed: _send),
+                  TurboButton(label: l10n.supportSend, loading: _busy, onPressed: _send),
                 ],
               ),
             ),

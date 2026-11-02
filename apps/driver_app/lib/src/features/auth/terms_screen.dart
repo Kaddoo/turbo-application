@@ -150,7 +150,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                           child: Text(_error!, style: text.bodyMedium?.copyWith(color: t.colors.danger)),
                         ),
                       ),
-                    TurboButton(label: l10n.termsAgree, large: true, loading: _busy, onPressed: () => _agree(versions)),
+                    TurboButton(label: l10n.termsAgree, driver: true, loading: _busy, onPressed: () => _agree(versions)),
                   ],
                 ),
               ),

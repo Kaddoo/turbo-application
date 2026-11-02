@@ -153,16 +153,40 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.destTitle),
-        leading: BackButton(onPressed: () => context.go('/home')),
-      ),
       body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                TurboSpacing.screen,
+                TurboSpacing.md,
+                TurboSpacing.screen,
+                0,
+              ),
+              child: Row(
+                children: [
+                  TurboIconButton(
+                    icon: Icons.arrow_back,
+                    label: l10n.back,
+                    onPressed: () => context.go('/home'),
+                  ),
+                  Expanded(
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        l10n.destTitle,
+                        textAlign: TextAlign.center,
+                        style: text.titleMedium,
+                      ),
+                    ),
+                  ),
+                  const SizedBox.square(dimension: TurboSizes.iconButton),
+                ],
+              ),
+            ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(TurboSpacing.lg),
+                padding: const EdgeInsets.all(TurboSpacing.screen),
                 children: [
                   pickupCard(),
                   if (_showNeedPickup && draft.pickup == null)
@@ -178,6 +202,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                   if (_pickingPickup)
                     for (final p in points)
                       TurboListRow(
+                        card: true,
                         title: p.name,
                         leading: const Icon(Icons.place_outlined),
                         onTap: () {
@@ -232,13 +257,21 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                       draft.dropoff == null)
                     Padding(
                       padding: const EdgeInsets.only(top: TurboSpacing.md),
-                      child: Text(
-                        l10n.destSearchNoResults,
-                        style: text.bodyMedium,
+                      child: Column(
+                        children: [
+                          const HeroIcon(icon: Icons.wrong_location_outlined),
+                          const SizedBox(height: TurboSpacing.md),
+                          Text(
+                            l10n.destSearchNoResults,
+                            style: text.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
                     ),
                   for (final r in _results)
                     TurboListRow(
+                      card: true,
                       title: r.title,
                       subtitle: r.subtitle,
                       leading: const Icon(Icons.place_outlined),
@@ -249,7 +282,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                   // somewhere to go even when place search is not set up.
                   Semantics(
                     header: true,
-                    child: Text(l10n.destPlacesTitle, style: text.titleLarge),
+                    child: Text(l10n.destPlacesTitle, style: text.titleSmall),
                   ),
                   const SizedBox(height: TurboSpacing.sm),
                   if (dropoffPoints.isEmpty)
@@ -257,6 +290,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                   else
                     for (final p in dropoffPoints)
                       TurboListRow(
+                        card: true,
                         title: p.name,
                         leading: const Icon(Icons.place_outlined),
                         onTap: () => ref
@@ -266,7 +300,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                   const SizedBox(height: TurboSpacing.xl),
                   Semantics(
                     header: true,
-                    child: Text(l10n.destSavedTitle, style: text.titleLarge),
+                    child: Text(l10n.destSavedTitle, style: text.titleSmall),
                   ),
                   const SizedBox(height: TurboSpacing.sm),
                   saved.when(
@@ -278,6 +312,7 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
                             children: [
                               for (final p in places)
                                 TurboListRow(
+                                  card: true,
                                   title: p.label,
                                   subtitle: p.location.label,
                                   leading: const Icon(Icons.bookmark_border),
@@ -292,10 +327,9 @@ class _DestinationScreenState extends ConsumerState<DestinationScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(TurboSpacing.lg),
+              padding: const EdgeInsets.all(TurboSpacing.screen),
               child: TurboButton(
                 label: l10n.destContinue,
-                large: true,
                 onPressed: draft.dropoff == null ? null : _continue,
               ),
             ),

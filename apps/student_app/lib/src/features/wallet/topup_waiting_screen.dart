@@ -121,7 +121,6 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
           actions: [
             TurboButton(
               label: l10n.topupTryAgain,
-              large: true,
               onPressed: () {
                 ref.read(topupProvider.notifier).clear();
                 context.pushReplacement('/wallet/topup');
@@ -224,7 +223,6 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
               const SizedBox(height: TurboSpacing.xl),
               TurboButton(
                 label: l10n.topupCheckStatus,
-                large: true,
                 loading: flow.checking,
                 onPressed: () => ref.read(topupProvider.notifier).check(),
               ),

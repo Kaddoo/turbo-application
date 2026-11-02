@@ -2,6 +2,114 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: driver app finish (branch `design-driver-finish`, on `design-photos`)
+
+**What changed:** driver phone and code screens use `AuthLayout` (accent titles "Your phone number" and "Enter your code", the 80 pt action, resend and wrong-number under the boxes); the new-assignment screen has a lime countdown ring (red in the last 10 seconds) with the mono countdown, the pickup name in the driver title style and a danger banner; driver SOS uses the separate SOS red; Me has the plate in the mono style, the emphasis name and 80 pt sign out.
+
+**Checks:** analyze clean; driver 61 pass. Not viewed on a device.
+
+**Not done:** the document tiles on Me (D12) and expiry on home (D02, "insurance expired") need document fields the driver profile does not return, so no contract request was written yet; the bento detail tiles on the assignment, the D03 map sheet, and 3D icons.
+
+## 2026-11-02, Kevin with Claude, code: photos in the screens (branch `design-photos`, on `design-driver`)
+
+**What changed:** new `PhotoCard` in `turbo_ui` (photo, fade, text on top; picture hidden from screen readers). Used for the driver welcome (the Ghanaian taxi driver, with the lime-accent "Drive for campus" title and a slide to continue), the student "You're verified" screen (campus student) and the in-trip card (trotro street, with the route on it). Driver welcome tagline is now "Drive for campus".
+
+**Checks:** analyze clean; turbo_ui 78, student 131, driver 61 pass. Not viewed in a browser or on a device.
+
+**Not done:** the bus-stop, busy-street and Accra-sunset photos have no screen yet (ride detail, share preview, student welcome are not built to the board); the Tema aerial waits for a home hero. 3D icons and map art still open.
+
+## 2026-11-02, Kevin with Claude, code: stock photos (branch `design-driver`)
+
+**What changed:** eight Pexels photos Kevin approved from a shortlist (trotro and intersection for the trip status card, a busy Accra street, a bus stop, a driver, a campus student, a young man in Accra, a Tema aerial) are in `packages/turbo_ui/assets/photos`, resized to 1200 px wide, declared as package assets, with `CREDITS.md` (photo page and photographer for each). Pexels licence: free, credit not required but kept; the people are stock models and must not be shown as real named drivers or students.
+
+**Not done:** no screen uses them yet (trip status card, welcome and verified heroes, driver welcome wait for those screen builds). The 3D icons and the campus map art are still open.
+
+## 2026-11-02, Kevin with Claude, code: driver app first pass (branch `design-driver`, on `design-activity`)
+
+**What changed in `apps/driver_app`:** primary actions are the 80 pt `driver` buttons (go on duty, arrived, start trip, complete, done); the start-PIN entry is `TripPin` plus the new `TurboKeypad`; the four record views are `TurboSegmented`; the boot error, update, maintenance and suspended screens use `SystemMessage`; home uses the avatar, list-card readiness rows and a danger banner; Me uses `TurboAvatar`. Test taps the keypad inside `TurboKeypad`.
+
+**Checks:** analyze clean; driver 61 pass. Not viewed in a browser or on a device.
+
+**Not done:** the driver welcome and sign-in (D01, still on the old shared auth layout with its own screens), the pickup-to-drop-off screens' bento tiles and countdown ring, the assignment accept countdown (D04), SOS tile (D11), documents tiles on Me (D12), 3D icons and photos.
+
+## 2026-11-02, Kevin with Claude, code: activity, safety, support, profile (branch `design-activity`, on `design-wallet`)
+
+**What changed:** S25 Activity has the large title and All rides / Completed / Cancelled chips (filtering the list on the device, no new endpoint) with mono fares. S26 Safety has the round back button and a bento share tile; contacts are list cards with avatars; section titles are smaller. SOS uses the separate red (`sos`, `onSos`), never the accent or the error red. Share trip, support and profile use `TurboAvatar`, the 22 pt padding, smaller section titles and a banner for the contact error; `large:` removed.
+
+**Checks:** analyze clean; student 131 (new activity filter test), turbo_ui 76 pass.
+
+**Not done:** ride detail with photo card (S25 detail), the SOS countdown ring and "Help has been alerted" art (S27), the share-trip preview card (S28), trusted-contacts tile, support new-ticket form restyle; none viewed in a browser.
+
+## 2026-11-02, Kevin with Claude, code: wallet and fare (branch `design-wallet`, on `design-trip`)
+
+**What changed:** S21 wallet has the kit header (title, avatar), a lime balance card (dark while money is owed, with a danger banner), the balance in the 50 px hero style, held amount, the name in mono capitals, Top up under the card. S22 top-up has the round back button, amounts as mono tiles (selected = light fill) and a danger banner for errors. S15 quote has the round back button, the 22 pt padding, an icon slot for "can't book this trip" and a warning banner for the shortfall. Review fixes: welcome corner mark reads "Tb" (first and last letter), and "Wrong number?" and resend sit under the code boxes.
+
+**Checks:** analyze clean; student 130 pass. Wallet viewed in a browser in dark and light before this change; the new card is not yet viewed.
+
+**Not done:** quote map and bottom sheet, Balance and Held bento tiles on the wallet card, the pay-with sheet, S23 waiting and success screens (3D icons), S24 transaction filter chips.
+
+## 2026-11-02, Kevin with Claude, code: trip screens (branch `design-trip`, on `design-destination`)
+
+**What changed:** the ride screen (S16-S20) uses the kit pieces: bottom sheet with the 36 radius, the start PIN as `TripPin` inside an `InnerPanel` (still read digit by digit, via the new `digitLabel` on `TripPin`), "driver arrived" as a success `TurboBanner`, quick messages as `TurboChip`s, the driver as `TurboAvatar`, the plate in the mono plate style. `large:` removed.
+
+**Checks:** analyze clean; turbo_ui 76, student 130 pass.
+
+**Not done:** the photo card for "Trip status" (S18), the arrival countdown, the cancel-reasons sheet restyle and the "no driver found" art need photos and 3D icons; the route line waits for `routePolyline` (CR-7) on the maps-wiring branch. Not checked on a device.
+
+## 2026-11-02, Kevin with Claude, code: destination screen (branch `design-destination`, on `design-home`)
+
+**What changed:** S14 has the kit's header (round back button, centred title), place rows as bordered list cards (new `card:` option on `TurboListRow`), smaller section titles, the screen's 22 pt side padding, and a "no places found" state with an icon slot. Behaviour is unchanged: search only where available, campus points as drop-offs, saved places, pinned Continue.
+
+**Checks:** analyze clean; turbo_ui 76, student 130 pass.
+
+**Not done:** Results / Saved / Recent tabs and the pickup-point sheet over a map (S14 board); both wait on the search decision and the map style. Not checked in a browser.
+
+## 2026-11-02, Kevin with Claude, code: home screen (branch `design-home`, on `design-signin`)
+
+**What changed:** S13 Home rebuilt as a scrolling page on the new components: header (nearest pickup point, safety icon button, avatar), saved places as chips, a "Book a ride" panel (pickup, wallet chip, Where to? button), the map in a rounded card, and bento tiles for Wallet (lime) and Safety. Offline and paused-booking notes are now `TurboBanner`s. `TurboIconButton` gained a tooltip. Destination (S14) and quote (S15) keep their layout and pick up the new look from the theme; `large:` removed.
+
+**Checks:** analyze clean; turbo_ui 74, student 130 pass. Not checked on a device or in a browser.
+
+**Not done:** the "Nearest point / Choose point" tabs, the swap button and the "last ride" tile need design assets and an API decision (no last-ride field used yet); the S14 results/saved/recent tabs and pickup-point sheet over the map; S15 has no board in the new kit. Light mode is kept (decided by Kevin). The welcome and system screens now follow light or dark like the rest.
+
+## 2026-11-02, Kevin with Claude, code: sign-in and system screens (branch `design-signin`, on `design-components`)
+
+**What changed:** new `turbo_ui` pieces `AccentTitle` (title with one lime word), `HeroIcon` (icon slot, so the 3D icons can drop in later) and `SystemMessage` (full-screen state with tag, message, action, footer). `AuthLayout` rewritten: back button, centred wordmark, hero icon, accent title, lead, pinned action and footer, optional `centered`. Student app: S06 welcome is one screen (lime card with a drawn grid and car placeholder, "Fixed fares" tag, slide to continue; the three slides and Skip are gone); S07 phone, S08 code and S09 terms use the new layout; S02-S05 (boot error, update required, maintenance, suspended) use `SystemMessage`. ARB strings added or removed to match.
+
+**Checks:** analyze clean in all three packages; turbo_ui 74 (new layout tests in dark and light at 100% and 200% text), student 130, driver 61 pass. Flow tests now tap the slide's Continue and find the accent titles as rich text.
+
+**Deviations / not done:** the welcome photo and 3D icons are placeholders until the asset decisions land; light mode kept. Not pushed or merged.
+
+## 2026-11-02, Kevin with Claude, code: core components (branch `design-components`, on `design-foundation`)
+
+**What changed in `packages/turbo_ui`:** buttons are 60 pt pills with new variants (light, outline, text, SOS) and an 80 pt `driver` size; disabled primary is the accent at 40%. Status tags are soft tinted 26 pt pills. New: `TurboChip` (50 pt, selected = light fill; outline 34 pt for "Fare locked"), `TurboSegmented`, `TurboIconButton`, `TurboAvatar`, `TurboBanner` (info, success, warning, danger; live region option), `BentoTile` and `InnerPanel`, `TripPin` (68 x 80 lime mono digits), `TurboKeypad`, `MessageComposer`, `SlideToContinue` (also tap to continue). Restyled: text fields (20 radius, lime focus, red error, mono prefix), cards (`selected` lime outline), sheets (36 radius, handle), OTP boxes (18 radius, mono), the bottom bar (pill with a lime circle for the open tab), switches and radios in lime, wordmark from the type scale. New `onSos` colour; `TurboSizes` gained the kit sizes and `TurboSpacing.screen` (22).
+
+**Checks:** analyze clean; turbo_ui 62 tests (new components in dark and light at 100% and 200% text, 60/80 pt heights, SOS red not accent, chip and segment semantics, PIN, keypad, slide, banner live region, bar circle); student 130 and driver 61 still pass; goldens regenerated.
+
+**Not done:** 3D icons, photos and the booking-panel tabs, map markers and glass photo card (waiting on the asset and map decisions); no screen has been rebuilt on these yet. `large:` on `TurboButton` is now a no-op (every button is 60 pt).
+
+## 2026-11-02, Kevin with Claude, code: design foundation (branch `design-foundation`)
+
+**Task:** First step of the new design (`design/Turbo-components.pdf`, `Turbo-type-scale.csv`, `Turbo-component-kit/`, 14 boards = 94 screens). Foundation only, in `packages/turbo_ui`.
+
+**What changed:** dark palette now the kit's (bg `#0B0B0A`, surface `#1A1B18`, raised `#252622`, fill, text `#F3F1EA`, lime `#D4FF3A`, success/warning/danger, a separate SOS red `#E5483A`, status tints); light palette kept and given the same new roles. Geist and Geist Mono (SIL OFL, copied from the dashboard's `geist` package, TTF) bundled in `packages/turbo_ui/fonts`. Full type scale: every role in the CSV is a text theme slot or `context.turbo.styles.*` (mono roles: timer, PIN, keypad, code, plate, money, phone, link). Radii from the sheet: card 30, field 20, sheet 36, panel 34, tile 28, list card 26, inner 22, code box 18, pill 999. Wallet and quote money use the 50 px hero style.
+
+**Deviations:** control edges stay `#8A8C84` (the sheet's 24% white is 2.1:1, inputs must reach 3:1). SOS text on `#E5483A` is below 4.5:1 for small text; the sheet has the same pairing, so keep it large. The kit is dark only; the apps still follow the phone's light or dark setting (decision pending).
+
+**Checks:** analyze clean; turbo_ui 49, student 130, driver 61 tests pass (including dark mode at 200% text); goldens regenerated.
+
+**Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
+
+## 2026-11-01, Kevin with Claude, code: issue 1 contract work, staging hardening, build 4
+
+**Done and merged to `main` (pushed, last merge `fc288f5`):** both redesigned apps; monitoring and alerts (inlet) and log shipping (LogPulse); one contract (`api/contract/openapi.yaml`, now 0.3.2) with a guard and CI; 426/503/403 docs (0.2.3); Idempotency-Key on OTP request, top-up resolve, reconciliation, add driver (0.2.4); specific problem codes, `service_busy`, `link_expired`/`link_invalid` (0.3.0); reduced student and ride views for support and finance, approval threshold on `/admin/me` (0.3.1); self-approval 403, plates compared ignoring case, spaces and hyphens (0.3.2, migration 015); hardened `turbo_rt` cookie (Secure from `COOKIE_SECURE`, Path `/v1/auth`); the `dashboard-ui-match` pull request, merged with item 17, idempotency keys and contract paths ported onto its new structure.
+
+**Staging now:** seed `@turbo.test` staff deactivated; `STAFF_MFA=required` restored (it had silently vanished from the settings file); invited accounts `devspaceshared+admin|finance|finance2|verifier|dispatch|hr|support@gmail.com` and `litobethel@gmail.com` (super admin), links handed out by hand because Zoho blocks mail; TEST data seeded (`scripts/seed-test-data.js`); plate migration applied after a pgBackRest diff backup, one duplicate TST vehicle soft-deleted; TestFlight build 4 of both apps uploaded.
+
+**Not done:** Emmanuel's re-run of the 48 staging checks and the dashboard "limited view" note; Google Maps server key; production switch (Texify, Payaza, Turbo SMTP sender, terms and privacy URLs, `NODE_ENV=production`); landing page (not in the repo); nothing of the redesign seen on a phone yet; student web not started; remaining redesign screens listed in `docs/10-handover-bethel.md`; student phone mask `+233 24 *** **67` awaiting planning's OK.
+
+**How to run things:** `docs/11-ops-runbook.md` (server, deploys, tests, TestFlight script `tools/testflight/ship.sh`).
+
 ## 2026-11-01, Claude, code: data-changing checks on staging for 0.3.1
 
 **Task:** Re-run the data-changing checks against staging and say what still mismatches (backend request; Kevin approved data changes, with the dev-seed accounts).

@@ -161,6 +161,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneTitle => 'Your phone number';
 
   @override
+  String get phoneTitleAccent => 'phone number';
+
+  @override
   String get phoneFieldLabel => 'Phone number';
 
   @override
@@ -175,6 +178,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codeTitle => 'Enter your code';
+
+  @override
+  String get codeTitleAccent => 'code';
 
   @override
   String codeSentTo(Object phone) {
@@ -215,7 +221,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
-  String get welcomeTagline => 'Drive for the campus, one ride at a time';
+  String get welcomeTagline => 'Drive for campus';
+
+  @override
+  String get welcomeTaglineAccent => 'campus';
 
   @override
   String welcomeAudience(String appName) {

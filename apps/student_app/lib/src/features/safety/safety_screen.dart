@@ -24,37 +24,34 @@ class SafetyScreen extends ConsumerWidget {
     final contacts = ref.watch(contactsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.safetyTitle)),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(TurboSpacing.lg),
+          padding: const EdgeInsets.all(TurboSpacing.screen),
           children: [
+            Row(
+              children: [
+                TurboIconButton(icon: Icons.arrow_back, label: l10n.back, onPressed: () => context.pop()),
+                Expanded(
+                  child: Semantics(header: true, child: Text(l10n.safetyTitle, textAlign: TextAlign.center, style: text.titleMedium)),
+                ),
+                const SizedBox.square(dimension: TurboSizes.iconButton),
+              ],
+            ),
+            const SizedBox(height: TurboSpacing.lg),
             HoldToSos(rideId: rideId, tall: true),
             const SizedBox(height: TurboSpacing.sm),
             Text(l10n.safetySosNote, style: text.bodySmall),
             const SizedBox(height: TurboSpacing.lg),
-            TurboCard(
+            BentoTile(
+              label: l10n.safetyShareTrip,
+              title: rideId == null ? l10n.safetyShareNoRide : l10n.safetyShareTrip,
+              trailing: const Icon(Icons.ios_share),
               onTap: rideId == null ? null : () => context.push('/ride/$rideId/share'),
-              child: Row(
-                children: [
-                  const Icon(Icons.ios_share),
-                  const SizedBox(width: TurboSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(l10n.safetyShareTrip, style: text.labelLarge),
-                        if (rideId == null) Text(l10n.safetyShareNoRide, style: text.bodySmall),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: TurboSpacing.xl),
             Row(
               children: [
-                Expanded(child: Semantics(header: true, child: Text(l10n.safetyContacts, style: text.titleLarge))),
+                Expanded(child: Semantics(header: true, child: Text(l10n.safetyContacts, style: text.titleSmall))),
                 if (contacts.hasValue) Text(l10n.safetyContactsCount(contacts.value!.length), style: text.bodySmall),
               ],
             ),
@@ -72,7 +69,8 @@ class SafetyScreen extends ConsumerWidget {
                     TurboListRow(
                       title: c.name,
                       subtitle: displayPhone(c.phone),
-                      leading: CircleAvatar(backgroundColor: t.colors.surface, child: Text(c.name.characters.first, style: text.labelLarge)),
+                      leading: TurboAvatar(name: c.name, small: true),
+                      card: true,
                       trailing: IconButton(
                         tooltip: l10n.safetyContactRemove,
                         constraints: const BoxConstraints(minWidth: TurboSizes.minTap, minHeight: TurboSizes.minTap),
@@ -103,7 +101,7 @@ class SafetyScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: TurboSpacing.xl),
-            Semantics(header: true, child: Text(l10n.safetyCallForHelp, style: text.titleLarge)),
+            Semantics(header: true, child: Text(l10n.safetyCallForHelp, style: text.titleSmall)),
             const SizedBox(height: TurboSpacing.sm),
             TurboButton(
               label: l10n.sosCall(emergencyNumber),
@@ -112,7 +110,7 @@ class SafetyScreen extends ConsumerWidget {
               onPressed: () => callNumber(emergencyNumber),
             ),
             const SizedBox(height: TurboSpacing.xl),
-            Semantics(header: true, child: Text(l10n.safetyHowSosWorks, style: text.titleLarge)),
+            Semantics(header: true, child: Text(l10n.safetyHowSosWorks, style: text.titleSmall)),
             const SizedBox(height: TurboSpacing.sm),
             Text(l10n.safetyHowSosBody, style: text.bodyMedium),
             const SizedBox(height: TurboSpacing.lg),
@@ -173,7 +171,6 @@ class _AddContactState extends ConsumerState<_AddContact> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.turbo;
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -191,7 +188,7 @@ class _AddContactState extends ConsumerState<_AddContact> {
           TurboTextField(label: l10n.safetyContactRelation, controller: _relation),
           if (_error != null) ...[
             const SizedBox(height: TurboSpacing.md),
-            Semantics(liveRegion: true, child: Text(_error!, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: t.colors.danger))),
+            TurboBanner(icon: Icons.error_outline, message: _error!, tone: StatusTone.danger, liveRegion: true),
           ],
           const SizedBox(height: TurboSpacing.lg),
           TurboButton(label: l10n.safetyContactSave, loading: _busy, onPressed: _save),

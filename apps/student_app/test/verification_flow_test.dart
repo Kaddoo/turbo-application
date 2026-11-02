@@ -1,3 +1,4 @@
+import 'package:turbo_ui/turbo_ui.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -87,9 +88,9 @@ Future<void> boot(
 }
 
 Future<void> fillDetails(WidgetTester tester) async {
-  await tester.enterText(find.widgetWithText(TextField, 'Full name as on your Ghana Card'), 'Ama Mensah');
-  await tester.enterText(find.widgetWithText(TextField, 'Ghana Card number'), '1234567890');
-  await tester.enterText(find.widgetWithText(TextField, 'Student ID number'), 'CU/2024/0042');
+  await tester.enterText(find.widgetWithText(TurboTextField, 'Full name as on your Ghana Card'), 'Ama Mensah');
+  await tester.enterText(find.widgetWithText(TurboTextField, 'Ghana Card number'), '1234567890');
+  await tester.enterText(find.widgetWithText(TurboTextField, 'Student ID number'), 'CU/2024/0042');
   await tester.pump();
 }
 
@@ -155,7 +156,7 @@ void main() {
 
   testWidgets('a bad Ghana Card number is explained after typing', (tester) async {
     await boot(tester, signedInServer());
-    await tester.enterText(find.widgetWithText(TextField, 'Ghana Card number'), '12345');
+    await tester.enterText(find.widgetWithText(TurboTextField, 'Ghana Card number'), '12345');
     await tester.pump();
     expect(find.textContaining('like GHA-123456789-0'), findsWidgets);
   });

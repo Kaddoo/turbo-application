@@ -162,7 +162,7 @@ class _LocationSpikeScreenState extends State<LocationSpikeScreen> with WidgetsB
                 const SizedBox(height: TurboSpacing.xl),
                 TurboButton(
                   label: s.running ? 'Go off duty' : 'Go on duty',
-                  large: true,
+                  
                   variant: s.running ? TurboButtonVariant.secondary : TurboButtonVariant.primary,
                   onPressed: s.running ? _stop : _start,
                 ),
