@@ -2,6 +2,42 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: student app design check against `design/new`
+
+**Method (read this first):** there is no usable iOS simulator on this Mac (every runtime shows "unavailable"), so I could not run the app. I rendered each screen in a widget test with the real Geist fonts, fake data, a placeholder where the map goes, at 390x844, dark and light at 100% text and dark at 200%, and compared the images with the 60 screens in `design/new`. This shows layout, type, colour, pictures and clipping, not the real map, animation, haptics or the phone's safe areas. The cedi sign shows as a box in these renders only because the test font lacks it; the phone falls back to a system font. The render script was scratch and is not committed.
+
+| Screen | Design shows | App showed | Result |
+| --- | --- | --- | --- |
+| Welcome | silver car on the lime grid, "Fixed fares" tag | a plain black car glyph | **Fixed** (`student-welcome-hero`) |
+| Phone | "+233" always in the field, placeholder number | prefix hidden until typing, no placeholder | **Fixed** (`student-phone-prefix`; also fixes the driver phone field once it passes a `hint:`) |
+| Code | six boxes, "Wrong number?" | not rendered | Not checked |
+| Terms | 3D pushpin and camera on the two "why" rows | plain Material icons | **Fixed** (`student-terms-art`) |
+| Home | pickup header, Book a ride panel, map, Wallet and Safety tiles | same parts, order matches; tiles scroll under the bar | Leave |
+| Destination | pickup row, results, saved places | matches in structure | Leave |
+| Quote | map with the route behind a bottom sheet, fare, "It won't change" chip, Wallet and Short-by tiles, Top up button | no map; a list on a plain page | **Question 1** |
+| Finding a driver | countdown, "Fare is held" lime tile and a drop-off tile | text rows | **Question 2** |
+| Driver on the way, arrived, on your way | countdown, PIN, plate, quick chips, photo card | matches in parts; no clipping at 100% | Leave |
+| Trip complete | 3D check-mark, Fare charged on a lime tile, distance tile with receipt link, rating | plain white tick, rows in a card | **Fixed** (`student-ride-complete`) |
+| Cancelled by system | 3D car, "You haven't been charged" | 3D taxi, matches | Leave |
+| Wallet | lime card, Balance and Held tiles with a 3D lock, Top up, recent | held was one line in the card, no tiles | **Fixed** (`student-wallet-tiles`) |
+| Top-up | amount tiles, other amount, number with a network chip, "Pay GH₵50.00" | amount tiles, other amount, a sentence with the number, "Top up" | **Question 3** |
+| Transactions, Activity | chips, list, empty state with 3D taxi | matches | Leave |
+| Safety | SOS first, share tile, contacts, 112 | matches | Leave |
+| Support, New ticket | not in the 60 screens | renders cleanly | Leave |
+| Profile, Receipt, Share | partly in the designs | the fake server had no data for them, so they showed error states | Not checked |
+
+**200% text:** no overflow on any rendered screen. The home sheet, the trip sheet and Terms need scrolling to reach their last items (Cancel ride, I agree text); I did not check that those scroll on a phone.
+
+**Branches (one per fix, each from `main`, not merged):** `student-terms-art`, `student-welcome-hero`, `student-phone-prefix`, `student-ride-complete`, `student-wallet-tiles`. `student-welcome-hero` and `student-phone-prefix` touch `packages/turbo_ui` (a `width` on `VehicleImage`; a `hint` on `TurboTextField`, with the two form goldens updated). Analyze is clean and tests pass in turbo_ui, the student app and the driver app on each.
+
+**Questions for Kevin (not changed):**
+1. Quote: the design has the map with the route behind a sheet; ours is a plain page. Rebuild it as map plus sheet?
+2. Finding a driver: switch the rows to the design's two tiles?
+3. Top-up: add the network chip next to the number and label the button "Pay GH₵X"?
+4. The welcome monogram reads "To" (first letters of the brand name); the design shows "Tb". Which is right?
+
+**Not done:** the code screen, Profile, Receipt and Share were not judged; nothing was run on a phone; light mode was rendered but only dark was compared closely.
+
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.
