@@ -36,7 +36,9 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 - Top-up: `student-topup-pay`. The number is a "Mobile money number" tile. The "Pay GH₵X" button already existed once an amount is chosen. **The network chip and the "Pay with" choice are not built:** the contract has no network or number on a top-up, so they would do nothing; that is CR-11. Also fixed: the amount tiles clipped their text at 200%.
 - The welcome monogram stays "To", as Kevin said.
 
-**Not done:** the code screen, Profile, Receipt and Share were not judged; nothing was run on a phone; light mode was rendered but only dark was compared closely.
+**Also checked later (code, Profile, Receipt, Share, with proper fake data):** Code matches except the design puts "Send a new code in 24 s" and "Wrong number?" on one line at opposite ends, where ours stacks them (left as is, minor). Receipt and Share are plain but fine. Profile in light mode had a pale lime "Sign out" on white (plain text buttons used the lime accent); **fixed** in `student-profile-contrast` by giving text buttons the readable accent in `turbo_ui`, which also helps the driver app. Heads up: `packages/turbo_ui/test/hardcoded_style_test.dart` fails on `main` right now because `apps/driver_app/lib/src/l10n/app_localizations_en.dart` lines 627 and 628 spell "Turbo" in "Cancelled by Turbo" (from the contract 0.5.0 commit); the driver ARB should use the app-name placeholder. I did not touch the driver app.
+
+**Not done:** nothing was run on a phone; light mode was rendered but only dark was compared closely.
 
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
