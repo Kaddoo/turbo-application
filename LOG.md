@@ -189,6 +189,13 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: decline reasons as 2x2 tiles (branch `driver-decline-tiles`, cut from `driver-offer-tiles`)
+
+- **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `test/driver_ride_test.dart`, `packages/turbo_ui/lib/src/components/bento_tile.dart`.
+- **What changed:** the decline sheet shows Car problem (wrench), Too far (motorway), Unwell (hourglass) and Other (speech balloon) as a 2x2 grid of tiles; tapping one sends the same reason as before. `BentoTile` now leaves out its small label line when the label is empty.
+- **Checks:** analyze clean; turbo_ui 87, driver 80, student 132 tests pass. Not run on a phone.
+- **Not done:** D10 trip detail, D11 help tiles, vehicle image on home.
+
 ## 2026-11-02, Claude, code: driver offer as four tiles, D04 (branch `driver-offer-tiles`, cut from `driver-location-priming`)
 
 - **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_ride_test.dart`.

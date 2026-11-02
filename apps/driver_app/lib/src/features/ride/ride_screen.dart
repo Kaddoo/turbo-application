@@ -234,18 +234,35 @@ class _OfferState extends ConsumerState<_Offer> {
             ),
           ),
           const SizedBox(height: TurboSpacing.md),
-          for (final (code, label) in [
-            (DeclineRequestReasonCodeEnum.vehicleIssue, l10n.declineVehicle),
-            (DeclineRequestReasonCodeEnum.tooFar, l10n.declineFar),
-            (DeclineRequestReasonCodeEnum.unwell, l10n.declineUnwell),
-            (DeclineRequestReasonCodeEnum.other, l10n.declineOther),
+          for (final row in [
+            [
+              (DeclineRequestReasonCodeEnum.vehicleIssue, l10n.declineVehicle, TurboArt.wrench),
+              (DeclineRequestReasonCodeEnum.tooFar, l10n.declineFar, TurboArt.motorway),
+            ],
+            [
+              (DeclineRequestReasonCodeEnum.unwell, l10n.declineUnwell, TurboArt.hourglassNotDone),
+              (DeclineRequestReasonCodeEnum.other, l10n.declineOther, TurboArt.speechBalloon),
+            ],
           ])
             Padding(
-              padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
-              child: TurboButton(
-                label: label,
-                variant: TurboButtonVariant.secondary,
-                onPressed: () => Navigator.of(sheet).pop(code),
+              padding: const EdgeInsets.only(bottom: TurboSpacing.md),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final (i, (code, label, art)) in row.indexed) ...[
+                      if (i > 0) const SizedBox(width: TurboSpacing.md),
+                      Expanded(
+                        child: BentoTile(
+                          label: '',
+                          title: label,
+                          trailing: TurboArtImage(art),
+                          onTap: () => Navigator.of(sheet).pop(code),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
         ],

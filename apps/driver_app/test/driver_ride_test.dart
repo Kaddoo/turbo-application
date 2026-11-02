@@ -105,6 +105,20 @@ void main() {
       expect(find.text('Navigate'), findsOneWidget);
     });
 
+    testWidgets('the four reasons lay out as tiles in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await bootDriver(tester, rideServer(driverRide('assigned', acknowledged: false)), size: const Size(360, 1600));
+      await settle(tester, 12);
+      await tester.tap(find.text('Decline'));
+      await settle(tester);
+      for (final reason in ['Car problem', 'Too far', 'Unwell', 'Other']) {
+        expect(find.text(reason), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('Decline asks why and sends the reason', (tester) async {
       final server = rideServer(driverRide('assigned', acknowledged: false))
         ..on('POST /driver/rides/$rideId/decline', status: 204, body: null);
