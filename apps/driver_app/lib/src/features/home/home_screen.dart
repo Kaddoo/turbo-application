@@ -189,6 +189,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                   ),
                             style: text.titleLarge,
                           ),
+                          if (vehicle != null) ...[
+                            const SizedBox(height: TurboSpacing.md),
+                            const Center(child: VehicleImage()),
+                          ],
                         ],
                       ),
                     ),

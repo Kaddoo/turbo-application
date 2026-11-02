@@ -189,6 +189,14 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: vehicle image on driver home (branch `driver-vehicle-image`, cut from `driver-help-tiles`)
+
+- **Files:** `packages/turbo_ui/lib/src/components/vehicle_image.dart` (new, exported), `assets/images/car-side.png` and `README.md` (new), `pubspec.yaml`, `apps/driver_app/lib/src/features/home/home_screen.dart`, `test/driver_home_test.dart`.
+- **What changed:** the home vehicle card shows the kit's side-view car under the make, model and plate (hidden from screen readers; not shown when no vehicle is assigned).
+- **Deviation:** it is one stand-in picture, not the driver's own car, and it is silver whatever the colour. The kit does not say where the image came from: confirm the source and licence with the designer (noted in `assets/images/README.md`). No Pexels download was needed.
+- **Checks:** analyze clean; turbo_ui 87, driver 83, student 132 tests pass. Not run on a phone.
+- **Not done:** D12 documents (CR-5), dark map style, patterns 13 and 15.
+
 ## 2026-11-02, Claude, code: Help topics as tiles, D11 (branch `driver-help-tiles`, cut from `driver-trip-detail`)
 
 - **Files:** `apps/driver_app/lib/src/features/support/help_screen.dart`, `test/driver_misc_test.dart`.

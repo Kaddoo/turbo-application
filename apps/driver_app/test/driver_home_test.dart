@@ -2,6 +2,7 @@ import 'package:driver_app/src/location/location_access.dart';
 import 'package:driver_app/src/location/tracked_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import 'support/fake_server.dart';
 import 'support/harness.dart';
@@ -77,6 +78,7 @@ void main() {
       await settle(tester);
       expect(find.text('Hello, Kofi'), findsOneWidget);
       expect(find.text('Silver Toyota Corolla · GR-4821-24'), findsOneWidget);
+      expect(find.byType(VehicleImage), findsOneWidget);
       expect(find.text('Before you go on duty'), findsOneWidget);
       expect(find.text('Ready to go'), findsOneWidget);
       expect(find.text('Ready'), findsNWidgets(4));
