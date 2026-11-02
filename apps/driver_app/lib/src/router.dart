@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:turbo_api/turbo_api.dart';
 
 import 'core/flow.dart';
 import 'core/flow_provider.dart';
@@ -12,6 +13,7 @@ import 'features/gate/gate_screens.dart';
 import 'features/home/home_screen.dart';
 import 'features/me/me_screen.dart';
 import 'features/me/record_screens.dart';
+import 'features/me/trip_detail_screen.dart';
 import 'features/me/trips_screen.dart';
 import 'features/support/help_screen.dart';
 import 'features/support/support_screens.dart';
@@ -63,6 +65,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/support/:id',
         parentNavigatorKey: _rootKey,
         builder: (_, state) => TicketScreen(ticketId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: '/trips/detail',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) => TripDetailScreen(ride: state.extra is DriverRide ? state.extra as DriverRide : null),
       ),
       GoRoute(path: '/ride', parentNavigatorKey: _rootKey, builder: (_, _) => const DriverRideScreen()),
       // Developer screen for the background-location test; not linked from the app.

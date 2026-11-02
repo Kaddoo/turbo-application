@@ -518,6 +518,44 @@ class AppLocalizationsEn extends AppLocalizations {
       'We couldn\'t load your trips. Check your connection and try again.';
 
   @override
+  String get tripDetailTitle => 'Trip';
+
+  @override
+  String get tripDetailDistance => 'Distance';
+
+  @override
+  String get tripDetailTime => 'Time';
+
+  @override
+  String tripDetailMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get tripDetailProgress => 'Progress';
+
+  @override
+  String get tripDetailReport => 'Report a problem with this trip';
+
+  @override
+  String get tripStepAssigned => 'Ride assigned';
+
+  @override
+  String get tripStepAccepted => 'You accepted';
+
+  @override
+  String get tripStepArrived => 'You arrived';
+
+  @override
+  String get tripStepStarted => 'Trip started';
+
+  @override
+  String get tripStepCompleted => 'Trip completed';
+
+  @override
+  String get tripStepCancelled => 'Ride cancelled';
+
+  @override
   String get rideStatusSearching => 'Finding a driver';
 
   @override

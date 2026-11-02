@@ -189,6 +189,14 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: trip detail with a timeline, D10 (branch `driver-trip-detail`, cut from `driver-decline-tiles`)
+
+- **Files:** `apps/driver_app/lib/src/features/me/trip_detail_screen.dart` (new), `trips_screen.dart`, `lib/src/router.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_misc_test.dart`, `CONTRACT_REQUESTS.md` (CR-10).
+- **What changed:** trip rows in Records now start with the kit's taxi picture and open `/trips/detail`: route, status, Distance and Time tiles, a timeline of the ride, and "Report a problem with this trip" (opens the existing new-ticket screen with the ride). No new endpoint: the list's ride is passed along.
+- **Deviation:** the contract only has assigned and accepted times, so later timeline steps show a state without a time and a cancelled ride does not say who cancelled. CR-10 asks for the missing times. The detail path is under `/trips` because the route guard only allows known prefixes.
+- **Checks:** analyze clean, 82 driver tests pass (completed, and cancelled in dark mode at 200% text). Not run on a phone.
+- **Not done:** D11 help tiles, vehicle image on home.
+
 ## 2026-11-02, Claude, code: decline reasons as 2x2 tiles (branch `driver-decline-tiles`, cut from `driver-offer-tiles`)
 
 - **Files:** `apps/driver_app/lib/src/features/ride/ride_screen.dart`, `test/driver_ride_test.dart`, `packages/turbo_ui/lib/src/components/bento_tile.dart`.

@@ -970,6 +970,78 @@ abstract class AppLocalizations {
   /// **'We couldn\'t load your trips. Check your connection and try again.'**
   String get tripsLoadFailed;
 
+  /// No description provided for @tripDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip'**
+  String get tripDetailTitle;
+
+  /// No description provided for @tripDetailDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get tripDetailDistance;
+
+  /// No description provided for @tripDetailTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get tripDetailTime;
+
+  /// No description provided for @tripDetailMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String tripDetailMinutes(int minutes);
+
+  /// No description provided for @tripDetailProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get tripDetailProgress;
+
+  /// No description provided for @tripDetailReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem with this trip'**
+  String get tripDetailReport;
+
+  /// No description provided for @tripStepAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride assigned'**
+  String get tripStepAssigned;
+
+  /// No description provided for @tripStepAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'You accepted'**
+  String get tripStepAccepted;
+
+  /// No description provided for @tripStepArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'You arrived'**
+  String get tripStepArrived;
+
+  /// No description provided for @tripStepStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip started'**
+  String get tripStepStarted;
+
+  /// No description provided for @tripStepCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip completed'**
+  String get tripStepCompleted;
+
+  /// No description provided for @tripStepCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride cancelled'**
+  String get tripStepCancelled;
+
   /// No description provided for @rideStatusSearching.
   ///
   /// In en, this message translates to:

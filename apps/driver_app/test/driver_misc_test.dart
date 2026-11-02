@@ -18,6 +18,18 @@ FakeServer base() => driverServer()
   ..on('GET /driver/rides/current', status: 204, body: null)
   ..on('GET /driver/rides', body: page([]));
 
+Map<String, Object?> pastRide(String status, {bool accepted = true}) => {
+  'id': '0190a1b2-0000-7e4f-8a5b-0000000a0001',
+  'status': status,
+  'pickup': {'point': {'lat': 5.7203, 'lng': 0.0757}, 'label': 'Central Gate'},
+  'dropoff': {'point': {'lat': 5.6942, 'lng': -0.0335}, 'label': 'Ashaiman China Mall'},
+  'routeDistanceMeters': 9400,
+  'routeDurationSeconds': 840,
+  'student': {'firstName': 'Ama'},
+  'assignedAt': '2026-11-01T08:00:00Z',
+  'acknowledgedAt': accepted ? '2026-11-01T08:00:20Z' : null,
+};
+
 Future<void> openMe(WidgetTester tester, FakeServer server) async {
   await bootDriver(tester, server);
   // A tall phone, so every row of Me sits above the floating bar.
@@ -89,6 +101,35 @@ void main() {
       await settle(tester);
       expect(find.text('No trips yet.'), findsOneWidget);
     });
+
+    for (final (status, dark) in [('completed', false), ('cancelled', true)]) {
+      testWidgets('a $status trip opens its detail with a timeline (dark: $dark)', (tester) async {
+        if (dark) {
+          tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+          tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+          addTearDown(tester.platformDispatcher.clearAllTestValues);
+        }
+        final server = driverServer()
+          ..on('GET /driver/rides/current', status: 204, body: null)
+          ..on('GET /driver/rides', body: page([pastRide(status)]));
+        await bootDriver(tester, server);
+        tester.view.physicalSize = const Size(390, 1800);
+        addTearDown(tester.view.reset);
+        await settle(tester);
+        await tester.tap(find.bySemanticsLabel('Trips'));
+        await settle(tester);
+        await tester.tap(find.textContaining('Central Gate'));
+        await settle(tester);
+        expect(find.text('9.4 km'), findsOneWidget);
+        expect(find.text('14 min'), findsOneWidget);
+        expect(find.text('Ride assigned'), findsOneWidget);
+        expect(find.text('You accepted'), findsOneWidget);
+        expect(find.text('Trip completed'), status == 'completed' ? findsOneWidget : findsNothing);
+        expect(find.text('Ride cancelled'), status == 'cancelled' ? findsOneWidget : findsNothing);
+        expect(find.text('Report a problem with this trip'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('shifts: empty teaches who sets them', (tester) async {
       final server = base()..on('GET /driver/shifts', body: page([]));
