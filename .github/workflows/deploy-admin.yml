@@ -25,6 +25,8 @@ jobs:
         env:
           VITE_API_BASE_URL: https://api.turbogh.app/v1
           VITE_APP_ENV: staging
+          # A browser key: it ends up in the built files, so restrict it to https://admin.turbogh.app/* and the Maps JavaScript API in Google Cloud.
+          VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
       - name: Set up SSH
         run: |
           install -m 700 -d ~/.ssh

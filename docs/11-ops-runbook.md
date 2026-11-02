@@ -52,7 +52,7 @@ Three workflows in `.github/workflows` publish to the staging server when the ma
 
 1. Make a key just for deploys (no passphrase): `ssh-keygen -t ed25519 -f ~/.ssh/turbo_deploy -C github-deploy -N ""`. Put `turbo_deploy.pub` in `/root/.ssh/authorized_keys` on the server.
 2. Get the server's host key so the runner can check it: `ssh-keyscan -t ed25519 203.161.62.244`.
-3. In GitHub, Settings, Secrets and variables, Actions, add four secrets: `DEPLOY_HOST` (`203.161.62.244`), `DEPLOY_USER` (`root`), `DEPLOY_SSH_KEY` (the whole private key file), `DEPLOY_KNOWN_HOSTS` (the `ssh-keyscan` line).
+3. In GitHub, Settings, Secrets and variables, Actions, add four secrets: `DEPLOY_HOST` (`203.161.62.244`), `DEPLOY_USER` (`root`), `DEPLOY_SSH_KEY` (the whole private key file), `DEPLOY_KNOWN_HOSTS` (the `ssh-keyscan` line). A fifth secret, `VITE_GOOGLE_MAPS_API_KEY`, is the Google Maps browser key that `deploy-admin` builds into the dashboard.
 4. Landing site: add DNS A records for `turbogh.app` and `www.turbogh.app` to the server IP, then add this to `/opt/turbo/deploy/Caddyfile` and run `cd /opt/turbo/deploy && docker compose up -d caddy`. The Caddy container must also be able to read `/opt/turbo/landing` (mount it the same way `/opt/turbo/admin` is mounted).
 
 ```
