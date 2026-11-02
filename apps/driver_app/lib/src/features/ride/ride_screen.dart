@@ -9,6 +9,7 @@ import 'package:turbo_ui/turbo_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/driver_feedback.dart';
+import '../../core/keep_awake.dart';
 import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
@@ -106,11 +107,11 @@ class _DriverRideScreenState extends ConsumerState<DriverRideScreen> {
         ride.acknowledgedAt == null) {
       body = _Offer(ride: ride);
     } else if (ride.status == RideStatus.assigned) {
-      body = _ToPickup(ride: ride);
+      body = KeepScreenAwake(child: _ToPickup(ride: ride));
     } else if (ride.status == RideStatus.driverArrived) {
-      body = _AtPickup(ride: ride);
+      body = KeepScreenAwake(child: _AtPickup(ride: ride));
     } else {
-      body = _Trip(ride: ride);
+      body = KeepScreenAwake(child: _Trip(ride: ride));
     }
 
     return PopScope(
