@@ -172,6 +172,19 @@ void main() {
       expect(body['message'], 'I was charged twice for the same ride.');
     });
 
+    testWidgets('the new ticket form uses the app chips and lays out in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()..on('GET /support/tickets', body: {'data': [], 'page': {'nextCursor': null, 'hasMore': false}});
+      await bootHome(tester, server, size: const Size(390, 2400));
+      GoRouter.of(tester.element(find.byType(Scaffold).first)).go('/support/new');
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TurboChip, 'Safety'), findsOneWidget);
+      expect(find.byType(ChoiceChip), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('sending without a topic or message is explained', (tester) async {
       final server = base()..on('GET /support/tickets', body: {'data': [], 'page': {'nextCursor': null, 'hasMore': false}});
       await openSupport(tester, server);

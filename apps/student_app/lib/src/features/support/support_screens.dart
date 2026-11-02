@@ -38,7 +38,7 @@ class SupportListScreen extends ConsumerWidget {
                 loading: () => const LoadingState(),
                 error: (_, _) => ErrorState(message: l10n.supportLoadFailed, onRetry: () => ref.invalidate(ticketsProvider)),
                 data: (list) => list.isEmpty
-                    ? EmptyState(icon: Icons.support_agent, message: l10n.supportEmpty)
+                    ? EmptyState(art: TurboArt.speechBalloon, message: l10n.supportEmpty)
                     : RefreshIndicator(
                         onRefresh: () async => ref.invalidate(ticketsProvider),
                         child: ListView(
@@ -206,10 +206,10 @@ class _NewTicketScreenState extends ConsumerState<NewTicketScreen> {
                     runSpacing: TurboSpacing.sm,
                     children: [
                       for (final c in shown)
-                        ChoiceChip(
-                          label: Text(_label(l10n, c)),
+                        TurboChip(
+                          label: _label(l10n, c),
                           selected: _category == c,
-                          onSelected: (_) => setState(() {
+                          onTap: () => setState(() {
                             _category = c;
                             _error = null;
                           }),
@@ -223,13 +223,13 @@ class _NewTicketScreenState extends ConsumerState<NewTicketScreen> {
                   const SizedBox(height: TurboSpacing.lg),
                   TurboTextField(label: l10n.supportSubject, controller: _subject, textInputAction: TextInputAction.next),
                   const SizedBox(height: TurboSpacing.md),
-                  TextField(
+                  TurboTextField(
+                    label: l10n.supportMessage,
                     controller: _message,
                     minLines: 4,
                     maxLines: 8,
                     maxLength: 2000,
-                    style: text.bodyLarge,
-                    decoration: InputDecoration(labelText: l10n.supportMessage, alignLabelWithHint: true, filled: true, fillColor: t.colors.surface),
+                    keyboardType: TextInputType.multiline,
                   ),
                   const SizedBox(height: TurboSpacing.md),
                   TurboButton(

@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: New ticket form restyle (branch `student-ticket-form`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/support/support_screens.dart`, `test/safety_support_profile_test.dart`, `packages/turbo_ui/lib/src/components/turbo_text_field.dart`.
+- **What changed:** the topic choices are the app's chips (as on Activity and Transactions) instead of Material choice chips; the message box is the shared labelled text field (label above, 2000 counter) instead of a bare Material one. `TurboTextField` gained optional `minLines`, `maxLines` and `maxLength` for this; nothing else that uses it changes. The empty support list shows the 3D speech balloon instead of a plain icon.
+- **Checks:** analyze clean in student, driver and turbo_ui; student 184, driver 89 and turbo_ui 96 tests pass (the form in dark mode at 200% text). Not run on a phone.
+- **Not done:** the ticket thread screen (reply box) was not restyled; the driver app's own support form still uses the bare field (the shared field is ready for it).
+
 ## 2026-11-02, Claude, code: top-up waiting, success and pending screens (branch `student-topup-states`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/wallet/topup_waiting_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/wallet_test.dart`.

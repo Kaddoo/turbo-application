@@ -21,6 +21,9 @@ class TurboTextField extends StatelessWidget {
     this.autofillHints,
     this.enabled = true,
     this.obscureText = false,
+    this.minLines,
+    this.maxLines = 1,
+    this.maxLength,
   });
 
   final String label;
@@ -38,6 +41,11 @@ class TurboTextField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final bool enabled;
   final bool obscureText;
+
+  /// For a message box: grows from [minLines] to [maxLines]; [maxLength] shows a counter.
+  final int? minLines;
+  final int maxLines;
+  final int? maxLength;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +68,9 @@ class TurboTextField extends StatelessWidget {
             controller: controller,
             enabled: enabled,
             obscureText: obscureText,
+            minLines: minLines,
+            maxLines: obscureText ? 1 : maxLines,
+            maxLength: maxLength,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
             onChanged: onChanged,
