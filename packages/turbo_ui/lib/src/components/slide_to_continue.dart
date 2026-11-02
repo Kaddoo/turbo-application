@@ -8,11 +8,17 @@ import '../theme/turbo_theme.dart';
 /// "Slide to continue" on the welcome screens: a 74 pt track with a lime knob. Dragging past the middle continues.
 /// Tapping the track also continues, so nobody needs to drag (and screen readers get a plain button).
 class SlideToContinue extends StatefulWidget {
-  const SlideToContinue({super.key, required this.label, required this.onContinue, this.icon = Icons.directions_car_outlined});
+  const SlideToContinue({super.key, required this.label, required this.onContinue, this.icon = Icons.directions_car_outlined, this.loading = false, this.tapToContinue = true});
 
   final String label;
   final VoidCallback onContinue;
   final IconData icon;
+
+  /// True while the action is running: the knob shows a spinner and the track ignores touches.
+  final bool loading;
+
+  /// False for an action that must not happen by accident (going on duty): only a drag continues. Screen readers still get a plain button.
+  final bool tapToContinue;
 
   @override
   State<SlideToContinue> createState() => _SlideToContinueState();
@@ -23,6 +29,7 @@ class _SlideToContinueState extends State<SlideToContinue> {
 
   /// One medium tap each time the slide goes through, whether it was dragged or tapped.
   void _continue() {
+    if (widget.loading) return;
     TurboHaptics.confirm();
     widget.onContinue();
   }
@@ -42,8 +49,8 @@ class _SlideToContinueState extends State<SlideToContinue> {
         builder: (context, box) {
           final max = (box.maxWidth - knob - TurboSpacing.sm * 2).clamp(0.0, double.infinity);
           return GestureDetector(
-            onTap: _continue,
-            onHorizontalDragUpdate: (d) => setState(() => _drag = (_drag + d.delta.dx).clamp(0.0, max)),
+            onTap: widget.tapToContinue ? _continue : null,
+            onHorizontalDragUpdate: (d) => widget.loading ? null : setState(() => _drag = (_drag + d.delta.dx).clamp(0.0, max)),
             onHorizontalDragEnd: (_) {
               final done = max > 0 && _drag > max * 0.6;
               setState(() => _drag = 0);
@@ -63,7 +70,9 @@ class _SlideToContinueState extends State<SlideToContinue> {
                       width: knob,
                       height: knob,
                       decoration: BoxDecoration(color: c.accent, shape: BoxShape.circle),
-                      child: Icon(widget.icon, color: c.onAccent, size: TurboSizes.iconMd),
+                      child: widget.loading
+                          ? Padding(padding: const EdgeInsets.all(TurboSpacing.lg), child: CircularProgressIndicator(strokeWidth: 3, color: c.onAccent))
+                          : Icon(widget.icon, color: c.onAccent, size: TurboSizes.iconMd),
                     ),
                   ),
                 ],

@@ -159,7 +159,7 @@ void main() {
       await bootDriver(tester, server, positions: positions);
       await settle(tester);
       expect(positions.started, 0, reason: 'no sharing while off duty');
-      await tester.tap(find.text('Go on duty'));
+      await tester.drag(find.byType(SlideToContinue), const Offset(600, 0));
       await settle(tester);
       expect((bodyOf(server.calls('PUT /driver/duty').single) as Map)['onDuty'], true);
       expect(find.text('On duty. Waiting for a ride.'), findsOneWidget);
@@ -172,11 +172,21 @@ void main() {
       expect(body['points'][0]['point']['lat'], 5.72);
     });
 
+    testWidgets('a tap on the slider does not put the driver on duty', (tester) async {
+      final server = driverServer()..on('PUT /driver/duty', body: driverProfile(onDuty: true));
+      await bootDriver(tester, server);
+      await settle(tester);
+      await tester.tap(find.byType(SlideToContinue));
+      await settle(tester);
+      expect(server.calls('PUT /driver/duty'), isEmpty);
+      expect(find.text('Go on duty'), findsOneWidget);
+    });
+
     testWidgets('an expired document keeps the driver off the road, in plain words', (tester) async {
       final server = driverServer()..on('PUT /driver/duty', status: 409, body: problem('document_expired', 409));
       await bootDriver(tester, server);
       await settle(tester);
-      await tester.tap(find.text('Go on duty'));
+      await tester.drag(find.byType(SlideToContinue), const Offset(600, 0));
       await settle(tester);
       expect(find.text('A document has expired. Contact your supervisor.'), findsOneWidget);
       expect(find.text('Go on duty'), findsOneWidget);
@@ -186,7 +196,7 @@ void main() {
       final server = driverServer();
       await bootDriver(tester, server);
       await settle(tester);
-      await tester.tap(find.text('Go on duty'));
+      await tester.drag(find.byType(SlideToContinue), const Offset(600, 0));
       await settle(tester);
       // No route: the fake answers 404, which reads as a failure, not a code.
       expect(find.text('Go on duty'), findsOneWidget);

@@ -338,11 +338,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           ),
                         ),
                       ),
-                    TurboButton(
+                    // A slide, not a tap, so a phone in a mount cannot put the driver on duty by accident.
+                    SlideToContinue(
                       label: l10n.homeGoOnDuty,
-                      driver: true,
+                      icon: Icons.power_settings_new,
                       loading: _busy,
-                      onPressed: () => _setDuty(true),
+                      tapToContinue: false,
+                      onContinue: () => _setDuty(true),
                     ),
                   ],
                 ),
