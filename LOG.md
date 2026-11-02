@@ -23,6 +23,27 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 - **Checks:** lint, 8 tests, `npm run check` (axe 0, links), and the responsive audit re-run at 12 sizes: no overflow, CLS 0 everywhere, no lines over 75 characters, no header overlap.
 - **Not changed:** section headings above 640 px keep their design sizes (some are larger than the H1 by design). The footer text and the captions stay under 16 px.
 
+## 2026-11-02, Claude, code: student app pattern 1, haptic grammar (not committed)
+
+**Task:** Pattern 1 of the student-app patterns brief. Latest designs are in `design/new` (60 unnamed screens, student and driver); they do not change this pattern.
+
+**Branch:** `haptic-grammar`, from main. **Files touched:**
+- `packages/turbo_ui`: `haptics/turbo_haptics.dart` (new kinds `confirm` and `completed`, `TurboHapticKind`, `play`), `components/haptic_on_show.dart` (new), `slide_to_continue.dart`, `turbo_chip.dart` (chip and segment), `turbo_button.dart` (optional `haptic`), `turbo_ui.dart`, `test/haptics_test.dart` (new).
+- `apps/student_app`: `quote_screen.dart` (Book is `confirm`), `topup_waiting_screen.dart` (success plays one light tap), `ride_screen.dart` (one heavy tap when a ride completes live).
+
+**What changed:** slide to continue plays a medium tap when it goes through, by drag or tap. Chips play the selection tick; a segment plays it only when the choice changes. Book plays medium. Top-up success plays light once. A ride that completes on screen plays one heavy tap; opening an already completed ride stays quiet. Buttons are silent unless given a `haptic`.
+
+**Not done:** "PIN copy" from the brief. Nothing in the student app copies the PIN, so there is nothing to attach it to (the share screen's "Copy link" is separate).
+
+**Checks:** NOT run the way CLAUDE.md requires. This machine has Flutter 3.35.2 (Dart 3.9.0) and the workspace needs Dart ^3.13.3, so `flutter analyze` and `flutter test` fail at version solving. Not upgraded: that is a global tool change and needs approval. Instead, on a scratchpad copy of `turbo_ui` with the SDK constraint relaxed: analyze is clean; the 12 tests that fail there (golden images and one semantics matcher) fail the same on unmodified main; `test/haptics_test.dart` (10 tests) and `hardcoded_style_test` pass. The three `student_app` edits are small and read-checked but not compiled.
+
+**Pattern registry (for the PR):**
+- P-01 Haptic grammar. Job: confirm actions without looking. Mechanism: `TurboHaptics` played from components (selection, light, medium, heavy once). A11y: follows the system haptic setting, never on scroll, once per action, always with a visual change. Status: Built, pending a real analyze and test run.
+
+**Also in the working tree, uncommitted and separate from this branch:** the admin dashboard UI work (`apps/admin_dashboard`, `package-lock.json` included).
+
+**Next step:** upgrade Flutter (or use the right SDK), run `flutter analyze && flutter test` in the workspace, commit as `add haptic grammar to components`, then pattern 2 (number tweening).
+
 ## 2026-11-02 · landing page: legal links until an admin publishes them
 
 - **Branch:** `landing-api`. **Files:** `apps/landing_page/src/lib/legal.ts` (new), `LegalLinks.tsx`, `legal/VersionLabel.tsx`, `test/api-rules.test.ts`, `CONTRACT_REQUESTS.md` (CR-8).

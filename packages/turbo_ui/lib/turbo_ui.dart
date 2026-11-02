@@ -16,6 +16,7 @@ export 'src/components/map_container.dart';
 export 'src/components/message_composer.dart';
 export 'src/components/money_text.dart';
 export 'src/components/otp_field.dart';
+export 'src/components/haptic_on_show.dart';
 export 'src/components/slide_to_continue.dart';
 export 'src/components/status_chip.dart';
 export 'src/components/system_message.dart';

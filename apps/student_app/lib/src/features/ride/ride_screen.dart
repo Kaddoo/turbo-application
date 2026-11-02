@@ -48,10 +48,16 @@ class _RideScreenState extends ConsumerState<RideScreen> {
     final id = widget.rideId;
     final ride = ref.watch(rideProvider(id));
 
-    // One haptic when the driver arrives.
+    // One haptic when the driver arrives, and one heavy tap when the ride ends. Both only on the change
+    // seen on this screen, so opening a ride that is already completed stays quiet.
     ref.listen(rideProvider(id), (prev, next) {
-      if (prev?.value?.status != RideStatus.driverArrived && next.value?.status == RideStatus.driverArrived) {
+      final before = prev?.value?.status;
+      final now = next.value?.status;
+      if (before != RideStatus.driverArrived && now == RideStatus.driverArrived) {
         TurboHaptics.success();
+      }
+      if (before != null && before != RideStatus.completed && now == RideStatus.completed) {
+        TurboHaptics.completed();
       }
     });
 

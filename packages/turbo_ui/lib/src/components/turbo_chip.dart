@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../haptics/turbo_haptics.dart';
 import '../theme/spacing.dart';
 import '../theme/turbo_theme.dart';
 
@@ -21,6 +22,14 @@ class TurboChip extends StatelessWidget {
   final Widget? leading;
   final bool outline;
 
+  /// A tap is a choice, so it gets the selection tick.
+  VoidCallback? get _tap => onTap == null
+      ? null
+      : () {
+          TurboHaptics.selection();
+          onTap!();
+        };
+
   @override
   Widget build(BuildContext context) {
     final t = context.turbo;
@@ -35,7 +44,7 @@ class TurboChip extends StatelessWidget {
       selected: selected,
       label: label,
       excludeSemantics: true,
-      onTap: onTap,
+      onTap: _tap,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: height < TurboSizes.minTap ? TurboSizes.minTap : height),
         child: Center(
@@ -46,7 +55,7 @@ class TurboChip extends StatelessWidget {
             shape: StadiumBorder(side: outline ? BorderSide(color: c.accentText) : BorderSide.none),
             child: InkWell(
               customBorder: const StadiumBorder(),
-              onTap: onTap,
+              onTap: _tap,
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: height),
                 child: Padding(
@@ -76,6 +85,12 @@ class TurboSegmented extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
+  /// The tick only plays when the choice really changes, not when the open tab is tapped again.
+  void _select(int i) {
+    if (i != selectedIndex) TurboHaptics.selection();
+    onSelected(i);
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.turbo;
@@ -92,10 +107,10 @@ class TurboSegmented extends StatelessWidget {
                 selected: i == selectedIndex,
                 label: labels[i],
                 excludeSemantics: true,
-                onTap: () => onSelected(i),
+                onTap: () => _select(i),
                 child: InkWell(
                   customBorder: const StadiumBorder(),
-                  onTap: () => onSelected(i),
+                  onTap: () => _select(i),
                   child: Container(
                     constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
                     alignment: Alignment.center,
