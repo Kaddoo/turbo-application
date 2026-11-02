@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../haptics/turbo_haptics.dart';
 import '../motion/turbo_motion.dart';
 import '../theme/spacing.dart';
 import '../theme/turbo_theme.dart';
@@ -20,6 +21,12 @@ class SlideToContinue extends StatefulWidget {
 class _SlideToContinueState extends State<SlideToContinue> {
   double _drag = 0;
 
+  /// One medium tap each time the slide goes through, whether it was dragged or tapped.
+  void _continue() {
+    TurboHaptics.confirm();
+    widget.onContinue();
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.turbo;
@@ -30,17 +37,17 @@ class _SlideToContinueState extends State<SlideToContinue> {
       button: true,
       label: widget.label,
       excludeSemantics: true,
-      onTap: widget.onContinue,
+      onTap: _continue,
       child: LayoutBuilder(
         builder: (context, box) {
           final max = (box.maxWidth - knob - TurboSpacing.sm * 2).clamp(0.0, double.infinity);
           return GestureDetector(
-            onTap: widget.onContinue,
+            onTap: _continue,
             onHorizontalDragUpdate: (d) => setState(() => _drag = (_drag + d.delta.dx).clamp(0.0, max)),
             onHorizontalDragEnd: (_) {
               final done = max > 0 && _drag > max * 0.6;
               setState(() => _drag = 0);
-              if (done) widget.onContinue();
+              if (done) _continue();
             },
             child: Container(
               height: track,

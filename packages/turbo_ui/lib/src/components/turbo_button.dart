@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../haptics/turbo_haptics.dart';
 import '../l10n/turbo_ui_localizations.dart';
 import '../theme/spacing.dart';
 import '../theme/turbo_theme.dart';
@@ -20,10 +21,14 @@ class TurboButton extends StatelessWidget {
     this.driver = false,
     this.icon,
     this.expand = true,
+    this.haptic,
   });
 
   final String label;
   final VoidCallback? onPressed;
+
+  /// Plays when the button is pressed. Most buttons stay silent; give it to the one that commits (Book).
+  final TurboHapticKind? haptic;
   final TurboButtonVariant variant;
   final bool loading;
 
@@ -97,7 +102,12 @@ class TurboButton extends StatelessWidget {
       hint: loading ? TurboUiLocalizations.of(context).loading : null,
       child: FilledButton(
         style: style,
-        onPressed: loading ? null : onPressed,
+        onPressed: loading || onPressed == null
+            ? null
+            : () {
+                if (haptic != null) TurboHaptics.play(haptic!);
+                onPressed!();
+              },
         child: loading ? Semantics(label: label, child: content) : content,
       ),
     );
