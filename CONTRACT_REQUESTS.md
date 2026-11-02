@@ -44,3 +44,9 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 
 **What:** "Too many tries. Call your supervisor." (PIN locked), the Safety screens and the help screens need real phone numbers. The apps show 112 only.
 **Suggested:** `supervisorPhone` and `campusSecurityPhone` in `GET /app-config` (see CR-3).
+
+### CR-7. The ride has no route line, so the in-app trip map cannot draw the road
+
+**What:** The trip map (student and driver) should show the road from pickup to drop-off and the car moving along it, like other ride apps. Markers and the live driver position already work (`GET /rides/{id}` driver position). The contract gives only `routeDistanceMeters` and `routeDurationSeconds`, no geometry.
+**Suggested:** add `routePolyline` (Google encoded polyline string) to `Ride` and to the quote, computed by the server from the Routes call it already makes, so no Maps key with Directions access ships in the apps. Optional later: `driverToPickupPolyline` for the approach leg.
+**Until then:** the apps draw markers and the driver position only.
