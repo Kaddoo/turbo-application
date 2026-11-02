@@ -2,6 +2,16 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: top-up waiting, success and pending screens (branch `student-topup-states`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/wallet/topup_waiting_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/wallet_test.dart`.
+- **What changed:**
+  - **Waiting:** the 3D phone on top, the countdown as "01:58" in the mono face with "left to approve GH₵50.00", numbered steps on lime circles, and a line that the app never asks for the PIN. Check status and Leave this screen are now pinned at the bottom, so Check status is always in reach (it was below the fold on a short phone).
+  - **Success:** "Top-up complete", "GH₵50.00 was added to your wallet.", and tiles for the new balance (lime) and the provider's reference.
+  - **Still waiting:** a "Pending · GH₵50.00" chip under the words. The failed screen is unchanged.
+- **Deviations:** Done stays the only button on success (the design also has Wallet and Book a ride) because Done returns the student to where the top-up began, such as the quote, and a test relies on that. The design's "Cancel this top-up" is not built: there is no endpoint to cancel one, so the button stays "Leave this screen". The network name (MTN MoMo) is not shown: CR-11.
+- **Checks:** analyze clean, 180 student tests pass. Not run on a phone.
+
 ## 2026-11-02, Claude, code: SOS countdown ring and 3D result (branch `student-sos-ring`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/safety/sos.dart`, `test/ride_test.dart`.

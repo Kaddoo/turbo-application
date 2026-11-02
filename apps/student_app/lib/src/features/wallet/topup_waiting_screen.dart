@@ -78,6 +78,7 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
       required String title,
       required String body,
       required List<Widget> actions,
+      Widget? extra,
     }) => ListView(
       padding: const EdgeInsets.all(TurboSpacing.xl),
       children: [
@@ -94,7 +95,8 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
           ),
         ),
         const SizedBox(height: TurboSpacing.md),
-        Text(body, style: text.bodyLarge, textAlign: TextAlign.center),
+        if (body.isNotEmpty) Text(body, style: text.bodyLarge, textAlign: TextAlign.center),
+        if (extra != null) ...[const SizedBox(height: TurboSpacing.lg), extra],
         const SizedBox(height: TurboSpacing.xxl),
         ...actions,
       ],
@@ -109,9 +111,31 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
           child: result(
             art: TurboArt.checkMarkButton,
             title: l10n.topupSuccessTitle,
-            body: wallet == null
-                ? ''
-                : l10n.topupSuccessBody(formatPesewas(wallet.availablePesewas)),
+            body: l10n.topupSuccessAdded(formatPesewas(flow.topup.amountPesewas)),
+            extra: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (wallet != null) ...[
+                    Expanded(
+                      child: BentoTile(
+                        label: l10n.topupTileBalance,
+                        title: formatPesewas(wallet.availablePesewas),
+                        tone: BentoTone.lime,
+                        money: true,
+                      ),
+                    ),
+                    const SizedBox(width: TurboSpacing.md),
+                  ],
+                  Expanded(
+                    child: BentoTile(
+                      label: l10n.topupTileReference,
+                      title: flow.topup.reference,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             actions: [
               TurboButton(label: l10n.topupDone, onPressed: _leave),
             ],
@@ -144,6 +168,13 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
             art: TurboArt.hourglassNotDone,
             title: l10n.topupSlowTitle,
             body: l10n.topupSlowBody,
+            extra: Center(
+              child: StatusChip(
+                label: l10n.topupPendingChip(formatPesewas(flow.topup.amountPesewas)),
+                icon: Icons.schedule,
+                tone: StatusTone.warning,
+              ),
+            ),
             actions: [
               TurboButton(
                 label: l10n.topupCheckStatus,
@@ -160,28 +191,37 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
               (TopupController.watchFor - _now.difference(flow.startedAt))
                   .inSeconds
                   .clamp(0, 999);
-          body = ListView(
+          // The two buttons stay pinned at the bottom, so Check status is always in reach.
+          body = Column(
+            children: [
+              Expanded(
+                child: ListView(
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
-              const SizedBox(height: TurboSpacing.xl),
+              const Center(child: HeroIcon(art: TurboArt.mobilePhone)),
+              const SizedBox(height: TurboSpacing.lg),
               Semantics(
                 header: true,
                 liveRegion: true,
-                child: Text(l10n.topupWaitTitle, style: text.headlineMedium),
+                child: Text(l10n.topupWaitTitle, style: text.headlineMedium, textAlign: TextAlign.center),
               ),
               const SizedBox(height: TurboSpacing.md),
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.end,
-                spacing: TurboSpacing.sm,
-                children: [
-                  Text(
-                    '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
-                    style: text.headlineMedium?.copyWith(
-                      fontSize: text.headlineMedium!.fontSize! * 1.5,
+              // The time left, big and in the mono face, with what is being approved.
+              Center(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  spacing: TurboSpacing.sm,
+                  children: [
+                    Text(
+                      '${(left ~/ 60).toString().padLeft(2, '0')}:${(left % 60).toString().padLeft(2, '0')}',
+                      style: t.styles.monoCountdown.copyWith(color: t.colors.accentText),
                     ),
-                  ),
-                  Text(l10n.topupWaitLeft, style: text.bodyMedium),
-                ],
+                    Text(
+                      l10n.topupWaitLeftAmount(formatPesewas(flow.topup.amountPesewas)),
+                      style: text.bodyMedium,
+                    ),
+                  ],
+                ),
               ),
               if (flow.topup.checkout?.message != null) ...[
                 const SizedBox(height: TurboSpacing.md),
@@ -205,8 +245,8 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
                           children: [
                             CircleAvatar(
                               radius: TurboSpacing.md,
-                              backgroundColor: t.colors.background,
-                              child: Text('${i + 1}', style: text.labelMedium),
+                              backgroundColor: t.colors.accent,
+                              child: Text('${i + 1}', style: text.labelMedium?.copyWith(color: t.colors.onAccent)),
                             ),
                             const SizedBox(width: TurboSpacing.md),
                             Expanded(child: Text(step, style: text.bodyLarge)),
@@ -224,17 +264,29 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
               ),
               const SizedBox(height: TurboSpacing.sm),
               Text(l10n.topupWaitSeconds(left), style: text.bodySmall),
-              const SizedBox(height: TurboSpacing.xl),
-              TurboButton(
-                label: l10n.topupCheckStatus,
-                loading: flow.checking,
-                onPressed: () => ref.read(topupProvider.notifier).check(),
-              ),
               const SizedBox(height: TurboSpacing.md),
-              TurboButton(
-                label: l10n.topupLeave,
-                variant: TurboButtonVariant.secondary,
-                onPressed: _leave,
+              Text(l10n.topupNeverPin(t.brand.appName), style: text.bodySmall, textAlign: TextAlign.center),
+            ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(TurboSpacing.lg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TurboButton(
+                      label: l10n.topupCheckStatus,
+                      loading: flow.checking,
+                      onPressed: () => ref.read(topupProvider.notifier).check(),
+                    ),
+                    const SizedBox(height: TurboSpacing.md),
+                    TurboButton(
+                      label: l10n.topupLeave,
+                      variant: TurboButtonVariant.secondary,
+                      onPressed: _leave,
+                    ),
+                  ],
+                ),
               ),
             ],
           );

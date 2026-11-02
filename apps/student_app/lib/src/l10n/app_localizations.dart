@@ -1477,8 +1477,44 @@ abstract class AppLocalizations {
   /// No description provided for @topupSuccessTitle.
   ///
   /// In en, this message translates to:
-  /// **'Money added'**
+  /// **'Top-up complete'**
   String get topupSuccessTitle;
+
+  /// No description provided for @topupSuccessAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} was added to your wallet.'**
+  String topupSuccessAdded(String amount);
+
+  /// No description provided for @topupTileBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'New balance'**
+  String get topupTileBalance;
+
+  /// No description provided for @topupTileReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get topupTileReference;
+
+  /// No description provided for @topupPendingChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending · {amount}'**
+  String topupPendingChip(String amount);
+
+  /// No description provided for @topupWaitLeftAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'left to approve {amount}'**
+  String topupWaitLeftAmount(String amount);
+
+  /// No description provided for @topupNeverPin.
+  ///
+  /// In en, this message translates to:
+  /// **'{appName} never asks for your PIN. Not by call, text or WhatsApp.'**
+  String topupNeverPin(String appName);
 
   /// No description provided for @topupSuccessBody.
   ///

@@ -803,7 +803,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get topupLeave => 'Leave this screen';
 
   @override
-  String get topupSuccessTitle => 'Money added';
+  String get topupSuccessTitle => 'Top-up complete';
+
+  @override
+  String topupSuccessAdded(String amount) {
+    return '$amount was added to your wallet.';
+  }
+
+  @override
+  String get topupTileBalance => 'New balance';
+
+  @override
+  String get topupTileReference => 'Reference';
+
+  @override
+  String topupPendingChip(String amount) {
+    return 'Pending · $amount';
+  }
+
+  @override
+  String topupWaitLeftAmount(String amount) {
+    return 'left to approve $amount';
+  }
+
+  @override
+  String topupNeverPin(String appName) {
+    return '$appName never asks for your PIN. Not by call, text or WhatsApp.';
+  }
 
   @override
   String topupSuccessBody(Object amount) {

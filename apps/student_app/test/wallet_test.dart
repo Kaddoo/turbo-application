@@ -240,8 +240,12 @@ void main() {
         ..on('GET /wallet', body: wallet(available: 8000));
       await tester.tap(find.text('Check status'));
       await tester.pumpAndSettle();
-      expect(find.text('Money added'), findsOneWidget);
-      expect(find.text('Your wallet now has GH₵80.00 available.'), findsOneWidget);
+      expect(find.text('Top-up complete'), findsOneWidget);
+      expect(find.text('GH₵20.00 was added to your wallet.'), findsOneWidget);
+      // The new balance and the provider's reference sit in tiles.
+      expect(find.text('New balance'), findsOneWidget);
+      expect(find.text('GH₵80.00'), findsOneWidget);
+      expect(find.text('ref-1'), findsOneWidget);
       await tester.tap(find.text('Done'));
       await tester.pumpAndSettle();
       expect(find.text('Available'), findsOneWidget);
