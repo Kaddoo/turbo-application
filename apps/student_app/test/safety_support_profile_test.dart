@@ -221,7 +221,8 @@ void main() {
 
   group('profile', () {
     Future<void> openProfile(WidgetTester tester, FakeServer server) async {
-      await bootHome(tester, server);
+      // Tall, so every section is on screen without scrolling.
+      await bootHome(tester, server, size: const Size(390, 2000));
       await tester.tap(find.bySemanticsLabel('Profile'));
       await tester.pumpAndSettle();
     }
@@ -233,6 +234,47 @@ void main() {
           'lastUsedAt': '2026-10-31T09:00:00Z',
           'current': current,
         };
+
+    testWidgets('notification choices show the defaults, save both, and put the old one back if saving fails', (tester) async {
+      final server = base()
+        ..on('GET /me/sessions', body: {'items': []})
+        ..on('GET /me/notification-settings', body: {'newsAndOffers': false, 'tips': true});
+      await openProfile(tester, server);
+      expect(find.text('News and offers'), findsOneWidget);
+      expect(find.text('Messages about your rides and your wallet are always sent.'), findsOneWidget);
+      bool on(String title) => tester
+          .widget<Switch>(find.descendant(of: find.ancestor(of: find.text(title), matching: find.byType(InkWell)).first, matching: find.byType(Switch)))
+          .value;
+      expect(on('News and offers'), isFalse);
+      expect(on('Tips'), isTrue);
+
+      server.on('PUT /me/notification-settings', body: {'newsAndOffers': true, 'tips': true});
+      await tester.tap(find.text('News and offers'));
+      await tester.pumpAndSettle();
+      final put = bodyOf(server.calls('PUT /me/notification-settings').single) as Map;
+      expect(put, {'newsAndOffers': true, 'tips': true}, reason: 'the PUT replaces both choices');
+      expect(on('News and offers'), isTrue);
+
+      server.on('PUT /me/notification-settings', status: 503, body: problem('internal', 503));
+      await tester.tap(find.text('Tips'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      expect(on('Tips'), isTrue, reason: 'a failed save puts the old choice back');
+      expect(find.text("We couldn't save that. Try again."), findsOneWidget);
+    });
+
+    testWidgets('the notification rows lay out in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = base()
+        ..on('GET /me/sessions', body: {'items': []})
+        ..on('GET /me/notification-settings', body: {'newsAndOffers': false, 'tips': true});
+      await openProfile(tester, server);
+      expect(find.text('News and offers'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
 
     testWidgets('shows who you are, saved places, devices and version', (tester) async {
       final server = base()..on('GET /me/sessions', body: {'items': [session(1, current: true), session(2)]});

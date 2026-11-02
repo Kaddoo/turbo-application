@@ -2662,6 +2662,48 @@ abstract class AppLocalizations {
   /// **'Enter a valid email address.'**
   String get profileEmailInvalid;
 
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profileNotifyNews.
+  ///
+  /// In en, this message translates to:
+  /// **'News and offers'**
+  String get profileNotifyNews;
+
+  /// No description provided for @profileNotifyNewsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates about new things from {appName}.'**
+  String profileNotifyNewsBody(String appName);
+
+  /// No description provided for @profileNotifyTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips'**
+  String get profileNotifyTips;
+
+  /// No description provided for @profileNotifyTipsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Short tips for getting around with {appName}.'**
+  String profileNotifyTipsBody(String appName);
+
+  /// No description provided for @profileNotifyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages about your rides and your wallet are always sent.'**
+  String get profileNotifyNote;
+
+  /// No description provided for @profileNotifyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t save that. Try again.'**
+  String get profileNotifyFailed;
+
   /// No description provided for @profileSavedPlaces.
   ///
   /// In en, this message translates to:

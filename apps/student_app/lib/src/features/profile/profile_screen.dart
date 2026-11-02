@@ -22,6 +22,37 @@ final sessionsProvider = FutureProvider.autoDispose<List<Session>>((ref) async {
   }
 });
 
+/// The two optional notification choices. Ride and wallet messages are always sent.
+class NotificationSettingsController extends AsyncNotifier<NotificationSettings> {
+  @override
+  Future<NotificationSettings> build() async {
+    try {
+      return (await ref.read(clientProvider).api.getStudentApi().getNotificationSettings()).data!;
+    } catch (e) {
+      throw problemOf(e);
+    }
+  }
+
+  /// Shows the new choice at once, then saves both; puts the old one back and returns false if saving fails.
+  Future<bool> change({bool? newsAndOffers, bool? tips}) async {
+    final before = state.value;
+    if (before == null) return false;
+    final next = NotificationSettings(newsAndOffers: newsAndOffers ?? before.newsAndOffers, tips: tips ?? before.tips);
+    state = AsyncData(next);
+    try {
+      final saved = (await ref.read(clientProvider).api.getStudentApi().updateNotificationSettings(notificationSettings: next)).data!;
+      state = AsyncData(saved);
+      return true;
+    } catch (_) {
+      state = AsyncData(before);
+      return false;
+    }
+  }
+}
+
+final notificationSettingsProvider =
+    AsyncNotifierProvider.autoDispose<NotificationSettingsController, NotificationSettings>(NotificationSettingsController.new);
+
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -37,6 +68,7 @@ class ProfileScreen extends ConsumerWidget {
     };
     final places = ref.watch(savedPlacesProvider);
     final sessions = ref.watch(sessionsProvider);
+    final notify = ref.watch(notificationSettingsProvider);
     final legal = ref.watch(legalProvider).value;
     final version = ref.watch(appVersionProvider).value;
 
@@ -102,6 +134,47 @@ class ProfileScreen extends ConsumerWidget {
                   TurboListRow(title: l10n.supportTitle, leading: const Icon(Icons.support_agent), onTap: () => context.push('/support')),
                 ],
               ),
+            ),
+            const SizedBox(height: TurboSpacing.xl),
+            Semantics(header: true, child: Text(l10n.profileNotifications, style: text.titleSmall)),
+            const SizedBox(height: TurboSpacing.sm),
+            notify.when(
+              loading: () => const LoadingState(rows: 1),
+              error: (_, _) => ErrorState(message: l10n.profileLoadFailed, onRetry: () => ref.invalidate(notificationSettingsProvider)),
+              data: (n) {
+                Future<void> change({bool? newsAndOffers, bool? tips}) async {
+                  final ok = await ref.read(notificationSettingsProvider.notifier).change(newsAndOffers: newsAndOffers, tips: tips);
+                  if (!ok && context.mounted) showTurboToast(context, l10n.profileNotifyFailed);
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TurboCard(
+                      padding: const EdgeInsets.symmetric(horizontal: TurboSpacing.lg),
+                      child: Column(
+                        children: [
+                          _ToggleRow(
+                            title: l10n.profileNotifyNews,
+                            body: l10n.profileNotifyNewsBody(t.brand.appName),
+                            value: n.newsAndOffers,
+                            onChanged: (v) => change(newsAndOffers: v),
+                          ),
+                          const Divider(),
+                          _ToggleRow(
+                            title: l10n.profileNotifyTips,
+                            body: l10n.profileNotifyTipsBody(t.brand.appName),
+                            value: n.tips,
+                            onChanged: (v) => change(tips: v),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: TurboSpacing.sm),
+                    Text(l10n.profileNotifyNote, style: text.bodySmall),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: TurboSpacing.xl),
             Row(
@@ -287,6 +360,52 @@ class _EmailSheetState extends ConsumerState<_EmailSheet> {
         const SizedBox(height: TurboSpacing.lg),
         TurboButton(label: l10n.profileEmailSave, loading: _busy, onPressed: _save),
       ],
+    );
+  }
+}
+
+/// A row with a switch. The whole row is the control, named and stated for screen readers as one switch.
+class _ToggleRow extends StatelessWidget {
+  const _ToggleRow({required this.title, required this.body, required this.value, required this.onChanged});
+
+  final String title;
+  final String body;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Semantics(
+      container: true,
+      toggled: value,
+      label: '$title. $body',
+      excludeSemantics: true,
+      onTap: () => onChanged(!value),
+      child: InkWell(
+        onTap: () => onChanged(!value),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: TurboSpacing.md),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: text.bodyLarge),
+                      Text(body, style: text.bodySmall),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: TurboSpacing.md),
+                IgnorePointer(child: Switch(value: value, onChanged: onChanged)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

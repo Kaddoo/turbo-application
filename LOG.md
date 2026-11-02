@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: notification toggles on Profile (branch `student-notification-toggles`, from `main` with the announcement banner)
+
+- **Files:** `apps/student_app/lib/src/features/profile/profile_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/safety_support_profile_test.dart`.
+- **What changed:** Profile has a Notifications section with two switches, "News and offers" (off until chosen) and "Tips" (on until chosen), read from `GET /me/notification-settings`. A change shows at once and is saved with `PUT`, which replaces both choices, so both values are sent. If saving fails the switch goes back and a toast says so. A line under them says ride and wallet messages are always sent. Each row is one control for screen readers (name, explanation and state).
+- **Not done:** nothing sends news or tips messages yet (the contract says so); the driver app has no such toggles.
+- **Checks:** analyze clean, 194 student tests pass (defaults, the PUT body, revert on failure, dark mode at 200% text; the existing profile tests now run on a tall screen because the new section pushed Saved places down). Not run on a phone, and not tried against the live API.
+
 ## 2026-11-02, Claude, code: Home announcement banner (branch `student-announcement`, from `main` with place search)
 
 - **Files:** `apps/student_app/lib/src/core/gate.dart`, `token_store.dart`, `features/home/home_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/home_flow_test.dart`, `test/support/fake_server.dart`, `test/support/home_harness.dart`; `packages/turbo_ui/lib/src/components/turbo_banner.dart`.

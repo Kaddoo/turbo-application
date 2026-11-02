@@ -1483,6 +1483,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileEmailInvalid => 'Enter a valid email address.';
 
   @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profileNotifyNews => 'News and offers';
+
+  @override
+  String profileNotifyNewsBody(String appName) {
+    return 'Updates about new things from $appName.';
+  }
+
+  @override
+  String get profileNotifyTips => 'Tips';
+
+  @override
+  String profileNotifyTipsBody(String appName) {
+    return 'Short tips for getting around with $appName.';
+  }
+
+  @override
+  String get profileNotifyNote =>
+      'Messages about your rides and your wallet are always sent.';
+
+  @override
+  String get profileNotifyFailed => 'We couldn\'t save that. Try again.';
+
+  @override
   String get profileSavedPlaces => 'Saved places';
 
   @override
