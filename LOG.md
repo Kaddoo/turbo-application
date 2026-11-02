@@ -2,6 +2,20 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: driver app fixes from the build 7 screenshots
+
+**Branch:** `driver-screenshot-fixes`, from main. **Files:** `apps/driver_app` `home/home_screen.dart`, `home/readiness_board.dart`, `me/me_screen.dart`, `ride/ride_screen.dart`, `l10n/app_en.arb` (+ generated), tests `driver_home_test.dart`, `driver_gaps_test.dart`.
+
+- **Vehicle card:** name and plate on separate lines; the car picture is no longer drawn (it was a silver saloon for every driver). `VehicleImage` stays in `turbo_ui` for when there is a matching picture.
+- **Documents tile with no data:** titled "Checked on duty".
+- **Readiness:** Notifications and Internet are a tick line when fine and tiles only when something is wrong (decision: `design/new` wins). The tile list ends in a soft fade above the Go on duty button so it reads as scrolling, and the gap under the vehicle card is tighter.
+- **Offer, Student tile:** an initials avatar instead of the silhouette picture (no student photo in the contract).
+- **Me:** Vehicle, Shifts, Attendance, Salary and Help use kit pictures; the plate is title-sized, not 26 pt mono.
+- **Floating speech-bubble button:** nothing in `apps/*/lib` or `turbo_ui` draws one (only list art and a status-chip icon), so it is almost certainly the TestFlight or system overlay. Not confirmed on a device.
+
+**Checks:** `flutter analyze` clean, 89 driver tests pass. Not run on a phone; spacing and the bottom fade are unchecked by eye.
+**Not done:** the rest of the driver comparison against `design/new` (map screens, dark map style, other screens); more screenshots are still to come.
+
 ## 2026-11-02 · landing page: responsive and Core Web Vitals fixes
 
 - **Branch:** main. Approved items R1 (option B), R2–R13 from the responsive audit.

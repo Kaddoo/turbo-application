@@ -90,7 +90,7 @@
   "suspendedTitle": "Your account is suspended",
   "suspendedBody": "Contact your supervisor to find out why.",
   "homeGreeting": "Hello, {name}",
-  "homeVehicle": "{colour} {make} {model} · {plate}",
+  "homeVehicle": "{colour} {make} {model}",
   "homeNoVehicle": "No vehicle assigned yet. Contact your supervisor.",
   "homeOffDuty": "Off duty",
   "homeGoOnDuty": "Go on duty",
@@ -108,7 +108,7 @@
   "readinessBattery": "Battery above 20% or charging",
   "readinessInternet": "Internet connected",
   "readinessNotifications": "Notifications on",
-  "readinessDocuments": "Documents checked when you go on duty",
+  "readinessDocuments": "Checked on duty",
   "readinessReadyToGo": "Ready to go",
   "readinessTileLocation": "Location",
   "readinessLocationAlways": "Always",
@@ -199,9 +199,6 @@
         "type": "String"
       },
       "model": {
-        "type": "String"
-      },
-      "plate": {
         "type": "String"
       }
     }

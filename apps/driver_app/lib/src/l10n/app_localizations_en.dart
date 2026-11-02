@@ -281,8 +281,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String homeVehicle(String colour, String make, String model, String plate) {
-    return '$colour $make $model · $plate';
+  String homeVehicle(String colour, String make, String model) {
+    return '$colour $make $model';
   }
 
   @override
@@ -338,7 +338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readinessNotifications => 'Notifications on';
 
   @override
-  String get readinessDocuments => 'Documents checked when you go on duty';
+  String get readinessDocuments => 'Checked on duty';
 
   @override
   String get readinessReadyToGo => 'Ready to go';
