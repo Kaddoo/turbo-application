@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: student campus security call tile (branch `student-security-call`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/core/gate.dart`, `features/safety/safety_screen.dart`, `features/safety/sos.dart`, `lib/l10n/app_en.arb` (+ generated), `test/safety_support_profile_test.dart`, `test/support/fake_server.dart`.
+- **What changed:** contract 0.5.0 adds nullable `campusSecurityPhone` to `AppConfig`. The gate check now keeps it; the Safety screen shows a "Campus security" tile (3D telephone, the number) next to an "Emergency 112" tile when it is set, and 112 alone as before when it is not. The SOS failure sheet gains a "Call campus security" button.
+- **Notes:** the number comes from the same app-config check as the gate (on start and resume); if that check cannot reach the server the app shows 112 only.
+- **Checks:** analyze clean, 167 student tests pass (the new tile in dark mode at 200% text, and 112 only without a number). Not run on a phone.
+
 ## 2026-11-02, Claude, code: contract 0.5.0 (CR-5, CR-6, CR-10)
 
 **Branch:** `contract-0-5-0`, from main. Done on Kevin's instruction (the contract is normally planning's).
