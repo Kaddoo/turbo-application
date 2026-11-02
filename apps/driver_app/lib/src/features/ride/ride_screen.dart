@@ -255,6 +255,7 @@ class _OfferState extends ConsumerState<_Offer> {
                       if (i > 0) const SizedBox(width: TurboSpacing.md),
                       Expanded(
                         child: BentoTile(
+                          stretch: true,
                           label: '',
                           title: label,
                           trailing: TurboArtImage(art),
@@ -296,6 +297,7 @@ class _OfferState extends ConsumerState<_Offer> {
       bool money = false,
       Widget? picture,
     }) => BentoTile(
+      stretch: true,
       label: label,
       title: title,
       tone: tone,

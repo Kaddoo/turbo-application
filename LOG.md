@@ -10,6 +10,7 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 - **Me:** the signed-in device row uses the 3D phone. Terms and Privacy keep the small open-link arrow, and the bottom bar keeps outline icons, as in the design.
 - **Fix:** the "Cancelled by Turbo" string in the trip timeline broke the no-product-name test (the scan reads the generated l10n); now "Cancelled by the system" and "Cancelled by staff". `main` carries the old wording until this branch is merged.
 - **Checks:** analyze clean; driver 89, turbo_ui 96 pass. A scratch render showed only blocks (test font, no pictures), so the alignment is NOT confirmed by eye; check it in the next TestFlight build.
+- **Same alignment on the other tile rows:** the Help topics, the decline reasons, the offer tiles and the trip detail tiles also use `stretch`, so their pictures sit at the bottom and line up across each row (Kevin saw the same uneven pictures on Help). Not yet seen on a phone; goes in the next build.
 - **The grey speech-bubble button** in the screenshots is not drawn by the apps (nothing in `apps/*/lib` or `turbo_ui` does); it is almost certainly the TestFlight feedback button.
 
 ## 2026-11-02, Claude, code: driver app fixes from the build 7 screenshots

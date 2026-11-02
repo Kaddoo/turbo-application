@@ -90,6 +90,7 @@ class _Detail extends StatelessWidget {
             children: [
               Expanded(
                 child: BentoTile(
+                  stretch: true,
                   label: l10n.tripDetailDistance,
                   title: l10n.assignKm(km),
                   trailing: const TurboArtImage(TurboArt.motorway),
@@ -98,6 +99,7 @@ class _Detail extends StatelessWidget {
               const SizedBox(width: TurboSpacing.md),
               Expanded(
                 child: BentoTile(
+                  stretch: true,
                   label: l10n.tripDetailTime,
                   title: minutes == null ? '–' : l10n.tripDetailMinutes(minutes),
                   trailing: const TurboArtImage(TurboArt.alarmClock),
