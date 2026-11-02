@@ -30,11 +30,11 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Branches (one per fix, each from `main`, not merged):** `student-terms-art`, `student-welcome-hero`, `student-phone-prefix`, `student-ride-complete`, `student-wallet-tiles`. `student-welcome-hero` and `student-phone-prefix` touch `packages/turbo_ui` (a `width` on `VehicleImage`; a `hint` on `TurboTextField`, with the two form goldens updated). Analyze is clean and tests pass in turbo_ui, the student app and the driver app on each.
 
-**Questions for Kevin (not changed):**
-1. Quote: the design has the map with the route behind a sheet; ours is a plain page. Rebuild it as map plus sheet?
-2. Finding a driver: switch the rows to the design's two tiles?
-3. Top-up: add the network chip next to the number and label the button "Pay GH₵X"?
-4. The welcome monogram reads "To" (first letters of the brand name); the design shows "Tb". Which is right?
+**Kevin's answers, done (each its own branch off `main`, not merged):**
+- Quote as map plus sheet: `student-quote-map`. The route on the map, then "Fixed fare" with an "It won't change" chip, the pickup and drop-off, and Wallet and After-this-ride tiles (Short-by tile with the 3D warning when the wallet is short). The shortfall banner became the tile; the pinned button is unchanged.
+- Finding a driver as tiles: `student-finding-tiles`. "Fare is held" on a lime tile with the 3D lock, "To <drop-off>" with the pushpin, and a "Pickup:" line.
+- Top-up: `student-topup-pay`. The number is a "Mobile money number" tile. The "Pay GH₵X" button already existed once an amount is chosen. **The network chip and the "Pay with" choice are not built:** the contract has no network or number on a top-up, so they would do nothing; that is CR-11. Also fixed: the amount tiles clipped their text at 200%.
+- The welcome monogram stays "To", as Kevin said.
 
 **Not done:** the code screen, Profile, Receipt and Share were not judged; nothing was run on a phone; light mode was rendered but only dark was compared closely.
 
