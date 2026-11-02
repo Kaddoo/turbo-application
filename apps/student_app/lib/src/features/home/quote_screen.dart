@@ -393,6 +393,7 @@ class _QuoteScreenState extends ConsumerState<QuoteScreen> {
                         q.wallet.sufficient
                             ? TurboButton(
                                 label: l10n.quoteBook(formatPesewas(fare)),
+                                haptic: TurboHapticKind.confirm,
                                 loading: _booking,
                                 onPressed: () => _book(q),
                               )

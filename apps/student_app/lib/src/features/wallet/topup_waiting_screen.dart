@@ -103,15 +103,19 @@ class _TopupWaitingScreenState extends ConsumerState<TopupWaitingScreen>
     final Widget body;
     switch (flow.topup.status) {
       case TopupStatusEnum.succeeded:
-        body = result(
-          art: TurboArt.checkMarkButton,
-          title: l10n.topupSuccessTitle,
-          body: wallet == null
-              ? ''
-              : l10n.topupSuccessBody(formatPesewas(wallet.availablePesewas)),
-          actions: [
-            TurboButton(label: l10n.topupDone, onPressed: _leave),
-          ],
+        // One light tap when the money lands.
+        body = HapticOnShow(
+          kind: TurboHapticKind.success,
+          child: result(
+            art: TurboArt.checkMarkButton,
+            title: l10n.topupSuccessTitle,
+            body: wallet == null
+                ? ''
+                : l10n.topupSuccessBody(formatPesewas(wallet.availablePesewas)),
+            actions: [
+              TurboButton(label: l10n.topupDone, onPressed: _leave),
+            ],
+          ),
         );
       case TopupStatusEnum.failed:
         body = result(
