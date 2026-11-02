@@ -602,27 +602,37 @@ class _DoneState extends ConsumerState<_Done> {
           child: ListView(
             padding: const EdgeInsets.all(TurboSpacing.xl),
             children: [
-              const Center(child: BadgeIcon(icon: Icons.check)),
+              const Center(child: HeroIcon(art: TurboArt.checkMarkButton)),
               const SizedBox(height: TurboSpacing.lg),
               Semantics(header: true, child: Text(l10n.rideDoneTitle, style: text.headlineMedium, textAlign: TextAlign.center)),
               const SizedBox(height: TurboSpacing.lg),
-              TurboCard(
-                child: Column(
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(children: [
-                      Expanded(child: Text(l10n.rideFareCharged, style: text.bodyMedium)),
-                      MoneyText(charged, style: text.titleLarge),
-                    ]),
-                    const SizedBox(height: TurboSpacing.md),
-                    Row(children: [
-                      Expanded(child: Text(l10n.rideDistanceTime, style: text.bodyMedium)),
-                      Text(l10n.rideDistanceTimeValue(km, minutes), style: text.bodyLarge),
-                    ]),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () => context.push('/ride/${ride.id}/receipt'),
-                        child: Text(l10n.rideViewReceipt, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
+                    Expanded(
+                      child: BentoTile(
+                        label: l10n.rideFareCharged,
+                        title: formatPesewas(charged),
+                        tone: BentoTone.lime,
+                        money: true,
+                      ),
+                    ),
+                    const SizedBox(width: TurboSpacing.md),
+                    Expanded(
+                      child: BentoTile(
+                        label: l10n.rideDistanceTime,
+                        title: l10n.rideDistanceTimeValue(km, minutes),
+                        footer: GestureDetector(
+                          onTap: () => context.push('/ride/${ride.id}/receipt'),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: TurboSizes.minTap),
+                            child: Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Text(l10n.rideViewReceipt, style: text.bodyMedium?.copyWith(color: t.colors.accentText)),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
