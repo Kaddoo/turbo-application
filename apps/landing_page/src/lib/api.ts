@@ -1,113 +1,97 @@
 /**
- * Read-only access to the Turbo API (no tokens). Every call can fail; callers
- * get `null` and must render a fallback. Requests are memoised so sections
- * that need the same endpoint share one request.
+ * The landing page's only door to the Turbo API: three public reads, no tokens.
+ * Types come from api/contract/openapi.yaml (`npm run gen:api`), calls go
+ * through the generated openapi-fetch client, and every 200 body is checked
+ * against the contract before a component sees it. Components never call
+ * fetch(); they use these resources through `useApi`.
  */
+import createClient from "openapi-fetch";
+import type { components, paths } from "@/api/schema";
+import { appConfigIssues, legalIssues, serviceAreaIssues } from "./guards";
+import { fromResponse, fromThrown, type ApiProblem } from "./problems";
 
-export type FareBand = {
-  /** Upper bound of the band, inclusive, in metres. */
-  maxDistanceMeters: number;
-  /** Price in pesewas (GH₵1 = 100 pesewas). */
-  fareMinor: number;
-};
+type Schemas = components["schemas"];
+export type ServiceArea = Schemas["ServiceArea"];
+export type FareBand = Schemas["FareBand"];
+export type PickupPoint = Schemas["PickupPoint"];
+export type LegalVersions = Schemas["LegalVersions"];
+export type AppConfig = Schemas["AppConfig"];
 
-export type PickupPoint = { id: string; name: string };
+export type ApiResult<T> = { ok: true; data: T; maxAgeMs: number } | { ok: false; problem: ApiProblem };
 
-export type ServiceArea = {
-  fareBands: FareBand[];
-  maxTripDistanceMeters: number | null;
-  pickupPoints: PickupPoint[];
-  operatingHours: string | null;
-};
-
-export type LegalDoc = { url: string | null; version: string | null; updatedAt: string | null };
-export type Legal = { terms: LegalDoc; privacy: LegalDoc };
-
-export type AppConfig = { maintenance: boolean; maintenanceMessage: string | null };
+/** A cacheable read. `key` identifies it in the shared cache. */
+export type Resource<T> = { key: string; load: (signal: AbortSignal) => Promise<ApiResult<T>> };
 
 const BASE = (process.env.PUBLIC_API_BASE_URL || "").replace(/\/$/, "");
+/** Without a base URL the page renders its static fallbacks and makes no calls. */
+export const HAS_API = Boolean(BASE);
 const TIMEOUT_MS = 6000;
-const cache = new Map<string, Promise<unknown | null>>();
+/** Used when the response carries no Cache-Control max-age. */
+const DEFAULT_MAX_AGE_MS = 60_000;
 
-function getJson(path: string): Promise<unknown | null> {
-  if (!BASE || typeof window === "undefined") return Promise.resolve(null);
-  let p = cache.get(path);
-  if (!p) {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-    p = fetch(`${BASE}${path}`, { signal: ctrl.signal, headers: { Accept: "application/json" } })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null)
-      .finally(() => clearTimeout(timer));
-    cache.set(path, p);
+const client = createClient<paths>({
+  baseUrl: BASE,
+  headers: { Accept: "application/json", "X-App-Version": `web/${process.env.PUBLIC_APP_VERSION || "0.0.0"}` },
+});
+
+function maxAge(res: Response): number {
+  const m = /max-age=(\d+)/.exec(res.headers.get("cache-control") ?? "");
+  return m ? Number(m[1]) * 1000 : DEFAULT_MAX_AGE_MS;
+}
+
+type Sent = { data?: unknown; error?: unknown; response: Response };
+
+/** Runs one call with a timeout, the caller's cancel signal and the contract check. */
+async function call<T>(key: string, send: (signal: AbortSignal) => Promise<Sent>, issues: (body: unknown) => string[], signal: AbortSignal): Promise<ApiResult<T>> {
+  if (!HAS_API) return { ok: false, problem: { kind: "not_configured" } };
+  const ctrl = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    ctrl.abort();
+  }, TIMEOUT_MS);
+  const cancel = () => ctrl.abort();
+  if (signal.aborted) ctrl.abort();
+  else signal.addEventListener("abort", cancel, { once: true });
+  try {
+    const { data, error, response } = await send(ctrl.signal);
+    if (!response.ok) return { ok: false, problem: fromResponse(response.status, error, response.headers.get("retry-after")) };
+    const found = issues(data);
+    if (found.length) {
+      // The API answered but not in the documented shape. Report it; do not patch around it.
+      console.error(`[turbo api] GET ${key} does not match api/contract/openapi.yaml: ${found.join(", ")}`);
+      return { ok: false, problem: { kind: "contract_mismatch", status: response.status } };
+    }
+    return { ok: true, data: data as T, maxAgeMs: maxAge(response) };
+  } catch {
+    const online = typeof navigator === "undefined" || navigator.onLine;
+    return { ok: false, problem: fromThrown({ cancelled: signal.aborted, timedOut, online }) };
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", cancel);
   }
-  return p;
 }
 
-const num = (v: unknown): number | null =>
-  typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v.trim() !== "" && Number.isFinite(+v) ? +v : null;
-const str = (v: unknown): string | null => (typeof v === "string" && v.trim() ? v : null);
-const obj = (v: unknown): Record<string, unknown> => (v && typeof v === "object" ? (v as Record<string, unknown>) : {});
+/** GET /service-area: fare bands, pickup points, operating hours. Cached for the API's max-age (5 min). */
+export const serviceArea: Resource<ServiceArea> = {
+  key: "/service-area",
+  load: (signal) => call("/service-area", (s) => client.GET("/service-area", { signal: s }), serviceAreaIssues, signal),
+};
 
-function parseBand(raw: unknown): FareBand | null {
-  const b = obj(raw);
-  const max = num(b.maxDistanceMeters) ?? num(b.upToMeters) ?? num(b.maxMeters);
-  const minor = num(b.fareMinor) ?? num(b.amountMinor) ?? num(b.pesewas);
-  const major = num(b.fare) ?? num(b.price) ?? num(b.amount);
-  const fare = minor ?? (major != null ? Math.round(major * 100) : null);
-  return max != null && fare != null && max > 0 && fare >= 0 ? { maxDistanceMeters: max, fareMinor: fare } : null;
-}
+/** GET /legal: current terms and privacy versions and URLs. */
+export const legal: Resource<LegalVersions> = {
+  key: "/legal",
+  load: (signal) => call("/legal", (s) => client.GET("/legal", { signal: s }), legalIssues, signal),
+};
 
-export async function getServiceArea(): Promise<ServiceArea | null> {
-  const raw = await getJson("/service-area");
-  if (!raw) return null;
-  const d = obj(raw);
-  const fareBands = (Array.isArray(d.fareBands) ? d.fareBands : [])
-    .map(parseBand)
-    .filter((b): b is FareBand => b !== null)
-    .sort((a, b) => a.maxDistanceMeters - b.maxDistanceMeters);
-  const pickupPoints = (Array.isArray(d.pickupPoints) ? d.pickupPoints : [])
-    .map((p, i): PickupPoint | null => {
-      if (typeof p === "string") return { id: String(i), name: p };
-      const o = obj(p);
-      const name = str(o.name) ?? str(o.label);
-      return name ? { id: str(o.id) ?? String(i), name } : null;
-    })
-    .filter((p): p is PickupPoint => p !== null);
-  const hours = d.operatingHours;
-  const operatingHours =
-    str(hours) ??
-    (obj(hours).open && obj(hours).close ? `${obj(hours).open}–${obj(hours).close}` : null);
-  return {
-    fareBands,
-    maxTripDistanceMeters: num(d.maxTripDistanceMeters),
-    pickupPoints,
-    operatingHours,
-  };
-}
+/** GET /app-config: maintenance and paused bookings. Cached for 1 min. */
+export const appConfig: Resource<AppConfig> = {
+  key: "/app-config",
+  load: (signal) => call("/app-config", (s) => client.GET("/app-config", { signal: s }), appConfigIssues, signal),
+};
 
-function parseDoc(raw: unknown): LegalDoc {
-  const o = obj(raw);
-  return { url: str(o.url), version: str(o.version), updatedAt: str(o.updatedAt) ?? str(o.updated_at) };
-}
-
-export async function getLegal(): Promise<Legal | null> {
-  const raw = await getJson("/legal");
-  if (!raw) return null;
-  const d = obj(raw);
-  return { terms: parseDoc(d.terms), privacy: parseDoc(d.privacy) };
-}
-
-export async function getAppConfig(): Promise<AppConfig | null> {
-  const raw = await getJson("/app-config");
-  if (!raw) return null;
-  const d = obj(raw);
-  const m = obj(d.maintenance);
-  const maintenance = d.maintenance === true || m.active === true || m.enabled === true;
-  return { maintenance, maintenanceMessage: str(m.message) ?? str(d.maintenanceMessage) };
-}
-
-export const formatCedis = (minor: number) =>
-  `GH₵${(minor / 100).toLocaleString("en-GH", { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 })}`;
+/** Money arrives as integer pesewas and is formatted only here. */
+export const formatCedis = (pesewas: number) =>
+  `GH₵${(pesewas / 100).toLocaleString("en-GH", { minimumFractionDigits: pesewas % 100 ? 2 : 0, maximumFractionDigits: 2 })}`;
 
 export const formatKm = (m: number) => `${(m / 1000).toLocaleString("en-GH", { maximumFractionDigits: 1 })} km`;

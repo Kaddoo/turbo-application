@@ -1,19 +1,116 @@
 {
-  "_note": "MOCK DATA for local development only. Not real Turbo prices or places.",
-  "fareBands": [
-    { "maxDistanceMeters": 3000, "fareMinor": 1800 },
-    { "maxDistanceMeters": 6000, "fareMinor": 2500 },
-    { "maxDistanceMeters": 10000, "fareMinor": 3400 },
-    { "maxDistanceMeters": 15000, "fareMinor": 4500 }
-  ],
-  "maxTripDistanceMeters": 15000,
+  "version": 1,
+  "boundary": null,
   "pickupPoints": [
-    { "id": "cu-main-gate", "name": "CU Main Gate" },
-    { "id": "cu-hostels", "name": "CU Hostels" },
-    { "id": "miotso-junction", "name": "Miotso Junction" },
-    { "id": "dawhenya", "name": "Dawhenya" },
-    { "id": "lashibi", "name": "Lashibi" },
-    { "id": "ashaiman-china-mall", "name": "Ashaiman China Mall" }
+    {
+      "id": "0190a1b2-0000-7e4f-8a5b-000000000001",
+      "name": "CU Main Gate",
+      "point": {
+        "lat": 5.77604,
+        "lng": 0.08321
+      },
+      "isActive": true
+    },
+    {
+      "id": "0190a1b2-0000-7e4f-8a5b-000000000002",
+      "name": "CU Hostels",
+      "point": {
+        "lat": 5.7675,
+        "lng": 0.0863
+      },
+      "isActive": true
+    },
+    {
+      "id": "0190a1b2-0000-7e4f-8a5b-000000000003",
+      "name": "Miotso Junction",
+      "point": {
+        "lat": 5.76647,
+        "lng": 0.06189
+      },
+      "isActive": true
+    },
+    {
+      "id": "0190a1b2-0000-7e4f-8a5b-000000000004",
+      "name": "Dawhenya",
+      "point": {
+        "lat": 5.76478,
+        "lng": 0.05632
+      },
+      "isActive": true
+    },
+    {
+      "id": "0190a1b2-0000-7e4f-8a5b-000000000005",
+      "name": "Ashaiman China Mall",
+      "point": {
+        "lat": 5.68437,
+        "lng": -0.024
+      },
+      "isActive": true
+    },
+    {
+      "id": "0190a1b2-0000-7e4f-8a5b-000000000006",
+      "name": "Old Lorry Station",
+      "point": {
+        "lat": 5.7601,
+        "lng": 0.0702
+      },
+      "isActive": false
+    }
   ],
-  "operatingHours": { "open": "06:00", "close": "22:00" }
+  "maxTripDistanceMeters": 18000,
+  "fareBands": [
+    {
+      "upToMeters": 3000,
+      "farePesewas": 1800
+    },
+    {
+      "upToMeters": 6000,
+      "farePesewas": 2500
+    },
+    {
+      "upToMeters": 12000,
+      "farePesewas": 3500
+    },
+    {
+      "upToMeters": 18000,
+      "farePesewas": 5000
+    }
+  ],
+  "operatingHours": [
+    {
+      "dayOfWeek": 1,
+      "opensAt": "06:00",
+      "closesAt": "22:00"
+    },
+    {
+      "dayOfWeek": 2,
+      "opensAt": "06:00",
+      "closesAt": "22:00"
+    },
+    {
+      "dayOfWeek": 3,
+      "opensAt": "06:00",
+      "closesAt": "22:00"
+    },
+    {
+      "dayOfWeek": 4,
+      "opensAt": "06:00",
+      "closesAt": "22:00"
+    },
+    {
+      "dayOfWeek": 5,
+      "opensAt": "06:00",
+      "closesAt": "22:00"
+    },
+    {
+      "dayOfWeek": 6,
+      "opensAt": "08:00",
+      "closesAt": "20:00"
+    },
+    {
+      "dayOfWeek": 0,
+      "opensAt": "08:00",
+      "closesAt": "20:00"
+    }
+  ]
 }

@@ -44,3 +44,16 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 
 **What:** "Too many tries. Call your supervisor." (PIN locked), the Safety screens and the help screens need real phone numbers. The apps show 112 only.
 **Suggested:** `supervisorPhone` and `campusSecurityPhone` in `GET /app-config` (see CR-3).
+
+## 2026-11-02, landing page
+
+### CR-7. `GET /legal` has no publication date
+
+**What:** The privacy and terms pages must show "Version 1.0, updated <date>" (prompt 01, and the app stores ask for it). `LegalVersions` carries versions and URLs only, so the landing page keeps the date in its own config and shows it only while that config describes the same version. A new version published through the API shows without a date.
+**Suggested:** `termsUpdatedAt` and `privacyUpdatedAt` (`format: date`) in `LegalVersions`.
+
+### CR-8. Admins need to set the terms and privacy documents
+
+**What:** Turbo has not supplied the terms and privacy yet; an admin will publish them from the dashboard. The contract only has `GET /legal`: no admin operation sets `termsUrl`, `privacyUrl` or the versions, so the dashboard cannot build that screen. Until an admin sets them, staging returns `https://turbo.example/...`, so the landing page footer links to a dead site.
+**Suggested:** `PUT /admin/legal` (`admin:super_admin`, audited) taking `LegalVersions` plus the dates from CR-7. Until the first one is set, `GET /legal` returns the landing page's own hosted drafts (`<PUBLIC_SITE_URL>/terms/` and `/privacy/`), not placeholders. Note: a new terms version makes every student accept again (`acceptedTermsVersion`), so the screen must say so before saving.
+

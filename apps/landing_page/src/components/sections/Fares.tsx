@@ -1,13 +1,12 @@
 "use client";
 
 import { CarFront, Info, ReceiptText, ShieldCheck } from "lucide-react";
-import { getServiceArea, formatCedis, formatKm, type ServiceArea } from "@/lib/api";
+import { serviceArea, formatCedis, formatKm } from "@/lib/api";
 import { useApi } from "@/lib/useApi";
+import { LoadProblem } from "../ui/LoadProblem";
 import { Phone } from "../ui/Phone";
 import { RiseHeading } from "../ui/ScrubHeading";
 import { Tag } from "../ui/Tag";
-
-const hasBands = (d: ServiceArea) => d.fareBands.length > 0;
 
 function Skeleton() {
   return (
@@ -55,7 +54,10 @@ function FareScreen() {
 }
 
 export function Fares() {
-  const state = useApi(getServiceArea, hasBands);
+  const state = useApi(serviceArea);
+  // The contract orders bands by upToMeters; sort anyway so the table always reads short to long.
+  const bands = state.status === "ok" ? [...state.data.fareBands].sort((a, b) => a.upToMeters - b.upToMeters) : [];
+  const fallback = state.status === "error" || (state.status === "ok" && bands.length === 0);
 
   return (
     <section id="fares" data-bg="paper" aria-labelledby="fares-title" className="on-light relative overflow-hidden bg-paper py-10 text-ink sm:py-14">
@@ -73,7 +75,7 @@ export function Fares() {
           <RiseHeading id="fares-title" className="mt-5 text-3xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-4xl">
             One price per distance band.
           </RiseHeading>
-          {state.status !== "error" && (
+          {!fallback && (
             <p data-reveal className="mt-5 flex gap-2.5 text-[15px] leading-relaxed text-ink/70">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ink" aria-hidden />
               You see the exact fare before you confirm. It never changes after.
@@ -83,14 +85,17 @@ export function Fares() {
           <div aria-live="polite" aria-busy={state.status === "loading"} className="mt-8">
             {state.status === "loading" && <Skeleton />}
 
-            {state.status === "error" && (
-              <p data-reveal className="text-[15px] leading-relaxed text-ink/70">
-                Fares are shown in the app before you book. You see the exact price before you confirm, and it never
-                changes after.
-              </p>
+            {fallback && (
+              <>
+                <p data-reveal className="text-[15px] leading-relaxed text-ink/70">
+                  Fares are shown in the app before you book. You see the exact price before you confirm, and it never
+                  changes after.
+                </p>
+                {state.status === "error" && <LoadProblem problem={state.problem} what="the current fares" onRetry={state.retry} className="text-ink" />}
+              </>
             )}
 
-            {state.status === "ok" && (
+            {state.status === "ok" && bands.length > 0 && (
               <>
                 <table className="w-full border-y border-ink/10">
                   <caption className="sr-only">Fare by trip distance, in Ghana cedis</caption>
@@ -101,34 +106,32 @@ export function Fares() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-ink/10">
-                    {state.data.fareBands.map((b, i, all) => {
-                      const max = all[all.length - 1].maxDistanceMeters;
+                    {bands.map((b, i, all) => {
+                      const max = all[all.length - 1].upToMeters;
                       return (
-                        <tr key={b.maxDistanceMeters}>
+                        <tr key={b.upToMeters}>
                           <th scope="row" className="relative py-4 text-left font-normal">
                             <span
                               aria-hidden
                               data-bar={i}
                               className="absolute bottom-0 left-0 h-0.5 bg-turbo"
-                              style={{ width: `${Math.max(12, (b.maxDistanceMeters / max) * 100)}%` }}
+                              style={{ width: `${Math.max(12, (b.upToMeters / max) * 100)}%` }}
                             />
                             <span className="text-ink/60">Up to </span>
-                            <span className="font-medium">{formatKm(b.maxDistanceMeters)}</span>
+                            <span className="font-medium">{formatKm(b.upToMeters)}</span>
                           </th>
                           <td className="py-4 text-right text-xl font-medium tracking-tight tabular-nums text-ink">
-                            {formatCedis(b.fareMinor)}
+                            {formatCedis(b.farePesewas)}
                           </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
-                {state.data.maxTripDistanceMeters != null && (
-                  <p className="mt-4 flex items-center gap-2 text-sm text-ink/60">
-                    <Info className="size-4" aria-hidden />
-                    Trips over {formatKm(state.data.maxTripDistanceMeters)} are not available.
-                  </p>
-                )}
+                <p className="mt-4 flex items-center gap-2 text-sm text-ink/60">
+                  <Info className="size-4" aria-hidden />
+                  Trips over {formatKm(state.data.maxTripDistanceMeters)} are not available.
+                </p>
               </>
             )}
           </div>

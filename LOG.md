@@ -2,6 +2,61 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: legal links until an admin publishes them
+
+- **Branch:** `landing-api`. **Files:** `apps/landing_page/src/lib/legal.ts` (new), `LegalLinks.tsx`, `legal/VersionLabel.tsx`, `test/api-rules.test.ts`, `CONTRACT_REQUESTS.md` (CR-8).
+- **What changed:** terms and privacy are not supplied yet; an admin will publish them from the dashboard, not the backend. The contract has no admin operation for that, so CR-8 asks for `PUT /admin/legal`. Meanwhile staging's `/legal` returns `turbo.example` placeholders: the footer and the version label now treat `.example` or non-https URLs as unpublished and link to the hosted drafts (`/terms/`, `/privacy/`).
+- **Checks:** lint, 8 tests, `build:mock` pass.
+- **Hosting:** the landing page is served from our own server (Caddy at turbogh.app) by `deploy-landing.yml`, which builds with `PUBLIC_API_BASE_URL=https://api.turbogh.app/v1`. Vercel is not used. Merged to main.
+- **Next:** dashboard screen for legal once CR-8 lands.
+
+## 2026-11-02, Claude, code: landing page public reads wired to the contract
+
+**Task:** Module 1 of the landing page integration: `GET /service-area`, `/legal` and `/app-config`, through a service layer, typed from the contract, with every failure handled.
+
+**Files touched:**
+- `apps/landing_page`:
+  - `src/lib/api.ts` (service layer on openapi-fetch) and `src/lib/useApi.ts` (shared cache, cancellation, refetch);
+  - new: `src/lib/problems.ts`, `src/lib/guards.ts`, `src/lib/hours.ts`, `src/components/ui/LoadProblem.tsx`, `src/api/` (generated schema, contract stamp, typed mock), `scripts/write-mock.ts`, `test/api-rules.test.ts`;
+  - the six components that read the API;
+  - `public/mock-api/*` (now generated), `package.json`, `next.config.ts`, `tsconfig.json`.
+- `tools/check-contract.mjs`, `.github/workflows/contract.yml` (new `landing-schema` job), `docs/api-tracker.md`, `CONTRACT_REQUESTS.md` (CR-7).
+
+**What changed:**
+- Fares, legal links and versions, and operating hours never displayed against the real API: the old parser looked for field names the contract does not use. They now use the contract's fields.
+- Closed pickup points are hidden.
+- "Bookings paused" now shows in the banner.
+- Failures say what happened and offer Try again where it can help. A body that does not match the contract is reported in the console and treated as a failure, not repaired.
+- Answers are cached for the API's own max-age and shared between sections. A request is cancelled when no section needs it any more, and data refetches when the tab comes back into view; app-config also refetches every minute.
+
+**Acceptance:**
+- `npm run lint` and `npm test` (7 tests) pass, and so do `npm run build:mock` and `npm run check` (12 page and size combinations, 0 accessibility or console errors) and `node tools/check-contract.mjs`.
+- In Chrome on the mock build, 8 of 9 scripted checks passed. The ninth expected two requests on the home page; there are three, one per endpoint, which is correct.
+
+**Deviations:** Footer links and the maintenance banner fall back without a message when their call fails: the hosted pages are the same documents, and there is nothing to announce.
+
+**Status:** Branch `landing-api`, ready. Not tested against staging from a browser: CORS blocks the landing page's addresses (issue posted for the backend).
+
+**Next step:** After the backend adds the landing addresses to `CORS_ORIGINS`, build with `PUBLIC_API_BASE_URL=https://api.turbogh.app/v1` and mark Tested.
+
+## 2026-11-02, Claude, code: landing page moved into the repo
+
+**Task:** `apps/landing_page` was committed as a bare pointer to another repo (`97ee0e5` on `staging-checks-032`, no `.gitmodules`), so clones got an empty folder. Bring it in like the other apps.
+
+**Files touched:** `apps/landing_page/` (86 files via `git subtree add`, merge commit `cf4a4c9`), `CLAUDE.md` (layout line).
+
+**What changed:**
+- The landing page's 13 commits from `github.com/Cloudregh/turbo` are now part of this repo's history; that repo becomes read-only history.
+- `node_modules`, `.next` and `out` stay ignored through the landing page's own `.gitignore`.
+- `staging-checks-032` gets a revert of `97ee0e5` (no force-push).
+- `tsc --noEmit` passes.
+
+**Deviations:** The uncommitted change to `src/components/hero/Hero.tsx` was carried over as an uncommitted change, not committed: its owner decides. The old nested repo is kept outside the repo as a backup until Kevin confirms.
+
+**Status:** Branch `add-landing-page` is ready. The landing page has no CI job yet, like the other apps.
+
+**Next step:** Commit or drop the Hero change; archive `Cloudregh/turbo` on GitHub.
+
 ## 2026-11-02, Kevin with Claude, code: 3D icons (branch `design-3d-icons`)
 
 **What changed:** the 28 3D icons from the design kit are bundled in `packages/turbo_ui/assets/icons3d` and used through `TurboArt` and `HeroIcon(art: ...)`. Both apps: phone (mobile phone), code (key), boot error (warning), update (mobile phone), maintenance (wrench), suspended (padlock). Student app: terms (shield), verification status (hourglass, warning, ID card, check), top-up result (check, warning, hourglass), quote "can't book" (taxi), no places found (motorway), cancelled ride (taxi), and the Wallet (money bag), Safety (shield) and share (speech balloon) tiles.

@@ -1,18 +1,18 @@
-import { MapPin } from "lucide-react";
+import { BadgeCheck, BanknoteX, CircleX, Handshake, KeyRound, MapPin, ReceiptText, Smartphone, type LucideIcon } from "lucide-react";
 import { ButtonLink } from "../Button";
 import { SplitHeading } from "../SectionLabel";
 import { FlatMap } from "./FlatMap";
 import { HeroStage } from "./HeroStage";
 import { links } from "@/config/links";
 
-const ticker = [
-  "No cash",
-  "No haggling",
-  "Verified students only",
-  "Fare fixed before you confirm",
-  "4-digit PIN on every trip",
-  "Cancel free, always",
-  "Mobile money top-ups",
+const ticker: { text: string; icon: LucideIcon }[] = [
+  { text: "No cash", icon: BanknoteX },
+  { text: "No haggling", icon: Handshake },
+  { text: "Verified students only", icon: BadgeCheck },
+  { text: "Fare fixed before you confirm", icon: ReceiptText },
+  { text: "4-digit PIN on every trip", icon: KeyRound },
+  { text: "Cancel free, always", icon: CircleX },
+  { text: "Mobile money top-ups", icon: Smartphone },
 ];
 
 export function Hero() {
@@ -60,16 +60,25 @@ export function Hero() {
         </a>
       </p>
 
-      <div className="absolute inset-x-0 bottom-0 border-y border-white/10 bg-ink py-4">
-        <p className="sr-only">{ticker.join(". ")}.</p>
-        <div aria-hidden className="flex w-max animate-marquee gap-10 whitespace-nowrap pl-10 text-sm text-paper/70 hover:[animation-play-state:paused]">
-          {[...ticker, ...ticker].map((t, i) => (
-            <span key={i} className="flex items-center gap-10">
-              {t}
-              <span className="size-1.5 rounded-full bg-turbo" />
+      <div className="absolute inset-x-0 bottom-0 overflow-hidden border-y border-white/10 bg-ink py-4">
+        <p className="sr-only">{ticker.map((t) => t.text).join(". ")}.</p>
+        <div aria-hidden className="flex w-max animate-marquee gap-12 whitespace-nowrap pl-12 text-sm text-paper/70 hover:[animation-play-state:paused]">
+          {[...ticker, ...ticker].map(({ text, icon: Icon }, i) => (
+            <span key={i} className="flex items-center gap-2.5">
+              <Icon className="size-4 shrink-0 text-turbo" strokeWidth={2} />
+              {text}
             </span>
           ))}
         </div>
+        {/* Blur and fade the items as they enter and leave at each end. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-ink to-transparent backdrop-blur-[3px] [mask-image:linear-gradient(to_right,black_30%,transparent)] sm:w-40"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-ink to-transparent backdrop-blur-[3px] [mask-image:linear-gradient(to_left,black_30%,transparent)] sm:w-40"
+        />
       </div>
     </section>
   );

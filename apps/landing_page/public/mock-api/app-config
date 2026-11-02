@@ -1,1 +1,13 @@
-{ "_note": "MOCK DATA", "maintenance": { "active": false, "message": null } }
+{
+  "minVersion": {
+    "ios": "1.0.0",
+    "android": "1.0.0",
+    "web": "0.0.0"
+  },
+  "maintenance": {
+    "active": false,
+    "message": null
+  },
+  "bookingsPaused": false,
+  "pauseMessage": null
+}
