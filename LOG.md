@@ -2,6 +2,15 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: student home tiles and pickup tabs (branch `student-home-tiles`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/home/home_screen.dart`, `features/ride/ride_providers.dart`, `lib/l10n/app_en.arb` (+ generated), `test/home_flow_test.dart`.
+- **What changed:**
+  - Under Wallet and Safety, three tiles that each show only when they have something to say: **Closest to you** (nearest pickup point and the straight-line distance, taps into booking), **Ride hours** (today's window from the service area, or "Closed today"; hidden while the API sends no hours) and **Last ride** (drop-off and fare of the latest finished ride, taps to its receipt).
+  - The Book a ride panel has **Nearest point / Choose point** tabs. Choose point lists the pickup points as chips; the chosen one becomes the pickup. The tabs only show when there is more than one point. The design's swap button is not built (there is no drop-off yet on Home).
+- **Checks:** analyze clean, 170 student tests pass (tiles, tabs, dark mode at 200% text). Not run on a phone.
+- **Not done:** "Ride hours" shows the same hours every day until the API sends real ones; the design's Home hero text and offline banner are unchanged.
+
 ## 2026-11-02, Claude, code: student campus security call tile (branch `student-security-call`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/core/gate.dart`, `features/safety/safety_screen.dart`, `features/safety/sos.dart`, `lib/l10n/app_en.arb` (+ generated), `test/safety_support_profile_test.dart`, `test/support/fake_server.dart`.

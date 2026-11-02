@@ -448,6 +448,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBookRide => 'Book a ride';
 
   @override
+  String get homeTabNearest => 'Nearest point';
+
+  @override
+  String get homeTabChoose => 'Choose point';
+
+  @override
+  String get homeTileClosest => 'Closest to you';
+
+  @override
+  String homeAway(String distance) {
+    return '$distance away';
+  }
+
+  @override
+  String get homeTileHours => 'Ride hours';
+
+  @override
+  String get homeHoursClosed => 'Closed today';
+
+  @override
+  String get homeTileLast => 'Last ride';
+
+  @override
   String get homeSafetyLabel => 'Safety';
 
   @override

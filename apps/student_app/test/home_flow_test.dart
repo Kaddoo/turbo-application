@@ -5,6 +5,7 @@ import 'package:student_app/src/features/home/place_search.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
+import 'ride_test.dart' show ride, rideList;
 import 'support/fake_server.dart';
 import 'support/home_harness.dart';
 
@@ -237,6 +238,55 @@ void main() {
       expect(calls, 2);
       expect(find.text('GH₵25.00'), findsOneWidget);
       expect(find.text('That price expired, so we got you a new one.'), findsOneWidget);
+    });
+  });
+
+  group('home tiles and pickup tabs', () {
+    FakeServer richHome() {
+      final area = serviceArea()
+        ..['operatingHours'] = [
+          for (var d = 0; d < 7; d++) {'dayOfWeek': d, 'opensAt': '06:00', 'closesAt': '22:00'},
+        ];
+      final done = ride('completed')..['dropoff'] = {'point': {'lat': 5.75, 'lng': 0.07}, 'label': 'Library'};
+      return homeServer()
+        ..on('GET /service-area', body: area)
+        ..on('GET /rides', body: rideList([done]));
+    }
+
+    testWidgets('closest point, ride hours and the last ride show as tiles', (tester) async {
+      await bootHome(tester, richHome(), size: const Size(390, 2400));
+      expect(find.text('Closest to you'), findsOneWidget);
+      expect(find.textContaining(' m away'), findsOneWidget);
+      expect(find.text('Ride hours'), findsOneWidget);
+      expect(find.text('06:00 – 22:00'), findsOneWidget);
+      expect(find.text('Last ride'), findsOneWidget);
+      expect(find.text('Library'), findsOneWidget);
+    });
+
+    testWidgets('tiles with nothing to say are left out', (tester) async {
+      await bootHome(tester, homeServer(), size: const Size(390, 2400));
+      expect(find.text('Ride hours'), findsNothing);
+      expect(find.text('Last ride'), findsNothing);
+    });
+
+    testWidgets('Choose point lists the pickup points and the chosen one is used', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await bootHome(tester, richHome(), size: const Size(390, 3600));
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Choose point'));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TurboChip, 'Hostel block'), findsOneWidget);
+      await tester.ensureVisible(find.widgetWithText(TurboChip, 'Hostel block'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TurboChip, 'Hostel block'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Where to?'));
+      await tester.pumpAndSettle();
+      expect(find.text('Where to?'), findsOneWidget);
+      // The destination screen opens with the chosen pickup.
+      expect(find.text('Hostel block'), findsWidgets);
     });
   });
 }

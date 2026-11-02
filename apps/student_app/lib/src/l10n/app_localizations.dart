@@ -844,6 +844,48 @@ abstract class AppLocalizations {
   /// **'Book a ride'**
   String get homeBookRide;
 
+  /// No description provided for @homeTabNearest.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest point'**
+  String get homeTabNearest;
+
+  /// No description provided for @homeTabChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose point'**
+  String get homeTabChoose;
+
+  /// No description provided for @homeTileClosest.
+  ///
+  /// In en, this message translates to:
+  /// **'Closest to you'**
+  String get homeTileClosest;
+
+  /// No description provided for @homeAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} away'**
+  String homeAway(String distance);
+
+  /// No description provided for @homeTileHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride hours'**
+  String get homeTileHours;
+
+  /// No description provided for @homeHoursClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed today'**
+  String get homeHoursClosed;
+
+  /// No description provided for @homeTileLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last ride'**
+  String get homeTileLast;
+
   /// No description provided for @homeSafetyLabel.
   ///
   /// In en, this message translates to:
