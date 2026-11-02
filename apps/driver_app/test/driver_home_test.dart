@@ -95,6 +95,27 @@ void main() {
       });
     }
 
+    testWidgets('Always location is explained first, and Not now changes nothing', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final readiness = FakeReadiness(access: DriverLocationAccess.denied);
+      await bootDriver(tester, driverServer(), readiness: readiness, size: const Size(360, 2400));
+      await settle(tester);
+      await tester.tap(find.text('Allow location always'));
+      await settle(tester);
+      expect(find.text('Choose Allow While Using App'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.text('Not now'));
+      await settle(tester);
+      expect(readiness.locationAsked, 0);
+      await tester.tap(find.text('Allow location always'));
+      await settle(tester);
+      await tester.tap(find.text('Continue'));
+      await settle(tester);
+      expect(readiness.locationAsked, 1);
+    });
+
     testWidgets('failures say what is wrong, with a fix where one exists', (tester) async {
       final readiness = FakeReadiness(access: DriverLocationAccess.whileInUse, percent: 12, notificationsOn: false, isOnline: false);
       await bootDriver(tester, driverServer(), readiness: readiness);
@@ -102,6 +123,11 @@ void main() {
       expect(find.text('Ready'), findsNothing);
       expect(find.text('Open Settings'), findsOneWidget);
       await tester.tap(find.text('Open Settings'));
+      await settle(tester);
+      // A sheet explains the choice first; nothing opens until the driver agrees.
+      expect(find.text('Choose Always'), findsOneWidget);
+      expect(readiness.settingsOpened, 0);
+      await tester.tap(find.text('Open Settings').last);
       await settle(tester);
       expect(readiness.settingsOpened, 1);
       // The headline names the one thing in the way.

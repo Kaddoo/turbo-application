@@ -16,6 +16,7 @@ import '../duty/connectivity.dart';
 import '../duty/location_sharing.dart';
 import '../duty/readiness.dart';
 import '../map/map_view.dart';
+import 'location_priming.dart';
 import 'readiness_board.dart';
 
 /// The home tab: off duty (readiness and the big button) or on duty (waiting).
@@ -202,8 +203,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         return ReadinessBoard(
                           readiness: r,
                           onFixLocation: () async {
-                            if (r.location == DriverLocationAccess.whileInUse ||
-                                r.location == DriverLocationAccess.deniedForever) {
+                            final viaSettings = r.location == DriverLocationAccess.whileInUse ||
+                                r.location == DriverLocationAccess.deniedForever;
+                            if (!await showLocationPriming(context, viaSettings: viaSettings)) return;
+                            if (viaSettings) {
                               await source.openSettings();
                             } else {
                               await source.requestLocation();

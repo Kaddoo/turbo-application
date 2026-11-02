@@ -730,6 +730,66 @@ abstract class AppLocalizations {
   /// **'Documents'**
   String get readinessTileDocuments;
 
+  /// No description provided for @primingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location Always'**
+  String get primingTitle;
+
+  /// No description provided for @primingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides reach you and students see you arrive even when the screen is locked. Sharing stops when you go off duty.'**
+  String get primingBody;
+
+  /// No description provided for @primingAskStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Continue'**
+  String get primingAskStep1;
+
+  /// No description provided for @primingAskStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Allow While Using App'**
+  String get primingAskStep2;
+
+  /// No description provided for @primingAskStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'When asked again, choose Change to Always Allow'**
+  String get primingAskStep3;
+
+  /// No description provided for @primingSettingsStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Open Settings, then Location'**
+  String get primingSettingsStep1;
+
+  /// No description provided for @primingSettingsStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Always'**
+  String get primingSettingsStep2;
+
+  /// No description provided for @primingSettingsStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back to the app'**
+  String get primingSettingsStep3;
+
+  /// No description provided for @primingContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get primingContinue;
+
+  /// No description provided for @primingNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get primingNotNow;
+
   /// No description provided for @readinessFix.
   ///
   /// In en, this message translates to:

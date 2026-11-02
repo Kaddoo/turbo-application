@@ -34,12 +34,12 @@ class ReadinessBoard extends StatelessWidget {
     final blocker = !r.locationOk
         ? l10n.readinessLocation
         : !r.notifications
-            ? l10n.readinessNotifications
-            : !r.online
-                ? l10n.readinessInternet
-                : !r.batteryOk
-                    ? l10n.readinessBattery
-                    : null;
+        ? l10n.readinessNotifications
+        : !r.online
+        ? l10n.readinessInternet
+        : !r.batteryOk
+        ? l10n.readinessBattery
+        : null;
 
     Widget tile({
       required String label,
@@ -55,16 +55,17 @@ class ReadinessBoard extends StatelessWidget {
         title: value,
         semanticLabel: '$label, $value, $tag',
         onTap: ok ? null : onFix,
-        trailing: Row(
+        // A wrap, so at large text the picture drops below the tag instead of squeezing it.
+        trailing: Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: TurboSpacing.sm,
           children: [
-            Flexible(
-              child: StatusChip(
-                label: tag,
-                icon: ok ? Icons.check : Icons.error_outline,
-                tone: ok ? StatusTone.success : StatusTone.danger,
-              ),
+            StatusChip(
+              label: tag,
+              icon: ok ? Icons.check : Icons.error_outline,
+              tone: ok ? StatusTone.success : StatusTone.danger,
             ),
-            const Spacer(),
             art,
           ],
         ),
@@ -102,7 +103,8 @@ class ReadinessBoard extends StatelessWidget {
             label: l10n.readinessTileLocation,
             value: switch (r.location) {
               DriverLocationAccess.always => l10n.readinessLocationAlways,
-              DriverLocationAccess.whileInUse => l10n.readinessLocationWhileUsing,
+              DriverLocationAccess.whileInUse =>
+                l10n.readinessLocationWhileUsing,
               _ => l10n.readinessLocationOff,
             },
             ok: r.locationOk,

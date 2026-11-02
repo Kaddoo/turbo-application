@@ -189,6 +189,14 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: driver app pattern 5, Always location priming (branch `driver-location-priming`, cut from `driver-records`)
+
+- **Files:** `apps/driver_app/lib/src/features/home/location_priming.dart` (new), `home_screen.dart`, `readiness_board.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_home_test.dart`.
+- **What changed:** fixing Location on the readiness tiles now opens a sheet first: the pushpin, why Always is needed, and three steps (one set for the system prompt, one for Settings), with Continue / Open Settings and Not now. Nothing asks or opens Settings until the driver agrees.
+- **Also fixed:** tile tags (StatusChip) overflowed by 6 px at 200% text on a 360 pt phone because the picture squeezed them; the tag and picture now wrap.
+- **Checks:** analyze clean, driver app 79 tests pass. Not run on a phone.
+- **Not done:** the screen rebuilds (D04 offer tiles, decline tiles, D10 trip detail, D11 help tiles, vehicle image), pattern 12 (CR-5), 13, 15.
+
 ## 2026-11-02, Claude, code: driver app patterns 1 to 4, 7, 8, 9, 11
 
 **Task:** Build the driver patterns from the pasted work list, in order, with the design kit's 3D pictures instead of Material icons where the kit has one. Branches are stacked (each cut from the one before): `driver-haptics`, `driver-pin-shake`, `driver-keep-awake`, `driver-readiness-bento`, `driver-records`. Merge them in that order.

@@ -385,6 +385,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readinessTileDocuments => 'Documents';
 
   @override
+  String get primingTitle => 'Allow location Always';
+
+  @override
+  String get primingBody =>
+      'Rides reach you and students see you arrive even when the screen is locked. Sharing stops when you go off duty.';
+
+  @override
+  String get primingAskStep1 => 'Tap Continue';
+
+  @override
+  String get primingAskStep2 => 'Choose Allow While Using App';
+
+  @override
+  String get primingAskStep3 =>
+      'When asked again, choose Change to Always Allow';
+
+  @override
+  String get primingSettingsStep1 => 'Tap Open Settings, then Location';
+
+  @override
+  String get primingSettingsStep2 => 'Choose Always';
+
+  @override
+  String get primingSettingsStep3 => 'Come back to the app';
+
+  @override
+  String get primingContinue => 'Continue';
+
+  @override
+  String get primingNotNow => 'Not now';
+
+  @override
   String get readinessFix => 'Fix';
 
   @override
