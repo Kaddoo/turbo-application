@@ -247,7 +247,7 @@
   "tripStepStarted": "Trip started",
   "tripStepCompleted": "Trip completed",
   "tripStepCancelled": "Ride cancelled",
-  "tripCancelledBy": "{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by Turbo} admin{Cancelled by Turbo} other{Cancelled}}",
+  "tripCancelledBy": "{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by the system} admin{Cancelled by staff} other{Cancelled}}",
   "@tripCancelledBy": {
     "placeholders": {
       "who": {

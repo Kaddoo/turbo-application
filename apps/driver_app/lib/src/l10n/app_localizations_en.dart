@@ -624,8 +624,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.selectLogic(who, {
       'student': 'Cancelled by the student',
       'driver': 'Cancelled by you',
-      'system': 'Cancelled by Turbo',
-      'admin': 'Cancelled by Turbo',
+      'system': 'Cancelled by the system',
+      'admin': 'Cancelled by staff',
       'other': 'Cancelled',
     });
     return '$_temp0';

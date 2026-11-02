@@ -1159,7 +1159,7 @@ abstract class AppLocalizations {
   /// No description provided for @tripCancelledBy.
   ///
   /// In en, this message translates to:
-  /// **'{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by Turbo} admin{Cancelled by Turbo} other{Cancelled}}'**
+  /// **'{who, select, student{Cancelled by the student} driver{Cancelled by you} system{Cancelled by the system} admin{Cancelled by staff} other{Cancelled}}'**
   String tripCancelledBy(String who);
 
   /// No description provided for @rideStatusSearching.

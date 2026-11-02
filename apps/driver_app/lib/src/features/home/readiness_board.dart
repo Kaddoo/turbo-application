@@ -74,29 +74,23 @@ class ReadinessBoard extends StatelessWidget {
     }) {
       final tag = ok ? l10n.readinessOk : (fixLabel ?? l10n.readinessProblem);
       return BentoTile(
+        stretch: true,
         label: label,
         title: value,
         semanticLabel: '$label, $value, $tag',
         onTap: ok ? null : onFix,
-        // A wrap, so at large text the picture drops below the tag instead of squeezing it.
-        trailing: Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          runSpacing: TurboSpacing.sm,
-          children: [
-            StatusChip(
-              label: tag,
-              icon: ok ? Icons.check : Icons.error_outline,
-              tone: ok ? StatusTone.success : StatusTone.danger,
-            ),
-            art,
-          ],
+        tag: StatusChip(
+          label: tag,
+          icon: ok ? Icons.check : Icons.error_outline,
+          tone: ok ? StatusTone.success : StatusTone.danger,
         ),
+        trailing: art,
       );
     }
 
     final Widget docsTile = worstDoc == null
         ? BentoTile(
+            stretch: true,
             label: l10n.readinessTileDocuments,
             title: l10n.readinessDocuments,
             trailing: const Align(
@@ -156,6 +150,7 @@ class ReadinessBoard extends StatelessWidget {
         const SizedBox(height: TurboSpacing.md),
         pair(
           BentoTile(
+            stretch: true,
             label: l10n.readinessTileShift,
             title: shift ?? '–',
             trailing: const TurboArtImage(TurboArt.calendar),
@@ -182,11 +177,7 @@ class ReadinessBoard extends StatelessWidget {
             label: l10n.readinessTileBattery,
             value: l10n.readinessBatteryPercent(r.batteryPercent),
             ok: r.batteryOk,
-            art: Icon(
-              r.charging ? Icons.battery_charging_full : Icons.battery_std,
-              size: TurboSizes.iconLg,
-              color: r.batteryOk ? t.colors.textSecondary : t.colors.danger,
-            ),
+            art: const TurboArtImage(TurboArt.mobilePhone),
           ),
           docsTile,
         ),
@@ -209,7 +200,7 @@ class ReadinessBoard extends StatelessWidget {
                     label: l10n.readinessTileInternet,
                     value: l10n.readinessOffline,
                     ok: false,
-                    art: const TurboArtImage(TurboArt.mobilePhone),
+                    art: const TurboArtImage(TurboArt.warning),
                   )
                 : const SizedBox.shrink(),
           ),

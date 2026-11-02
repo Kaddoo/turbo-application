@@ -2,6 +2,16 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: driver tile alignment, plate-first vehicle card, 3D icon on Me (branch `driver-screenshot-fixes`)
+
+- **Files:** `packages/turbo_ui/.../bento_tile.dart`, `apps/driver_app` `home/readiness_board.dart`, `home/home_screen.dart`, `me/me_screen.dart`, `l10n/app_en.arb` (+ generated).
+- **Tiles:** `BentoTile` has a `tag` (chip, bottom left) and `stretch` (in a row of equal height, the chip and picture go to the bottom, so pictures line up across the row). The readiness tiles use both; the Battery tile uses the 3D phone instead of a Flutter battery icon; the Internet problem tile uses the 3D warning. Student tiles are unchanged (`stretch` is off by default).
+- **Vehicle card:** the plate is the title and the colour, make and model sit under it, as in `design/new` screen 17.
+- **Me:** the signed-in device row uses the 3D phone. Terms and Privacy keep the small open-link arrow, and the bottom bar keeps outline icons, as in the design.
+- **Fix:** the "Cancelled by Turbo" string in the trip timeline broke the no-product-name test (the scan reads the generated l10n); now "Cancelled by the system" and "Cancelled by staff". `main` carries the old wording until this branch is merged.
+- **Checks:** analyze clean; driver 89, turbo_ui 96 pass. A scratch render showed only blocks (test font, no pictures), so the alignment is NOT confirmed by eye; check it in the next TestFlight build.
+- **The grey speech-bubble button** in the screenshots is not drawn by the apps (nothing in `apps/*/lib` or `turbo_ui` does); it is almost certainly the TestFlight feedback button.
+
 ## 2026-11-02, Claude, code: driver app fixes from the build 7 screenshots
 
 **Branch:** `driver-screenshot-fixes`, from main. **Files:** `apps/driver_app` `home/home_screen.dart`, `home/readiness_board.dart`, `me/me_screen.dart`, `ride/ride_screen.dart`, `l10n/app_en.arb` (+ generated), tests `driver_home_test.dart`, `driver_gaps_test.dart`.

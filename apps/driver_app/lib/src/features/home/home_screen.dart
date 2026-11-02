@@ -214,21 +214,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                       style: text.bodySmall,
                                     ),
                                     const SizedBox(height: TurboSpacing.xs),
-                                    Text(
-                                      vehicle == null
-                                          ? l10n.homeNoVehicle
-                                          : l10n.homeVehicle(
-                                              vehicle.colour,
-                                              vehicle.make,
-                                              vehicle.model,
-                                            ),
-                                      style: text.titleLarge,
-                                    ),
-                                    if (vehicle != null)
+                                    if (vehicle == null)
+                                      Text(
+                                        l10n.homeNoVehicle,
+                                        style: text.titleLarge,
+                                      )
+                                    else ...[
                                       Text(
                                         vehicle.plateNumber,
-                                        style: context.turbo.styles.emphasis,
+                                        style: text.titleLarge,
                                       ),
+                                      Text(
+                                        l10n.homeVehicle(
+                                          vehicle.colour,
+                                          vehicle.make,
+                                          vehicle.model,
+                                        ),
+                                        style: text.bodyMedium,
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),

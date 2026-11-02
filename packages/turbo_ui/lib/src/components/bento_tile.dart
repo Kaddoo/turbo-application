@@ -8,7 +8,7 @@ enum BentoTone { surface, lime, light }
 /// One tile of the home and profile "bento" grid: a small label, a headline, and an optional picture or icon in the corner.
 /// An empty [label] leaves the small line out. The lime tile is for the one number that matters (the wallet).
 class BentoTile extends StatelessWidget {
-  const BentoTile({super.key, required this.label, required this.title, this.trailing, this.tone = BentoTone.surface, this.onTap, this.semanticLabel, this.footer, this.money = false});
+  const BentoTile({super.key, required this.label, required this.title, this.trailing, this.tone = BentoTone.surface, this.onTap, this.semanticLabel, this.footer, this.money = false, this.tag, this.stretch = false});
 
   final String label;
   final String title;
@@ -19,6 +19,12 @@ class BentoTile extends StatelessWidget {
   final VoidCallback? onTap;
   final String? semanticLabel;
   final Widget? footer;
+
+  /// A status chip for the bottom left, on the same line as [trailing] (which then sits at the right).
+  final Widget? tag;
+
+  /// Set when the tile sits in a row of equal height (an IntrinsicHeight row): the chip and picture then go to the bottom, so pictures line up across the row.
+  final bool stretch;
 
   /// Set for an amount: it is drawn in the mono font.
   final bool money;
@@ -47,28 +53,46 @@ class BentoTile extends StatelessWidget {
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(TurboSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (label.isNotEmpty) ...[
-                  Text(label, style: t.styles.tag.copyWith(color: sub)),
-                  const SizedBox(height: TurboSpacing.xs),
-                ],
-                if (money)
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(title, maxLines: 1, style: t.styles.monoMoneyLarge.copyWith(color: fore)),
-                  )
-                else
-                  Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: fore)),
-                if (trailing != null) ...[
-                  const SizedBox(height: TurboSpacing.sm),
-                  Align(alignment: AlignmentDirectional.centerEnd, child: trailing!),
-                ],
-                if (footer != null) ...[const SizedBox(height: TurboSpacing.sm), footer!],
-              ],
+            child: Builder(
+              builder: (context) {
+                final Widget? bottom = tag != null
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.end,
+                          runSpacing: TurboSpacing.sm,
+                          children: [tag!, if (trailing != null) trailing!],
+                        ),
+                      )
+                    : trailing == null
+                    ? null
+                    : SizedBox(width: double.infinity, child: Align(alignment: AlignmentDirectional.centerEnd, child: trailing!));
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: stretch ? MainAxisSize.max : MainAxisSize.min,
+                  children: [
+                    if (label.isNotEmpty) ...[
+                      Text(label, style: t.styles.tag.copyWith(color: sub)),
+                      const SizedBox(height: TurboSpacing.xs),
+                    ],
+                    if (money)
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(title, maxLines: 1, style: t.styles.monoMoneyLarge.copyWith(color: fore)),
+                      )
+                    else
+                      Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(color: fore)),
+                    if (bottom != null) ...[
+                      const SizedBox(height: TurboSpacing.sm),
+                      if (stretch) const Spacer(),
+                      bottom,
+                    ],
+                    if (footer != null) ...[const SizedBox(height: TurboSpacing.sm), footer!],
+                  ],
+                );
+              },
             ),
           ),
         ),

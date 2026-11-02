@@ -94,7 +94,7 @@ class MeScreen extends ConsumerWidget {
                     TurboListRow(
                       title: s.current ? l10n.meThisDevice : (s.deviceName ?? s.platform.value),
                       subtitle: l10n.meLastUsed(DateFormat('d MMM, HH:mm').format(s.lastUsedAt.toUtc())),
-                      leading: const Icon(Icons.smartphone),
+                      leading: const TurboArtImage(TurboArt.mobilePhone, size: TurboSizes.iconMd),
                       trailing: s.current
                           ? null
                           : TextButton(
