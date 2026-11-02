@@ -2,6 +2,15 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02 · landing page: phone ride on top; canonical Tailwind classes
+
+- **Branch:** main.
+- **Files:** `apps/landing_page/src/components/Journey.tsx`; `hero/Hero.tsx`, `Button.tsx`, `sections/TapAway.tsx`, `sections/Safety.tsx` (class names only).
+- **What changed:**
+  - **Phone ride:** at Kevin's request, the route and taxi now sit on top of the content on phones too. To stay clear of the text they hug the screen edge (18 px in), with a smaller taxi and objects.
+  - **Tailwind classes:** renamed to their v4 canonical names, as flagged by the editor: `min-h-[100svh]` / `h-[100svh]` became `min-h-svh` / `h-svh`, and `bg-gradient-to-*` became `bg-linear-to-*`. The CSS output is the same.
+- **Acceptance:** tests (8) pass; axe, console and links are clean; no hidden text at 1440 or 390.
+
 ## 2026-11-02 · landing page: one-ride journey with 3D objects; intro on visit 1 and every 5th
 
 - **Branch:** main.

@@ -19,7 +19,7 @@ const items: { icon: Icon3dName; title: string; body: string; photo?: "student-p
 export function Safety() {
   return (
     <section id="safety" data-bg="ink" aria-labelledby="safety-title" className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,50rem)_+_150svh)]">
-      <div className="flex flex-col justify-center py-section lg:min-h-[50rem] lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-[100svh] lg:motion-safe:py-0 lg:motion-safe:pt-16">
+      <div className="flex flex-col justify-center py-section lg:min-h-[50rem] lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-svh lg:motion-safe:py-0 lg:motion-safe:pt-16">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6">
         <SectionHead
           id="safety-title"
@@ -55,7 +55,7 @@ export function Safety() {
                     sizes="(min-width: 640px) 17rem, 15rem"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <div aria-hidden className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent" />
                   <span className="absolute right-3 top-3 inline-flex size-12 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm">
                     <Icon3d name={icon} className="size-9" />
                   </span>

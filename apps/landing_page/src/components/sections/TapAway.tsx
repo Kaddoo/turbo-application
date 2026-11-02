@@ -83,7 +83,7 @@ function ArrivingScreen() {
 export function TapAway() {
   return (
     <section id="tap-away" data-bg="ink" data-bg-solid aria-labelledby="tapaway-title" data-tapaway className="relative overflow-clip bg-ink lg:motion-safe:h-[calc(max(100svh,46rem)_+_110svh)]">
-      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 sm:h-[52rem] sm:px-6 lg:h-[100svh] lg:min-h-[46rem] lg:pt-28 lg:motion-safe:sticky lg:motion-safe:top-0">
+      <div className="relative mx-auto flex h-[44rem] max-w-6xl flex-col items-center px-4 pt-24 sm:h-[52rem] sm:px-6 lg:h-svh lg:min-h-[46rem] lg:pt-28 lg:motion-safe:sticky lg:motion-safe:top-0">
         <div
           data-tapaway-glow
           aria-hidden
@@ -123,7 +123,7 @@ export function TapAway() {
         {/* Fade the phones out at the bottom. An overlay, not a mask: a mask over the moving phones re-renders
             the whole scene every frame. Full width (the side phones reach past the container), and the section
             stays solid ink (data-bg-solid) so the paper fading in behind How it works never shows at the sides. */}
-        <div aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-1/5 w-screen -translate-x-1/2 bg-gradient-to-b from-transparent to-ink" />
+        <div aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-1/5 w-screen -translate-x-1/2 bg-linear-to-b from-transparent to-ink" />
       </div>
     </section>
   );
