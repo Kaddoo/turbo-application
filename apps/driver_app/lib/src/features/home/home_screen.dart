@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
+import '../../core/driver_feedback.dart';
 import '../../core/profile.dart';
 import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
@@ -108,6 +109,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final on = profile.dutyStatus == DriverProfileDutyStatusEnum.onDuty;
     final sharing = ref.watch(locationSharingProvider);
     final online = ref.watch(onlineProvider).value ?? true;
+    ref.listen(onlineProvider, (prev, next) {
+      if (prev?.value != false && next.value == false) DriverFeedback.wentOffline();
+    });
     final now = clock.now();
 
     Widget banner(String message, {bool danger = true}) => Padding(

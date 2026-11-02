@@ -2,16 +2,17 @@ import 'dart:async';
 
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/driver_feedback.dart';
 import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../duty/connectivity.dart';
 import '../map/map_view.dart';
 import '../safety/sos.dart';
 import 'ride_providers.dart';
@@ -68,15 +69,8 @@ class _DriverRideScreenState extends ConsumerState<DriverRideScreen> {
     final asyncRide = ref.watch(currentRideProvider);
     final ride = asyncRide.value;
 
-    // A new assignment: sound and a buzz, once.
-    ref.listen(currentRideProvider, (prev, next) {
-      final fresh = next.value;
-      if (fresh != null &&
-          prev?.value?.id != fresh.id &&
-          fresh.acknowledgedAt == null) {
-        TurboHaptics.warning();
-        SystemSound.play(SystemSoundType.alert);
-      }
+    ref.listen(onlineProvider, (prev, next) {
+      if (prev?.value != false && next.value == false) DriverFeedback.wentOffline();
     });
 
     if (ride != null) {
@@ -177,6 +171,35 @@ class _Offer extends ConsumerStatefulWidget {
 class _OfferState extends ConsumerState<_Offer> {
   bool _busy = false;
   String? _error;
+  bool _warned = false;
+  Timer? _tick;
+
+  int get _left => (ackWindow - clock.now().difference(widget.ride.assignedAt))
+      .inSeconds
+      .clamp(0, ackWindow.inSeconds);
+
+  @override
+  void initState() {
+    super.initState();
+    // The offer has just taken over the screen: sound and a buzz, once.
+    DriverFeedback.offered();
+    // Count down every second, and sound once when ten seconds are left.
+    _tick = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      final left = _left;
+      if (!_warned && left > 0 && left <= 10) {
+        _warned = true;
+        DriverFeedback.offerExpiring();
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
 
   Future<void> _accept() async {
     final l10n = AppLocalizations.of(context);
@@ -186,6 +209,7 @@ class _OfferState extends ConsumerState<_Offer> {
     });
     try {
       await ref.read(driverRideActionsProvider).acknowledge(widget.ride.id);
+      DriverFeedback.accepted();
     } on ApiProblem catch (p) {
       if (mounted) setState(() => _error = problemMessage(l10n, p));
     } finally {
@@ -240,8 +264,7 @@ class _OfferState extends ConsumerState<_Offer> {
     final t = context.turbo;
     final text = Theme.of(context).textTheme;
     final r = widget.ride;
-    final left = (ackWindow - clock.now().difference(r.assignedAt)).inSeconds
-        .clamp(0, ackWindow.inSeconds);
+    final left = _left;
     final km = ((r.pickupDistanceMeters ?? 0) / 1000).toStringAsFixed(1);
     final minutes = ((r.pickupEtaSeconds ?? 0) / 60).ceil();
 
@@ -506,6 +529,7 @@ class _ToPickupState extends ConsumerState<_ToPickup> {
         if (!sure) return;
       }
       await actions.arrived(widget.ride.id, here);
+      DriverFeedback.arrived();
     } on ApiProblem catch (p) {
       if (mounted) {
         setState(
@@ -615,7 +639,9 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
     });
     try {
       await ref.read(driverRideActionsProvider).start(widget.ride.id, _pin);
+      DriverFeedback.pinAccepted();
     } on ApiProblem catch (p) {
+      DriverFeedback.pinWrong();
       if (!mounted) return;
       setState(() {
         _pin = '';
@@ -887,6 +913,7 @@ class _TripState extends ConsumerState<_Trip> {
     final l10n = AppLocalizations.of(context);
     try {
       await ref.read(driverRideActionsProvider).complete(widget.ride.id, at);
+      DriverFeedback.tripCompleted();
       _retry?.cancel();
       if (mounted) setState(() => _pending = null);
     } on ApiProblem catch (p) {
