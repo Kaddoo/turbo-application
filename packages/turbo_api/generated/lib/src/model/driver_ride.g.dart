@@ -17,6 +17,8 @@ abstract class _$DriverRideCWProxy {
 
   DriverRide routeDistanceMeters(int routeDistanceMeters);
 
+  DriverRide routePolyline(String? routePolyline);
+
   DriverRide farePesewas(int? farePesewas);
 
   DriverRide pickupDistanceMeters(int? pickupDistanceMeters);
@@ -45,6 +47,7 @@ abstract class _$DriverRideCWProxy {
     Location pickup,
     Location dropoff,
     int routeDistanceMeters,
+    String? routePolyline,
     int? farePesewas,
     int? pickupDistanceMeters,
     int? pickupEtaSeconds,
@@ -77,6 +80,10 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
   @override
   DriverRide routeDistanceMeters(int routeDistanceMeters) =>
       this(routeDistanceMeters: routeDistanceMeters);
+
+  @override
+  DriverRide routePolyline(String? routePolyline) =>
+      this(routePolyline: routePolyline);
 
   @override
   DriverRide farePesewas(int? farePesewas) => this(farePesewas: farePesewas);
@@ -120,6 +127,7 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
     Object? pickup = const $CopyWithPlaceholder(),
     Object? dropoff = const $CopyWithPlaceholder(),
     Object? routeDistanceMeters = const $CopyWithPlaceholder(),
+    Object? routePolyline = const $CopyWithPlaceholder(),
     Object? farePesewas = const $CopyWithPlaceholder(),
     Object? pickupDistanceMeters = const $CopyWithPlaceholder(),
     Object? pickupEtaSeconds = const $CopyWithPlaceholder(),
@@ -150,6 +158,10 @@ class _$DriverRideCWProxyImpl implements _$DriverRideCWProxy {
           ? _value.routeDistanceMeters
           // ignore: cast_nullable_to_non_nullable
           : routeDistanceMeters as int,
+      routePolyline: routePolyline == const $CopyWithPlaceholder()
+          ? _value.routePolyline
+          // ignore: cast_nullable_to_non_nullable
+          : routePolyline as String?,
       farePesewas: farePesewas == const $CopyWithPlaceholder()
           ? _value.farePesewas
           // ignore: cast_nullable_to_non_nullable
@@ -230,6 +242,7 @@ DriverRide _$DriverRideFromJson(Map<String, dynamic> json) => $checkedCreate(
         'routeDistanceMeters',
         (v) => (v as num).toInt(),
       ),
+      routePolyline: $checkedConvert('routePolyline', (v) => v as String?),
       farePesewas: $checkedConvert('farePesewas', (v) => (v as num?)?.toInt()),
       pickupDistanceMeters: $checkedConvert(
         'pickupDistanceMeters',
@@ -271,6 +284,7 @@ Map<String, dynamic> _$DriverRideToJson(DriverRide instance) =>
       'pickup': instance.pickup.toJson(),
       'dropoff': instance.dropoff.toJson(),
       'routeDistanceMeters': instance.routeDistanceMeters,
+      'routePolyline': ?instance.routePolyline,
       'farePesewas': ?instance.farePesewas,
       'pickupDistanceMeters': ?instance.pickupDistanceMeters,
       'pickupEtaSeconds': ?instance.pickupEtaSeconds,

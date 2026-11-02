@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **pickup** | [**Location**](Location.md) |  | 
 **dropoff** | [**Location**](Location.md) |  | 
 **routeDistanceMeters** | **int** |  | 
+**routePolyline** | **String** | The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app. | [optional] 
 **farePesewas** | **int** | Money as an integer number of pesewas (GH₵1 = 100 pesewas). Never a float. GH₵35.00 = 3500. | 
 **pin** | **String** | 4-digit start PIN. Returned only to the student who owns the ride, while status is assigned or driver_arrived. | [optional] 
 **pickupEtaSeconds** | **int** |  | [optional] 

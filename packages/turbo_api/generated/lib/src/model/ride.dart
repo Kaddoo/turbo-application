@@ -36,6 +36,8 @@ class Ride {
 
     required  this.routeDistanceMeters,
 
+     this.routePolyline,
+
     required  this.farePesewas,
 
      this.pin,
@@ -119,6 +121,19 @@ class Ride {
 
 
   final int routeDistanceMeters;
+
+
+
+      /// The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app.
+  @JsonKey(
+    
+    name: r'routePolyline',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final String? routePolyline;
 
 
 
@@ -278,6 +293,7 @@ class Ride {
       other.pickup == pickup &&
       other.dropoff == dropoff &&
       other.routeDistanceMeters == routeDistanceMeters &&
+      other.routePolyline == routePolyline &&
       other.farePesewas == farePesewas &&
       other.pin == pin &&
       other.pickupEtaSeconds == pickupEtaSeconds &&
@@ -298,6 +314,7 @@ class Ride {
         pickup.hashCode +
         dropoff.hashCode +
         routeDistanceMeters.hashCode +
+        (routePolyline == null ? 0 : routePolyline.hashCode) +
         farePesewas.hashCode +
         (pin == null ? 0 : pin.hashCode) +
         (pickupEtaSeconds == null ? 0 : pickupEtaSeconds.hashCode) +

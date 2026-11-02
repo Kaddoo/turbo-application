@@ -33,6 +33,12 @@ void main() {
       // TODO
     });
 
+    // The road from pickup to drop-off as a Google encoded polyline (precision 5), computed by the server from the same Routes call that gives the distance. Null when no road route is known (the apps then draw the two points only). Never needs a Maps key in the app.
+    // String routePolyline
+    test('to test the property `routePolyline`', () async {
+      // TODO
+    });
+
     // Money as an integer number of pesewas (GH₵1 = 100 pesewas). Never a float. GH₵35.00 = 3500.
     // int farePesewas
     test('to test the property `farePesewas`', () async {
