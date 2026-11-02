@@ -57,6 +57,12 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Next step:** Commit or drop the Hero change; archive `Cloudregh/turbo` on GitHub.
 
+## 2026-11-02, Kevin with Claude, planning handoff: patterns files (branch `patterns-handoff`)
+
+**What changed:** added `apps/student_app/PATTERNS.md` (for Bethel) and `apps/driver_app/PATTERNS.md` (for Kevin): the mobile-native patterns reference turned into an ordered build list per app, a screen-by-screen table with the patterns and the image slots for each screen (have, in the kit, or still needed), the assets still missing, and a registry template. No code changed.
+
+**Not done:** nothing in the lists is built yet; asset and CR dependencies are listed in each file.
+
 ## 2026-11-02, Kevin with Claude, code: route line (branch `route-line`, includes `maps-wiring`)
 
 **What changed:** merged `maps-wiring` (Android Maps key wiring, CR-7, log). CR-7 is now built: contract 0.4.0 adds a nullable `routePolyline` (Google encoded polyline) to `Quote`, `Ride` and `DriverRide`; migration 016 adds `route_polyline` to `quotes` and `rides`; the Routes call also asks for `routes.polyline.encodedPolyline`; the quote stores it, booking copies it to the ride, and the student ride, driver ride and quote views return it. Without a Maps key the server sends the straight line between the two points. Dart client and dashboard types regenerated. `turbo_ui` has `decodePolyline`; both map views draw the road (a lime casing under a dark line, so it shows on any map style). Student: the ride map draws it at every stage. Driver: the trip map draws it once the trip has started.
