@@ -27,5 +27,17 @@ void main() {
       // TODO
     });
 
+    // The drivers' supervisor, E.164. Null until staff set it; the apps then draw no call button.
+    // String supervisorPhone
+    test('to test the property `supervisorPhone`', () async {
+      // TODO
+    });
+
+    // Campus security, E.164. Null until staff set it; the apps then show 112 only.
+    // String campusSecurityPhone
+    test('to test the property `campusSecurityPhone`', () async {
+      // TODO
+    });
+
   });
 }

@@ -23,6 +23,8 @@ abstract class _$DriverProfileCWProxy {
 
   DriverProfile currentRideId(String? currentRideId);
 
+  DriverProfile documents(List<DriverDocumentStatus>? documents);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DriverProfile(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -38,6 +40,7 @@ abstract class _$DriverProfileCWProxy {
     DriverProfileDutyStatusEnum dutyStatus,
     Vehicle? vehicle,
     String? currentRideId,
+    List<DriverDocumentStatus>? documents,
   });
 }
 
@@ -74,6 +77,10 @@ class _$DriverProfileCWProxyImpl implements _$DriverProfileCWProxy {
       this(currentRideId: currentRideId);
 
   @override
+  DriverProfile documents(List<DriverDocumentStatus>? documents) =>
+      this(documents: documents);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `DriverProfile(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -89,6 +96,7 @@ class _$DriverProfileCWProxyImpl implements _$DriverProfileCWProxy {
     Object? dutyStatus = const $CopyWithPlaceholder(),
     Object? vehicle = const $CopyWithPlaceholder(),
     Object? currentRideId = const $CopyWithPlaceholder(),
+    Object? documents = const $CopyWithPlaceholder(),
   }) {
     return DriverProfile(
       id: id == const $CopyWithPlaceholder()
@@ -123,6 +131,10 @@ class _$DriverProfileCWProxyImpl implements _$DriverProfileCWProxy {
           ? _value.currentRideId
           // ignore: cast_nullable_to_non_nullable
           : currentRideId as String?,
+      documents: documents == const $CopyWithPlaceholder()
+          ? _value.documents
+          // ignore: cast_nullable_to_non_nullable
+          : documents as List<DriverDocumentStatus>?,
     );
   }
 }
@@ -161,6 +173,14 @@ DriverProfile _$DriverProfileFromJson(Map<String, dynamic> json) =>
           (v) => v == null ? null : Vehicle.fromJson(v as Map<String, dynamic>),
         ),
         currentRideId: $checkedConvert('currentRideId', (v) => v as String?),
+        documents: $checkedConvert(
+          'documents',
+          (v) => (v as List<dynamic>?)
+              ?.map(
+                (e) => DriverDocumentStatus.fromJson(e as Map<String, dynamic>),
+              )
+              .toList(),
+        ),
       );
       return val;
     });
@@ -175,6 +195,7 @@ Map<String, dynamic> _$DriverProfileToJson(DriverProfile instance) =>
       'dutyStatus': _$DriverProfileDutyStatusEnumEnumMap[instance.dutyStatus]!,
       'vehicle': ?instance.vehicle?.toJson(),
       'currentRideId': ?instance.currentRideId,
+      'documents': ?instance.documents?.map((e) => e.toJson()).toList(),
     };
 
 const _$AccountStatusEnumMap = {

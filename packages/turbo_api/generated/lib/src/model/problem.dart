@@ -3,6 +3,7 @@
 //
 
 // ignore_for_file: unused_element
+import 'package:turbo_api_generated/src/model/driver_document_kind.dart';
 import 'package:turbo_api_generated/src/model/problem_errors_inner.dart';
 import 'package:turbo_api_generated/src/model/problem_code.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
@@ -37,6 +38,10 @@ class Problem {
      this.errors,
 
      this.retryAfterSeconds,
+
+     this.documentType,
+
+     this.expiredOn,
   });
 
   @JsonKey(
@@ -135,6 +140,32 @@ class Problem {
 
 
 
+      /// Only on 409 `document_expired`. Which of the driver's documents has expired.
+  @JsonKey(
+    
+    name: r'documentType',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DriverDocumentKind? documentType;
+
+
+
+      /// Only on 409 `document_expired`. The day it expired.
+  @JsonKey(
+    
+    name: r'expiredOn',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? expiredOn;
+
+
+
 
 
     @override
@@ -146,7 +177,9 @@ class Problem {
       other.instance == instance &&
       other.code == code &&
       other.errors == errors &&
-      other.retryAfterSeconds == retryAfterSeconds;
+      other.retryAfterSeconds == retryAfterSeconds &&
+      other.documentType == documentType &&
+      other.expiredOn == expiredOn;
 
     @override
     int get hashCode =>
@@ -157,7 +190,9 @@ class Problem {
         instance.hashCode +
         code.hashCode +
         errors.hashCode +
-        retryAfterSeconds.hashCode;
+        retryAfterSeconds.hashCode +
+        documentType.hashCode +
+        expiredOn.hashCode;
 
   factory Problem.fromJson(Map<String, dynamic> json) => _$ProblemFromJson(json);
 

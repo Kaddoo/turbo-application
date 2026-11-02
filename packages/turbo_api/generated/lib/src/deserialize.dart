@@ -33,6 +33,7 @@ import 'package:turbo_api_generated/src/model/driver_document.dart';
 import 'package:turbo_api_generated/src/model/driver_document_create.dart';
 import 'package:turbo_api_generated/src/model/driver_document_expiry.dart';
 import 'package:turbo_api_generated/src/model/driver_document_expiry_list.dart';
+import 'package:turbo_api_generated/src/model/driver_document_status.dart';
 import 'package:turbo_api_generated/src/model/driver_location.dart';
 import 'package:turbo_api_generated/src/model/driver_location_point.dart';
 import 'package:turbo_api_generated/src/model/driver_profile.dart';
@@ -254,6 +255,11 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
           return DriverDocumentExpiry.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'DriverDocumentExpiryList':
           return DriverDocumentExpiryList.fromJson(value as Map<String, dynamic>) as ReturnType;
+        case 'DriverDocumentKind':
+          
+          
+        case 'DriverDocumentStatus':
+          return DriverDocumentStatus.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'DriverLocation':
           return DriverLocation.fromJson(value as Map<String, dynamic>) as ReturnType;
         case 'DriverLocationPoint':

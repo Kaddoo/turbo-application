@@ -37,6 +37,7 @@ export const config = {
   privacyUrl: e.PRIVACY_URL || 'https://turbo.example/privacy',
   locationNoticeUrl: e.LOCATION_NOTICE_URL || '',
   minVersion: { ios: e.MIN_APP_VERSION_IOS || e.MIN_APP_VERSION || '0.0.0', android: e.MIN_APP_VERSION_ANDROID || e.MIN_APP_VERSION || '0.0.0', web: e.MIN_APP_VERSION_WEB || e.MIN_APP_VERSION || '0.0.0' },
+  supervisorPhone: e.SUPERVISOR_PHONE || '', campusSecurityPhone: e.CAMPUS_SECURITY_PHONE || '',
   maintenance: e.MAINTENANCE === 'true', maintenanceMessage: e.MAINTENANCE_MESSAGE || '',
   // Push: 'fcm' (Firebase Cloud Messaging, production), 'console' (development: logs instead of sending), 'off'.
   pushProvider: e.FCM_PROVIDER || (e.NODE_ENV === 'development' ? 'console' : 'fcm'),

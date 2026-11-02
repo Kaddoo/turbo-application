@@ -47,5 +47,17 @@ void main() {
       // TODO
     });
 
+    // Only on 409 `document_expired`. Which of the driver's documents has expired.
+    // DriverDocumentKind documentType
+    test('to test the property `documentType`', () async {
+      // TODO
+    });
+
+    // Only on 409 `document_expired`. The day it expired.
+    // DateTime expiredOn
+    test('to test the property `expiredOn`', () async {
+      // TODO
+    });
+
   });
 }

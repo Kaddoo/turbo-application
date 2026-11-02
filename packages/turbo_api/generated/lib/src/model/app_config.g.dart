@@ -15,6 +15,10 @@ abstract class _$AppConfigCWProxy {
 
   AppConfig pauseMessage(String? pauseMessage);
 
+  AppConfig supervisorPhone(String? supervisorPhone);
+
+  AppConfig campusSecurityPhone(String? campusSecurityPhone);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -26,6 +30,8 @@ abstract class _$AppConfigCWProxy {
     AppConfigMaintenance maintenance,
     bool bookingsPaused,
     String? pauseMessage,
+    String? supervisorPhone,
+    String? campusSecurityPhone,
   });
 }
 
@@ -52,6 +58,14 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
       this(pauseMessage: pauseMessage);
 
   @override
+  AppConfig supervisorPhone(String? supervisorPhone) =>
+      this(supervisorPhone: supervisorPhone);
+
+  @override
+  AppConfig campusSecurityPhone(String? campusSecurityPhone) =>
+      this(campusSecurityPhone: campusSecurityPhone);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `AppConfig(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -63,6 +77,8 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
     Object? maintenance = const $CopyWithPlaceholder(),
     Object? bookingsPaused = const $CopyWithPlaceholder(),
     Object? pauseMessage = const $CopyWithPlaceholder(),
+    Object? supervisorPhone = const $CopyWithPlaceholder(),
+    Object? campusSecurityPhone = const $CopyWithPlaceholder(),
   }) {
     return AppConfig(
       minVersion: minVersion == const $CopyWithPlaceholder()
@@ -81,6 +97,14 @@ class _$AppConfigCWProxyImpl implements _$AppConfigCWProxy {
           ? _value.pauseMessage
           // ignore: cast_nullable_to_non_nullable
           : pauseMessage as String?,
+      supervisorPhone: supervisorPhone == const $CopyWithPlaceholder()
+          ? _value.supervisorPhone
+          // ignore: cast_nullable_to_non_nullable
+          : supervisorPhone as String?,
+      campusSecurityPhone: campusSecurityPhone == const $CopyWithPlaceholder()
+          ? _value.campusSecurityPhone
+          // ignore: cast_nullable_to_non_nullable
+          : campusSecurityPhone as String?,
     );
   }
 }
@@ -95,30 +119,40 @@ extension $AppConfigCopyWith on AppConfig {
 // JsonSerializableGenerator
 // **************************************************************************
 
-AppConfig _$AppConfigFromJson(Map<String, dynamic> json) =>
-    $checkedCreate('AppConfig', json, ($checkedConvert) {
-      $checkKeys(
-        json,
-        requiredKeys: const ['minVersion', 'maintenance', 'bookingsPaused'],
-      );
-      final val = AppConfig(
-        minVersion: $checkedConvert(
-          'minVersion',
-          (v) => AppConfigMinVersion.fromJson(v as Map<String, dynamic>),
-        ),
-        maintenance: $checkedConvert(
-          'maintenance',
-          (v) => AppConfigMaintenance.fromJson(v as Map<String, dynamic>),
-        ),
-        bookingsPaused: $checkedConvert('bookingsPaused', (v) => v as bool),
-        pauseMessage: $checkedConvert('pauseMessage', (v) => v as String?),
-      );
-      return val;
-    });
+AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => $checkedCreate(
+  'AppConfig',
+  json,
+  ($checkedConvert) {
+    $checkKeys(
+      json,
+      requiredKeys: const ['minVersion', 'maintenance', 'bookingsPaused'],
+    );
+    final val = AppConfig(
+      minVersion: $checkedConvert(
+        'minVersion',
+        (v) => AppConfigMinVersion.fromJson(v as Map<String, dynamic>),
+      ),
+      maintenance: $checkedConvert(
+        'maintenance',
+        (v) => AppConfigMaintenance.fromJson(v as Map<String, dynamic>),
+      ),
+      bookingsPaused: $checkedConvert('bookingsPaused', (v) => v as bool),
+      pauseMessage: $checkedConvert('pauseMessage', (v) => v as String?),
+      supervisorPhone: $checkedConvert('supervisorPhone', (v) => v as String?),
+      campusSecurityPhone: $checkedConvert(
+        'campusSecurityPhone',
+        (v) => v as String?,
+      ),
+    );
+    return val;
+  },
+);
 
 Map<String, dynamic> _$AppConfigToJson(AppConfig instance) => <String, dynamic>{
   'minVersion': instance.minVersion.toJson(),
   'maintenance': instance.maintenance.toJson(),
   'bookingsPaused': instance.bookingsPaused,
   'pauseMessage': ?instance.pauseMessage,
+  'supervisorPhone': ?instance.supervisorPhone,
+  'campusSecurityPhone': ?instance.campusSecurityPhone,
 };

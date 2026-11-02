@@ -7,7 +7,7 @@ import { isUuid, haversineM } from '../lib/util.js';
 import { getSettings } from '../lib/settings.js';
 import { pageArgs, pageOf } from '../lib/page.js';
 import { ACTIVE, event, lockRide, cancelRide, completeRide } from '../domain/rides.js';
-import { RIDE_SQL, rideView, location, vehicleView, iso, fullName, opt } from '../views.js';
+import { RIDE_SQL, rideView, location, vehicleView, iso, fullName, opt, cancelCode } from '../views.js';
 import { clockIn, clockOut } from '../domain/attendance.js';
 import { rideArrived } from '../domain/notify.js';
 
@@ -16,12 +16,19 @@ const D = [authenticate, requireRole('driver'), terms];
 
 async function profile(uid) {
   const { rows: [d] } = await q(
-    `SELECT u.id, u.full_name, u.first_name, u.last_name, u.phone, u.status, d.on_duty, d.active, v.*, v.id AS vid,
+    // v.* first: its id and status are null for a driver with no vehicle, and the last column of a name wins, so the user's must come after.
+    `SELECT v.*, v.id AS vid, u.id, u.full_name, u.first_name, u.last_name, u.phone, u.status, d.on_duty, d.active,
             (SELECT id FROM rides WHERE driver_id=u.id AND status = ANY($2) LIMIT 1) AS current_ride
        FROM users u JOIN drivers d ON d.user_id=u.id LEFT JOIN vehicles v ON v.id=d.vehicle_id WHERE u.id=$1`, [uid, ACTIVE]);
+  // One row per type: the document that expires last (a renewal replaces the old one). Days are counted on the Accra date.
+  const { rows: docs } = await q(
+    `SELECT DISTINCT ON (type) type, expires_on::text AS expires_on, (expires_on - (now() AT TIME ZONE 'Africa/Accra')::date) AS days_left
+       FROM driver_documents WHERE driver_id=$1 AND deleted_at IS NULL AND type IN ('drivers_licence','vehicle_registration','insurance','roadworthy')
+       ORDER BY type, expires_on DESC NULLS FIRST`, [uid]);
   return {
     id: d.id, fullName: fullName(d) ?? 'Driver', phone: d.phone, status: d.status, dutyStatus: d.on_duty ? 'on_duty' : 'off_duty',
     vehicle: d.vid ? vehicleView({ ...d, id: d.vid }) : null, currentRideId: d.current_ride ?? null,
+    documents: docs.map((x) => ({ type: x.type, expiresOn: x.expires_on, daysLeft: x.days_left, status: x.days_left == null ? 'valid' : x.days_left < 0 ? 'expired' : x.days_left < 30 ? 'expiring' : 'valid' })),
   };
 }
 driver.get('/driver/profile', ...D, async (req, res) => res.json(await profile(req.user.id)));
@@ -38,8 +45,8 @@ driver.put('/driver/duty', ...D, async (req, res) => {
     } else if (!d.on_duty) {
       // A licence, the vehicle's insurance or its roadworthy certificate that has expired keeps the driver off the road.
       const { rows: [bad] } = await c.query(
-        `SELECT type FROM driver_documents WHERE driver_id=$1 AND deleted_at IS NULL AND expires_on < current_date AND type IN ('drivers_licence','insurance','roadworthy') LIMIT 1`, [req.user.id]);
-      if (bad) throw conflict('document_expired', `Your ${bad.type.replace('_', ' ')} has expired. Contact the office to renew it.`);
+        `SELECT type, expires_on::text AS expired_on FROM driver_documents WHERE driver_id=$1 AND deleted_at IS NULL AND expires_on < current_date AND type IN ('drivers_licence','insurance','roadworthy') ORDER BY expires_on LIMIT 1`, [req.user.id]);
+      if (bad) throw conflict('document_expired', `Your ${bad.type.replace('_', ' ')} has expired. Contact the office to renew it.`, { documentType: bad.type, expiredOn: bad.expired_on });
       await c.query('UPDATE drivers SET on_duty=true, duty_since=now() WHERE user_id=$1', [req.user.id]);
       await clockIn(c, req.user.id);
     }
@@ -79,6 +86,8 @@ const driverRide = (r, cfg) => {
     id: r.id, status: r.status, pickup: base.pickup, dropoff: base.dropoff, routeDistanceMeters: r.distance_m, routePolyline: r.route_polyline ?? null, farePesewas: r.fare_pesewas,
     pickupDistanceMeters: dist, pickupEtaSeconds: eta, routeDurationSeconds: r.duration_s, student: { firstName: r.s_first ?? 'Student' },
     assignedAt: iso(r.assigned_at ?? r.requested_at), acknowledgedAt: iso(r.acked_at),
+    arrivedAt: iso(r.arrived_at), startedAt: iso(r.started_at), completedAt: iso(r.completed_at), cancelledAt: iso(r.cancelled_at),
+    cancelledBy: r.status === 'cancelled' ? r.cancel_by : null, cancelReasonCode: r.status === 'cancelled' ? cancelCode(r.cancel_reason_code ?? r.cancel_reason) : null,
     noShowAvailableAt: r.status === 'driver_arrived' && r.arrived_at ? new Date(new Date(r.arrived_at).getTime() + cfg.noShowWaitSeconds * 1000).toISOString() : null,
   };
 };

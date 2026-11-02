@@ -67,6 +67,8 @@ export 'package:turbo_api_generated/src/model/driver_document.dart';
 export 'package:turbo_api_generated/src/model/driver_document_create.dart';
 export 'package:turbo_api_generated/src/model/driver_document_expiry.dart';
 export 'package:turbo_api_generated/src/model/driver_document_expiry_list.dart';
+export 'package:turbo_api_generated/src/model/driver_document_kind.dart';
+export 'package:turbo_api_generated/src/model/driver_document_status.dart';
 export 'package:turbo_api_generated/src/model/driver_location.dart';
 export 'package:turbo_api_generated/src/model/driver_location_point.dart';
 export 'package:turbo_api_generated/src/model/driver_profile.dart';

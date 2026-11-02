@@ -23,6 +23,10 @@ abstract class _$ProblemCWProxy {
 
   Problem retryAfterSeconds(int? retryAfterSeconds);
 
+  Problem documentType(DriverDocumentKind? documentType);
+
+  Problem expiredOn(DateTime? expiredOn);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Problem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -38,6 +42,8 @@ abstract class _$ProblemCWProxy {
     ProblemCode code,
     List<ProblemErrorsInner>? errors,
     int? retryAfterSeconds,
+    DriverDocumentKind? documentType,
+    DateTime? expiredOn,
   });
 }
 
@@ -73,6 +79,13 @@ class _$ProblemCWProxyImpl implements _$ProblemCWProxy {
       this(retryAfterSeconds: retryAfterSeconds);
 
   @override
+  Problem documentType(DriverDocumentKind? documentType) =>
+      this(documentType: documentType);
+
+  @override
+  Problem expiredOn(DateTime? expiredOn) => this(expiredOn: expiredOn);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `Problem(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -88,6 +101,8 @@ class _$ProblemCWProxyImpl implements _$ProblemCWProxy {
     Object? code = const $CopyWithPlaceholder(),
     Object? errors = const $CopyWithPlaceholder(),
     Object? retryAfterSeconds = const $CopyWithPlaceholder(),
+    Object? documentType = const $CopyWithPlaceholder(),
+    Object? expiredOn = const $CopyWithPlaceholder(),
   }) {
     return Problem(
       type: type == const $CopyWithPlaceholder()
@@ -122,6 +137,14 @@ class _$ProblemCWProxyImpl implements _$ProblemCWProxy {
           ? _value.retryAfterSeconds
           // ignore: cast_nullable_to_non_nullable
           : retryAfterSeconds as int?,
+      documentType: documentType == const $CopyWithPlaceholder()
+          ? _value.documentType
+          // ignore: cast_nullable_to_non_nullable
+          : documentType as DriverDocumentKind?,
+      expiredOn: expiredOn == const $CopyWithPlaceholder()
+          ? _value.expiredOn
+          // ignore: cast_nullable_to_non_nullable
+          : expiredOn as DateTime?,
     );
   }
 }
@@ -157,6 +180,14 @@ Problem _$ProblemFromJson(
       'retryAfterSeconds',
       (v) => (v as num?)?.toInt(),
     ),
+    documentType: $checkedConvert(
+      'documentType',
+      (v) => $enumDecodeNullable(_$DriverDocumentKindEnumMap, v),
+    ),
+    expiredOn: $checkedConvert(
+      'expiredOn',
+      (v) => v == null ? null : DateTime.parse(v as String),
+    ),
   );
   return val;
 });
@@ -170,6 +201,8 @@ Map<String, dynamic> _$ProblemToJson(Problem instance) => <String, dynamic>{
   'code': _$ProblemCodeEnumMap[instance.code]!,
   'errors': ?instance.errors?.map((e) => e.toJson()).toList(),
   'retryAfterSeconds': ?instance.retryAfterSeconds,
+  'documentType': ?_$DriverDocumentKindEnumMap[instance.documentType],
+  'expiredOn': ?instance.expiredOn?.toIso8601String(),
 };
 
 const _$ProblemCodeEnumMap = {
@@ -232,4 +265,11 @@ const _$ProblemCodeEnumMap = {
   ProblemCode.serviceBusy: 'service_busy',
   ProblemCode.linkExpired: 'link_expired',
   ProblemCode.linkInvalid: 'link_invalid',
+};
+
+const _$DriverDocumentKindEnumMap = {
+  DriverDocumentKind.driversLicence: 'drivers_licence',
+  DriverDocumentKind.vehicleRegistration: 'vehicle_registration',
+  DriverDocumentKind.insurance: 'insurance',
+  DriverDocumentKind.roadworthy: 'roadworthy',
 };

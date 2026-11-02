@@ -50,6 +50,18 @@ class DriverRide {
      this.acknowledgedAt,
 
      this.noShowAvailableAt,
+
+     this.arrivedAt,
+
+     this.startedAt,
+
+     this.completedAt,
+
+     this.cancelledAt,
+
+     this.cancelledBy,
+
+     this.cancelReasonCode,
   });
 
       /// UUID (v7 recommended so ids sort by creation time).
@@ -228,6 +240,80 @@ class DriverRide {
 
 
 
+  @JsonKey(
+    
+    name: r'arrivedAt',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? arrivedAt;
+
+
+
+  @JsonKey(
+    
+    name: r'startedAt',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? startedAt;
+
+
+
+  @JsonKey(
+    
+    name: r'completedAt',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? completedAt;
+
+
+
+  @JsonKey(
+    
+    name: r'cancelledAt',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DateTime? cancelledAt;
+
+
+
+      /// Who cancelled (as `Cancellation.by`). Null unless the ride is cancelled.
+  @JsonKey(
+    
+    name: r'cancelledBy',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DriverRideCancelledByEnum? cancelledBy;
+
+
+
+      /// Why (as `Cancellation.reasonCode`). Null unless the ride is cancelled. The free-text note is not sent to drivers.
+  @JsonKey(
+    
+    name: r'cancelReasonCode',
+    required: false,
+    includeIfNull: false,
+  )
+
+
+  final DriverRideCancelReasonCodeEnum? cancelReasonCode;
+
+
+
 
 
     @override
@@ -245,7 +331,13 @@ class DriverRide {
       other.student == student &&
       other.assignedAt == assignedAt &&
       other.acknowledgedAt == acknowledgedAt &&
-      other.noShowAvailableAt == noShowAvailableAt;
+      other.noShowAvailableAt == noShowAvailableAt &&
+      other.arrivedAt == arrivedAt &&
+      other.startedAt == startedAt &&
+      other.completedAt == completedAt &&
+      other.cancelledAt == cancelledAt &&
+      other.cancelledBy == cancelledBy &&
+      other.cancelReasonCode == cancelReasonCode;
 
     @override
     int get hashCode =>
@@ -262,7 +354,13 @@ class DriverRide {
         student.hashCode +
         assignedAt.hashCode +
         (acknowledgedAt == null ? 0 : acknowledgedAt.hashCode) +
-        (noShowAvailableAt == null ? 0 : noShowAvailableAt.hashCode);
+        (noShowAvailableAt == null ? 0 : noShowAvailableAt.hashCode) +
+        (arrivedAt == null ? 0 : arrivedAt.hashCode) +
+        (startedAt == null ? 0 : startedAt.hashCode) +
+        (completedAt == null ? 0 : completedAt.hashCode) +
+        (cancelledAt == null ? 0 : cancelledAt.hashCode) +
+        (cancelledBy == null ? 0 : cancelledBy.hashCode) +
+        (cancelReasonCode == null ? 0 : cancelReasonCode.hashCode);
 
   factory DriverRide.fromJson(Map<String, dynamic> json) => _$DriverRideFromJson(json);
 
@@ -274,4 +372,52 @@ class DriverRide {
   }
 
 }
+
+/// Who cancelled (as `Cancellation.by`). Null unless the ride is cancelled.
+enum DriverRideCancelledByEnum {
+@JsonValue(r'student')
+student(r'student'),
+@JsonValue(r'driver')
+driver(r'driver'),
+@JsonValue(r'system')
+system(r'system'),
+@JsonValue(r'admin')
+admin(r'admin');
+
+const DriverRideCancelledByEnum(this.value);
+
+final String value;
+
+@override
+String toString() => value;
+}
+
+
+/// Why (as `Cancellation.reasonCode`). Null unless the ride is cancelled. The free-text note is not sent to drivers.
+enum DriverRideCancelReasonCodeEnum {
+@JsonValue(r'student_changed_mind')
+studentChangedMind(r'student_changed_mind'),
+@JsonValue(r'driver_unavailable')
+driverUnavailable(r'driver_unavailable'),
+@JsonValue(r'vehicle_issue')
+vehicleIssue(r'vehicle_issue'),
+@JsonValue(r'no_driver_available')
+noDriverAvailable(r'no_driver_available'),
+@JsonValue(r'service_issue')
+serviceIssue(r'service_issue'),
+@JsonValue(r'admin_decision')
+adminDecision(r'admin_decision'),
+@JsonValue(r'other')
+other(r'other'),
+@JsonValue(r'rider_no_show')
+riderNoShow(r'rider_no_show');
+
+const DriverRideCancelReasonCodeEnum(this.value);
+
+final String value;
+
+@override
+String toString() => value;
+}
+
 

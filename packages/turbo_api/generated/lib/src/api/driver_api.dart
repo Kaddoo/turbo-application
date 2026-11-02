@@ -1037,7 +1037,7 @@ _responseData = rawData == null ? null : deserialize<DriverRide, DriverRide>(raw
   }
 
   /// Go on or off duty
-  /// **Access:** driver.  409 &#x60;driver_has_active_ride&#x60; when going off duty with an active ride. Duty events also feed attendance.  Going on duty returns 409 &#x60;document_expired&#x60; when the driver&#39;s licence, the vehicle insurance or the roadworthy certificate has expired.
+  /// **Access:** driver.  409 &#x60;driver_has_active_ride&#x60; when going off duty with an active ride. Duty events also feed attendance.  Going on duty returns 409 &#x60;document_expired&#x60; when the driver&#39;s licence, the vehicle insurance or the roadworthy certificate has expired. The problem carries &#x60;documentType&#x60; and &#x60;expiredOn&#x60;.
   ///
   /// Parameters:
   /// * [dutyUpdate] 
