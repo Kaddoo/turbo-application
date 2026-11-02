@@ -2,6 +2,16 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Kevin with Claude, code: route line (branch `route-line`, includes `maps-wiring`)
+
+**What changed:** merged `maps-wiring` (Android Maps key wiring, CR-7, log). CR-7 is now built: contract 0.4.0 adds a nullable `routePolyline` (Google encoded polyline) to `Quote`, `Ride` and `DriverRide`; migration 016 adds `route_polyline` to `quotes` and `rides`; the Routes call also asks for `routes.polyline.encodedPolyline`; the quote stores it, booking copies it to the ride, and the student ride, driver ride and quote views return it. Without a Maps key the server sends the straight line between the two points. Dart client and dashboard types regenerated. `turbo_ui` has `decodePolyline`; both map views draw the road (a lime casing under a dark line, so it shows on any map style). Student: the ride map draws it at every stage. Driver: the trip map draws it once the trip has started.
+
+**Checks:** contract lints; API tests 128 of 130 (the two known failures); new `route-polyline.test.js`; turbo_ui 82, student 132, driver 61 pass; contract guard passes. Not seen on a phone yet, and not deployed to staging.
+
+**Not done:** the approach leg (driver to pickup) has no road, only the driver marker; the quote screen has no map; the dark map style needs its JSON; no "map unavailable" message without a key; Android untested.
+
+**To deploy:** merge, then the API deploy workflow runs migration 016 (it takes a database backup first) and restarts.
+
 ## 2026-11-02, Kevin with Claude, code: 3D icons (branch `design-3d-icons`)
 
 **What changed:** the 28 3D icons from the design kit are bundled in `packages/turbo_ui/assets/icons3d` and used through `TurboArt` and `HeroIcon(art: ...)`. Both apps: phone (mobile phone), code (key), boot error (warning), update (mobile phone), maintenance (wrench), suspended (padlock). Student app: terms (shield), verification status (hourglass, warning, ID card, check), top-up result (check, warning, hourglass), quote "can't book" (taxi), no places found (motorway), cancelled ride (taxi), and the Wallet (money bag), Safety (shield) and share (speech balloon) tiles.
