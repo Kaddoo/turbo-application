@@ -2,6 +2,15 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: staging scripts to approve top-ups and add pickup points (branch `staging-ops-scripts`)
+
+- **Files:** `api/scripts/approve-topup.js`, `api/scripts/seed-pickup-points.js`, `api/scripts/campus-points.json` (new), `docs/11-ops-runbook.md`.
+- **approve-topup:** lists open top-ups; approves one by reference, or credits a student by phone (creating a MANUAL top-up when they have none). Uses `applyOutcome` (the webhook's path), audit-logged, dry run unless `--yes`, refuses without `ALLOW_MANUAL_TOPUP=true`.
+- **seed-pickup-points:** upserts by name, refuses points outside the service area, optional `--saved-for <phone>` adds saved places.
+- **Placeholders:** the four "Test point" entries are NOT real places. Real hostel names and positions were not available: the Places API is blocked for the server's Maps key and OpenStreetMap has nothing for Miotso. Send the real list (or drop pins in the dashboard) and they replace the test ones.
+- **Checks:** run against a scratch Postgres: dry run, refusal without the env flag, new top-up, by-reference, replay ("already succeeded"), audit rows, points and saved places added and re-run safely. Not run on the server yet (a deploy to main puts the scripts there).
+- **Staging facts seen:** one pickup point (Central Gate), no saved places, two TEST top-ups, service area is the demo rectangle.
+
 ## 2026-11-02, Claude, code: SOS countdown ring and 3D result (branch `student-sos-ring`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/safety/sos.dart`, `test/ride_test.dart`.

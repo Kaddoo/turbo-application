@@ -1,0 +1,14 @@
+{
+  "note": "Pickup and drop-off points for the campus. The four 'Test point' entries are PLACEHOLDERS a few hundred metres from the main gate, so a ride can be booked on staging. Replace them with the real hostels and landmarks: put the real name and position here and run the script again (it matches by name; rename or delete the test ones in the dashboard).",
+  "points": [
+    { "name": "Central Gate", "landmark": "Main gate, Miotso", "lat": 5.7203, "lng": 0.0757 },
+    { "name": "Test point: Hostel A", "landmark": "Placeholder position, replace with the real hostel", "lat": 5.7218, "lng": 0.0770 },
+    { "name": "Test point: Library", "landmark": "Placeholder position, replace with the real library", "lat": 5.7195, "lng": 0.0742 },
+    { "name": "Test point: Sports field", "landmark": "Placeholder position, replace with the real field", "lat": 5.7188, "lng": 0.0775 },
+    { "name": "Test point: Lecture block", "landmark": "Placeholder position, replace with the real block", "lat": 5.7212, "lng": 0.0738 }
+  ],
+  "savedPlaces": [
+    { "label": "Hostel", "point": "Test point: Hostel A" },
+    { "label": "Campus", "point": "Central Gate" }
+  ]
+}

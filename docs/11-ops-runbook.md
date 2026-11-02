@@ -69,6 +69,22 @@ www.turbogh.app {
 
 Notes: a contract change that makes a header or field required must reach the API and the dashboard in the same merge, so run both. The API's own tests need a Postgres and have two known failures (see below), so they are not a gate here; the contract guard is. Roll back by copying the newest `*.pre-*` folder back and restarting. Do not put the private key anywhere in the repo.
 
+## Staging helpers: approve a top-up, add pickup points
+
+Both scripts are in `api/scripts/` and reach the server with the API deploy. Run them on the server as the `turbo` user (`ssh turbo`):
+
+```bash
+cd /opt/turbo/turbo-api
+# top-ups: list the open ones, approve one by its reference, or credit a student by phone
+ALLOW_MANUAL_TOPUP=true runuser -u turbo -- node --env-file=/etc/turbo/api.env scripts/approve-topup.js --list
+ALLOW_MANUAL_TOPUP=true runuser -u turbo -- node --env-file=/etc/turbo/api.env scripts/approve-topup.js --ref TU... --yes
+ALLOW_MANUAL_TOPUP=true runuser -u turbo -- node --env-file=/etc/turbo/api.env scripts/approve-topup.js --phone +233... --amount 50 --yes
+# pickup points from scripts/campus-points.json (and saved places for one student)
+runuser -u turbo -- node --env-file=/etc/turbo/api.env scripts/seed-pickup-points.js --saved-for +233... --yes
+```
+
+Without `--yes` both only say what they would do. `approve-topup.js` goes through the same code as the Payaza webhook (ledger, notification, once-only), writes the audit log, masks phone numbers, and refuses unless `ALLOW_MANUAL_TOPUP=true` is set on that one command. It is for staging and for a stuck payment, never a way around real payments in production. The four "Test point" entries in `campus-points.json` are placeholders: put the real hostels and landmarks in the file and run it again, or edit them in the dashboard.
+
 ## Staff accounts (no seed accounts on staging, ever)
 
 - Never run `scripts/seed.js` on a shared host (it now refuses). The old `@turbo.test` staff are deactivated.
