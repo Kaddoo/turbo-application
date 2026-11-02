@@ -190,9 +190,9 @@ export function DataTable<T>({
                         ))}
                       </dl>
                     )}
-                    {actions && <div className={s.dataActions}>{actions.cell(row)}</div>}
                   </>
                 )}
+                {actions && <div className={s.dataActions}>{actions.cell(row)}</div>}
               </li>
             ))}
       </ul>

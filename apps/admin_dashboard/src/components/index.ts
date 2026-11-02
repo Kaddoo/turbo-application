@@ -52,6 +52,7 @@ export { cx } from './cx';
 export const ui = s;
 export {
   CardFoot,
+  CardLink,
   CardTop,
   Callout,
   Dots,
@@ -61,4 +62,6 @@ export {
   Muted,
   Person,
   Plate,
+  Row,
+  Title,
 } from './Cards';

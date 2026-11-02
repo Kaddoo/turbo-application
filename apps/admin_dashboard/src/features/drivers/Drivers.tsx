@@ -20,6 +20,12 @@ import {
   useToast,
   ui,
   When,
+  CardFoot,
+  CardTop,
+  Callout,
+  Person,
+  Plate,
+  Row,
 } from '@/components';
 import { accountTone } from '@/components/statusTones';
 import { formatDate, formatPhone, humanize, maskPhone } from '@/utils/format';
@@ -158,6 +164,8 @@ export function Drivers() {
             </Button>
           ),
         }}
+        card={(r) => <DriverCard r={r} />}
+        cardTone={(r) => (r.currentRideId ? 'accent' : r.dutyStatus === 'on_duty' ? 'success' : 'neutral')}
         columns={[
           { header: 'Name', cell: (r) => r.fullName },
           { header: 'Phone', cell: (r) => maskPhone(r.phone) },
@@ -516,6 +524,32 @@ export function DriverDetail() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function DriverCard({ r }: { r: Schemas['DriverDetail'] }) {
+  const onDuty = r.dutyStatus === 'on_duty';
+  return (
+    <>
+      <CardTop end={<Chip tone={accountTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Person name={r.fullName} sub={maskPhone(r.phone)} presence={onDuty ? 'on' : 'off'} size="lg" />
+      </CardTop>
+      {r.vehicle ? (
+        <Row>
+          <Plate>{r.vehicle.plateNumber}</Plate>
+          <span className={ui.muted}>
+            {r.vehicle.make} {r.vehicle.model}
+          </span>
+        </Row>
+      ) : (
+        <Callout tone="warning" icon="warning">
+          No vehicle assigned
+        </Callout>
+      )}
+      <CardFoot end={r.currentRideId ? <Chip tone="accent">On a ride</Chip> : undefined}>
+        {onDuty ? 'On duty' : 'Off duty'}
+      </CardFoot>
     </>
   );
 }

@@ -12,6 +12,11 @@ import {
   useToast,
   ui,
   type Tone,
+  CardTop,
+  Fact,
+  Facts,
+  Plate,
+  Title,
 } from '@/components';
 import { humanize } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -82,6 +87,8 @@ export function Vehicles() {
             </Button>
           ),
         }}
+        card={(r) => <VehicleCard r={r} />}
+        cardTone={(r) => vehicleTone[r.status]}
         columns={[
           { header: 'Plate', cell: (r) => <span className={ui.num}>{r.plateNumber}</span> },
           { header: 'Vehicle', cell: (r) => `${r.make} ${r.model}` },
@@ -149,6 +156,23 @@ export function Vehicles() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function VehicleCard({ r }: { r: Schemas['Vehicle'] }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={vehicleTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Plate>{r.plateNumber}</Plate>
+      </CardTop>
+      <Title lines={1}>
+        {r.make} {r.model}
+      </Title>
+      <Facts>
+        <Fact label="Colour">{r.colour}</Fact>
+        <Fact label="Seats">{r.seats ?? '—'}</Fact>
+      </Facts>
     </>
   );
 }

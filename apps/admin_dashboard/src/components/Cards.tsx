@@ -128,3 +128,22 @@ export function CardFoot({ children, end }: { children?: ReactNode; end?: ReactN
     </div>
   );
 }
+
+/** Two or three people on one dotted line, e.g. rider then driver. */
+export function CardLink({ children }: { children: ReactNode }) {
+  return <div className={s.link}>{children}</div>;
+}
+
+/** Items side by side, wrapping on narrow cards. */
+export function Row({ children }: { children: ReactNode }) {
+  return <div className={s.row}>{children}</div>;
+}
+
+/** The headline of a card: a ticket subject, a place name. Long text stops at `lines`. */
+export function Title({ children, lines = 2 }: { children: ReactNode; lines?: number }) {
+  return (
+    <p className={s.title} style={{ ['--lines' as string]: lines } as React.CSSProperties}>
+      {children}
+    </p>
+  );
+}

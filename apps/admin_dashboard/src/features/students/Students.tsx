@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import type { Schemas } from '@/types';
 import { canDo } from '@/utils/permissions';
 import { useSession } from '@/state/session';
 import {
@@ -21,6 +22,13 @@ import {
   TextField,
   useToast,
   ui,
+  CardTop,
+  Callout,
+  Dots,
+  Fact,
+  Facts,
+  Figure,
+  Person,
 } from '@/components';
 import { accountTone, verificationTone } from '@/components/statusTones';
 import { formatDate, formatPhone, humanize, maskPhone } from '@/utils/format';
@@ -89,6 +97,8 @@ export function Students() {
         loadingMore={list.loadingMore}
         onRowClick={(r) => navigate(`/students/${r.id}`)}
         empty={{ title: 'No students match', body: 'Try part of the name, or the phone number with +233.' }}
+        card={(r) => <StudentCard r={r} />}
+        cardTone={(r) => verificationTone[r.verificationStatus]}
         columns={[
           { header: 'Name', cell: (r) => r.fullName ?? <span className={ui.muted}>Not given</span> },
           { header: 'Phone', cell: (r) => maskPhone(r.phone) },
@@ -303,6 +313,39 @@ export function StudentDetail() {
           })
         }
       />
+    </>
+  );
+}
+
+function StudentCard({ r }: { r: Schemas['StudentSummary'] }) {
+  const noShows = r.noShowCount ?? 0;
+  return (
+    <>
+      <CardTop end={<Chip tone={verificationTone[r.verificationStatus]}>{humanize(r.verificationStatus)}</Chip>}>
+        <Person name={r.fullName ?? 'Name not given'} sub={maskPhone(r.phone)} size="lg" />
+      </CardTop>
+      <Facts>
+        <Figure
+          label="No-shows"
+          tone={noShows >= 3 ? 'danger' : noShows > 0 ? 'warning' : undefined}
+          note={
+            <Dots
+              count={Math.min(noShows, 5)}
+              of={5}
+              tone={noShows >= 3 ? 'danger' : 'warning'}
+              label={`${noShows} no-shows`}
+            />
+          }
+        >
+          {noShows}
+        </Figure>
+        <Fact label="Joined">{formatDate(r.createdAt)}</Fact>
+      </Facts>
+      {r.accountStatus !== 'active' && (
+        <Callout tone="danger" icon="lock">
+          Account {humanize(r.accountStatus).toLowerCase()}
+        </Callout>
+      )}
     </>
   );
 }

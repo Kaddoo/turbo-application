@@ -1,7 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { Schemas } from '@/types';
-import { Button, Chip, DataTable, PageHeader, Select, useToast, ui, When, type Tone } from '@/components';
+import {
+  Button,
+  Chip,
+  DataTable,
+  PageHeader,
+  Select,
+  useToast,
+  ui,
+  When,
+  type Tone,
+  CardTop,
+  Callout,
+  Fact,
+  Facts,
+  Figure,
+  Person,
+} from '@/components';
 import { verificationTone } from '@/components/statusTones';
 import { formatRelative, formatTime, humanize, maskPhone } from '@/utils/format';
 import { ApiError, problemMessage } from '@/utils/problems';
@@ -68,6 +84,8 @@ export function VerificationQueue() {
         loadingMore={list.loadingMore}
         onRowClick={(r) => (r.status === 'pending' ? void open(r.id) : navigate(`/verification/${r.id}`))}
         empty={{ title: 'No submissions waiting', body: 'New submissions appear here oldest first.' }}
+        card={(r) => <SubmissionCard r={r} />}
+        cardTone={(r) => ageTone(r.submittedAt)}
         columns={[
           {
             header: 'Student',
@@ -99,6 +117,34 @@ export function VerificationQueue() {
           },
         ]}
       />
+    </>
+  );
+}
+
+function SubmissionCard({ r }: { r: Schemas['VerificationSummary'] }) {
+  const claimed = !!(r.claimedBy && r.claimExpiresAt && new Date(r.claimExpiresAt) > new Date());
+  return (
+    <>
+      <CardTop end={<Chip tone={verificationTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Person name={r.student.fullName ?? 'Name not given'} sub={maskPhone(r.student.phone)} size="lg" />
+      </CardTop>
+      <Facts>
+        <Figure label="Waiting" tone={ageTone(r.submittedAt)}>
+          {formatRelative(r.submittedAt)}
+        </Figure>
+        <Fact label="Submitted">
+          <When iso={r.submittedAt} exact />
+        </Fact>
+      </Facts>
+      {claimed ? (
+        <Callout tone="accent" icon="lock">
+          Being reviewed until {formatTime(r.claimExpiresAt)}
+        </Callout>
+      ) : (
+        <Callout tone="neutral" icon="check">
+          Free to claim
+        </Callout>
+      )}
     </>
   );
 }

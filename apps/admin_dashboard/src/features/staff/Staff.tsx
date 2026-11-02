@@ -16,6 +16,11 @@ import {
   useToast,
   ui,
   When,
+  CardTop,
+  Callout,
+  Fact,
+  Facts,
+  Person,
 } from '@/components';
 import { problemMessage } from '@/utils/problems';
 import { useInviteStaff, useResendInvite, useSignOutStaff, useStaff, useUpdateStaff } from './queries';
@@ -63,6 +68,17 @@ export function Staff() {
         loadingMore={list.loadingMore}
         onRowClick={setSelected}
         empty={{ title: 'No staff yet' }}
+        card={(r) => <StaffCard r={r} />}
+        cardMin="22rem"
+        cardTone={(r) =>
+          !r.isActive
+            ? 'neutral'
+            : r.lockedUntil && new Date(r.lockedUntil) > new Date()
+              ? 'danger'
+              : r.invitePending
+                ? 'warning'
+                : 'success'
+        }
         columns={[
           {
             header: 'Name',
@@ -244,6 +260,38 @@ export function Staff() {
           })
         }
       />
+    </>
+  );
+}
+
+function StaffCard({ r }: { r: Schemas['StaffUser'] }) {
+  const locked = !!r.lockedUntil && new Date(r.lockedUntil) > new Date();
+  return (
+    <>
+      <CardTop end={<Chip variant="plain">{roleLabels[r.staffRole]}</Chip>}>
+        <Person name={r.fullName} sub={r.email} size="lg" />
+      </CardTop>
+      <span className={ui.row}>
+        {!r.isActive ? (
+          <Chip>Deactivated</Chip>
+        ) : r.invitePending ? (
+          <Chip tone="warning">Invite pending</Chip>
+        ) : (
+          <Chip tone="success">Active</Chip>
+        )}
+        {locked && <Chip tone="danger">Locked</Chip>}
+      </span>
+      <Facts>
+        <Fact label="Last sign-in">
+          <When iso={r.lastLoginAt} />
+        </Fact>
+        <Fact label="Authenticator">{r.mfaEnrolled ? 'Set up' : 'Not set up'}</Fact>
+      </Facts>
+      {!r.mfaEnrolled && r.isActive && (
+        <Callout tone="warning" icon="lock">
+          No authenticator yet
+        </Callout>
+      )}
     </>
   );
 }

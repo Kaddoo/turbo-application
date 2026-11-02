@@ -16,6 +16,10 @@ import {
   ui,
   When,
   type Tone,
+  CardFoot,
+  CardTop,
+  Callout,
+  Title,
 } from '@/components';
 import { humanize } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -83,6 +87,8 @@ export function Incidents() {
           title: status === 'open' ? 'No open incidents' : 'No incidents',
           body: 'An SOS from the apps appears here and as a red banner on every page.',
         }}
+        card={(r) => <IncidentCard r={r} />}
+        cardTone={(r) => (r.status === 'open' ? 'danger' : incidentTone[r.status])}
         columns={[
           { header: 'Raised', cell: (r) => <When iso={r.createdAt} exact /> },
           {
@@ -193,6 +199,34 @@ export function Incidents() {
           )}
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function IncidentCard({ r }: { r: Incident }) {
+  const mins = Math.round((Date.now() - new Date(r.createdAt).getTime()) / 60_000);
+  return (
+    <>
+      <CardTop end={<Chip tone={incidentTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Chip tone={r.type === 'sos' ? 'danger' : 'warning'}>{r.type === 'sos' ? 'SOS' : 'Safety report'}</Chip>
+      </CardTop>
+      {r.note ? <Title lines={3}>{r.note}</Title> : <span className={ui.muted}>No note left</span>}
+      {r.status === 'open' && mins > 2 && (
+        <Callout tone="danger" icon="danger">
+          Open for {mins} min
+        </Callout>
+      )}
+      <CardFoot
+        end={
+          r.rideId ? (
+            <Link to={`/rides/${r.rideId}`} onClick={(e) => e.stopPropagation()}>
+              Open ride
+            </Link>
+          ) : undefined
+        }
+      >
+        <When iso={r.createdAt} exact />
+      </CardFoot>
     </>
   );
 }

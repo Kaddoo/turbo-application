@@ -23,6 +23,12 @@ import {
   ui,
   When,
   type Tone,
+  CardFoot,
+  CardTop,
+  Fact,
+  Facts,
+  Figure,
+  Title,
 } from '@/components';
 import { formatPesewas, humanize, parseCedis, shortId } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -156,6 +162,8 @@ function WalletTab() {
             onLoadMore={tx.loadMore}
             loadingMore={tx.loadingMore}
             empty={{ title: 'No wallet activity yet' }}
+            card={(r) => <LedgerCard r={r} />}
+            cardTone={(r) => (!r.affectsBalance ? 'neutral' : r.amountPesewas < 0 ? 'danger' : 'success')}
             columns={[
               { header: 'When', cell: (r) => <When iso={r.createdAt} exact /> },
               { header: 'Type', cell: (r) => humanize(r.type) },
@@ -272,6 +280,8 @@ function ApprovalsTab() {
         onLoadMore={list.loadMore}
         loadingMore={list.loadingMore}
         empty={{ title: status === 'pending' ? 'Nothing waiting for approval' : 'No requests' }}
+        card={(r) => <AdjustmentCard r={r} />}
+        cardTone={(r) => adjTone[r.status]}
         columns={[
           { header: 'Requested', cell: (r) => <When iso={r.createdAt} exact /> },
           { header: 'Student', cell: (r) => <span className={ui.num}>{shortId(r.studentId)}</span> },
@@ -362,5 +372,49 @@ function ApprovalsTab() {
         </DialogActions>
       </Dialog>
     </div>
+  );
+}
+
+function LedgerCard({ r }: { r: Schemas['WalletTransaction'] }) {
+  const tone = !r.affectsBalance ? 'neutral' : r.amountPesewas < 0 ? 'danger' : 'success';
+  return (
+    <>
+      <CardTop end={<When iso={r.createdAt} exact />}>
+        <Chip variant="plain">{humanize(r.type)}</Chip>
+      </CardTop>
+      <Figure
+        label={r.affectsBalance ? (r.amountPesewas < 0 ? 'Taken off' : 'Added') : 'Held, not spent'}
+        size="lg"
+        tone={tone}
+      >
+        {r.affectsBalance && r.amountPesewas > 0 ? '+' : ''}
+        {formatPesewas(r.amountPesewas)}
+      </Figure>
+      <Title lines={2}>{r.description}</Title>
+      <CardFoot end={<Money pesewas={r.balanceAfterPesewas} />}>Balance after</CardFoot>
+    </>
+  );
+}
+
+function AdjustmentCard({ r }: { r: Schemas['AdjustmentRequest'] }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={adjTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <When iso={r.createdAt} exact />
+      </CardTop>
+      <Figure label="Change to wallet" size="lg" tone={r.amountPesewas < 0 ? 'danger' : 'success'}>
+        {r.amountPesewas > 0 ? '+' : ''}
+        {formatPesewas(r.amountPesewas)}
+      </Figure>
+      <Facts columns={1}>
+        <Fact label="Reason">
+          {humanize(r.reasonCode)}
+          {r.note ? <div className={ui.muted}>{r.note}</div> : null}
+        </Fact>
+        <Fact label="Student" mono>
+          {shortId(r.studentId)}
+        </Fact>
+      </Facts>
+    </>
   );
 }

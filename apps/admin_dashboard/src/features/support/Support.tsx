@@ -16,6 +16,10 @@ import {
   ui,
   When,
   type Tone,
+  CardFoot,
+  CardTop,
+  Callout,
+  Title,
 } from '@/components';
 import { formatRelative, formatTime, humanize } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -91,6 +95,8 @@ export function Support() {
         loadingMore={list.loadingMore}
         onRowClick={(r) => navigate(`/support/${r.id}`)}
         empty={{ title: 'No tickets here', body: status === 'open' ? 'Everyone has an answer.' : undefined }}
+        card={(r) => <TicketCard r={r} />}
+        cardTone={(r) => ticketTone[r.status]}
         columns={[
           { header: 'Subject', cell: (r) => r.subject },
           { header: 'Category', cell: (r) => humanize(r.category) },
@@ -226,6 +232,23 @@ export function TicketDetail() {
           </div>
         </Card>
       </div>
+    </>
+  );
+}
+
+function TicketCard({ r }: { r: Ticket }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={ticketTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Chip variant="plain">{humanize(r.category)}</Chip>
+      </CardTop>
+      <Title lines={2}>{r.subject}</Title>
+      {r.assignedToStaffId ? null : (
+        <Callout tone="warning" icon="info">
+          Nobody is on this yet
+        </Callout>
+      )}
+      <CardFoot end={<span>Updated {formatRelative(r.updatedAt)}</span>}>Opened {formatRelative(r.createdAt)}</CardFoot>
     </>
   );
 }

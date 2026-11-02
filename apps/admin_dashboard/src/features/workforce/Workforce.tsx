@@ -17,6 +17,12 @@ import {
   useToast,
   ui,
   type Tone,
+  CardFoot,
+  CardTop,
+  Fact,
+  Facts,
+  Figure,
+  Person,
 } from '@/components';
 import { formatDate, formatMinutes, formatTime, humanize, parseCedis } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -94,6 +100,8 @@ export function Shifts() {
                 rows={shifts}
                 rowKey={(r) => r.id}
                 empty={{ title: 'None' }}
+                card={(r) => <ShiftCard r={r} driver={name(r.driverId)} />}
+                cardTone={(r) => shiftTone[r.status]}
                 columns={[
                   { header: 'Driver', cell: (r) => name(r.driverId) },
                   { header: 'Time', cell: (r) => `${formatTime(r.startsAt)} – ${formatTime(r.endsAt)}` },
@@ -138,6 +146,8 @@ export function Shifts() {
               </Button>
             ),
           }}
+          card={(r) => <ShiftCard r={r} driver={name(r.driverId)} date />}
+          cardTone={(r) => shiftTone[r.status]}
           columns={[]}
         />
       )}
@@ -286,6 +296,8 @@ export function Attendance() {
           });
         }}
         empty={{ title: 'No attendance yet', body: 'Rows appear when drivers go on duty during a shift.' }}
+        card={(r) => <AttendanceCard r={r} driver={name(r.driverId)} />}
+        cardTone={(r) => attTone[r.status]}
         columns={[
           { header: 'Date', cell: (r) => formatDate(`${r.date}T12:00:00Z`) },
           { header: 'Driver', cell: (r) => name(r.driverId) },
@@ -420,6 +432,7 @@ export function SalaryPayments() {
         onLoadMore={list.loadMore}
         loadingMore={list.loadingMore}
         empty={{ title: 'No payments recorded', body: 'Record each salary after it has been paid.' }}
+        card={(r) => <SalaryCard r={r} driver={name(r.driverId)} />}
         columns={[
           { header: 'Driver', cell: (r) => name(r.driverId) },
           {
@@ -529,6 +542,52 @@ export function SalaryPayments() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function ShiftCard({ r, driver, date }: { r: Schemas['Shift']; driver: string; date?: boolean }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={shiftTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Person name={driver} sub={date ? formatDate(r.startsAt) : undefined} />
+      </CardTop>
+      <Figure label="Shift" size="lg">
+        {formatTime(r.startsAt)} – {formatTime(r.endsAt)}
+      </Figure>
+    </>
+  );
+}
+
+function AttendanceCard({ r, driver }: { r: Schemas['AttendanceRecord']; driver: string }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={attTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <Person name={driver} sub={formatDate(`${r.date}T12:00:00Z`)} />
+      </CardTop>
+      <Figure label="Worked" size="lg">
+        {formatMinutes(r.minutesWorked)}
+      </Figure>
+      <Facts>
+        <Fact label="Clocked in">{formatTime(r.clockInAt)}</Fact>
+        <Fact label="Clocked out">{formatTime(r.clockOutAt)}</Fact>
+      </Facts>
+    </>
+  );
+}
+
+function SalaryCard({ r, driver }: { r: Schemas['SalaryPayment']; driver: string }) {
+  return (
+    <>
+      <CardTop end={<Chip variant="plain">{humanize(r.method)}</Chip>}>
+        <Person name={driver} sub={`Paid ${formatDate(r.paidAt)}`} />
+      </CardTop>
+      <Figure label="Amount paid" size="lg">
+        <Money pesewas={r.amountPesewas} />
+      </Figure>
+      <CardFoot end={<span className={ui.num}>{r.reference ?? '—'}</span>}>
+        {formatDate(`${r.periodStart}T12:00:00Z`)} – {formatDate(`${r.periodEnd}T12:00:00Z`)}
+      </CardFoot>
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, DataTable, PageHeader, TextField, ui, When } from '@/components';
+import { Button, Chip, DataTable, Fact, Facts, PageHeader, Person, Row, TextField, ui, When } from '@/components';
+import type { Schemas } from '@/types';
 import { humanize, shortId } from '@/utils/format';
 import { useAuditLog } from './queries';
 
@@ -66,6 +67,8 @@ export function AuditLog() {
         onLoadMore={list.loadMore}
         loadingMore={list.loadingMore}
         empty={{ title: 'No entries match' }}
+        card={(r) => <AuditCard r={r} />}
+        cardMin="22rem"
         columns={[
           { header: 'When', cell: (r) => <When iso={r.at} exact /> },
           {
@@ -95,6 +98,34 @@ export function AuditLog() {
           },
         ]}
       />
+    </>
+  );
+}
+
+function AuditCard({ r }: { r: Schemas['AuditEntry'] }) {
+  const details = r.detail ? Object.entries(r.detail) : [];
+  return (
+    <>
+      <Person
+        name={r.actorStaffId ? `Staff ${shortId(r.actorStaffId)}` : 'System'}
+        sub={<When iso={r.at} exact />}
+        tone={r.actorStaffId ? 'neutral' : 'accent'}
+      />
+      <Row>
+        <Chip variant="plain">
+          <span className={ui.num}>{r.action}</span>
+        </Chip>
+      </Row>
+      <Facts columns={1}>
+        <Fact label="Changed">
+          {humanize(r.entityType)} <span className={`${ui.num} ${ui.muted}`}>{shortId(r.entityId)}</span>
+        </Fact>
+        {details.map(([k, v]) => (
+          <Fact key={k} label={humanize(k)}>
+            {String(v)}
+          </Fact>
+        ))}
+      </Facts>
     </>
   );
 }

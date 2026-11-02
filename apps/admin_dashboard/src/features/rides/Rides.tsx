@@ -27,6 +27,12 @@ import {
   ui,
   When,
   type Tone,
+  CardLink,
+  CardTop,
+  Facts,
+  Callout,
+  Figure,
+  Person,
 } from '@/components';
 import { formatKm, formatPesewas, formatRelative, formatTime, humanize, parseCedis } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -243,6 +249,9 @@ export function Rides() {
         loadingMore={list.loadingMore}
         onRowClick={(r) => navigate(`/rides/${r.id}`)}
         empty={{ title: 'No rides match', body: 'Clear a filter to see more.' }}
+        card={(r) => <RideCard r={r} />}
+        cardTone={(r) => (r.flags?.length ? 'danger' : rideTone[r.status])}
+        cardMin="21rem"
         columns={[
           { header: 'Requested', cell: (r) => <When iso={r.requestedAt} exact /> },
           {
@@ -644,6 +653,33 @@ export function RideDetail() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function RideCard({ r }: { r: Schemas['AdminRideSummary'] }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={rideTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <When iso={r.requestedAt} exact />
+      </CardTop>
+      <CardLink>
+        <Person name={r.studentName ?? 'Student'} sub="Rider" />
+        {r.driverName ? (
+          <Person name={r.driverName} sub="Driver" tone="accent" />
+        ) : (
+          <Callout tone="warning" icon="info">
+            {r.status === 'cancelled' ? 'No driver was assigned' : 'No driver yet'}
+          </Callout>
+        )}
+      </CardLink>
+      {r.flags?.length ? <Flags flags={r.flags} /> : null}
+      <Facts>
+        <Figure label="Fare">
+          <Money pesewas={r.farePesewas} />
+        </Figure>
+        <Figure label="Distance">{formatKm(r.routeDistanceMeters)}</Figure>
+      </Facts>
     </>
   );
 }

@@ -1010,6 +1010,9 @@ textarea.input {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.dataActions:empty {
+  display: none;
+}
 .dataActions {
   display: flex;
   flex-wrap: wrap;

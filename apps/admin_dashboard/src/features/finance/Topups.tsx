@@ -15,6 +15,10 @@ import {
   ui,
   When,
   type Tone,
+  CardTop,
+  Callout,
+  Figure,
+  Row,
 } from '@/components';
 import { formatPesewas, humanize } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -84,6 +88,8 @@ export function Topups() {
           title: flaggedOnly ? 'No flagged top-ups' : 'No top-ups yet',
           body: flaggedOnly ? 'Every top-up matched what the provider received.' : undefined,
         }}
+        card={(r) => <TopupCard r={r} />}
+        cardTone={(r) => (r.resolvedAt ? 'success' : r.flagged ? 'danger' : topupTone[r.status])}
         columns={[
           { header: 'When', cell: (r) => <When iso={r.createdAt} exact /> },
           { header: 'Reference', cell: (r) => <span className={ui.num}>{r.reference}</span> },
@@ -177,6 +183,42 @@ export function Topups() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function TopupCard({ r }: { r: Topup }) {
+  const short = r.amountReceivedPesewas != null && r.amountReceivedPesewas < r.amountPesewas;
+  return (
+    <>
+      <CardTop end={<Chip tone={topupTone[r.status]}>{humanize(r.status)}</Chip>}>
+        <span className={ui.num}>{r.reference}</span>
+      </CardTop>
+      <Figure
+        label="Received"
+        size="lg"
+        tone={short ? 'danger' : undefined}
+        note={
+          <>
+            of <Money pesewas={r.amountPesewas} /> requested
+          </>
+        }
+      >
+        <Money pesewas={r.amountReceivedPesewas} />
+      </Figure>
+      <Row>
+        {r.validation ? <Chip tone={validationTone[r.validation]}>{humanize(r.validation)}</Chip> : null}
+        <When iso={r.createdAt} exact />
+      </Row>
+      {r.resolvedAt ? (
+        <Callout tone="success" icon="check">
+          Resolved
+        </Callout>
+      ) : r.flagged ? (
+        <Callout tone="danger" icon="warning">
+          {r.flagReason ?? 'Flagged'}
+        </Callout>
+      ) : null}
     </>
   );
 }

@@ -15,6 +15,11 @@ import {
   useToast,
   ui,
   When,
+  CardFoot,
+  CardTop,
+  Callout,
+  Facts,
+  Figure,
 } from '@/components';
 import { formatDate, shortId } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -79,6 +84,8 @@ export function Reconciliation() {
               rows={report.exceptions}
               rowKey={(r) => `${r.issue}-${r.providerReference}-${r.topupId}`}
               empty={{ title: 'None' }}
+              card={(r) => <ExceptionCard r={r} />}
+              cardTone={(r) => (r.issue === 'amount_mismatch' ? 'danger' : 'warning')}
               columns={[
                 {
                   header: 'Issue',
@@ -117,6 +124,8 @@ export function Reconciliation() {
           title: 'No reconciliation run yet',
           body: 'Download the collections statement from the Payaza dashboard, then run it here.',
         }}
+        card={(r) => <ReportCard r={r} />}
+        cardTone={(r) => (r.exceptions.length ? 'warning' : 'success')}
         columns={[
           { header: 'Period', cell: (r) => `${formatDate(r.periodFrom)} – ${formatDate(r.periodTo)}` },
           { header: 'Matched', align: 'right', cell: (r) => r.matchedCount },
@@ -183,6 +192,54 @@ export function Reconciliation() {
           </Button>
         </DialogActions>
       </Dialog>
+    </>
+  );
+}
+
+function ExceptionCard({ r }: { r: Schemas['ReconciliationItem'] }) {
+  const gap =
+    r.providerAmountPesewas != null && r.ourAmountPesewas != null ? r.providerAmountPesewas - r.ourAmountPesewas : null;
+  return (
+    <>
+      <CardTop end={r.topupId ? <span className={ui.num}>{shortId(r.topupId)}</span> : undefined}>
+        <Chip tone={r.issue === 'amount_mismatch' ? 'danger' : 'warning'}>{issueLabel[r.issue]}</Chip>
+      </CardTop>
+      <Facts>
+        <Figure label="Provider">
+          <Money pesewas={r.providerAmountPesewas} />
+        </Figure>
+        <Figure label="Ours">
+          <Money pesewas={r.ourAmountPesewas} />
+        </Figure>
+      </Facts>
+      {gap ? (
+        <Callout tone="danger" icon="warning">
+          Differ by <Money pesewas={Math.abs(gap)} />
+        </Callout>
+      ) : null}
+      <CardFoot end={<span className={ui.num}>{r.providerReference ?? '—'}</span>}>Provider reference</CardFoot>
+    </>
+  );
+}
+
+function ReportCard({ r }: { r: Schemas['ReconciliationReport'] }) {
+  return (
+    <>
+      <CardTop
+        end={
+          <Chip tone={r.exceptions.length ? 'warning' : 'success'}>
+            {r.exceptions.length ? `${r.exceptions.length} to work` : 'All matched'}
+          </Chip>
+        }
+      >
+        {formatDate(r.periodFrom)} – {formatDate(r.periodTo)}
+      </CardTop>
+      <Figure label="Matched" size="lg">
+        {r.matchedCount}
+      </Figure>
+      <CardFoot>
+        Run <When iso={r.createdAt} />
+      </CardFoot>
     </>
   );
 }

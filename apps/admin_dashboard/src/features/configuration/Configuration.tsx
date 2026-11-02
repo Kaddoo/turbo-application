@@ -19,6 +19,10 @@ import {
   TextField,
   useToast,
   ui,
+  CardTop,
+  Fact,
+  Facts,
+  Title,
 } from '@/components';
 import { formatKm, formatPesewas } from '@/utils/format';
 import { problemMessage } from '@/utils/problems';
@@ -228,6 +232,8 @@ function PickupsTab({ area }: { area: Schemas['ServiceArea'] }) {
             ? 'Add the gates and halls students wait at.'
             : 'Draw the service boundary first, then add the gates and halls inside it.',
         }}
+        card={(r) => <PickupCard r={r} />}
+        cardTone={(r) => (r.isActive ? 'success' : 'neutral')}
         columns={[
           { header: 'Name', cell: (r) => r.name },
           {
@@ -617,5 +623,20 @@ function SettingsTab() {
         </DialogActions>
       </Dialog>
     </div>
+  );
+}
+
+function PickupCard({ r }: { r: Schemas['PickupPoint'] }) {
+  return (
+    <>
+      <CardTop end={<Chip tone={r.isActive ? 'success' : 'neutral'}>{r.isActive ? 'Active' : 'Inactive'}</Chip>}>
+        <Title lines={1}>{r.name}</Title>
+      </CardTop>
+      <Facts columns={1}>
+        <Fact label="Location" mono>
+          {r.point.lat.toFixed(5)}, {r.point.lng.toFixed(5)}
+        </Fact>
+      </Facts>
+    </>
   );
 }
