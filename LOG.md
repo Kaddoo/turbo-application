@@ -189,6 +189,17 @@ Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the e
 
 **Not done / next:** core components (buttons 60 px, chips, inputs, cards, banners, the new bottom bar with a lime active circle, sheets, segmented control), then screens in the order in the design report. Open: light mode, destination search (S14) vs planning's "campus points only", 3D icons and photos (provenance and licence), map style JSON.
 
+## 2026-11-02, Claude, code: documents, supervisor call and shift tile on stand-ins (branch `driver-contract-gaps`, cut from `driver-vehicle-image`)
+
+- **Files:** `CONTRACT_REPORT_driver_app.md` (new: what the API must add, per screen), `apps/driver_app/lib/src/core/driver_gaps.dart`, `features/me/documents_screen.dart`, `features/support/call_supervisor_button.dart` (all new), `readiness_board.dart`, `home_screen.dart`, `me_screen.dart`, `ride_screen.dart`, `router.dart`, `lib/l10n/app_en.arb` (+ generated), `test/driver_gaps_test.dart`.
+- **What changed:**
+  - Home: a "Today's shift" tile from the real `GET /driver/shifts`; the Documents tile shows the worst document (name and Valid / Expiring soon / Expired); an expired document shows a red banner and a Call supervisor button.
+  - Me has a Documents row and a list screen (`/me/documents`).
+  - The PIN-locked screen has a Call supervisor button.
+- **Stand-in:** documents and the supervisor number are not in the contract (CR-5, CR-6). `DriverGaps` is the one seam: a real build uses `ApiGaps`, which returns nothing, so no documents are invented and no call button is drawn. Run with `--dart-define=SAMPLE_DRIVER_DATA=true` to see the screens with sample values. When the contract lands only `ApiGaps` changes.
+- **Not done:** timeline times (CR-10) and the approach-road line need generated client fields that do not exist; no "not registered as a driver" call button on sign-in.
+- **Checks:** analyze clean, 89 driver tests pass. Not run on a phone.
+
 ## 2026-11-02, Claude, code: vehicle image on driver home (branch `driver-vehicle-image`, cut from `driver-help-tiles`)
 
 - **Files:** `packages/turbo_ui/lib/src/components/vehicle_image.dart` (new, exported), `assets/images/car-side.png` and `README.md` (new), `pubspec.yaml`, `apps/driver_app/lib/src/features/home/home_screen.dart`, `test/driver_home_test.dart`.

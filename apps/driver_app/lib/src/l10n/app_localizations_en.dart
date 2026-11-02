@@ -417,6 +417,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String get primingNotNow => 'Not now';
 
   @override
+  String get callSupervisor => 'Call supervisor';
+
+  @override
+  String get readinessDocumentsValid => 'Documents up to date';
+
+  @override
+  String get docsTitle => 'Documents';
+
+  @override
+  String get docsEmpty =>
+      'Your documents will show here once your supervisor adds them.';
+
+  @override
+  String get docsUnavailable => 'Your documents will show here soon.';
+
+  @override
+  String get docsRenewHint => 'Contact your supervisor to renew.';
+
+  @override
+  String get docDriversLicence => 'Driver\'s licence';
+
+  @override
+  String get docVehicleRegistration => 'Vehicle registration';
+
+  @override
+  String get docInsurance => 'Insurance';
+
+  @override
+  String get docRoadworthy => 'Roadworthy certificate';
+
+  @override
+  String get docValid => 'Valid';
+
+  @override
+  String get docExpiring => 'Expiring soon';
+
+  @override
+  String get docExpired => 'Expired';
+
+  @override
+  String docExpiresOn(String date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String docExpiredOn(String date) {
+    return 'Expired $date';
+  }
+
+  @override
+  String docBanner(String document, String date) {
+    return 'Your $document expired on $date. You can\'t go on duty until it\'s renewed.';
+  }
+
+  @override
+  String get readinessTileShift => 'Today\'s shift';
+
+  @override
+  String get shiftNoneToday => 'No shift today';
+
+  @override
+  String get meDocuments => 'Documents';
+
+  @override
   String get readinessFix => 'Fix';
 
   @override

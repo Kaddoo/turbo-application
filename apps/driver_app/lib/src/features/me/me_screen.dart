@@ -70,6 +70,8 @@ class MeScreen extends ConsumerWidget {
                     ),
                     const Divider(),
                   ],
+                  TurboListRow(title: l10n.meDocuments, leading: const TurboArtImage(TurboArt.identificationCard, size: TurboSizes.iconMd), onTap: () => context.go('/me/documents')),
+                  const Divider(),
                   TurboListRow(title: l10n.meShifts, leading: const Icon(Icons.event_outlined), onTap: () => context.go('/trips/shifts')),
                   const Divider(),
                   TurboListRow(title: l10n.meAttendance, leading: const Icon(Icons.schedule), onTap: () => context.go('/trips/hours')),

@@ -3,7 +3,9 @@ import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../location/location_access.dart';
+import '../../core/driver_gaps.dart';
 import '../duty/readiness.dart';
+import '../me/documents_screen.dart';
 
 /// "Ready to go", or the one thing in the way, then a tile for each thing the
 /// phone must have before a shift. Each tile says its state with a word, not
@@ -14,11 +16,21 @@ class ReadinessBoard extends StatelessWidget {
     required this.readiness,
     required this.onFixLocation,
     required this.onFixNotifications,
+    this.documents,
+    this.shift,
+    this.onOpenDocuments,
   });
 
   final Readiness readiness;
   final VoidCallback onFixLocation;
   final VoidCallback onFixNotifications;
+
+  /// Null when the app cannot tell yet (CR-5).
+  final List<DriverDoc>? documents;
+
+  /// Today's shift as "07:00 – 15:00", or null while it loads.
+  final String? shift;
+  final VoidCallback? onOpenDocuments;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +42,13 @@ class ReadinessBoard extends StatelessWidget {
         r.location == DriverLocationAccess.whileInUse ||
         r.location == DriverLocationAccess.deniedForever;
 
+    final docs = documents;
+    DriverDoc? worstDoc;
+    for (final d in docs ?? const <DriverDoc>[]) {
+      if (worstDoc == null || d.status.index > worstDoc.status.index) worstDoc = d;
+    }
+    final docsExpired = worstDoc?.status == DocStatus.expired;
+
     // The single blocker, in order of what stops a shift first.
     final blocker = !r.locationOk
         ? l10n.readinessLocation
@@ -39,6 +58,8 @@ class ReadinessBoard extends StatelessWidget {
         ? l10n.readinessInternet
         : !r.batteryOk
         ? l10n.readinessBattery
+        : docsExpired
+        ? l10n.readinessDocumentsValid
         : null;
 
     Widget tile({
@@ -72,6 +93,24 @@ class ReadinessBoard extends StatelessWidget {
       );
     }
 
+    final Widget docsTile = worstDoc == null
+        ? BentoTile(
+            label: l10n.readinessTileDocuments,
+            title: l10n.readinessDocuments,
+            trailing: const Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TurboArtImage(TurboArt.identificationCard),
+            ),
+          )
+        : tile(
+            label: worstDoc.status == DocStatus.valid ? l10n.readinessTileDocuments : docName(l10n, worstDoc.type),
+            value: docStatusWord(l10n, worstDoc.status),
+            ok: !docsExpired,
+            art: const TurboArtImage(TurboArt.identificationCard),
+            fixLabel: l10n.readinessFix,
+            onFix: onOpenDocuments,
+          );
+
     Widget pair(Widget a, Widget b) => IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -99,6 +138,11 @@ class ReadinessBoard extends StatelessWidget {
         ),
         const SizedBox(height: TurboSpacing.md),
         pair(
+          BentoTile(
+            label: l10n.readinessTileShift,
+            title: shift ?? '–',
+            trailing: const TurboArtImage(TurboArt.calendar),
+          ),
           tile(
             label: l10n.readinessTileLocation,
             value: switch (r.location) {
@@ -114,6 +158,9 @@ class ReadinessBoard extends StatelessWidget {
                 : l10n.readinessLocationFix,
             onFix: onFixLocation,
           ),
+        ),
+        const SizedBox(height: TurboSpacing.md),
+        pair(
           tile(
             label: l10n.readinessTileBattery,
             value: l10n.readinessBatteryPercent(r.batteryPercent),
@@ -124,6 +171,7 @@ class ReadinessBoard extends StatelessWidget {
               color: r.batteryOk ? t.colors.textSecondary : t.colors.danger,
             ),
           ),
+          docsTile,
         ),
         const SizedBox(height: TurboSpacing.md),
         pair(
@@ -140,15 +188,6 @@ class ReadinessBoard extends StatelessWidget {
             value: r.online ? l10n.readinessConnected : l10n.readinessOffline,
             ok: r.online,
             art: const TurboArtImage(TurboArt.mobilePhone),
-          ),
-        ),
-        const SizedBox(height: TurboSpacing.md),
-        BentoTile(
-          label: l10n.readinessTileDocuments,
-          title: l10n.readinessDocuments,
-          trailing: const Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: TurboArtImage(TurboArt.identificationCard),
           ),
         ),
       ],

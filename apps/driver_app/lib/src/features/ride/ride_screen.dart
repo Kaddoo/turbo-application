@@ -16,6 +16,7 @@ import '../../l10n/app_localizations.dart';
 import '../duty/connectivity.dart';
 import '../map/map_view.dart';
 import '../safety/sos.dart';
+import '../support/call_supervisor_button.dart';
 import 'ride_providers.dart';
 
 /// One screen for the driver's whole ride. What shows depends on the ride's
@@ -753,6 +754,7 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
             const SizedBox(height: TurboSpacing.sm),
             Text(l10n.pinLockedBody, style: text.titleLarge),
             const Spacer(),
+            const CallSupervisorButton(driver: true),
           ],
         ),
       );

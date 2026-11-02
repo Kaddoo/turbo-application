@@ -790,6 +790,120 @@ abstract class AppLocalizations {
   /// **'Not now'**
   String get primingNotNow;
 
+  /// No description provided for @callSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Call supervisor'**
+  String get callSupervisor;
+
+  /// No description provided for @readinessDocumentsValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents up to date'**
+  String get readinessDocumentsValid;
+
+  /// No description provided for @docsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get docsTitle;
+
+  /// No description provided for @docsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents will show here once your supervisor adds them.'**
+  String get docsEmpty;
+
+  /// No description provided for @docsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents will show here soon.'**
+  String get docsUnavailable;
+
+  /// No description provided for @docsRenewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact your supervisor to renew.'**
+  String get docsRenewHint;
+
+  /// No description provided for @docDriversLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver\'s licence'**
+  String get docDriversLicence;
+
+  /// No description provided for @docVehicleRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle registration'**
+  String get docVehicleRegistration;
+
+  /// No description provided for @docInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get docInsurance;
+
+  /// No description provided for @docRoadworthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Roadworthy certificate'**
+  String get docRoadworthy;
+
+  /// No description provided for @docValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid'**
+  String get docValid;
+
+  /// No description provided for @docExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring soon'**
+  String get docExpiring;
+
+  /// No description provided for @docExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get docExpired;
+
+  /// No description provided for @docExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires {date}'**
+  String docExpiresOn(String date);
+
+  /// No description provided for @docExpiredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired {date}'**
+  String docExpiredOn(String date);
+
+  /// No description provided for @docBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {document} expired on {date}. You can\'t go on duty until it\'s renewed.'**
+  String docBanner(String document, String date);
+
+  /// No description provided for @readinessTileShift.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s shift'**
+  String get readinessTileShift;
+
+  /// No description provided for @shiftNoneToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No shift today'**
+  String get shiftNoneToday;
+
+  /// No description provided for @meDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get meDocuments;
+
   /// No description provided for @readinessFix.
   ///
   /// In en, this message translates to:

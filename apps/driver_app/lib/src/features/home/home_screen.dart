@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
 import '../../core/driver_feedback.dart';
+import '../../core/driver_gaps.dart';
 import '../../core/profile.dart';
 import '../../core/problem_messages.dart';
 import '../../core/providers.dart';
@@ -16,6 +19,9 @@ import '../duty/connectivity.dart';
 import '../duty/location_sharing.dart';
 import '../duty/readiness.dart';
 import '../map/map_view.dart';
+import '../me/documents_screen.dart';
+import '../me/record_screens.dart';
+import '../support/call_supervisor_button.dart';
 import 'location_priming.dart';
 import 'readiness_board.dart';
 
@@ -138,6 +144,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     final vehicle = profile.vehicle;
+    final docs = ref.watch(driverDocsProvider).value;
+    final expired = [for (final d in docs ?? const <DriverDoc>[]) if (d.status == DocStatus.expired) d];
+    // Today's shift, by the Accra date (UTC).
+    final shifts = ref.watch(shiftsProvider).value;
+    String? shiftText;
+    if (shifts != null) {
+      final today = clock.now().toUtc();
+      final mine = shifts.where((x) {
+        final d = x.startsAt.toUtc();
+        return d.year == today.year && d.month == today.month && d.day == today.day;
+      });
+      shiftText = mine.isEmpty
+          ? l10n.shiftNoneToday
+          : '${DateFormat('HH:mm').format(mine.first.startsAt.toUtc())} – ${DateFormat('HH:mm').format(mine.first.endsAt.toUtc())}';
+    }
     final firstName = profile.fullName.split(' ').first;
 
     if (!on) {
@@ -197,6 +218,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       ),
                     ),
                     const SizedBox(height: TurboSpacing.xl),
+                    if (expired.isNotEmpty) ...[
+                      banner(
+                        l10n.docBanner(
+                          docName(l10n, expired.first.type),
+                          DateFormat('d MMM').format(expired.first.expiresOn!),
+                        ),
+                      ),
+                      const CallSupervisorButton(),
+                      const SizedBox(height: TurboSpacing.lg),
+                    ],
                     readiness.when(
                       loading: () => const LoadingState(rows: 2),
                       error: (_, _) => ErrorState(
@@ -206,6 +237,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         final source = ref.read(readinessSourceProvider);
                         return ReadinessBoard(
                           readiness: r,
+                          documents: docs,
+                          shift: shiftText,
+                          onOpenDocuments: () => context.go('/me/documents'),
                           onFixLocation: () async {
                             final viaSettings = r.location == DriverLocationAccess.whileInUse ||
                                 r.location == DriverLocationAccess.deniedForever;

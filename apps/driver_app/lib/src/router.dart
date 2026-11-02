@@ -11,6 +11,7 @@ import 'features/auth/terms_screen.dart';
 import 'features/auth/welcome_screen.dart';
 import 'features/gate/gate_screens.dart';
 import 'features/home/home_screen.dart';
+import 'features/me/documents_screen.dart';
 import 'features/me/me_screen.dart';
 import 'features/me/record_screens.dart';
 import 'features/me/trip_detail_screen.dart';
@@ -57,6 +58,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/trips/salary', builder: (_, _) => const SalaryScreen()),
           GoRoute(path: '/help', builder: (_, _) => const HelpScreen()),
           GoRoute(path: '/me', builder: (_, _) => const MeScreen()),
+          GoRoute(path: '/me/documents', builder: (_, _) => const DocumentsScreen()),
         ],
       ),
       GoRoute(path: '/support', parentNavigatorKey: _rootKey, builder: (_, _) => const SupportListScreen()),
