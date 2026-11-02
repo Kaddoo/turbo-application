@@ -124,8 +124,10 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
           ),
           data: (items) => items.isEmpty
               ? EmptyState(
-                  icon: Icons.directions_car_outlined,
+                  art: TurboArt.oncomingTaxi,
                   message: l10n.activityEmpty,
+                  actionLabel: l10n.homeBookRide,
+                  onAction: () => context.go('/home'),
                 )
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(myRidesProvider),
@@ -146,16 +148,27 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                               padding: const EdgeInsets.only(bottom: TurboSpacing.md),
                               child: TurboCard(
                                 onTap: () => context.push('/ride/${r.id}'),
-                                child: Column(
+                                child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
+                                    const TurboArtImage(TurboArt.oncomingTaxi),
+                                    const SizedBox(width: TurboSpacing.md),
+                                    Expanded(
+                                      child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // A wrap, so at large text the status drops under the date instead of overflowing.
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Wrap(
+                                      alignment: WrapAlignment.spaceBetween,
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: TurboSpacing.sm,
+                                      runSpacing: TurboSpacing.xs,
                                       children: [
-                                        Expanded(
-                                          child: Text(
-                                            DateFormat('d MMM, HH:mm').format(r.requestedAt.toUtc()),
-                                            style: text.bodySmall,
-                                          ),
+                                        Text(
+                                          DateFormat('d MMM, HH:mm').format(r.requestedAt.toUtc()),
+                                          style: text.bodySmall,
                                         ),
                                         Builder(
                                           builder: (_) {
@@ -164,6 +177,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                                           },
                                         ),
                                       ],
+                                      ),
                                     ),
                                     const SizedBox(height: TurboSpacing.md),
                                     Row(
@@ -181,6 +195,9 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                                         ),
                                         MoneyText(r.farePesewas, style: t.styles.monoMoneyRow),
                                       ],
+                                    ),
+                                  ],
+                                ),
                                     ),
                                   ],
                                 ),

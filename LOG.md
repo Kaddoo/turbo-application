@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: Activity row pictures and empty state (branch `student-activity-pictures`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/activity/activity_screen.dart`, `test/activity_test.dart`.
+- **What changed:** each ride row starts with the kit's 3D taxi. The empty state uses the 3D taxi with a "Book a ride" button that goes Home, as in the design, instead of a Material car icon. The date and status chip now wrap, so at 200% text the status drops under the date instead of overflowing.
+- **Deviation:** `PATTERNS.md` suggested the kit's silver car (`car-side.png`) on each row. I used the 3D taxi instead: the silver car is one specific car and a row is not about a specific car (the same kind of mismatch as on the driver's home), and the taxi matches the Transactions rows and the empty state.
+- **Checks:** analyze clean, 176 student tests pass (rows in dark mode at 200% text; empty state button). Not run on a phone.
+
 ## 2026-11-02, Claude, code: transaction filter chips and 3D row pictures (branch `student-transaction-chips`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/wallet/transactions_screen.dart`, `transaction_row.dart`, `lib/l10n/app_en.arb` (+ generated), `test/wallet_test.dart`.

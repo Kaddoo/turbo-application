@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import 'ride_test.dart' show ride, rideList;
 import 'support/home_harness.dart';
@@ -20,6 +21,29 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Library'), findsOneWidget);
       expect(find.text('Hostel C'), findsNothing);
+    });
+
+    testWidgets('each ride row has a taxi picture, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final server = homeServer()..on('GET /rides', body: rideList([ride('completed'), ride('cancelled')]));
+      await bootHome(tester, server, size: const Size(390, 1800));
+      await tester.tap(find.byIcon(Icons.history));
+      await tester.pumpAndSettle();
+      expect(find.byType(TurboArtImage), findsNWidgets(2));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('no rides yet: a picture, the words, and a Book a ride button that goes home', (tester) async {
+      final server = homeServer()..on('GET /rides', body: rideList([]));
+      await bootHome(tester, server);
+      await tester.tap(find.byIcon(Icons.history));
+      await tester.pumpAndSettle();
+      expect(find.text('Your rides will appear here.'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Book a ride'));
+      await tester.pumpAndSettle();
+      expect(find.text('Where to?'), findsOneWidget);
     });
   });
 }
