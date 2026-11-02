@@ -219,6 +219,7 @@
   "topupCustom": "Other amount in cedis",
   "topupCustomHint": "Between {min} and {max}",
   "topupPay": "Pay {amount}",
+  "topupNumberLabel": "Mobile money number",
   "topupPhoneNote": "We'll send a payment prompt to {phone}.",
   "topupPendingTitle": "A top-up is still waiting",
   "topupPendingBody": "You started a top-up that hasn't finished. If you start another, you could pay twice.",

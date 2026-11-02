@@ -71,3 +71,10 @@ The destination screen offers official pickup points as drop-offs. A real "searc
 **What:** The trip detail timeline can only show times for "assigned" and "accepted" (`assignedAt`, `acknowledgedAt`). The steps after that (arrived, trip started, completed, cancelled) show a state but no time, and a cancelled ride does not say who cancelled or why.
 **Suggested:** add nullable `arrivedAt`, `startedAt`, `completedAt`, `cancelledAt` to `DriverRide` (the server already records them for the state machine), and optionally `cancelReasonCode`.
 **Until then:** the timeline shows states only for those steps.
+
+
+### CR-11. Top-up cannot name the mobile money network or number
+
+**What:** The design's top-up screen shows the mobile money number with a network chip ("MTN MoMo"), and a "Pay with" choice (MTN MoMo, Telecel Cash, AT Money) when the number's network cannot be told. `TopupCreate` has only `amountPesewas` and `channel`, so the app cannot send a network or a number different from the account phone, and it cannot say which network will be asked to approve.
+**Suggested:** nullable `network` (`mtn | telecel | at`) and `msisdn` on `TopupCreate`; the server detects the network from the number when `network` is omitted and answers `422 network_unknown` when it cannot, so the app can show the "Pay with" choice.
+**Until then:** the top-up screen shows the account phone as the number the prompt goes to, with no network chip.
