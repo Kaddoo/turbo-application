@@ -14,6 +14,7 @@ class GateState {
     this.maintenanceMessage,
     this.offline = false,
     this.campusSecurityPhone,
+    this.announcement,
   });
 
   final GateStatus status;
@@ -26,6 +27,9 @@ class GateState {
 
   /// Campus security, E.164, from the app config. Null until staff set it: then only 112 is offered.
   final String? campusSecurityPhone;
+
+  /// The notice staff set for Home, or null.
+  final HomeNotice? announcement;
 }
 
 GateState gateFrom(AppConfig config, String platform, String version) {
@@ -45,6 +49,7 @@ GateState gateFrom(AppConfig config, String platform, String version) {
     pauseMessage: config.pauseMessage,
     maintenanceMessage: config.maintenance.message,
     campusSecurityPhone: config.campusSecurityPhone,
+    announcement: config.announcement,
   );
 }
 
@@ -75,3 +80,24 @@ final gateProvider = AsyncNotifierProvider<GateController, GateState>(GateContro
 
 /// The campus security number, or null when none is set (or the config could not be read).
 final campusSecurityPhoneProvider = Provider<String?>((ref) => ref.watch(gateProvider).value?.campusSecurityPhone);
+
+/// The id of the notice the student closed, remembered across launches. A changed message or severity has a new id, so it shows again.
+class ClosedNoticeController extends AsyncNotifier<String?> {
+  @override
+  Future<String?> build() => ref.read(tokenStoreProvider).readClosedNotice();
+
+  Future<void> close(String id) async {
+    state = AsyncData(id);
+    await ref.read(tokenStoreProvider).writeClosedNotice(id);
+  }
+}
+
+final closedNoticeProvider = AsyncNotifierProvider<ClosedNoticeController, String?>(ClosedNoticeController.new);
+
+/// The notice to show on Home: the current one unless the student closed that very notice. Null while the closed id is still loading, so nothing flashes.
+final homeNoticeProvider = Provider<HomeNotice?>((ref) {
+  final notice = ref.watch(gateProvider).value?.announcement;
+  final closed = ref.watch(closedNoticeProvider);
+  if (notice == null || closed.isLoading) return null;
+  return closed.value == notice.id && notice.severity != HomeNoticeSeverityEnum.critical ? null : notice;
+});

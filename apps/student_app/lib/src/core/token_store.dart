@@ -7,6 +7,10 @@ abstract class TokenStore {
   Future<String?> readDeviceId();
   Future<void> writeDeviceId(String id);
 
+  /// The id of the home notice the student closed. Not a secret; kept here because this is the app's only storage.
+  Future<String?> readClosedNotice();
+  Future<void> writeClosedNotice(String id);
+
   /// Signs out: removes the session but keeps the device id.
   Future<void> clear();
 }
@@ -18,6 +22,7 @@ class SecureTokenStore implements TokenStore {
   final FlutterSecureStorage _storage;
   static const _key = 'refresh_token';
   static const _deviceKey = 'device_id';
+  static const _noticeKey = 'closed_notice';
 
   @override
   Future<String?> readRefreshToken() => _storage.read(key: _key);
@@ -32,6 +37,12 @@ class SecureTokenStore implements TokenStore {
   Future<void> writeDeviceId(String id) => _storage.write(key: _deviceKey, value: id);
 
   @override
+  Future<String?> readClosedNotice() => _storage.read(key: _noticeKey);
+
+  @override
+  Future<void> writeClosedNotice(String id) => _storage.write(key: _noticeKey, value: id);
+
+  @override
   Future<void> clear() => _storage.delete(key: _key);
 }
 
@@ -41,6 +52,7 @@ class MemoryTokenStore implements TokenStore {
 
   String? _token;
   String? _deviceId;
+  String? _closedNotice;
 
   @override
   Future<String?> readRefreshToken() async => _token;
@@ -53,6 +65,12 @@ class MemoryTokenStore implements TokenStore {
 
   @override
   Future<void> writeDeviceId(String id) async => _deviceId = id;
+
+  @override
+  Future<String?> readClosedNotice() async => _closedNotice;
+
+  @override
+  Future<void> writeClosedNotice(String id) async => _closedNotice = id;
 
   @override
   Future<void> clear() async => _token = null;

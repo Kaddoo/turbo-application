@@ -838,6 +838,12 @@ abstract class AppLocalizations {
   /// **'Your pickup point'**
   String get homeYourPickup;
 
+  /// No description provided for @homeNoticeClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close this notice'**
+  String get homeNoticeClose;
+
   /// No description provided for @homeBookRide.
   ///
   /// In en, this message translates to:

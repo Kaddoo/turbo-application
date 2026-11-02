@@ -63,6 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final area = ref.watch(serviceAreaProvider);
     final location = ref.watch(userLocationProvider);
     final gate = ref.watch(gateProvider).value ?? const GateState();
+    final notice = ref.watch(homeNoticeProvider);
     final wallet = ref.watch(walletProvider);
     final me = switch (ref.watch(meProvider).value) {
       MeLoaded(:final student) => student,
@@ -256,6 +257,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               padding: const EdgeInsets.fromLTRB(TurboSpacing.screen, TurboSpacing.md, TurboSpacing.screen, TurboSpacing.xxl),
               children: [
                 header(),
+                if (notice != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: TurboSpacing.lg),
+                    child: TurboBanner(
+                      icon: switch (notice.severity) {
+                        HomeNoticeSeverityEnum.info => Icons.info_outline,
+                        HomeNoticeSeverityEnum.warning => Icons.warning_amber,
+                        HomeNoticeSeverityEnum.critical => Icons.error_outline,
+                      },
+                      message: notice.message,
+                      tone: switch (notice.severity) {
+                        HomeNoticeSeverityEnum.info => StatusTone.neutral,
+                        HomeNoticeSeverityEnum.warning => StatusTone.warning,
+                        HomeNoticeSeverityEnum.critical => StatusTone.danger,
+                      },
+                      liveRegion: notice.severity != HomeNoticeSeverityEnum.info,
+                      // A critical notice stays until staff remove it.
+                      onClose: notice.severity == HomeNoticeSeverityEnum.critical
+                          ? null
+                          : () => ref.read(closedNoticeProvider.notifier).close(notice.id),
+                      closeLabel: l10n.homeNoticeClose,
+                    ),
+                  ),
                 if (data.stale)
                   Padding(
                     padding: const EdgeInsets.only(top: TurboSpacing.lg),

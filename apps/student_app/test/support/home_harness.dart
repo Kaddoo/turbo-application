@@ -116,6 +116,7 @@ Future<List<MapSpec>> bootHome(
   FakeSearch? search,
   Size size = const Size(390, 900),
   List<Override> extra = const [],
+  MemoryTokenStore? store,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -126,7 +127,7 @@ Future<List<MapSpec>> bootHome(
       retry: (_, _) => null,
       overrides: [
         ...extra,
-        ...server.overrides(store: MemoryTokenStore('refresh-1')),
+        ...server.overrides(store: store ?? MemoryTokenStore('refresh-1')),
         locationServiceProvider.overrideWithValue(location ?? FakeLocation(UserLocation(LocationStatus.granted, GeoPoint(lat: 5.7405, lng: 0.0662)))),
         placeSearchProvider.overrideWithValue(search ?? FakeSearch(available: false)),
         mapBuilderProvider.overrideWithValue((context, spec) {

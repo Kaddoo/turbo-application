@@ -445,6 +445,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeYourPickup => 'Your pickup point';
 
   @override
+  String get homeNoticeClose => 'Close this notice';
+
+  @override
   String get homeBookRide => 'Book a ride';
 
   @override

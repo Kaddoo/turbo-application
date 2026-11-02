@@ -125,6 +125,7 @@
   "statusSubmittedAt": "Sent {date}",
   "homeWhereTo": "Where to?",
   "homeYourPickup": "Your pickup point",
+  "homeNoticeClose": "Close this notice",
   "homeBookRide": "Book a ride",
   "homeTabNearest": "Nearest point",
   "homeTabChoose": "Choose point",

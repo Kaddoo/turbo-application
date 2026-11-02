@@ -2,6 +2,14 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: Home announcement banner (branch `student-announcement`, from `main` with place search)
+
+- **Files:** `apps/student_app/lib/src/core/gate.dart`, `token_store.dart`, `features/home/home_screen.dart`, `lib/l10n/app_en.arb` (+ generated), `test/home_flow_test.dart`, `test/support/fake_server.dart`, `test/support/home_harness.dart`; `packages/turbo_ui/lib/src/components/turbo_banner.dart`.
+- **What changed:** the notice staff set (`announcement` in the app config, contract 0.6.0) shows as a banner under the Home header: info is quiet, warning amber, critical red. Info and warning have a close button; closing remembers the notice's id, so it stays closed across launches until staff change the message or severity (a new id). A critical notice has no close button. It is read in the same app-config check as the gate (start and every resume). `TurboBanner` gained an optional close button (`onClose`, `closeLabel`); nothing else that uses it changes.
+- **Where the closed id lives:** the token store (secure storage), the app's only storage; it is not a secret and is kept on sign-out.
+- **Not done:** the dashboard still needs a field for staff to write the notice (the admin settings PUT sends the whole document); the driver app does not show the notice (the contract names it for Home; ask if drivers should see it).
+- **Checks:** analyze clean; student 192, driver 90 and turbo_ui 99 tests pass (shows, closes and stays closed, new id shows again, critical cannot be closed, dark mode at 200% text). Not run on a phone, and not tried against the live API (it returns null today).
+
 ## 2026-11-02, Claude, code: place search through the API (branch `student-place-search`, from `main` at contract 0.6.0)
 
 - **Files:** `apps/student_app/lib/src/features/home/place_search.dart`, `destination_screen.dart`, `test/geo_search_test.dart`, `test/home_flow_test.dart`.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:student_app/src/core/token_store.dart';
 import 'package:student_app/src/features/home/location_service.dart';
 import 'package:student_app/src/features/home/place_search.dart';
 import 'package:turbo_api/turbo_api.dart';
@@ -261,6 +262,51 @@ void main() {
       expect(calls, 2);
       expect(find.text('GH₵25.00'), findsOneWidget);
       expect(find.text('That price expired, so we got you a new one.'), findsOneWidget);
+    });
+  });
+
+  group('home notice', () {
+    Map<String, Object?> notice(String id, String severity, [String message = 'Rides pause on Friday for exams.']) =>
+        {'id': id, 'message': message, 'severity': severity};
+
+    FakeServer withNotice(Map<String, Object?>? n) => homeServer()..on('GET /app-config', body: appConfig(notice: n));
+
+    testWidgets('a notice shows on Home, and nothing shows without one', (tester) async {
+      await bootHome(tester, withNotice(notice('n1', 'info')));
+      expect(find.text('Rides pause on Friday for exams.'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      await bootHome(tester, withNotice(null));
+      expect(find.text('Rides pause on Friday for exams.'), findsNothing);
+    });
+
+    testWidgets('closing it hides it and it stays hidden, until the notice changes', (tester) async {
+      final store = MemoryTokenStore('refresh-1');
+      final server = withNotice(notice('n1', 'warning'));
+      await bootHome(tester, server, store: store);
+      await tester.tap(find.bySemanticsLabel('Close this notice'));
+      await tester.pumpAndSettle();
+      expect(find.text('Rides pause on Friday for exams.'), findsNothing);
+      expect(await store.readClosedNotice(), 'n1');
+
+      // Next launch, same notice: still closed.
+      await tester.pumpWidget(const SizedBox());
+      await bootHome(tester, server, store: store);
+      expect(find.text('Rides pause on Friday for exams.'), findsNothing);
+
+      // Staff change the message: new id, so it shows again.
+      await tester.pumpWidget(const SizedBox());
+      await bootHome(tester, withNotice(notice('n2', 'warning', 'Back to normal on Monday.')), store: store);
+      expect(find.text('Back to normal on Monday.'), findsOneWidget);
+    });
+
+    testWidgets('a critical notice cannot be closed, in dark mode at 200% text', (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      await bootHome(tester, withNotice(notice('c1', 'critical', 'Rides are stopped for now.')), size: const Size(390, 2400));
+      expect(find.text('Rides are stopped for now.'), findsOneWidget);
+      expect(find.bySemanticsLabel('Close this notice'), findsNothing);
+      expect(tester.takeException(), isNull);
     });
   });
 
