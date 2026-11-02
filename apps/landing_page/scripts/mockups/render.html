@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+    </style>
+    <script type="importmap">
+      { "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }
+    </script>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "three";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+      import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer.setClearColor(0x000000, 0);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+      key.position.set(-3, 4, 5);
+      scene.add(key);
+      const rim = new THREE.DirectionalLight(0xffffff, 1.2);
+      rim.position.set(4, 1, -2);
+      scene.add(rim);
+
+      const gltf = await new GLTFLoader().loadAsync("/model.glb");
+      const model = gltf.scene;
+      let screenMesh;
+      model.traverse((o) => o.isMesh && o.material.name === "Screen_BG" && (screenMesh = o));
+      const screenOrig = screenMesh.material;
+      // Dark titanium band instead of the model's silver.
+      model.traverse((o) => o.isMesh && o.material.name === "Rim_Buttons" && o.material.color.set(0x3b3f45));
+
+      // Wrap so the pose rotation is applied around the phone's centre.
+      const pivot = new THREE.Group();
+      const holder = new THREE.Group();
+      holder.add(model);
+      pivot.add(holder);
+      scene.add(pivot);
+
+      window.__info = () => {
+        const out = { size: null, meshes: [] };
+        const box = new THREE.Box3().setFromObject(model);
+        out.size = box.getSize(new THREE.Vector3()).toArray();
+        out.center = box.getCenter(new THREE.Vector3()).toArray();
+        model.traverse((o) => {
+          if (o.isMesh) {
+            const b = new THREE.Box3().setFromObject(o);
+            out.meshes.push({ name: o.name, mat: o.material.name, size: b.getSize(new THREE.Vector3()).toArray().map((v) => +v.toFixed(4)), center: b.getCenter(new THREE.Vector3()).toArray().map((v) => +v.toFixed(4)) });
+          }
+        });
+        return out;
+      };
+
+      /** Applies the canonical orientation fix (Euler, radians) so the phone stands upright facing +Z. */
+      window.__orient = (euler) => {
+        model.rotation.set(0, 0, 0);
+        holder.rotation.set(...euler);
+        holder.position.set(0, 0, 0);
+        holder.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(holder);
+        const c = box.getCenter(new THREE.Vector3());
+        holder.position.sub(c);
+        holder.updateMatrixWorld(true);
+        const s = box.getSize(new THREE.Vector3());
+        // Normalise to 1 unit tall.
+        const k = 1 / s.y;
+        pivot.scale.setScalar(k);
+        pivot.updateMatrixWorld(true);
+        return new THREE.Box3().setFromObject(pivot).getSize(new THREE.Vector3()).toArray();
+      };
+
+      /** Screen face corners in pivot space (front = max z), from the Screen_BG mesh. */
+      function screenCorners() {
+        const screen = screenMesh;
+        const saved = pivot.rotation.clone();
+        pivot.rotation.set(0, 0, 0);
+        pivot.updateMatrixWorld(true);
+        const b = new THREE.Box3().setFromObject(screen);
+        pivot.rotation.copy(saved);
+        pivot.updateMatrixWorld(true);
+        const z = b.max.z;
+        // TL, TR, BR, BL in world space with identity pose.
+        return [
+          new THREE.Vector3(b.min.x, b.max.y, z),
+          new THREE.Vector3(b.max.x, b.max.y, z),
+          new THREE.Vector3(b.max.x, b.min.y, z),
+          new THREE.Vector3(b.min.x, b.min.y, z),
+        ];
+      }
+
+      window.__render = ({ rot = [0, 0, 0], width = 900, height = 1600, fov = 18, screen = "hole", margin = 1.08 }) => {
+        if (screen === "hole") {
+          screenMesh.material = new THREE.MeshBasicMaterial({ colorWrite: false });
+          // Draw first so the body behind the display fails the depth test and stays transparent.
+          screenMesh.renderOrder = -1;
+        } else if (screen === "grid") {
+          const c = document.createElement("canvas");
+          c.width = c.height = 512;
+          const g = c.getContext("2d");
+          for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { g.fillStyle = (i + j) % 2 ? "#d4ff3a" : "#222"; g.fillRect(i * 64, j * 64, 64, 64); }
+          g.fillStyle = "red"; g.font = "bold 120px sans-serif"; g.fillText("TL", 10, 110);
+          const t = new THREE.CanvasTexture(c); t.flipY = false; t.colorSpace = THREE.SRGBColorSpace;
+          screenMesh.material = new THREE.MeshBasicMaterial({ map: t });
+        } else {
+          screenMesh.material = screenOrig;
+        }
+
+        const corners0 = screenCorners();
+        pivot.rotation.set(rot[0], rot[1], rot[2], "XYZ");
+        pivot.updateMatrixWorld(true);
+
+        renderer.setPixelRatio(1);
+        renderer.setSize(width, height);
+        const camera = new THREE.PerspectiveCamera(fov, width / height, 0.1, 100);
+        // Fit the rotated phone into the frame.
+        const box = new THREE.Box3().setFromObject(pivot);
+        const sphere = box.getBoundingSphere(new THREE.Sphere());
+        const vFov = THREE.MathUtils.degToRad(fov);
+        const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+        const size = box.getSize(new THREE.Vector3());
+        const dist = Math.max(size.y / 2 / Math.tan(vFov / 2), size.x / 2 / Math.tan(hFov / 2)) * margin + size.z;
+        camera.position.set(0, 0, dist);
+        camera.lookAt(box.getCenter(new THREE.Vector3()));
+        camera.updateMatrixWorld(true);
+
+        renderer.render(scene, camera);
+
+        const pts = corners0.map((p) => {
+          const v = p.clone().applyEuler(new THREE.Euler(rot[0], rot[1], rot[2], "XYZ")).project(camera);
+          return [+((v.x + 1) / 2 * width).toFixed(2), +((1 - v.y) / 2 * height).toFixed(2)];
+        });
+        return { dataUrl: renderer.domElement.toDataURL("image/webp", 0.92), corners: pts, width, height };
+      };
+
+      window.__ready = true;
+    </script>
+  </body>
+</html>
