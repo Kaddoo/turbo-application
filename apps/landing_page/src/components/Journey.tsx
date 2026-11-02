@@ -5,7 +5,7 @@ import { Icon3d, type Icon3dName } from "./ui/Icon3d";
 
 /**
  * One ride down the page. A 3D taxi follows a route down the right-hand page
- * margin (along the screen edge, behind the content, on narrow screens) and
+ * margin (hugging the screen edge on narrow screens, on top of the content) and
  * keeps pace a little below the middle of the screen as you scroll. The route behind it fills in. At each stop,
  * marked in the sections with data-journey="…", the object waiting there plays
  * its part as the car reaches it. Everything is driven by the scroll, so it
@@ -40,7 +40,7 @@ type Geo = { w: number; h: number; d: string; start: Point; stops: Point[]; wide
 
 /**
  * Where the route runs: down the right-hand page margin when there is room, otherwise
- * along the right screen edge. It never crosses the content; between stops it bends
+ * hugging the right screen edge. It never crosses the content; between stops it bends
  * gently within the margin, like a road.
  */
 function measure(): Geo | null {
@@ -50,7 +50,7 @@ function measure(): Geo | null {
   const w = main.clientWidth;
   const margin = (w - Math.min(w, 72 * 16 + 48)) / 2;
   const wide = margin >= 110;
-  const x = wide ? w - margin / 2 : w - 26;
+  const x = wide ? w - margin / 2 : w - 18;
   const sway = wide ? Math.min(28, margin / 5) : 0;
   const docY = (el: Element) => el.getBoundingClientRect().top + window.scrollY - top;
 
@@ -247,9 +247,9 @@ export function Journey() {
   }, [geo]);
 
   if (!geo) return <div aria-hidden className="hidden" />;
-  const objSize = geo.wide ? "size-14" : "size-9";
+  const objSize = geo.wide ? "size-14" : "size-8";
   return (
-    <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${geo.wide ? "z-20" : "-z-10"}`} style={{ height: geo.h }}>
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-20 overflow-hidden" style={{ height: geo.h }}>
       <svg width={geo.w} height={geo.h} className="absolute left-0 top-0" fill="none">
         {/* The road ahead, faint; the stretch already driven, in lime. */}
         <path ref={routeRef} d={geo.d} className="stroke-mute/30" strokeWidth="2" strokeDasharray="2 9" strokeLinecap="round" />
@@ -288,7 +288,7 @@ export function Journey() {
         </div>
       ))}
       <div ref={carRef} className="absolute left-0 top-0">
-        <div className={geo.wide ? "size-16" : "size-10"}>
+        <div className={geo.wide ? "size-16" : "size-9"}>
           <Icon3d name="oncoming-taxi" eager className="size-full drop-shadow-[0_14px_18px_rgba(0,0,0,0.45)]" />
         </div>
       </div>
