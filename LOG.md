@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: Go on duty is a slide (branch `driver-duty-slider`, from main)
+
+- **Files:** `packages/turbo_ui/lib/src/components/slide_to_continue.dart`, `test/slide_to_continue_test.dart` (new), `apps/driver_app/lib/src/features/home/home_screen.dart`, `test/driver_home_test.dart`.
+- **What changed:** the big Go on duty button is now the lime slide, left to right, with a power icon on the knob. `SlideToContinue` gained `loading` (spinner on the knob, touches ignored while the request runs) and `tapToContinue` (off here: a tap does nothing, only a drag goes on duty, so a phone in a mount cannot do it by accident). Screen readers still get a plain button. The student welcome slide is unchanged (tap still works there).
+- **Not changed:** Go off duty is still a button; the on-duty screen is as it was.
+- **Checks:** analyze clean; turbo_ui 99, driver 90, student pass. Not seen on a phone.
+
 ## 2026-11-02, Claude, code: real campus points for staging (branch `campus-pickup-points`)
 
 - **Files:** `api/scripts/campus-points.json`, `docs/11-ops-runbook.md`.
