@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: share trip as contact chips and a photo preview (branch `student-share-card`, from `main`)
+
+- **Files:** `apps/student_app/lib/src/features/safety/share_screen.dart`, `test/safety_support_profile_test.dart`.
+- **What changed:** trusted contacts are chips with their initial (tap to choose), not rows with a check circle. "What they get" is a photo card (`trip-status-intersection.jpg`, already in `turbo_ui`) with the trip's pickup → drop-off on it, and the explanation under it. The "Link sent" screen uses the 3D check-mark and the no-contact screen the 3D busts instead of plain icons.
+- **Deviation:** chips show the name only; the phone number that the old rows showed is on the Safety screen. The route on the card comes from the ride (`GET /rides/{id}`) and is left out until it loads.
+- **Checks:** analyze clean, 177 student tests pass (chips and photo in dark mode at 200% text). Not run on a phone.
+
 ## 2026-11-02, Claude, code: receipt as a photo card, map and tiles (branch `student-receipt-card`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/ride/ride_screen.dart` (`ReceiptScreen`), `lib/l10n/app_en.arb` (+ generated), `test/ride_test.dart`.

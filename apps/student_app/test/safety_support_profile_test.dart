@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 
 import 'support/fake_server.dart';
 import 'support/home_harness.dart';
@@ -78,6 +79,9 @@ void main() {
       GoRouter.of(ctx).go('/ride/0190a1b2-0000-7e4f-8a5b-000000000001/share');
       await tester.pumpAndSettle();
       expect(find.text('Send link'), findsOneWidget);
+      // Contacts are chips, and the preview sits on a photo.
+      expect(find.widgetWithText(TurboChip, 'Akosua Mensah'), findsOneWidget);
+      expect(find.byType(PhotoCard), findsOneWidget);
       await tester.tap(find.text('Akosua Mensah'));
       await tester.pumpAndSettle();
       expect(find.text('Send to 1 contact'), findsOneWidget);

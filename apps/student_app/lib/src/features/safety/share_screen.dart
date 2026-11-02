@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:turbo_api/turbo_api.dart';
 import 'package:turbo_ui/turbo_ui.dart';
 
-import '../../core/auth_draft.dart';
 import '../../core/providers.dart';
 import '../../l10n/app_localizations.dart';
+import '../ride/ride_providers.dart';
 import 'safety_providers.dart';
 
 /// Choose trusted contacts to follow a ride. The link works without an account
@@ -53,6 +53,7 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
     final text = Theme.of(context).textTheme;
     final contacts = ref.watch(contactsProvider);
     final shared = _shared;
+    final ride = ref.watch(rideProvider(widget.rideId)).value;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.shareTitle)),
@@ -62,7 +63,7 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                 padding: const EdgeInsets.all(TurboSpacing.xl),
                 children: [
                   const SizedBox(height: TurboSpacing.xl),
-                  const Center(child: BadgeIcon(icon: Icons.check)),
+                  const Center(child: HeroIcon(art: TurboArt.checkMarkButton)),
                   const SizedBox(height: TurboSpacing.xl),
                   Semantics(
                     header: true,
@@ -90,7 +91,7 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                 error: (_, _) => ErrorState(message: l10n.safetyLoadFailed, onRetry: () => ref.read(contactsProvider.notifier).reload()),
                 data: (list) => list.isEmpty
                     ? EmptyState(
-                        icon: Icons.group_outlined,
+                        art: TurboArt.bustsInSilhouette,
                         message: l10n.shareNeedContact,
                         actionLabel: l10n.safetyAddContact,
                         onAction: () => context.pushReplacement('/safety', extra: widget.rideId),
@@ -103,28 +104,39 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                               children: [
                                 Semantics(header: true, child: Text(l10n.shareChoose, style: text.titleSmall)),
                                 const SizedBox(height: TurboSpacing.md),
-                                for (final c in list)
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: TurboSpacing.sm),
-                                    child: _ContactTile(
-                                      name: c.name,
-                                      phone: displayPhone(c.phone),
-                                      selected: _chosen.contains(c.id),
-                                      onChanged: (v) => setState(() => v ? _chosen.add(c.id) : _chosen.remove(c.id)),
-                                    ),
-                                  ),
+                                // Contacts are chips with their picture; tap to choose who follows.
+                                Wrap(
+                                  spacing: TurboSpacing.sm,
+                                  runSpacing: TurboSpacing.sm,
+                                  children: [
+                                    for (final c in list)
+                                      TurboChip(
+                                        label: c.name,
+                                        leading: TurboAvatar(name: c.name, small: true),
+                                        selected: _chosen.contains(c.id),
+                                        onTap: () => setState(() => _chosen.contains(c.id) ? _chosen.remove(c.id) : _chosen.add(c.id)),
+                                      ),
+                                  ],
+                                ),
                                 const SizedBox(height: TurboSpacing.md),
-                                TurboCard(
-                                  color: t.colors.surface,
+                                // What the contacts will see: the trip, over a photo.
+                                PhotoCard(
+                                  asset: 'trip-status-intersection.jpg',
+                                  height: 160 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.5),
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(l10n.sharePreviewTitle, style: text.labelLarge),
-                                      const SizedBox(height: TurboSpacing.sm),
-                                      Text(l10n.sharePreviewBody, style: text.bodyMedium),
+                                      if (ride != null) ...[
+                                        const SizedBox(height: TurboSpacing.xs),
+                                        Text('${ride.pickup.label ?? ''} → ${ride.dropoff.label ?? ''}', style: text.titleMedium),
+                                      ],
                                     ],
                                   ),
                                 ),
+                                const SizedBox(height: TurboSpacing.sm),
+                                Text(l10n.sharePreviewBody, style: text.bodyMedium),
                                 if (_error != null)
                                   Padding(
                                     padding: const EdgeInsets.only(top: TurboSpacing.md),
@@ -147,50 +159,6 @@ class _ShareTripScreenState extends ConsumerState<ShareTripScreen> {
                         ],
                       ),
               ),
-      ),
-    );
-  }
-}
-
-class _ContactTile extends StatelessWidget {
-  const _ContactTile({required this.name, required this.phone, required this.selected, required this.onChanged});
-
-  final String name;
-  final String phone;
-  final bool selected;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.turbo;
-    final text = Theme.of(context).textTheme;
-    return Semantics(
-      container: true,
-      checked: selected,
-      label: '$name, $phone',
-      excludeSemantics: true,
-      onTap: () => onChanged(!selected),
-      child: TurboCard(
-        onTap: () => onChanged(!selected),
-        child: Row(
-          children: [
-            TurboAvatar(name: name, small: true),
-            const SizedBox(width: TurboSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name, style: text.bodyLarge),
-                  Text(phone, style: text.bodySmall),
-                ],
-              ),
-            ),
-            Icon(
-              selected ? Icons.check_circle : Icons.circle_outlined,
-              color: selected ? t.colors.textPrimary : t.colors.textSecondary,
-            ),
-          ],
-        ),
       ),
     );
   }
