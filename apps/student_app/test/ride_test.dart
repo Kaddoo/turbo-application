@@ -75,8 +75,9 @@ void main() {
       expect((bodyOf(request) as Map)['quoteId'], '0190a1b2-0000-7e4f-8a5b-0000000000d4');
       expect(request.headers['Idempotency-Key'], isNotEmpty);
       expect(find.text('Finding your driver'), findsOneWidget);
-      expect(find.text('Your fare is held. GH₵35.00'), findsOneWidget);
-      expect(find.text('Main gate'), findsOneWidget);
+      expect(find.text('Fare is held'), findsOneWidget);
+      expect(find.text('GH₵35.00'), findsOneWidget);
+      expect(find.text('Pickup: Main gate'), findsOneWidget);
       expect(find.text('Cancel ride'), findsOneWidget);
     });
 

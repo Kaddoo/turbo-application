@@ -1546,6 +1546,24 @@ abstract class AppLocalizations {
   /// **'Cancelled'**
   String get rideStatusCancelled;
 
+  /// No description provided for @rideTileFareHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Fare is held'**
+  String get rideTileFareHeld;
+
+  /// No description provided for @rideTileTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get rideTileTo;
+
+  /// No description provided for @rideSearchingFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup: {place}'**
+  String rideSearchingFrom(String place);
+
   /// No description provided for @rideSearchingTitle.
   ///
   /// In en, this message translates to:

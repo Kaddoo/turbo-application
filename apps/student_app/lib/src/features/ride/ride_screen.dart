@@ -256,16 +256,33 @@ class _Searching extends ConsumerWidget {
             Text(_clockText(sinceRequested(ride)), style: text.bodyMedium),
           ],
         ),
-        const SizedBox(height: TurboSpacing.xs),
-        Row(
-          children: [
-            Icon(Icons.lock_outline, size: TurboSizes.iconSm, color: context.turbo.colors.textSecondary),
-            const SizedBox(width: TurboSpacing.xs),
-            Expanded(child: Text(l10n.rideFareHeld(formatPesewas(held > 0 ? held : ride.farePesewas)), style: text.bodyMedium)),
-          ],
-        ),
         const SizedBox(height: TurboSpacing.md),
-        _Route(ride),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: BentoTile(
+                  label: l10n.rideTileFareHeld,
+                  title: formatPesewas(held > 0 ? held : ride.farePesewas),
+                  tone: BentoTone.lime,
+                  money: true,
+                  trailing: const TurboArtImage(TurboArt.locked),
+                ),
+              ),
+              const SizedBox(width: TurboSpacing.md),
+              Expanded(
+                child: BentoTile(
+                  label: l10n.rideTileTo,
+                  title: ride.dropoff.label ?? '',
+                  trailing: const TurboArtImage(TurboArt.roundPushpin),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: TurboSpacing.sm),
+        Text(l10n.rideSearchingFrom(ride.pickup.label ?? ''), style: text.bodyMedium),
         const SizedBox(height: TurboSpacing.lg),
         TurboButton(
           label: l10n.rideCancel,
@@ -273,36 +290,6 @@ class _Searching extends ConsumerWidget {
           onPressed: () => _confirmCancel(context, ref, ride),
         ),
       ],
-    );
-  }
-}
-
-class _Route extends StatelessWidget {
-  const _Route(this.ride);
-
-  final Ride ride;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    final t = context.turbo;
-    return TurboCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            Icon(Icons.trip_origin, size: TurboSizes.iconSm, color: t.colors.accentText),
-            const SizedBox(width: TurboSpacing.sm),
-            Expanded(child: Text(ride.pickup.label ?? '', style: text.bodyLarge)),
-          ]),
-          const SizedBox(height: TurboSpacing.sm),
-          Row(children: [
-            Icon(Icons.flag_outlined, size: TurboSizes.iconSm, color: t.colors.textSecondary),
-            const SizedBox(width: TurboSpacing.sm),
-            Expanded(child: Text(ride.dropoff.label ?? '', style: text.bodyLarge)),
-          ]),
-        ],
-      ),
     );
   }
 }
