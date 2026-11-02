@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:turbo_ui/turbo_ui.dart' show TurboKeypad;
+import 'package:turbo_ui/turbo_ui.dart' show TripPin, TurboKeypad;
 import 'package:flutter/material.dart';
 
 import 'driver_ride_test.dart' show driverRide, rideId, rideServer, settle;
@@ -114,5 +114,28 @@ void main() {
       await settle(tester, 6);
       expect(events, contains('haptic:HapticFeedbackType.mediumImpact'));
     }, variant: iosOnly);
+  });
+
+  testWidgets('a wrong PIN shakes the boxes and then they rest', (tester) async {
+    final server = rideServer(driverRide('driver_arrived'))..on('POST /driver/rides/$rideId/start', status: 422, body: problem('invalid_pin', 422));
+    await bootDriver(tester, server);
+    await settle(tester, 12);
+    await tester.tap(find.text('Start trip'));
+    await settle(tester);
+    for (final d in '1111'.split('')) {
+      await tester.tap(find.descendant(of: find.byType(TurboKeypad), matching: find.text(d)));
+      await tester.pump();
+    }
+    final rest = tester.getTopLeft(find.byType(TripPin)).dx;
+    await tester.tap(find.widgetWithText(FilledButton, 'Start'));
+    // The reply arrives, then the shake plays.
+    var moved = false;
+    for (var i = 0; i < 40; i++) {
+      await tester.pump(const Duration(milliseconds: 10));
+      if ((tester.getTopLeft(find.byType(TripPin)).dx - rest).abs() > 1) moved = true;
+    }
+    expect(moved, isTrue);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(tester.getTopLeft(find.byType(TripPin)).dx, rest);
   });
 }

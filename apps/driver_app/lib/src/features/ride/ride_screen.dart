@@ -629,6 +629,7 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
   String _pin = '';
   bool _busy = false;
   bool _locked = false;
+  int _shakes = 0;
   String? _error;
 
   Future<void> _start() async {
@@ -645,6 +646,7 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
       if (!mounted) return;
       setState(() {
         _pin = '';
+        _shakes++;
         if (p.code == 'pin_locked') {
           _locked = true;
         } else {
@@ -721,7 +723,10 @@ class _AtPickupState extends ConsumerState<_AtPickup> {
                 child: Text(l10n.pinHint, style: text.bodyMedium),
               ),
               const SizedBox(height: TurboSpacing.xl),
-              TripPin(digits: _pin, current: true, error: _error != null),
+              TurboShake(
+                trigger: _shakes,
+                child: TripPin(digits: _pin, current: true, error: _error != null),
+              ),
               if (_error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: TurboSpacing.md),
