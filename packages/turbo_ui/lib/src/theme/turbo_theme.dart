@@ -200,6 +200,8 @@ ThemeData buildTurboTheme(BrandTokens brand, Brightness brightness) {
       titleTextStyle: textTheme.titleLarge,
     ),
     dividerTheme: DividerThemeData(color: colors.border, space: 1, thickness: 1),
+    // Plain text buttons use the readable accent: lime on a light page is unreadable.
+    textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: colors.accentText)),
     switchTheme: SwitchThemeData(
       trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? colors.accent : colors.fill),
       thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? colors.onAccent : colors.textSecondary),
