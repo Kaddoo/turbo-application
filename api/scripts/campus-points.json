@@ -1,14 +1,15 @@
 {
-  "note": "Pickup and drop-off points for the campus. The four 'Test point' entries are PLACEHOLDERS a few hundred metres from the main gate, so a ride can be booked on staging. Replace them with the real hostels and landmarks: put the real name and position here and run the script again (it matches by name; rename or delete the test ones in the dashboard).",
+  "note": "Pickup and drop-off points around Central University, Miotso. Positions for the campus places come from OpenStreetMap (Central University, Central Plaza, Block C, Block F, Trinity Hall); Queens Court is placed at the Gulf Energy filling station on Prampram Road, because its own page says it is 50 m from the Gulf of Guinea filling station (approximate, confirm on the map). 'Central Gate' keeps its name but now sits on the campus, not 5 km away where the demo data put it; its landmark says to confirm the exact gate. Other hostels (Sewkem, ICGC Boys, Mawuena, Blue Hostel, Fortress) have no published position: add them here with a real lat/lng, or drop pins in the dashboard, then run the script again (it matches by name).",
   "points": [
-    { "name": "Central Gate", "landmark": "Main gate, Miotso", "lat": 5.7203, "lng": 0.0757 },
-    { "name": "Test point: Hostel A", "landmark": "Placeholder position, replace with the real hostel", "lat": 5.7218, "lng": 0.0770 },
-    { "name": "Test point: Library", "landmark": "Placeholder position, replace with the real library", "lat": 5.7195, "lng": 0.0742 },
-    { "name": "Test point: Sports field", "landmark": "Placeholder position, replace with the real field", "lat": 5.7188, "lng": 0.0775 },
-    { "name": "Test point: Lecture block", "landmark": "Placeholder position, replace with the real block", "lat": 5.7212, "lng": 0.0738 }
+    { "name": "Central Gate", "landmark": "Main campus, Miotso (position from OpenStreetMap, confirm the gate)", "lat": 5.76948, "lng": 0.08402 },
+    { "name": "Central Plaza", "landmark": "Central Plaza, Central University", "lat": 5.76875, "lng": 0.08384 },
+    { "name": "Block C", "landmark": "Lecture block C, Central University", "lat": 5.77079, "lng": 0.08195 },
+    { "name": "Block F", "landmark": "Lecture block F, Central University", "lat": 5.77128, "lng": 0.08256 },
+    { "name": "Trinity Hall", "landmark": "Trinity Hall, Central University", "lat": 5.77008, "lng": 0.08134 },
+    { "name": "Queens Court", "landmark": "Student hostel off Prampram Road, by the Gulf filling station (approximate position)", "lat": 5.76219, "lng": 0.07071 }
   ],
   "savedPlaces": [
-    { "label": "Hostel", "point": "Test point: Hostel A" },
+    { "label": "Hostel", "point": "Queens Court" },
     { "label": "Campus", "point": "Central Gate" }
   ]
 }

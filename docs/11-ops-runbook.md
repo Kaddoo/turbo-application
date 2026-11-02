@@ -83,7 +83,7 @@ ALLOW_MANUAL_TOPUP=true runuser -u turbo -- node --env-file=/etc/turbo/api.env s
 runuser -u turbo -- node --env-file=/etc/turbo/api.env scripts/seed-pickup-points.js --saved-for +233... --yes
 ```
 
-Without `--yes` both only say what they would do. `approve-topup.js` goes through the same code as the Payaza webhook (ledger, notification, once-only), writes the audit log, masks phone numbers, and refuses unless `ALLOW_MANUAL_TOPUP=true` is set on that one command. It is for staging and for a stuck payment, never a way around real payments in production. The four "Test point" entries in `campus-points.json` are placeholders: put the real hostels and landmarks in the file and run it again, or edit them in the dashboard.
+Without `--yes` both only say what they would do. `approve-topup.js` goes through the same code as the Payaza webhook (ledger, notification, once-only), writes the audit log, masks phone numbers, and refuses unless `ALLOW_MANUAL_TOPUP=true` is set on that one command. It is for staging and for a stuck payment, never a way around real payments in production. `campus-points.json` holds the campus places (positions from OpenStreetMap; Queens Court is approximate). Hostels without a published position are not in it yet: add them with a real latitude and longitude, or drop pins in the dashboard.
 
 ## Staff accounts (no seed accounts on staging, ever)
 

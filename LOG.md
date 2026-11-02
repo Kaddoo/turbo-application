@@ -2,6 +2,13 @@
 
 Newest entry first. Template is in `docs/05-work-plan.md`. Add an entry at the end of every working session.
 
+## 2026-11-02, Claude, code: real campus points for staging (branch `campus-pickup-points`)
+
+- **Files:** `api/scripts/campus-points.json`, `docs/11-ops-runbook.md`.
+- **Finding:** the demo "Central Gate" (5.7203, 0.0757) is about 5 km from the real campus (Central University, Miotso: 5.76948, 0.08402 on OpenStreetMap). The file moves it onto the campus.
+- **Points:** Central Gate (campus), Central Plaza, Block C, Block F, Trinity Hall, Queens Court. Campus positions are OpenStreetMap's; Queens Court is placed at the Gulf Energy station on Prampram Road (its page says 50 m from the Gulf of Guinea filling station), so it is approximate. The "Test point" placeholders are gone.
+- **Not done:** Sewkem, ICGC Boys, Mawuena, Blue Hostel and Fortress hostels have no published position (the server's Maps key cannot use Places search, OSM does not list them). Needs real positions from Turbo or pins dropped in the dashboard. The service area is still the demo rectangle (it does include the campus).
+
 ## 2026-11-02, Claude, code: verification photo rows with 3D pictures (branch `student-verification-art`, from `main`)
 
 - **Files:** `apps/student_app/lib/src/features/verification/verification_capture_screen.dart`, `test/verification_flow_test.dart`.
